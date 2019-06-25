@@ -24,5 +24,6 @@
     </build>
     <modules>
         <module>tnxjee-alone</module>
+        <module>tnxjee-core</module>
     </modules>
 </project>
