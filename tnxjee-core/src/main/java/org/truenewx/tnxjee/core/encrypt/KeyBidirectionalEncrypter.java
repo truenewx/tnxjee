@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.util.encrypt;
+package org.truenewx.tnxjee.core.encrypt;
 
 /**
  * 含密钥的双向加密器

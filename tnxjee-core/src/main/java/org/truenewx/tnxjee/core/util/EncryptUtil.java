@@ -18,7 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.encrypt.Md5Encrypter;
+import org.truenewx.tnxjee.core.encrypt.Md5Encrypter;
 
 /**
  * 加密工具类
