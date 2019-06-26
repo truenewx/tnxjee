@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * 数组工具类
@@ -14,6 +15,28 @@ import java.util.Set;
 public class ArrayUtil {
 
     private ArrayUtil() {
+    }
+
+    /**
+     * 取指定数组中满足指定断言条件的第一条记录
+     *
+     * @param array     数组
+     * @param predicate 断言，为null时忽略
+     * @return 第一条记录
+     */
+    public static <T> T getFirst(T[] array, Predicate<T> predicate) {
+        if (array != null && array.length > 0) {
+            if (predicate == null) {
+                return array[0];
+            } else {
+                for (T object : array) {
+                    if (predicate.test(object)) {
+                        return object;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

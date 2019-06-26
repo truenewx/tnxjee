@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.Nullable;
+import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
  * Bean工具类
@@ -21,6 +22,11 @@ import org.springframework.lang.Nullable;
  * @since JDK 1.8
  */
 public class BeanUtil {
+
+    public static boolean equals(Object bean, Object otherBean) {
+        return PredEqual.INSTANCE.test(bean, otherBean);
+    }
+
     /**
      * 检查指定的2个bean是否相等，只根据id属性进行判断，没有id属性或id属性值都为null，则直接用bean的原始equals方法进行比较
      *

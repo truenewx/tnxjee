@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.core.util.tuple;
 
+import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.function.FuncHashCode;
-import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
  * 对称二元体，其左右元顺序不敏感，(a,b)等同于(b,a)
@@ -46,10 +46,10 @@ public class SymplexBinary<T> extends Binary<T, T> {
             return false;
         }
         SymplexBinary<T> other = (SymplexBinary<T>) obj;
-        return (PredEqual.INSTANCE.test(getLeft(), other.getLeft())
-                && PredEqual.INSTANCE.test(getRight(), other.getRight()))
-                || (PredEqual.INSTANCE.test(getLeft(), other.getRight())
-                        && PredEqual.INSTANCE.test(getRight(), other.getLeft()));
+        return (BeanUtil.equals(getLeft(), other.getLeft())
+                && BeanUtil.equals(getRight(), other.getRight()))
+                || (BeanUtil.equals(getLeft(), other.getRight())
+                        && BeanUtil.equals(getRight(), other.getLeft()));
     }
 
     @Override

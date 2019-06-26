@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * 集合工具类
@@ -16,6 +17,31 @@ import java.util.Objects;
 public class CollectionUtil {
 
     private CollectionUtil() {
+    }
+
+    /**
+     * 取指定集合中满足指定断言条件的第一条记录
+     *
+     * @param iterable  集合
+     * @param predicate 断言，为null时忽略
+     * @return 第一条记录
+     */
+    public static <T> T getFirst(Iterable<T> iterable, Predicate<T> predicate) {
+        if (iterable != null) {
+            if (predicate == null) {
+                Iterator<T> iterator = iterable.iterator();
+                if (iterator.hasNext()) {
+                    return iterator.next();
+                }
+            } else {
+                for (T object : iterable) {
+                    if (predicate.test(object)) {
+                        return object;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
