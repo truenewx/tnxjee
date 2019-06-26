@@ -54,5 +54,10 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.58</version>
         </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version><!-- 与Hibernate引用的dom4j版本保持一致，后续应该跟随Hibernate升级 -->
+        </dependency>
     </dependencies>
 </project>

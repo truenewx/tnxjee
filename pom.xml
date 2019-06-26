@@ -26,4 +26,11 @@
         <module>tnxjee-alone</module>
         <module>tnxjee-core</module>
     </modules>
+    <organization>
+        <name>truenewx</name>
+        <url>https://github.com/truenewx</url>
+    </organization>
+    <name>tnxjee</name>
+    <url>https://github.com/truenewx/tnxjee</url>
+    <description>互联网技术解决方案：服务端JavaEE技术框架</description>
 </project>

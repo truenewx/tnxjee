@@ -38,12 +38,9 @@ public class ClassUtil {
     /**
      * 查找指定类的指定属性字段上的指定类型注解
      *
-     * @param clazz
-     *            类
-     * @param propertyName
-     *            属性名，可以是父类中的属性
-     * @param annotationClass
-     *            注解类型
+     * @param clazz           类
+     * @param propertyName    属性名，可以是父类中的属性
+     * @param annotationClass 注解类型
      * @return 注解对象
      */
     public static <A extends Annotation> A findAnnotation(Class<?> clazz, String propertyName,
@@ -61,10 +58,8 @@ public class ClassUtil {
     /**
      * 在指定类及其各级父类中查找表示指定属性的Field对象，如果无法找到则返回null
      *
-     * @param clazz
-     *            类
-     * @param propertyName
-     *            属性名
+     * @param clazz        类
+     * @param propertyName 属性名
      * @return 表示指定属性的Field对象
      */
     public static Field findField(Class<?> clazz, String propertyName) {
@@ -86,8 +81,7 @@ public class ClassUtil {
      * 获取指定类的源于其父类的实际泛型类型集<br/>
      * 如果指定类没有父类，或者父类没有泛型，则返回长度为0的空数组
      *
-     * @param clazz
-     *            指定了父类实际泛型的类
+     * @param clazz 指定了父类实际泛型的类
      * @return 实际泛型类型集
      */
     public static Class<?>[] getActualGenericTypes(Class<?> clazz) {
@@ -98,10 +92,8 @@ public class ClassUtil {
     /**
      * 获取指定类的源于其父类的第index个实际泛型类型
      *
-     * @param clazz
-     *            指定了父类实际泛型的类
-     * @param index
-     *            要取的泛型位置索引
+     * @param clazz 指定了父类实际泛型的类
+     * @param index 要取的泛型位置索引
      * @return 实际泛型类型
      */
     public static <T> Class<T> getActualGenericType(Class<?> clazz, int index) {
@@ -115,10 +107,8 @@ public class ClassUtil {
     /**
      * 获取指定超类型的第index个实际泛型类型
      *
-     * @param superType
-     *            超类型
-     * @param index
-     *            要取的泛型位置索引
+     * @param superType 超类型
+     * @param index     要取的泛型位置索引
      * @return 实际泛型类型
      */
     @SuppressWarnings("unchecked")
@@ -139,8 +129,7 @@ public class ClassUtil {
     /**
      * 获取指定类型的实际泛型类型集
      *
-     * @param type
-     *            类型
+     * @param type 类型
      * @return 实际泛型类型集
      */
     private static Class<?>[] getActualGenericTypes(Type type) {
@@ -165,10 +154,8 @@ public class ClassUtil {
     /**
      * 获取指定类的源于指定接口的实际泛型类型集
      *
-     * @param clazz
-     *            指定了接口实际泛型的类
-     * @param interfaceClass
-     *            接口类型
+     * @param clazz          指定了接口实际泛型的类
+     * @param interfaceClass 接口类型
      * @return 实际泛型类型集
      */
     public static Class<?>[] getActualGenericTypes(Class<?> clazz, Class<?> interfaceClass) {
@@ -180,12 +167,9 @@ public class ClassUtil {
     /**
      * 获取指定类的源于指定接口的第index个实际泛型类型
      *
-     * @param clazz
-     *            指定了指定接口实际泛型的类
-     * @param interfaceClass
-     *            接口类型
-     * @param index
-     *            要取的泛型位置索引
+     * @param clazz          指定了指定接口实际泛型的类
+     * @param interfaceClass 接口类型
+     * @param index          要取的泛型位置索引
      * @return 实际泛型类型
      */
     public static <T> Class<T> getActualGenericType(Class<?> clazz, Class<?> interfaceClass,
@@ -198,8 +182,7 @@ public class ClassUtil {
     /**
      * 查出指定类的所有带泛型的接口类型清单
      *
-     * @param clazz
-     *            类型
+     * @param clazz 类型
      * @return 带泛型的接口类型清单
      */
     private static Collection<ParameterizedType> findParameterizedGenericInterfaces(
@@ -220,10 +203,8 @@ public class ClassUtil {
     /**
      * 获取指定类的指定注解的value()值
      *
-     * @param clazz
-     *            类
-     * @param annotationClass
-     *            注解类
+     * @param clazz           类
+     * @param annotationClass 注解类
      * @return 注解的value()值
      */
     @SuppressWarnings("unchecked")
@@ -236,12 +217,9 @@ public class ClassUtil {
     /**
      * 获取指定类的指定属性字段上指定类型的注解value()值
      *
-     * @param clazz
-     *            类
-     * @param propertyName
-     *            属性名
-     * @param annotationClass
-     *            注解类型
+     * @param clazz           类
+     * @param propertyName    属性名
+     * @param annotationClass 注解类型
      * @return 注解的value()值
      */
     @SuppressWarnings("unchecked")
@@ -254,10 +232,8 @@ public class ClassUtil {
     /**
      * 获取指定类型集中与指定接口类型泛型匹配的类型
      *
-     * @param types
-     *            类型集
-     * @param interfaceClass
-     *            接口类型
+     * @param types          类型集
+     * @param interfaceClass 接口类型
      * @return 指定类型集中与指定接口类型泛型匹配的类型
      */
     private static ParameterizedType getMatchedGenericType(Collection<ParameterizedType> types,
@@ -313,10 +289,8 @@ public class ClassUtil {
     /**
      * 获取指定类的指定公开静态属性值
      *
-     * @param clazz
-     *            类
-     * @param propertyName
-     *            属性名
+     * @param clazz        类
+     * @param propertyName 属性名
      * @return 属性值
      */
     public static Object getPublicStaticPropertyValue(Class<?> clazz, String propertyName) {
@@ -337,8 +311,7 @@ public class ClassUtil {
     /**
      * 获取指定类的简单属性名。简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
      *
-     * @param clazz
-     *            类
+     * @param clazz 类
      * @return 指定类的简单属性名
      */
     public static Set<String> getSimplePropertyNames(Class<?> clazz) {
@@ -362,8 +335,7 @@ public class ClassUtil {
     /**
      * 获取指定类的所有简单属性字段。简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
      *
-     * @param clazz
-     *            类
+     * @param clazz 类
      * @return 指定类的所有简单属性字段
      */
     public static List<Field> getSimplePropertyField(Class<?> clazz) {
@@ -388,18 +360,12 @@ public class ClassUtil {
     /**
      * 查找指定类型中的属性-类型映射集
      *
-     * @param clazz
-     *            类型
-     * @param gettable
-     *            是否包含可读属性
-     * @param settable
-     *            是否包含可写属性
-     * @param parent
-     *            是否包含父类中的属性
-     * @param includes
-     *            包含的属性集
-     * @param excludes
-     *            排除的属性集
+     * @param clazz    类型
+     * @param gettable 是否包含可读属性
+     * @param settable 是否包含可写属性
+     * @param parent   是否包含父类中的属性
+     * @param includes 包含的属性集
+     * @param excludes 排除的属性集
      * @return 属性-类型映射集
      */
     public static Collection<PropertyMeta> findPropertyMetas(Class<?> clazz, boolean gettable,
@@ -490,12 +456,9 @@ public class ClassUtil {
     /**
      * 获取指定方法可能访问的属性名，如果该方法不是getter/setter方法，则返回null
      *
-     * @param method
-     *            方法
-     * @param getter
-     *            是否考虑为getter方法的可能
-     * @param setter
-     *            是否考虑为setter方法的可能
+     * @param method 方法
+     * @param getter 是否考虑为getter方法的可能
+     * @param setter 是否考虑为setter方法的可能
      * @return 属性名
      */
     private static String getPropertyName(Method method, boolean getter, boolean setter) {
@@ -522,12 +485,9 @@ public class ClassUtil {
     /**
      * 判断指定方法是否指定属性的访问方法
      *
-     * @param method
-     *            方法
-     * @param propertyName
-     *            属性名
-     * @param getter
-     *            是否getter方法，false-setter方法
+     * @param method       方法
+     * @param propertyName 属性名
+     * @param getter       是否getter方法，false-setter方法
      * @return 指定方法是否指定属性的访问方法
      */
     private static boolean isPropertyMethod(Method method, String propertyName, boolean getter) {
@@ -552,12 +512,9 @@ public class ClassUtil {
     /**
      * 查找指定类型及其父类中指定属性的访问方法
      *
-     * @param clazz
-     *            类型
-     * @param propertyName
-     *            属性名
-     * @param getter
-     *            是否getter方法，false-setter方法
+     * @param clazz        类型
+     * @param propertyName 属性名
+     * @param getter       是否getter方法，false-setter方法
      * @return 指定类型中指定属性的访问方法
      */
     public static Method findPropertyMethod(Class<?> clazz, String propertyName, boolean getter) {
@@ -577,10 +534,8 @@ public class ClassUtil {
     /**
      * 在指定类型中查找所有符合Bean规范的属性描述集合
      *
-     * @param clazz
-     *            类型
-     * @param propertyType
-     *            期望的属性类型，为空时忽略属性类型限制
+     * @param clazz        类型
+     * @param propertyType 期望的属性类型，为空时忽略属性类型限制
      * @return 符合Bean规范的属性描述集合
      */
     public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz,
@@ -600,10 +555,8 @@ public class ClassUtil {
     /**
      * 判断指定类型集合中是否有至少一个类型，与指定类型相同或为其父类型
      *
-     * @param classes
-     *            类型集合
-     * @param clazz
-     *            类型
+     * @param classes 类型集合
+     * @param clazz   类型
      * @return 指定类型集合中是否有至少一个类型，与指定类型相同或为其父类型
      */
     public static boolean oneIsAssignableFrom(Class<?>[] classes, Class<?> clazz) {
@@ -621,8 +574,7 @@ public class ClassUtil {
     /**
      * 判断指定类型是否复合类型
      *
-     * @param type
-     *            类型
+     * @param type 类型
      * @return 指定类型是否复合类型
      */
     public static boolean isComplex(Class<?> type) {
@@ -632,12 +584,9 @@ public class ClassUtil {
     /**
      * 获取指定类型（包括父类）中指定方法名称和参数个数的公开方法清单
      *
-     * @param type
-     *            类型
-     * @param methodName
-     *            方法名称
-     * @param argCount
-     *            参数个数，小于0时忽略个数，返回所有同名方法
+     * @param type       类型
+     * @param methodName 方法名称
+     * @param argCount   参数个数，小于0时忽略个数，返回所有同名方法
      * @return 指定类型中指定方法名称和参数个数的公开方法清单
      */
     public static Collection<Method> findPublicMethods(Class<?> type, String methodName,
@@ -668,6 +617,15 @@ public class ClassUtil {
         }
         path.append(propertyName);
         return path.toString();
+    }
+
+    public static Field getField(Enum<?> enumConstant) {
+        Class<?> clazz = enumConstant.getDeclaringClass();
+        try {
+            return clazz.getDeclaredField(enumConstant.name());
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
 }
