@@ -40,6 +40,32 @@ public class ArrayUtil {
     }
 
     /**
+     * 获取指定数组中，满足指定断言条件的最后一个元素
+     *
+     * @param array     数组
+     * @param predicate 断言条件，为null时忽略
+     * @return 满足条件的最后一个元素
+     */
+
+    public static <T> T getLast(T[] array, Predicate<T> predicate) {
+        T result = null;
+        if (array != null) {
+            if (predicate == null) {
+                for (T obj : array) {
+                    result = obj;
+                }
+            } else {
+                for (T obj : array) {
+                    if (predicate.test(obj)) {
+                        result = obj;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * 从指定对象数组中获取指定索引下标处的对象，如果指定数组为空或长度不够，则返回null
      *
      * @param array 对象数组

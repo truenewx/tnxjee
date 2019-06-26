@@ -20,7 +20,7 @@ public class TreeNode<K extends Serializable> implements Serializable {
     private TreeNode<K> parent;
     private List<TreeNode<K>> subs = new ArrayList<>();
 
-    public TreeNode(final K id, final String caption) {
+    public TreeNode(K id, String caption) {
         this.id = id;
         this.caption = caption;
     }
@@ -45,7 +45,7 @@ public class TreeNode<K extends Serializable> implements Serializable {
         return this.parent == null ? null : this.parent.getId();
     }
 
-    public void addSub(final TreeNode<K> sub) {
+    public void addSub(TreeNode<K> sub) {
         this.subs.add(sub);
         sub.parent = this;
     }

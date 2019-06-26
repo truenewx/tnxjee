@@ -15,15 +15,15 @@ public class PropertyMeta {
     private Class<?> type;
     private List<Annotation> annotations = new ArrayList<>();
 
-    public PropertyMeta(final String name, final Class<?> type, final Annotation... annotations) {
+    public PropertyMeta(String name, Class<?> type, Annotation... annotations) {
         this.name = name;
         this.type = type;
         addAnnotations(annotations);
     }
 
-    public void addAnnotations(final Annotation[] annotations) {
+    public void addAnnotations(Annotation[] annotations) {
         if (annotations != null) {
-            for (final Annotation annotation : annotations) {
+            for (Annotation annotation : annotations) {
                 if (annotation != null) {
                     this.annotations.add(annotation);
                 }

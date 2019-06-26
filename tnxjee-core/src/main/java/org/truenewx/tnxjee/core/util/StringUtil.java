@@ -1,10 +1,18 @@
 package org.truenewx.tnxjee.core.util;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Currency;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
@@ -16,6 +24,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -520,6 +529,34 @@ public class StringUtil {
         return list.toArray(new String[0]);
     }
 
+    public static <T> List<T> split(String s, String regex, Function<String, T> funcParseString) {
+        List<T> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(s)) {
+            String[] array = s.split(regex);
+            for (String str : array) {
+                T obj = funcParseString.apply(str);
+                if (obj != null) {
+                    list.add(obj);
+                }
+            }
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] split(String s, String regex, Function<String, T> funcParseString,
+            Class<T> elementClass) {
+        if (StringUtils.isNotBlank(s)) {
+            String[] array = s.split(regex);
+            T[] result = (T[]) Array.newInstance(elementClass, array.length);
+            for (int i = 0; i < array.length; i++) {
+                result[i] = funcParseString.apply(array[i]);
+            }
+            return result;
+        }
+        return (T[]) Array.newInstance(elementClass, 0);
+    }
+
     public static Set<String> splitToSet(String s, String regex, boolean trim) {
         String[] array = s.split(regex);
         Set<String> set = new LinkedHashSet<>();
@@ -810,6 +847,47 @@ public class StringUtil {
         return sb.toString();
     }
 
+    public static <T> String join(T[] array, String separator, Function<T, String> funcToString) {
+        if (array == null) {
+            return null;
+        }
+        if (funcToString == null) {
+            return StringUtils.join(array, separator);
+        }
+        if (separator == null) {
+            separator = Strings.EMPTY;
+        }
+        StringBuffer result = new StringBuffer();
+        for (T obj : array) {
+            String s = funcToString.apply(obj);
+            if (s != null) {
+                result.append(s).append(separator);
+            }
+        }
+        if (result.length() > 0) {
+            result.delete(result.length() - separator.length(), result.length());
+        }
+        return result.toString();
+    }
+
+    public static <T> String join(Iterable<T> iterable, String separator,
+            Function<T, String> funcToString) {
+        if (funcToString == null) {
+            return StringUtils.join(iterable, separator);
+        }
+        if (separator == null) {
+            separator = Strings.EMPTY;
+        }
+        StringBuffer result = new StringBuffer();
+        for (T obj : iterable) {
+            result.append(funcToString.apply(obj)).append(separator);
+        }
+        if (result.length() > 0) {
+            result.delete(result.length() - separator.length(), result.length());
+        }
+        return result.toString();
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T parse(String s, Class<T> type) {
         if (type == String.class) {
@@ -820,6 +898,9 @@ public class StringUtil {
         }
         if (type == BigDecimal.class) {
             return (T) new BigDecimal(s);
+        }
+        if (type == BigInteger.class) {
+            return (T) new BigInteger(s);
         }
         if (type == Long.class || type == long.class) {
             return (T) Long.valueOf(s);
@@ -838,6 +919,24 @@ public class StringUtil {
         }
         if (type == Float.class || type == float.class) {
             return (T) Float.valueOf(s);
+        }
+        if (Date.class.isAssignableFrom(type)) {
+            return (T) DateUtil.parseLong(s);
+        }
+        if (type == Instant.class) {
+            return (T) TemporalUtil.parseInstant(s);
+        }
+        if (type == LocalDate.class) {
+            return (T) TemporalUtil.parseDate(s);
+        }
+        if (type == LocalTime.class) {
+            return (T) TemporalUtil.parseTime(s);
+        }
+        if (type == LocalDateTime.class) {
+            return (T) TemporalUtil.parseDateTime(s);
+        }
+        if (Currency.class.isAssignableFrom(type)) {
+            return (T) Currency.getInstance(new Locale(s));
         }
         if (type.isEnum()) {
             return (T) EnumUtils.getEnum((Class<Enum>) type, s);

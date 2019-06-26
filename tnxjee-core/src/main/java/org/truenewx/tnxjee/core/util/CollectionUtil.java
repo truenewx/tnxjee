@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -42,6 +43,32 @@ public class CollectionUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取指定可迭代集合中，满足指定断言条件的最后一个元素
+     *
+     * @param iterable  可迭代集合
+     * @param predicate 断言条件，为null时忽略
+     * @return 满足条件的最后一个元素
+     */
+
+    public static <T> T getLast(Iterable<T> iterable, Predicate<T> predicate) {
+        T result = null;
+        if (iterable != null) {
+            if (predicate == null) {
+                for (T obj : iterable) {
+                    result = obj;
+                }
+            } else {
+                for (T obj : iterable) {
+                    if (predicate.test(obj)) {
+                        result = obj;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -255,4 +282,31 @@ public class CollectionUtil {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 从迭代器中移除符合指定断言的元素
+     *
+     * @param iterator  迭代器
+     * @param predicate 移除断言
+     */
+    public static <T> void remove(Iterator<T> iterator, BiPredicate<T, Integer> predicate) {
+        int i = 0;
+        while (iterator.hasNext()) {
+            if (predicate.test(iterator.next(), i++)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 从迭代集合中移除符合指定断言的元素
+     *
+     * @param iterable  迭代集合
+     * @param predicate 移除断言
+     */
+    public static <T> void remove(Iterable<T> iterable, BiPredicate<T, Integer> predicate) {
+        Iterator<T> iterator = iterable.iterator();
+        remove(iterator, predicate);
+    }
+
 }
