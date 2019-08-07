@@ -9,7 +9,7 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.1.6.RELEASE</spring.version><!-- 与spring-batch最新版4.1.2匹配 -->
+        <spring.version>5.1.6.RELEASE</spring.version><!-- 匹配spring-batch-4.1.2，限定spring-boot-2.1.4 -->
     </properties>
     <modules>
         <module>tnxjee-alone</module>
