@@ -7,13 +7,14 @@
     <version>3.0.0</version>
     <packaging>pom</packaging>
     <properties>
-        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.1.6.RELEASE</spring.version><!-- 匹配spring-batch-4.1.2，限定spring-boot-2.1.4 -->
+        <spring.version>5.1.9.RELEASE</spring.version>
     </properties>
     <modules>
         <module>tnxjee-alone</module>
         <module>tnxjee-core</module>
+        <module>tnxjee-model</module>
+        <module>tnxjee-repo</module>
     </modules>
     <organization>
         <name>truenewx</name>
@@ -22,4 +23,16 @@
     <name>tnxjee</name>
     <url>https://github.com/truenewx/tnxjee</url>
     <description>互联网技术解决方案：服务端JavaEE技术框架</description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
