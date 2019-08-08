@@ -15,6 +15,10 @@
         <module>tnxjee-core</module>
         <module>tnxjee-model</module>
         <module>tnxjee-repo</module>
+        <module>tnxjee-repo-hibernate</module>
+        <module>tnxjee-service-api</module>
+        <module>tnxjee-service-impl</module>
+        <module>tnxjee-web</module>
     </modules>
     <organization>
         <name>truenewx</name>
