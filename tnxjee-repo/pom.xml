@@ -7,10 +7,11 @@
         <artifactId>tnxjee</artifactId>
         <version>3.0.0</version>
     </parent>
+    <groupId>org.truenewx.tnxjee</groupId>
     <artifactId>tnxjee-repo</artifactId>
     <dependencies>
         <dependency>
-            <groupId>org.truenewx</groupId>
+            <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-model</artifactId>
             <version>${project.version}</version>
         </dependency>

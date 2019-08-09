@@ -7,6 +7,7 @@
         <artifactId>tnxjee</artifactId>
         <version>3.0.0</version>
     </parent>
+    <groupId>org.truenewx.tnxjee</groupId>
     <artifactId>tnxjee-alone</artifactId>
     <description>不依赖于任何第三方库的独立工程，用于部署至中间件服务器的lib中，通常用于创建JNDI资源</description>
 </project>
