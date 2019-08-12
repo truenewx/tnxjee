@@ -19,7 +19,8 @@
         <module>tnxjee-repo-hibernate</module>
         <module>tnxjee-service-api</module>
         <module>tnxjee-service-impl</module>
-        <module>tnxjee-web</module>
+        <module>tnxjee-web-controller</module>
+        <module>tnxjee-web-servlet</module>
     </modules>
     <organization>
         <name>truenewx</name>
@@ -78,7 +79,12 @@
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-web</artifactId>
+                <artifactId>tnxjee-web-controller</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.truenewx.tnxjee</groupId>
+                <artifactId>tnxjee-web-servlet</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
