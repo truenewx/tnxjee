@@ -13,7 +13,6 @@
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

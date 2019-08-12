@@ -13,12 +13,10 @@
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-service-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-repo</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
