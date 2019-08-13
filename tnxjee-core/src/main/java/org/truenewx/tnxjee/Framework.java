@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core;
+package org.truenewx.tnxjee;
 
 /**
  * 框架信息
