@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.validation.config.annotation;
+package org.truenewx.tnxjee.model.validation.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

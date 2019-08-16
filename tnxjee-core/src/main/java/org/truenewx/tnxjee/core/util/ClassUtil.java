@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.truenewx.tnxjee.core.Strings;
@@ -578,7 +577,7 @@ public class ClassUtil {
      * @return 指定类型是否复合类型
      */
     public static boolean isComplex(Class<?> type) {
-        return !ClassUtils.isPrimitiveOrWrapper(type) && !CharSequence.class.isAssignableFrom(type);
+        return !isSimpleValueType(type);
     }
 
     /**
