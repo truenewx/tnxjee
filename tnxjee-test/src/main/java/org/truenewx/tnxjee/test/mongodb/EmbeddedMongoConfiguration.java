@@ -1,6 +1,8 @@
 package org.truenewx.tnxjee.test.mongodb;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -17,6 +19,7 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
  * @author jianglei
  */
 @TestConfiguration
+@AutoConfigureBefore(MongoDataAutoConfiguration.class)
 public class EmbeddedMongoConfiguration extends AbstractMongoConfiguration {
 
     @Autowired
