@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.test.mongodb;
+package org.truenewx.tnxjee.test.context.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
