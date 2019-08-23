@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model;
+package org.truenewx.tnxjee.model.definition;
 
 /**
  * 可克隆后存储到会话中

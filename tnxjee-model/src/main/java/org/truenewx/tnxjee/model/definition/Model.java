@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model;
+package org.truenewx.tnxjee.model.definition;
 
 /**
  * 模型

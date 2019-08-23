@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.test.TnxjeeTestApplication;
 import org.truenewx.tnxjee.test.context.config.EmbeddedMongoConfiguration;
 import org.truenewx.tnxjee.test.init.TestDataProvider;

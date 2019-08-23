@@ -1,8 +1,8 @@
-package org.truenewx.tnxjee.model.relation;
+package org.truenewx.tnxjee.model.definition.relation;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.definition.Entity;
 
 /**
  * 关系模型
