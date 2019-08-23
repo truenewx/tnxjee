@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.orm;
+package org.truenewx.tnxjee.repo.support;
 
 /**
  * 数据查询模板工厂

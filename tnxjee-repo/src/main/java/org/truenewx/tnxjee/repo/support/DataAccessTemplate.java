@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.orm;
+package org.truenewx.tnxjee.repo.support;
 
 import java.util.List;
 import java.util.Map;

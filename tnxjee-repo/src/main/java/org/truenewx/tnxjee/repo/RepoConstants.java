@@ -1,13 +1,13 @@
-package org.truenewx.tnxjee.repo.orm;
+package org.truenewx.tnxjee.repo;
 
 import org.truenewx.tnxjee.core.Strings;
 
 /**
- * ORM常量类
- * 
+ * Repo常量类
+ *
  * @author jianglei
  */
-public class OrmConstants {
+public class RepoConstants {
 
     /**
      * 默认模式名
