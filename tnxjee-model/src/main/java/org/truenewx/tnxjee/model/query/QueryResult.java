@@ -8,7 +8,6 @@ import java.util.List;
  * 查询结果实现
  *
  * @author jianglei
- * @since JDK 1.8
  * @param <T> 结果记录类型
  */
 public class QueryResult<T> implements Iterable<T> {
@@ -26,8 +25,7 @@ public class QueryResult<T> implements Iterable<T> {
     }
 
     public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, long total) {
-        Paged paged = Paged.of(pageSize, pageNo, total);
-        return new QueryResult<T>(records, paged);
+        return new QueryResult<T>(records, new Paged(pageSize, pageNo, total));
     }
 
     /**
@@ -42,13 +40,11 @@ public class QueryResult<T> implements Iterable<T> {
             pageSize = records.size();
             pageNo = 1;
         }
-        Paging paging = new Paging(pageSize, pageNo);
         boolean morePage = records.size() > pageSize;
-        Paged paged = new Paged(paging, morePage);
-        while (morePage) { // 确保结果数据数目不大于页大小
+        while (records.size() > pageSize) { // 确保结果数据数目不大于页大小
             records.remove(records.size() - 1);
         }
-        return new QueryResult<T>(records, paged);
+        return new QueryResult<T>(records, new Paged(pageSize, pageNo, morePage));
     }
 
     public List<T> getRecords() {

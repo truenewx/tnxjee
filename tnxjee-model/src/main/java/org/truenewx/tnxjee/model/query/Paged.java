@@ -11,34 +11,53 @@ public class Paged implements Serializable {
 
     private static final long serialVersionUID = 2748051722289562458L;
 
-    private Paging paging;
+    private int pageSize;
+    private int pageNo;
+    private QuerySort sort;
     private Long total;
     private boolean morePage;
 
-    public Paged(Paging paging, long total) {
-        this.paging = paging;
+    public Paged(int pageSize, int pageNo, long total) {
+        this.pageSize = pageSize;
+        this.pageNo = pageNo;
         this.total = total;
+        this.morePage = (pageSize * pageNo) < total;
     }
 
-    public Paged(Paging paging, boolean morePage) {
-        this.paging = paging;
+    public Paged(int pageSize, int pageNo, long total, QuerySort sort) {
+        this(pageSize, pageNo, total);
+        this.sort = sort;
+    }
+
+    public Paged(int pageSize, int pageNo, boolean morePage) {
+        this.pageSize = pageSize;
+        this.pageNo = pageNo;
         this.morePage = morePage;
     }
 
-    public static Paged of(int pageSize, int pageNo, long total) {
-        return new Paged(new Paging(pageSize, pageNo), total);
+    public Paged(int pageSize, int pageNo, boolean morePage, QuerySort sort) {
+        this(pageSize, pageNo, morePage);
+        this.sort = sort;
+    }
+
+    public static Paged of(Paging paging, long total) {
+        return new Paged(paging.getPageSize(), paging.getPageNo(), total, paging.getSort());
+    }
+
+    public static Paged of(Paging paging, boolean morePage) {
+        return new Paged(paging.getPageSize(), paging.getPageNo(), morePage, paging.getSort());
     }
 
     public int getPageSize() {
-        return this.paging.getPageSize();
+        return this.pageSize;
     }
 
     public int getPageNo() {
-        return this.paging.getPageNo();
+        return this.pageNo;
     }
 
     public QuerySort getSort() {
-        return this.paging.getSort();
+        return this.sort;
     }
 
     public Long getTotal() {
