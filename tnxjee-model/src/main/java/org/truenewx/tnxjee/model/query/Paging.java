@@ -13,7 +13,7 @@ public class Paging implements Serializable {
     private static final long serialVersionUID = 5918877416013992553L;
 
     private int pageSize;
-    private int pageNo;
+    private int pageNo = 1;
     private QuerySort sort;
 
     public Paging() {

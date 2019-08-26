@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo;
+package org.truenewx.tnxjee.repo.util;
 
 import org.truenewx.tnxjee.core.Strings;
 

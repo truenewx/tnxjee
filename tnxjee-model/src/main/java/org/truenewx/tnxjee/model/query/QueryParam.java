@@ -11,7 +11,7 @@ public abstract class QueryParam implements Serializable {
 
     private static final long serialVersionUID = 1766849422293534482L;
 
-    private Paging paging;
+    private Paging paging = new Paging();
     private boolean totalable = true;
     private boolean listable = true;
 
@@ -20,6 +20,9 @@ public abstract class QueryParam implements Serializable {
     }
 
     public void setPaging(Paging paging) {
+        if (paging == null) { // 确保paging不为null
+            paging = new Paging();
+        }
         this.paging = paging;
     }
 

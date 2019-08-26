@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo;
+package org.truenewx.tnxjee.repo.util;
 
 /**
  * 比较操作符

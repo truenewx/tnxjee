@@ -60,22 +60,22 @@ public abstract class DataQueryTemplate {
         return first(ql, (Map<String, ?>) null);
     }
 
-    public final int count(CharSequence ql, String paramName, Object paramValue) {
+    public final long count(CharSequence ql, String paramName, Object paramValue) {
         Number value = first(ql, paramName, paramValue);
-        return value == null ? 0 : value.intValue();
+        return value == null ? 0 : value.longValue();
     }
 
-    public final int count(CharSequence ql, Map<String, ?> params) {
+    public final long count(CharSequence ql, Map<String, ?> params) {
         Number value = first(ql, params);
-        return value == null ? 0 : value.intValue();
+        return value == null ? 0 : value.longValue();
     }
 
-    public final int count(CharSequence ql, List<?> params) {
+    public final long count(CharSequence ql, List<?> params) {
         Number value = first(ql, params);
-        return value == null ? 0 : value.intValue();
+        return value == null ? 0 : value.longValue();
     }
 
-    public final int count(CharSequence ql) {
+    public final long count(CharSequence ql) {
         return count(ql, (Map<String, ?>) null);
     }
 

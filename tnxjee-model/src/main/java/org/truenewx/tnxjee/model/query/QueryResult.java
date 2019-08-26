@@ -24,27 +24,22 @@ public class QueryResult<T> implements Iterable<T> {
         this.paged = paged;
     }
 
-    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, long total) {
-        return new QueryResult<T>(records, new Paged(pageSize, pageNo, total));
-    }
-
-    /**
-     * 构建未知总数的查询结果
-     *
-     * @param records  结果记录清单
-     * @param pageSize 页大小
-     * @param pageNo   页码
-     */
-    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo) {
+    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, Long total) {
         if (pageSize <= 0) {
             pageSize = records.size();
             pageNo = 1;
         }
-        boolean morePage = records.size() > pageSize;
-        while (records.size() > pageSize) { // 确保结果数据数目不大于页大小
-            records.remove(records.size() - 1);
+        Paged paged;
+        if (total != null) {
+            paged = new Paged(pageSize, pageNo, total);
+        } else {
+            boolean morePage = records.size() > pageSize;
+            while (records.size() > pageSize) { // 确保结果数据数目不大于页大小
+                records.remove(records.size() - 1);
+            }
+            paged = new Paged(pageSize, pageNo, morePage);
         }
-        return new QueryResult<T>(records, new Paged(pageSize, pageNo, morePage));
+        return new QueryResult<T>(records, paged);
     }
 
     public List<T> getRecords() {
