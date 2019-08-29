@@ -5,17 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 查询结果实现
+ * 分页查询结果
  *
  * @author jianglei
  * @param <T> 结果记录类型
  */
-public class QueryResult<T> implements Iterable<T> {
+public class Queried<T> implements Iterable<T> {
 
     private List<T> records;
     private Paged paged;
 
-    public QueryResult(List<T> records, Paged paged) {
+    public Queried(List<T> records, Paged paged) {
         if (records == null) {
             this.records = Collections.emptyList();
         } else {
@@ -24,7 +24,7 @@ public class QueryResult<T> implements Iterable<T> {
         this.paged = paged;
     }
 
-    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, Long total) {
+    public static <T> Queried<T> of(List<T> records, int pageSize, int pageNo, Long total) {
         if (pageSize <= 0) {
             pageSize = records.size();
             pageNo = 1;
@@ -39,7 +39,7 @@ public class QueryResult<T> implements Iterable<T> {
             }
             paged = new Paged(pageSize, pageNo, morePage);
         }
-        return new QueryResult<T>(records, paged);
+        return new Queried<T>(records, paged);
     }
 
     public List<T> getRecords() {

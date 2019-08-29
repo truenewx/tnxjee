@@ -3,11 +3,11 @@ package org.truenewx.tnxjee.model.query;
 import java.io.Serializable;
 
 /**
- * 查询参数。通过创建子类附带更多的查询条件
+ * 分页查询条件。通过创建子类附带更多的查询条件
  *
  * @author jianglei
  */
-public abstract class QueryParam implements Serializable {
+public abstract class Querying implements Serializable {
 
     private static final long serialVersionUID = 1766849422293534482L;
 

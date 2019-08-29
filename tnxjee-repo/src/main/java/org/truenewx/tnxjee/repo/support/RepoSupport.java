@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.QueryParam;
-import org.truenewx.tnxjee.model.query.QueryResult;
+import org.truenewx.tnxjee.model.query.Querying;
+import org.truenewx.tnxjee.model.query.Queried;
 import org.truenewx.tnxjee.model.query.QuerySort;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.util.OqlUtil;
@@ -50,7 +50,7 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
         return getDataAccessTemplate(entityName).first(hql, (Map<String, Object>) null);
     }
 
-    private QueryResult<T> query(String entityName, CharSequence ql, Map<String, Object> params,
+    private Queried<T> query(String entityName, CharSequence ql, Map<String, Object> params,
             int pageSize, int pageNo, QuerySort sort, boolean totalable, boolean listable) {
         Long total = null;
         if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
@@ -75,22 +75,22 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
                 total = (long) dataList.size();
             }
         }
-        return QueryResult.of(dataList, pageSize, pageNo, total);
+        return Queried.of(dataList, pageSize, pageNo, total);
     }
 
-    protected QueryResult<T> query(String entityName, CharSequence ql, Map<String, Object> params,
-            QueryParam qp) {
-        Paging paging = qp.getPaging();
+    protected Queried<T> query(String entityName, CharSequence ql, Map<String, Object> params,
+            Querying querying) {
+        Paging paging = querying.getPaging();
         return query(entityName, ql, params, paging.getPageSize(), paging.getPageNo(),
-                paging.getSort(), qp.isTotalable(), qp.isListable());
+                paging.getSort(), querying.isTotalable(), querying.isListable());
     }
 
-    protected QueryResult<T> query(String entityName, CharSequence ql, Map<String, Object> params,
+    protected Queried<T> query(String entityName, CharSequence ql, Map<String, Object> params,
             int pageSize, int pageNo, QuerySort sort) {
         return query(entityName, ql, params, pageSize, pageNo, sort, true, true);
     }
 
-    protected QueryResult<T> query(String entityName, CharSequence ql, Map<String, Object> params,
+    protected Queried<T> query(String entityName, CharSequence ql, Map<String, Object> params,
             Paging paging) {
         return query(entityName, ql, params, paging.getPageSize(), paging.getPageNo(),
                 paging.getSort());
