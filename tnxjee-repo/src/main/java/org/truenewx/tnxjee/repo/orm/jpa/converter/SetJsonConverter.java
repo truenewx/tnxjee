@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import org.truenewx.tnxjee.core.util.JsonUtil;
  *
  * @author jianglei
  */
+@Converter
 public class SetJsonConverter implements AttributeConverter<Set<?>, String> {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());

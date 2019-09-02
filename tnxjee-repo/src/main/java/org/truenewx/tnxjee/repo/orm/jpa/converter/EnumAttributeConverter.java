@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo.orm.jpa.converter;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 import org.truenewx.tnxjee.core.enums.support.EnumValueHelper;
 import org.truenewx.tnxjee.core.util.ClassUtil;
@@ -10,6 +11,7 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
  *
  * @author jianglei
  */
+@Converter
 public class EnumAttributeConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
 
     private Class<T> entityClass;
