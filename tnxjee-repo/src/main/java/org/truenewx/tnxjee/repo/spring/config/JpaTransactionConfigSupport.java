@@ -48,6 +48,10 @@ public abstract class JpaTransactionConfigSupport implements ApplicationContextA
             EntityManagerFactoryBuilder builder) {
         Builder b = builder.dataSource(getDataSource()).properties(getVendorProperties())
                 .persistenceUnit(getPersistenceUnitName());
+        String[] entityPackages = getEntityPackages();
+        if (ArrayUtils.isNotEmpty(entityPackages)) {
+            b.packages(entityPackages);
+        }
         String[] mappingResources = getMappingResources();
         if (ArrayUtils.isNotEmpty(mappingResources)) {
             b.mappingResources(mappingResources);
@@ -84,6 +88,20 @@ public abstract class JpaTransactionConfigSupport implements ApplicationContextA
         return false;
     }
 
+    /**
+     * 当同一个包下的所有实体均映射到同一个数据源时，可覆写本方法提供包名，并在实体类中用注解配置映射
+     *
+     * @return 实体类所在包名集合
+     */
+    protected String[] getEntityPackages() {
+        return null;
+    }
+
+    /**
+     * 当同一个包下的实体映射到不同数据源时，需覆写本方法提供配置文件路径，并在配置文件中配置映射
+     * 
+     * @return 实体映射配置文件的classpath路径
+     */
     protected String[] getMappingResources() {
         return null;
     }

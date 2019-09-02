@@ -15,8 +15,6 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
 public abstract class AbstractRelation<L extends Serializable, R extends Serializable>
         implements Relation<L, R> {
 
-    private static final long serialVersionUID = -9071339607117025280L;
-
     @Override
     public final int hashCode() {
         return FuncHashCode.INSTANCE.apply(new Object[] { getLeftId(), getRightId() });

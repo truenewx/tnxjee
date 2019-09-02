@@ -11,8 +11,7 @@ import org.truenewx.tnxjee.model.definition.Entity;
  * @param <L> 左标识类型
  * @param <R> 右标识类型
  */
-public interface Relation<L extends Serializable, R extends Serializable>
-        extends Entity, Serializable {
+public interface Relation<L extends Serializable, R extends Serializable> extends Entity {
 
     /**
      *
