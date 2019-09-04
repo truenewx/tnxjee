@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.core.spring.util;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.truenewx.tnxjee.core.util.ArrayUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 
 /**
@@ -14,6 +15,16 @@ import org.truenewx.tnxjee.core.util.StringUtil;
 public class SpringUtil {
 
     private SpringUtil() {
+    }
+
+    public static String getActiveProfile(ApplicationContext context) {
+        String[] profiles = context.getEnvironment().getActiveProfiles();
+        return ArrayUtil.get(profiles, 0);
+    }
+
+    public static boolean isActiveProfile(ApplicationContext context, String profile) {
+        String[] profiles = context.getEnvironment().getActiveProfiles();
+        return ArrayUtils.contains(profiles, profile);
     }
 
     /**
@@ -49,8 +60,8 @@ public class SpringUtil {
     }
 
     /**
-     * 从Spring容器上下文中获取指定类型的第一个bean，优先获取bean名称为默认命名规则下的名称的bean， 如果没有则获取Spring容器中默认顺序下的第一个bean。
-     * 该方法一般用于在确知Spring容器中只有一个指定类型的bean，或不关心指定类型实现时
+     * 从Spring容器上下文中获取指定类型的第一个bean，优先获取bean名称为默认命名规则下的名称的bean，
+     * 如果没有则获取Spring容器中默认顺序下的第一个bean。 该方法一般用于在确知Spring容器中只有一个指定类型的bean，或不关心指定类型实现时
      *
      * @param context          Spring容器上下文
      * @param beanClass        bean类型

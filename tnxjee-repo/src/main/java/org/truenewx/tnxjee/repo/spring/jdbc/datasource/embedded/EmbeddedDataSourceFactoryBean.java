@@ -22,7 +22,7 @@ public class EmbeddedDataSourceFactoryBean extends EmbeddedDatabaseFactoryBean {
     /**
      * @param scripts 初始化脚本
      */
-    public void setScripts(Resource[] scripts) {
+    public void setScripts(Resource... scripts) {
         setDatabasePopulator(new ResourceDatabasePopulator(scripts));
     }
 

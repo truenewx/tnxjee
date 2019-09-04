@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.repo;
 
+import java.util.List;
+
 import org.truenewx.tnxjee.model.definition.Entity;
 
 /**
@@ -38,9 +40,16 @@ public interface Repo<T extends Entity> {
     long countAll();
 
     /**
-     * 获取已有数据中的第一条，常用于单元测试，谨慎用于它处
+     * 获取实体的所有数据，一般用于单元测试，请谨慎使用
      *
-     * @return 第一条数据记录
+     * @return 当前实体的所有数据
+     */
+    List<T> findAll();
+
+    /**
+     * 获取实体的第一条数据，一般在单元测试中才有意义
+     *
+     * @return 实体的第一条数据
      */
     T first();
 }

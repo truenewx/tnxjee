@@ -99,7 +99,7 @@ public abstract class JpaTransactionConfigSupport implements ApplicationContextA
 
     /**
      * 当同一个包下的实体映射到不同数据源时，需覆写本方法提供配置文件路径，并在配置文件中配置映射
-     * 
+     *
      * @return 实体映射配置文件的classpath路径
      */
     protected String[] getMappingResources() {
