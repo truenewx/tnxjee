@@ -1,15 +1,15 @@
 package org.truenewx.tnxjee;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 /**
  * 框架信息
  *
  * @author jianglei
  * @since JDK 1.8
  */
+@SpringBootApplication
 public class Framework {
-
-    private Framework() {
-    }
 
     /**
      * 框架名称

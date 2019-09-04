@@ -5,14 +5,10 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.truenewx.tnxjee.model.definition.Entity;
-import org.truenewx.tnxjee.test.TnxjeeTestModule;
 import org.truenewx.tnxjee.test.context.config.EmbeddedMongoConfiguration;
 import org.truenewx.tnxjee.test.init.TestDataProvider;
 import org.truenewx.tnxjee.test.spring.context.junit4.JUnit4SpringContextTest;
@@ -22,8 +18,6 @@ import org.truenewx.tnxjee.test.spring.context.junit4.JUnit4SpringContextTest;
  *
  * @author jianglei
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = TnxjeeTestModule.class)
 @Import(EmbeddedMongoConfiguration.class)
 public abstract class MongoTestSupport extends JUnit4SpringContextTest {
 
