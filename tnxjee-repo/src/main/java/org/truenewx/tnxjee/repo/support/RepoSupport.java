@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.Repository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
@@ -21,6 +23,8 @@ import org.truenewx.tnxjee.repo.util.OqlUtil;
  * @author jianglei
  */
 public abstract class RepoSupport<T extends Entity> implements Repo<T> {
+    @Autowired
+    private RepoFactory repoFactory;
 
     /**
      * 获取实体类型<br/>
@@ -32,6 +36,10 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
     @SuppressWarnings("unchecked")
     public Class<T> getEntityClass() {
         return (Class<T>) ClassUtil.getActualGenericType(getClass(), 0);
+    }
+
+    protected final <K, R extends Repository<T, K>> R getRepository() {
+        return this.repoFactory.getRepositoryByEntityClass(getEntityClass());
     }
 
     protected abstract DataAccessTemplate getDataAccessTemplate(String entityName);
