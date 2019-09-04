@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.URL;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsAngleBracket;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsHtmlChars;
@@ -24,7 +23,7 @@ public class MarkRuleBuilder implements ValidationRuleBuilder<MarkRule> {
     @Override
     public Class<?>[] getConstraintTypes() {
         return new Class<?>[] { NotNull.class, NotEmpty.class, NotBlank.class, Email.class,
-                URL.class, NotContainsAngleBracket.class, NotContainsHtmlChars.class };
+                NotContainsAngleBracket.class, NotContainsHtmlChars.class };
     }
 
     @Override

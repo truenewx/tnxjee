@@ -9,7 +9,6 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import org.hibernate.validator.constraints.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,16 +26,14 @@ public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
 
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { Range.class, Digits.class, Min.class, Max.class, DecimalMin.class,
+        return new Class<?>[] { Digits.class, Min.class, Max.class, DecimalMin.class,
                 DecimalMax.class };
     }
 
     @Override
     public void update(Annotation annotation, DecimalRule rule) {
         Class<? extends Annotation> annoClass = annotation.annotationType();
-        if (annoClass == Range.class) {
-            updateRule(rule, (Range) annotation);
-        } else if (annoClass == Digits.class) {
+        if (annoClass == Digits.class) {
             updateRule(rule, (Digits) annotation);
         } else if (annoClass == Min.class) {
             updateRule(rule, (Min) annotation);
@@ -100,18 +97,6 @@ public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
         int precision = digits.integer() + (scale < 0 ? 0 : scale);
         if (precision < rule.getPrecision()) {
             rule.setPrecision(precision);
-        }
-        return rule;
-    }
-
-    private DecimalRule updateRule(DecimalRule rule, Range range) {
-        BigDecimal min = BigDecimal.valueOf(range.min());
-        if (min.compareTo(rule.getMin()) > 0) {
-            rule.setMin(min);
-        }
-        BigDecimal max = BigDecimal.valueOf(range.max());
-        if (max.compareTo(rule.getMax()) < 0) {
-            rule.setMax(max);
         }
         return rule;
     }

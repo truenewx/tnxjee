@@ -197,7 +197,6 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         if (resource != null) {
             try {
                 Document doc = reader.read(resource.getInputStream());
-                @SuppressWarnings("unchecked")
                 List<Element> typeElements = doc.getRootElement().elements("type");
                 for (Element typeElement : typeElements) {
                     String typeName = typeElement.attributeValue("name");
@@ -216,7 +215,6 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private void addEnumItemsToEnumType(Element typeElement, EnumType enumType) {
         List<Element> itemElements = typeElement.elements("item");
         for (int i = 0; i < itemElements.size(); i++) {
@@ -240,7 +238,6 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      * @param itemElement 枚举项元素
      * @param enumItem    枚举项
      */
-    @SuppressWarnings("unchecked")
     private void addChildrenToEnumItem(Element itemElement, EnumItem enumItem) {
         List<Element> childElements = itemElement.elements("item");
         for (int i = 0; i < childElements.size(); i++) {
@@ -265,7 +262,6 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
                 if (resource.exists()) {
                     try {
                         Document doc = reader.read(resource.getInputStream());
-                        @SuppressWarnings("unchecked")
                         List<Element> typeElements = doc.getRootElement().elements("type");
                         String resourceName = FilenameUtils.getBaseName(resource.getFilename());
                         Locale locale = getLocale(resourceName);

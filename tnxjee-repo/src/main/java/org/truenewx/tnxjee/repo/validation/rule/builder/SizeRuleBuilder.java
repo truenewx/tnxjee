@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.repo.validation.rule.SizeRule;
 
 /**
- * 集合大小规则的构建器
+ * 字符串长度和集合大小规则的构建器
  *
  * @author jianglei
  */
