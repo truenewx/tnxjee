@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.net.InetAddressRange;
 import org.truenewx.tnxjee.core.net.InetAddressSet;
@@ -20,6 +18,7 @@ import org.truenewx.tnxjee.core.region.Region;
 import org.truenewx.tnxjee.core.region.RegionNationCodes;
 import org.truenewx.tnxjee.core.region.RegionSource;
 import org.truenewx.tnxjee.core.util.ArrayUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.NetUtil;
 
 /**
@@ -103,7 +102,6 @@ public class Cz88RegionInetAddressSetMapParser implements RegionInetAddressSetMa
     public Map<String, InetAddressSet> parse(InputStream in, Locale locale, String encoding)
             throws IOException {
         Map<String, InetAddressSet> result = new HashMap<>();
-        Logger logger = LoggerFactory.getLogger(getClass());
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
         String line = reader.readLine();
         while (line != null) {
@@ -111,7 +109,7 @@ public class Cz88RegionInetAddressSetMapParser implements RegionInetAddressSetMa
             try {
                 parseLineTo(line, result, locale);
             } catch (Exception e) { // 仅打印异常堆栈，不影响后续行的解析
-                logger.debug(e.getMessage());
+                LogUtil.debug(getClass(), e);
             }
             line = reader.readLine();
         }

@@ -17,7 +17,6 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -126,7 +125,7 @@ public class IOUtil {
             process.waitFor();
             result = IOUtils.toString(process.getInputStream(), Strings.ENCODING_UTF8);
         } catch (IOException | InterruptedException e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+            LogUtil.error(IOUtil.class, e);
         }
         return result;
     }
@@ -176,7 +175,7 @@ public class IOUtil {
                 sb.append("\r\n");
             }
         } catch (Exception e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+            LogUtil.error(IOUtil.class, e);
         } finally {
             if (br != null) {
                 try {
@@ -192,7 +191,7 @@ public class IOUtil {
             bw = new BufferedWriter(new FileWriter(filePath));
             bw.write(s);
         } catch (Exception e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+            LogUtil.error(IOUtil.class, e);
         } finally {
             if (bw != null) {
                 try {
@@ -244,7 +243,7 @@ public class IOUtil {
             }
             return result;
         } catch (IOException e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+            LogUtil.error(IOUtil.class, e);
         }
         return null;
     }

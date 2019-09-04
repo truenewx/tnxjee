@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.slf4j.LoggerFactory;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 基于JDBC查询的表存在断言
@@ -26,13 +26,13 @@ public abstract class JdbcTableExistsPredicate implements TableExistsPredicate {
             ResultSet rs = statement.executeQuery();
             return rs.next();
         } catch (SQLException e) {
-            LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         } finally {
             if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                    LogUtil.error(getClass(), e);
                 }
             }
         }

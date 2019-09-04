@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
@@ -33,8 +31,6 @@ public abstract class AbstractNationalRegionSource
      * 显示区域-区划名称-行政区划的映射集
      */
     protected Map<Locale, Map<String, Region>> localeCaptionSubsMap = new HashMap<>();
-
-    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public void setBasename(String basename) {
         this.basename = basename;

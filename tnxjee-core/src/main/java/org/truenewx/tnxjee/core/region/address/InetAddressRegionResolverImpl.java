@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.net.InetAddressSet;
 import org.truenewx.tnxjee.core.util.IOUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 网络地址->区划解决器实现
@@ -51,7 +51,7 @@ public class InetAddressRegionResolverImpl implements InetAddressRegionResolver 
             try {
                 this.cache.load(new FileInputStream(this.cacheFile));
             } catch (IOException e) {
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
     }
@@ -61,7 +61,7 @@ public class InetAddressRegionResolverImpl implements InetAddressRegionResolver 
             try {
                 this.cache.store(new FileOutputStream(this.cacheFile), null);
             } catch (IOException e) {
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
     }

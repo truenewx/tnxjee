@@ -16,7 +16,6 @@ import javax.crypto.Cipher;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.encrypt.Md5Encrypter;
 
@@ -42,7 +41,7 @@ public class EncryptUtil {
                 return source.toString().getBytes();
             }
         } catch (IOException e) {
-            LoggerFactory.getLogger(Md5Encrypter.class).error(e.getMessage(), e);
+            LogUtil.error(Md5Encrypter.class, e);
             return null;
         }
     }

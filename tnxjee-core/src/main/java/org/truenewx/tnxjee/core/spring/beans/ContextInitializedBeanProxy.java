@@ -2,10 +2,10 @@ package org.truenewx.tnxjee.core.spring.beans;
 
 import java.util.concurrent.Executor;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 容器初始化后执行bean代理，为目标bean提供线程执行能力
@@ -44,7 +44,7 @@ public class ContextInitializedBeanProxy implements Runnable, ContextInitialized
             try {
                 Thread.sleep(this.runDelay * 1000);
             } catch (InterruptedException e) {
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
         try {
@@ -53,7 +53,7 @@ public class ContextInitializedBeanProxy implements Runnable, ContextInitialized
             }
             this.target.afterInitialized(this.context);
         } catch (Exception e) {
-            LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         }
     }
 

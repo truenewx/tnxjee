@@ -4,11 +4,11 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.net.InetAddressSet;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 抽象的区划-网络地址集合 来源实现
@@ -62,7 +62,7 @@ public class RegionInetAddressSetMapSourceImpl
                 this.map = this.parser.parse(in, this.locale, this.encoding);
                 in.close();
             } catch (Exception e) {
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
     }

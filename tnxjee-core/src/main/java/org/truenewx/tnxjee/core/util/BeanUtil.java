@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.Nullable;
 import org.truenewx.tnxjee.core.util.function.PredEqual;
@@ -316,7 +315,8 @@ public class BeanUtil {
     }
 
     /**
-     * 获取静态属性表达式所表示的静态属性值，静态属性表达式形如：@org.truenewx.tnxjee.core.util.DateUtil@SHORT_DATE_PATTERN <br/>
+     * 获取静态属性表达式所表示的静态属性值，静态属性表达式形如：@org.truenewx.tnxjee.core.util.DateUtil@SHORT_DATE_PATTERN
+     * <br/>
      * 如果表达式错误或所表示的属性为非静态或不可访问 ，则返回null
      *
      * @param propertyExpression 静态属性表达式
@@ -357,7 +357,8 @@ public class BeanUtil {
     }
 
     /**
-     * 将指定源对象中的简单属性的值复制到指定目标对象中，如果目标对象中无相应属性则忽略。 简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
+     * 将指定源对象中的简单属性的值复制到指定目标对象中，如果目标对象中无相应属性则忽略。
+     * 简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
      *
      * @param source 源对象
      * @param target 目标对象
@@ -383,7 +384,7 @@ public class BeanUtil {
                     }
                 }
             } catch (Exception e) {
-                LoggerFactory.getLogger(BeanUtil.class).error(e.getMessage(), e);
+                LogUtil.error(BeanUtil.class, e);
             }
         }
     }

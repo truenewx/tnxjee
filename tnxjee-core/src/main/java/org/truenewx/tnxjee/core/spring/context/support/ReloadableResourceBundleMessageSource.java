@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.context.MessagesSource;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 基于资源包属性集的消息来源
@@ -65,7 +66,7 @@ public class ReloadableResourceBundleMessageSource
                         set.add(path);
                     }
                 } catch (IOException e) {
-                    this.logger.error(e.getMessage(), e);
+                    LogUtil.error(getClass(), e);
                 }
             } else {
                 set.add(basename);

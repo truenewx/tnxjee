@@ -13,8 +13,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -25,6 +23,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.enums.BooleanEnum;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.IOUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 枚举字典工厂（解析器实现）
@@ -44,7 +43,6 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      */
     private static final String CONFIG_FILE_EXTENSION = "xml";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<Locale, EnumDict> dicts = new Hashtable<>();
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
@@ -142,7 +140,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
                 }
                 return enumType;
             } else {
-                this.logger.warn("{} is not an enum class, so didn't build from it", type);
+                LogUtil.warn(getClass(), "{} is not an enum class, so didn't build from it", type);
             }
         } catch (ClassNotFoundException e) {
             // type如果不是一个有效的类名，则尝试从枚举配置文件中构建
@@ -209,7 +207,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
                     }
                 }
             } catch (DocumentException | IOException e) {
-                this.logger.error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
         return null;
@@ -275,7 +273,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
                             dict.addType(enumType);
                         }
                     } catch (DocumentException | IOException e) {
-                        this.logger.error(e.getMessage(), e);
+                        LogUtil.error(getClass(), e);
                     } // 单个配置文件异常不影响对其它配置文件的读取
                 }
             }

@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 
 /**
@@ -45,20 +44,20 @@ public class NetUtil {
      * @param host 主机名（域名）
      * @return IP地址
      */
-    public static String getIpByHost(final String host) {
+    public static String getIpByHost(String host) {
         if (StringUtil.isIp(host)) {
             return host;
         }
         String s = "";
         try {
-            final InetAddress address = InetAddress.getByName(host);
-            for (final byte b : address.getAddress()) {
+            InetAddress address = InetAddress.getByName(host);
+            for (byte b : address.getAddress()) {
                 s += (b & 0xff) + ".";
             }
             if (s.length() > 0) {
                 s = s.substring(0, s.length() - 1);
             }
-        } catch (final UnknownHostException e) {
+        } catch (UnknownHostException e) {
             throw new IllegalArgumentException(e);
         }
         return s;
@@ -71,19 +70,19 @@ public class NetUtil {
      */
     public static String getLocalIp() {
         try {
-            final Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
+            Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
             while (nis.hasMoreElements()) {
-                final NetworkInterface ni = nis.nextElement();
-                final Enumeration<InetAddress> ias = ni.getInetAddresses();
+                NetworkInterface ni = nis.nextElement();
+                Enumeration<InetAddress> ias = ni.getInetAddresses();
                 while (ias.hasMoreElements()) {
-                    final String ip = ias.nextElement().getHostAddress();
+                    String ip = ias.nextElement().getHostAddress();
                     if (NetUtil.isLanIp(ip) && !"127.0.0.1".equals(ip)) {
                         return ip;
                     }
                 }
             }
-        } catch (final SocketException e) {
-            LoggerFactory.getLogger(NetUtil.class).error(e.getMessage(), e);
+        } catch (SocketException e) {
+            LogUtil.error(NetUtil.class, e);
         }
         return "127.0.0.1";
     }
@@ -94,13 +93,13 @@ public class NetUtil {
      * @param ip ip地址字符串
      * @return IPv4网络地址对象
      */
-    public static Inet4Address getInet4Address(final String ip) {
+    public static Inet4Address getInet4Address(String ip) {
         try {
-            final InetAddress address = InetAddress.getByName(ip);
+            InetAddress address = InetAddress.getByName(ip);
             if (address instanceof Inet4Address) {
                 return (Inet4Address) address;
             }
-        } catch (final UnknownHostException e) {
+        } catch (UnknownHostException e) {
         }
         return null;
     }
@@ -111,14 +110,14 @@ public class NetUtil {
      * @param s 字符串
      * @return true if 指定字符串是局域网IP地址, otherwise false
      */
-    public static boolean isLanIp(final String s) {
+    public static boolean isLanIp(String s) {
         if (StringUtil.isIp(s)) {
             if (s.startsWith("192.168.") || s.startsWith("10.") || s.equals("127.0.0.1")
                     || s.equals("0:0:0:0:0:0:0:1")) {
                 return true;
             } else if (s.startsWith("172.")) { // 172.16-172.31网段
-                final String seg = s.substring(4, s.indexOf('.', 4)); // 取第二节
-                final int value = MathUtil.parseInt(seg);
+                String seg = s.substring(4, s.indexOf('.', 4)); // 取第二节
+                int value = MathUtil.parseInt(seg);
                 if (16 <= value && value <= 31) {
                     return true;
                 }
@@ -133,8 +132,8 @@ public class NetUtil {
      * @param address 网络地址
      * @return 指定网络地址是否局域网地址
      */
-    public static boolean isLanAddress(final InetAddress address) {
-        final byte[] b = address.getAddress();
+    public static boolean isLanAddress(InetAddress address) {
+        byte[] b = address.getAddress();
         // 暂只考虑IPv4
         return b.length == 4 && ((b[0] == 192 && b[1] == 168) || b[0] == 10
                 || (b[0] == 172 && b[1] >= 16 && b[1] <= 31)
@@ -147,7 +146,7 @@ public class NetUtil {
      * @param address IP地址
      * @return 整数表达形式
      */
-    public static int intValueOf(final InetAddress address) {
+    public static int intValueOf(InetAddress address) {
         // IPv4和IPv6的hashCode()即为其整数表达形式，本方法向调用者屏蔽该逻辑
         return address.hashCode();
     }
@@ -160,19 +159,19 @@ public class NetUtil {
      * @return 参数字符串
      */
     @SuppressWarnings("unchecked")
-    private static String map2Params(final Map<String, Object> params, final String encoding) {
-        final StringBuffer result = new StringBuffer();
-        for (final Map.Entry<String, Object> entry : params.entrySet()) {
-            final String key = entry.getKey();
-            final Object value = entry.getValue();
+    private static String map2Params(Map<String, Object> params, String encoding) {
+        StringBuffer result = new StringBuffer();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
             if (value != null) {
                 if (value instanceof Collection) {
-                    for (final Object o : (Collection<Object>) value) {
+                    for (Object o : (Collection<Object>) value) {
                         result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding))
                                 .append(Strings.AND);
                     }
                 } else if (value instanceof Object[]) {
-                    for (final Object o : (Object[]) value) {
+                    for (Object o : (Object[]) value) {
                         result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding))
                                 .append(Strings.AND);
                     }
@@ -188,11 +187,11 @@ public class NetUtil {
         return result.toString();
     }
 
-    private static String encodeParam(final Object param, final String encoding) {
+    private static String encodeParam(Object param, String encoding) {
         if (StringUtils.isNotBlank(encoding)) {
             try {
                 return URLEncoder.encode(param.toString(), encoding);
-            } catch (final UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
             }
         }
         // 编码为空或不被支持，则不做编码转换
@@ -205,20 +204,20 @@ public class NetUtil {
      * @param paramString 参数字符串
      * @return 参数集合
      */
-    private static Map<String, Object> paramString2Map(final String paramString) {
-        final Map<String, Object> map = new HashMap<>();
-        final String[] pairArray = paramString.split(Strings.AND);
-        for (final String pair : pairArray) {
-            final String[] entry = pair.split(Strings.EQUAL);
+    private static Map<String, Object> paramString2Map(String paramString) {
+        Map<String, Object> map = new HashMap<>();
+        String[] pairArray = paramString.split(Strings.AND);
+        for (String pair : pairArray) {
+            String[] entry = pair.split(Strings.EQUAL);
             if (entry.length == 2) {
-                final String key = entry[0];
-                final Object value = map.get(key);
+                String key = entry[0];
+                Object value = map.get(key);
                 if (value instanceof Collection) {
                     @SuppressWarnings("unchecked")
-                    final Collection<Object> collection = (Collection<Object>) value;
+                    Collection<Object> collection = (Collection<Object>) value;
                     collection.add(entry[1]);
                 } else if (value != null) {
-                    final Collection<Object> collection = new ArrayList<>();
+                    Collection<Object> collection = new ArrayList<>();
                     collection.add(entry[1]);
                     map.put(key, collection);
                 } else {
@@ -238,22 +237,21 @@ public class NetUtil {
      * @return 合并之后的新URL
      * @throws UnsupportedEncodingException 字符编码错误
      */
-    public static String mergeParams(String url, final Map<String, Object> params,
-            final String encoding) {
-        final String[] pair = url.split("\\?");
+    public static String mergeParams(String url, Map<String, Object> params, String encoding) {
+        String[] pair = url.split("\\?");
         url = pair[0];
         String paramString = "";
         if (pair.length == 2) {
             paramString = pair[1];
         }
-        final Map<String, Object> paramMap = paramString2Map(paramString);
+        Map<String, Object> paramMap = paramString2Map(paramString);
         paramMap.putAll(params);
         paramString = map2Params(paramMap, encoding);
         return url + "?" + paramString;
     }
 
-    private static String getQueryString(final Map<String, Object> params) {
-        final String result = mergeParams(Strings.EMPTY, params, Strings.ENCODING_UTF8);
+    private static String getQueryString(Map<String, Object> params) {
+        String result = mergeParams(Strings.EMPTY, params, Strings.ENCODING_UTF8);
         if (result.length() > 0) {
             return result.substring(1); // 去掉首部问号
         }
@@ -267,13 +265,12 @@ public class NetUtil {
      * @param params    下载资源链接的参数
      * @param localFile 本地文件
      */
-    public static void download(String url, final Map<String, Object> params,
-            final File localFile) {
+    public static void download(String url, Map<String, Object> params, File localFile) {
         url = mergeParams(url, params, Strings.ENCODING_UTF8);
         InputStream in = null;
         OutputStream out = null;
         try {
-            final URL urlObj = new URL(url);
+            URL urlObj = new URL(url);
             in = urlObj.openStream();
             IOUtil.createFile(localFile);
             out = new BufferedOutputStream(new FileOutputStream(localFile));
@@ -281,8 +278,8 @@ public class NetUtil {
             in.close();
             out.flush();
             out.close();
-        } catch (final IOException e) {
-            LoggerFactory.getLogger(NetUtil.class).error(e.getMessage(), e);
+        } catch (IOException e) {
+            LogUtil.error(NetUtil.class, e);
         } finally {
             try {
                 if (in != null) {
@@ -291,8 +288,8 @@ public class NetUtil {
                 if (out != null) {
                     out.close();
                 }
-            } catch (final IOException e) {
-                LoggerFactory.getLogger(NetUtil.class).error(e.getMessage(), e);
+            } catch (IOException e) {
+                LogUtil.error(NetUtil.class, e);
             }
         }
     }
@@ -304,8 +301,7 @@ public class NetUtil {
      * @param params 请求参数
      * @return 响应结果
      */
-    public static String requestByGet(String url, final Map<String, Object> params,
-            String encoding) {
+    public static String requestByGet(String url, Map<String, Object> params, String encoding) {
         if (StringUtils.isBlank(encoding)) {
             encoding = Strings.ENCODING_UTF8;
         }
@@ -313,30 +309,29 @@ public class NetUtil {
         String result = Strings.EMPTY;
         InputStream in = null;
         try {
-            final URL urlObj = new URL(url);
+            URL urlObj = new URL(url);
             in = urlObj.openStream();
             result = IOUtils.toString(in, encoding);
-        } catch (final IOException e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+        } catch (IOException e) {
+            LogUtil.error(NetUtil.class, e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (final IOException e) {
-                    LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+                } catch (IOException e) {
+                    LogUtil.error(NetUtil.class, e);
                 }
             }
         }
         return new String(result);
     }
 
-    public static String requestByPost(final String url, final Map<String, Object> params,
-            String encoding) {
+    public static String requestByPost(String url, Map<String, Object> params, String encoding) {
         InputStream in = null;
         PrintWriter out = null;
         String response = "";
         try {
-            final URLConnection connection = new URL(url).openConnection();
+            URLConnection connection = new URL(url).openConnection();
             connection.setDoInput(true);
             connection.setDoOutput(true);
             if (StringUtils.isBlank(encoding)) {
@@ -347,17 +342,17 @@ public class NetUtil {
             out.write(getQueryString(params));
             out.flush();
             in = connection.getInputStream();
-            final byte[] b = new byte[in.available()];
+            byte[] b = new byte[in.available()];
             in.read(b);
             response = new String(b, encoding);
-        } catch (final IOException e) {
-            LoggerFactory.getLogger(NetUtil.class).error(e.getMessage(), e);
+        } catch (IOException e) {
+            LogUtil.error(NetUtil.class, e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (final IOException e) {
-                    LoggerFactory.getLogger(NetUtil.class).error(e.getMessage(), e);
+                } catch (IOException e) {
+                    LogUtil.error(NetUtil.class, e);
                 }
                 in = null;
             }

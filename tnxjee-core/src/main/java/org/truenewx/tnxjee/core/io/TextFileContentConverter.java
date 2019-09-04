@@ -7,10 +7,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 文本文件内容转换器
@@ -52,7 +52,7 @@ public class TextFileContentConverter implements FileContentConverter {
                 out.close();
             }
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         }
     }
 

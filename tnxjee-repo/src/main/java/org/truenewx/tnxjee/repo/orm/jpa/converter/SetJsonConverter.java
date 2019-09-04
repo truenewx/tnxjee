@@ -9,9 +9,8 @@ import javax.persistence.Converter;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * Set-JSON字符串的属性转换器
@@ -20,8 +19,6 @@ import org.truenewx.tnxjee.core.util.JsonUtil;
  */
 @Converter
 public class SetJsonConverter implements AttributeConverter<Set<?>, String> {
-
-    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     protected Class<?> getComponentType() {
         return null;
@@ -62,7 +59,7 @@ public class SetJsonConverter implements AttributeConverter<Set<?>, String> {
                 }
                 return new HashSet<>(list);
             } catch (Exception e) {
-                this.logger.error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
         return null;

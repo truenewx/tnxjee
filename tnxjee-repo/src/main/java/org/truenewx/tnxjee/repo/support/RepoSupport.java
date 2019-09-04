@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.model.query.Queried;
 import org.truenewx.tnxjee.model.query.QuerySort;
+import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.util.OqlUtil;
 
@@ -23,8 +21,6 @@ import org.truenewx.tnxjee.repo.util.OqlUtil;
  * @author jianglei
  */
 public abstract class RepoSupport<T extends Entity> implements Repo<T> {
-
-    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 获取实体类型<br/>

@@ -21,7 +21,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.FileCopyUtils;
 import org.truenewx.tnxjee.core.Strings;
 
@@ -29,7 +28,7 @@ import org.truenewx.tnxjee.core.Strings;
  * 图片工具类
  *
  * @author jianglei
- * @since  JDK 1.8
+ * @since JDK 1.8
  */
 public class ImageUtil {
 
@@ -46,13 +45,13 @@ public class ImageUtil {
     /**
      * 截取指定输入流中图片的指定矩形区域范围内的内容
      *
-     * @param  in          图片输入流，如果该输入流中的数据不是图片，将抛出IOException
-     * @param  formatName  图片格式，如："png"
-     * @param  x           截取矩形区域相对于图片的x轴坐标
-     * @param  y           截取矩形区域相对于图片的y轴坐标
-     * @param  width       截取矩形区域的宽度
-     * @param  height      截取矩形区域的高度
-     * @return             截取得到的图片数据
+     * @param in         图片输入流，如果该输入流中的数据不是图片，将抛出IOException
+     * @param formatName 图片格式，如："png"
+     * @param x          截取矩形区域相对于图片的x轴坐标
+     * @param y          截取矩形区域相对于图片的y轴坐标
+     * @param width      截取矩形区域的宽度
+     * @param height     截取矩形区域的高度
+     * @return 截取得到的图片数据
      * @throws IOException 如果截取过程中出现IO错误
      */
     public static byte[] crop(InputStream in, String formatName, int x, int y, int width,
@@ -86,10 +85,10 @@ public class ImageUtil {
     /**
      * 保存图片
      *
-     * @param  image       图片
-     * @param  dirsPath    存储位置
-     * @param  filename    文件名
-     * @param  extension   后缀名
+     * @param image     图片
+     * @param dirsPath  存储位置
+     * @param filename  文件名
+     * @param extension 后缀名
      * @throws IOException 系统没有写入权限
      */
     public static void save(BufferedImage image, String dir, String filename, String extension)
@@ -117,10 +116,10 @@ public class ImageUtil {
     /**
      * 保存图片
      *
-     * @param  bytes       图片字节数组
-     * @param  dir         存储位置
-     * @param  filename    文件名
-     * @param  extension   后缀名
+     * @param bytes     图片字节数组
+     * @param dir       存储位置
+     * @param filename  文件名
+     * @param extension 后缀名
      * @throws IOException 系统没有写入权限
      */
     public static void save(byte[] bytes, String dir, String filename, String extension)
@@ -173,17 +172,17 @@ public class ImageUtil {
             TRACKER.waitForID(0);
             TRACKER.removeImage(image, 0);
         } catch (InterruptedException e) {
-            LoggerFactory.getLogger(IOUtil.class).error(e.getMessage(), e);
+            LogUtil.error(IOUtil.class, e);
         }
     }
 
     /**
      * 缩放图片
      *
-     * @param  image 原图片
-     * @param  width 缩放目标宽度
-     * @return       缩放后得到的图片
-     * @author       jianglei
+     * @param image 原图片
+     * @param width 缩放目标宽度
+     * @return 缩放后得到的图片
+     * @author jianglei
      */
     public static BufferedImage zoom(Image image, int width) {
         int originalWidth = image.getWidth(null);
@@ -220,9 +219,9 @@ public class ImageUtil {
     /**
      * 缩放图片
      *
-     * @param  in          原图片输入流
-     * @param  width       缩放目标宽度
-     * @return             缩放后得到的图片
+     * @param in    原图片输入流
+     * @param width 缩放目标宽度
+     * @return 缩放后得到的图片
      * @throws IOException 缩放异常(原文件损坏或指定缩放大小错误)
      */
     public static BufferedImage zoom(InputStream in, int width) throws IOException {

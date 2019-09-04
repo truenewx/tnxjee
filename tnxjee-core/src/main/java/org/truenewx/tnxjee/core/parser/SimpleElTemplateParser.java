@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.BeanUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 
 /**
@@ -62,7 +62,7 @@ public class SimpleElTemplateParser implements TemplateParser {
                 templateContent = templateContent.replace(key,
                         value == null ? "" : value.toString());
             } catch (Exception e) { // 忽略单个替换异常
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
         return templateContent;

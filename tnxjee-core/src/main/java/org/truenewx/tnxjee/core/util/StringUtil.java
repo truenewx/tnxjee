@@ -31,7 +31,6 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.truenewx.tnxjee.core.Strings;
@@ -121,7 +120,8 @@ public class StringUtil {
     }
 
     /**
-     * 生成随机字符串。其中type指定随机字符串类型，取值范围: RANDOM_TYPE_NUMBER, RANDOM_TYPE_LETTER, RANDOM_TYPE_MIXED
+     * 生成随机字符串。其中type指定随机字符串类型，取值范围: RANDOM_TYPE_NUMBER, RANDOM_TYPE_LETTER,
+     * RANDOM_TYPE_MIXED
      *
      * @param type   随机字符串类型
      * @param length 随机字符串长度
@@ -639,7 +639,7 @@ public class StringUtil {
         } catch (MissingResourceException e) {
             return key;
         } catch (RuntimeException e) {
-            LoggerFactory.getLogger(StringUtil.class).error(e.getMessage(), e);
+            LogUtil.error(StringUtil.class, e);
         }
         return null;
     }

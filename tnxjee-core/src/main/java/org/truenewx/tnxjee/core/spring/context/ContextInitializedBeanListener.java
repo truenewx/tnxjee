@@ -3,13 +3,13 @@ package org.truenewx.tnxjee.core.spring.context;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBeanProxy;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 容器初始化完成后执行bean的监听器，找出所有容器初始化完成后执行bean并在容器初始化完成后执行。<br/>
@@ -45,7 +45,7 @@ public class ContextInitializedBeanListener implements ApplicationListener<Conte
             try {
                 bean.afterInitialized(context);
             } catch (Exception e) {
-                LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
     }

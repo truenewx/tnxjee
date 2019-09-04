@@ -9,9 +9,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.repo.validation.rule.DecimalRule;
 
 /**
@@ -21,8 +20,6 @@ import org.truenewx.tnxjee.repo.validation.rule.DecimalRule;
  */
 @Component
 public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public Class<?>[] getConstraintTypes() {
@@ -54,7 +51,7 @@ public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
                 rule.setInclusiveMax(dm.inclusive());
             }
         } catch (NumberFormatException e) {
-            this.logger.error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         }
         return rule;
     }
@@ -67,7 +64,7 @@ public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
                 rule.setInclusiveMin(dm.inclusive());
             }
         } catch (NumberFormatException e) {
-            this.logger.error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         }
         return rule;
     }

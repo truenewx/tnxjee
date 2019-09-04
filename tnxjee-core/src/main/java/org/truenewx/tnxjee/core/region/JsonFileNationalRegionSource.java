@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 基于JSON文件的国家级区划来源实现
@@ -49,7 +50,7 @@ public class JsonFileNationalRegionSource extends AbstractNationalRegionSource {
                     return nationalRegion;
                 }
             } catch (IOException e) {
-                this.logger.error(e.getMessage(), e);
+                LogUtil.error(getClass(), e);
             }
         }
         return null;

@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.ArrayUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 
@@ -110,7 +110,7 @@ public class DirVersionReader extends AbstractVersionReader {
             }
             return StringUtils.join(array, Strings.DOT);
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);
+            LogUtil.error(getClass(), e);
         }
         return null;
     }

@@ -4,8 +4,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 默认线程池执行器
@@ -14,8 +13,6 @@ import org.slf4j.LoggerFactory;
  * @since JDK 1.8
  */
 public class DefaultThreadPoolExecutor extends ThreadPoolExecutor {
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private int logPerTaskCount = 10;
 
@@ -42,9 +39,8 @@ public class DefaultThreadPoolExecutor extends ThreadPoolExecutor {
         super.afterExecute(r, t);
         long completedTaskCount = getCompletedTaskCount();
         if (completedTaskCount % this.logPerTaskCount == 0) {
-            this.logger
-                    .info("Thread pool:size=" + getPoolSize() + " largest=" + getLargestPoolSize()
-                            + " active=" + getActiveCount() + " completed=" + completedTaskCount);
+            LogUtil.info(getClass(), "Thread pool:size={}, largest={}, active={}, completed={}",
+                    getPoolSize(), getLargestPoolSize(), getActiveCount(), completedTaskCount);
         }
     }
 

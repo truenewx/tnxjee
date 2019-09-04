@@ -3,8 +3,8 @@ package org.truenewx.tnxjee.test.junit.rules;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.annotation.Caption;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 输出@Caption注解日志的单元测试规则
@@ -30,7 +30,7 @@ public class LogCaption extends TestRuleAdapter {
         Caption caption = description.getAnnotation(Caption.class);
         if (caption != null) {
             Class<?> testClass = description.getTestClass();
-            Logger logger = LoggerFactory.getLogger(getClass());
+            Logger logger = LogUtil.getLogger(getClass());
             if (logger.isInfoEnabled()) {
                 String info;
                 if (this.appendTestClassName) {

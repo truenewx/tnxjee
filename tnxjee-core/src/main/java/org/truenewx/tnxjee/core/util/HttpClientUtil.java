@@ -21,7 +21,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.enums.HttpRequestMethod;
 import org.truenewx.tnxjee.core.util.tuple.Binary;
@@ -128,7 +127,7 @@ public class HttpClientUtil {
             HttpResponse response = CLIENT.execute(httpPost);
             return response.getEntity().getContent();
         } catch (Exception e) {
-            LoggerFactory.getLogger(HttpClientUtil.class).error(e.getMessage(), e);
+            LogUtil.error(HttpClientUtil.class, e);
         }
         return null;
     }
