@@ -10,6 +10,7 @@ import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
 import org.truenewx.tnxjee.model.query.QuerySort;
 import org.truenewx.tnxjee.model.query.Querying;
+import org.truenewx.tnxjee.repo.jpa.JpaRepo;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
 import org.truenewx.tnxjee.repo.util.OqlUtil;
 
@@ -18,7 +19,8 @@ import org.truenewx.tnxjee.repo.util.OqlUtil;
  *
  * @author jianglei
  */
-public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> {
+public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
+        implements JpaRepo<T> {
 
     @Override
     protected JpaSchemaTemplate getSchemaTemplate() {
@@ -32,6 +34,16 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> {
     @Override
     public T first() {
         return getSchemaTemplate().first("from " + getEntityName(), (Map<String, Object>) null);
+    }
+
+    @Override
+    public void flush() {
+        getSchemaTemplate().flush();
+    }
+
+    @Override
+    public void refresh(T entity) {
+        getSchemaTemplate().refresh(entity);
     }
 
     private Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
