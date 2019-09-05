@@ -26,6 +26,14 @@ public abstract class Querying implements Serializable {
         this.paging = paging;
     }
 
+    public void setPageSize(int pageSize) {
+        this.paging.setPageSize(pageSize);
+    }
+
+    public void setPageNo(int pageNo) {
+        this.paging.setPageNo(pageNo);
+    }
+
     public boolean isTotalable() {
         return this.totalable;
     }

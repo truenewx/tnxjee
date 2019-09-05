@@ -1,0 +1,17 @@
+package org.truenewx.tnxjee.repo;
+
+import org.springframework.data.repository.Repository;
+import org.truenewx.tnxjee.model.definition.Entity;
+
+/**
+ *
+ * @author jianglei
+ */
+public interface RepositoryFactory {
+
+    <T extends Entity, R extends Repository<T, ?>> R getRepositoryByEntityClass(
+            Class<T> entityClass);
+
+    <R extends Repository<?, ?>> R getRepositoryByRepositoryClass(Class<R> repositoryClass);
+
+}

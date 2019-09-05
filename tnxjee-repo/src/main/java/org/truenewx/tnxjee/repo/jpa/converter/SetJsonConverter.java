@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.orm.jpa.converter;
+package org.truenewx.tnxjee.repo.jpa.converter;
 
 import java.util.HashSet;
 import java.util.List;

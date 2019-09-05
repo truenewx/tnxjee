@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.support;
+package org.truenewx.tnxjee.repo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,16 +10,15 @@ import org.springframework.data.repository.Repository;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
-import org.truenewx.tnxjee.repo.Repo;
 
 /**
- * Repo工厂实现
+ * Repository工厂实现
  *
  * @author jianglei
  */
 @org.springframework.stereotype.Repository
-public class RepoFactoryImpl
-        implements RepoFactory, ApplicationContextAware, ContextInitializedBean {
+public class RepositoryFactoryImpl
+        implements RepositoryFactory, RepoFactory, ApplicationContextAware, ContextInitializedBean {
 
     private ApplicationContext context;
     private Map<Class<?>, Repo<?>> repoMapping = new HashMap<>();

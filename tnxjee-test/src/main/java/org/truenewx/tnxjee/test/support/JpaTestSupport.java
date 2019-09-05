@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.repo.Repo;
-import org.truenewx.tnxjee.repo.support.RepoFactory;
+import org.truenewx.tnxjee.repo.RepoFactory;
 import org.truenewx.tnxjee.test.spring.context.junit4.TransactionalJUnit4SpringContextTest;
 
 /**
