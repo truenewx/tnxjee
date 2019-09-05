@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.test.support;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.RepoFactory;
@@ -20,7 +21,7 @@ public abstract class JpaTestSupport extends TransactionalJUnit4SpringContextTes
 
     protected <T extends Entity> List<T> getDataList(Class<T> entityClass) {
         Repo<T> repo = this.repoFactory.getRepoByEntityClass(entityClass);
-        return repo.findAll();
+        return CollectionUtil.toList(repo.findAll());
     }
 
     protected <T extends Entity> T getData(Class<T> entityClass, int index) {

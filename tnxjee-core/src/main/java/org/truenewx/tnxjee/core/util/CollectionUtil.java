@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -253,6 +254,21 @@ public class CollectionUtil {
             map.put(constant.name(), constant);
         }
         return map;
+    }
+
+    public static <T> List<T> toList(Iterable<T> iterable) {
+        if (iterable == null) {
+            return null;
+        }
+        if (iterable instanceof List) {
+            return (List<T>) iterable;
+        } else {
+            List<T> list = new ArrayList<>();
+            iterable.forEach(entity -> {
+                list.add(entity);
+            });
+            return list;
+        }
     }
 
     public static <K, V> Map<K, V> clone(Map<K, V> map) {
