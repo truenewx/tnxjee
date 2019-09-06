@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.truenewx.tnxjee.model.definition.relation.Relation;
 
@@ -15,7 +16,7 @@ import org.truenewx.tnxjee.model.definition.relation.Relation;
 public interface RelationRepo<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends Repo<T> {
 
-    T findById(L leftId, R rightId);
+    Optional<T> findById(L leftId, R rightId);
 
     /**
      * 递增指定关系的指定数值属性值

@@ -1,12 +1,13 @@
 package org.truenewx.tnxjee.repo.support;
 
+import java.lang.reflect.Field;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.repo.Repo;
-import org.truenewx.tnxjee.repo.RepositoryFactory;
 
 /**
  * 数据访问仓库支持
@@ -64,6 +65,11 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
     public T first() {
         Iterable<T> iterable = findAll();
         return iterable == null ? null : CollectionUtil.getFirst(iterable, null);
+    }
+
+    protected Class<?> getPropertyClass(String propertyName) {
+        Field field = ClassUtil.findField(getEntityClass(), propertyName);
+        return field == null ? null : field.getType();
     }
 
 }

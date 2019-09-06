@@ -8,15 +8,15 @@
         <version>3.0.0</version>
     </parent>
     <groupId>org.truenewx.tnxjee</groupId>
-    <artifactId>tnxjee-repo</artifactId>
+    <artifactId>tnxjee-repo-jpa</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-model</artifactId>
+            <artifactId>tnxjee-repo</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
     </dependencies>
 </project>
