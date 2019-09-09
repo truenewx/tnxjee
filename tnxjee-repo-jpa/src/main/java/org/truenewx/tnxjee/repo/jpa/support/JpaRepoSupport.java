@@ -12,7 +12,6 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
@@ -106,10 +105,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
     }
 
     protected final Column getColumn(String propertyName) {
-        return (Column) ((MetamodelImplementor) getSchemaTemplate().getEntityManager()
-                .getMetamodel()).getTypeConfiguration().getMetadataBuildingContext()
-                        .getMetadataCollector().getEntityBinding(getEntityName())
-                        .getProperty(propertyName).getColumnIterator().next();
+        return (Column) getSchemaTemplate().getPersistentClass(getEntityName())
+                .getProperty(propertyName).getColumnIterator().next();
     }
 
     private Number getNumberPropertyMinValue(String propertyName) {

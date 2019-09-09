@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.hibernate.mapping.PersistentClass;
+import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
@@ -61,6 +63,11 @@ public class JpaSchemaTemplate implements SchemaTemplate {
 
     public EntityManager getEntityManager() {
         return this.entityManager;
+    }
+
+    public PersistentClass getPersistentClass(String entityName) {
+        return ((MetamodelImplementor) this.entityManager.getMetamodel()).getTypeConfiguration()
+                .getMetadataBuildingContext().getMetadataCollector().getEntityBinding(entityName);
     }
 
     /**

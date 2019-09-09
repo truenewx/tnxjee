@@ -20,7 +20,7 @@ public interface OwnedUnityRepo<T extends OwnedUnity<K, O>, K extends Serializab
      * @param owner 所属者
      * @return 指定所属者下的单体个数
      */
-    int countByOwner(O owner);
+    long countByOwner(O owner);
 
     /**
      * 获取指定所属者下指定标识的单体
