@@ -19,7 +19,7 @@ public abstract class AbstractUnity<K extends Serializable> implements Unity<K> 
      *
      * @param id 标识
      */
-    protected AbstractUnity(final K id) {
+    protected AbstractUnity(K id) {
         this.id = id;
     }
 
@@ -34,7 +34,7 @@ public abstract class AbstractUnity<K extends Serializable> implements Unity<K> 
         return this.id;
     }
 
-    protected void setId(final K id) {
+    protected void setId(K id) {
         this.id = id;
     }
 

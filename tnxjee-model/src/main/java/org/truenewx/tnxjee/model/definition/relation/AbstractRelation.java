@@ -16,12 +16,12 @@ public abstract class AbstractRelation<L extends Serializable, R extends Seriali
         implements Relation<L, R> {
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return FuncHashCode.INSTANCE.apply(new Object[] { getLeftId(), getRightId() });
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -29,7 +29,7 @@ public abstract class AbstractRelation<L extends Serializable, R extends Seriali
             return false;
         }
         @SuppressWarnings("unchecked")
-        final Relation<L, R> other = (Relation<L, R>) obj;
+        Relation<L, R> other = (Relation<L, R>) obj;
         return PredEqual.INSTANCE.test(getLeftId(), other.getLeftId())
                 && PredEqual.INSTANCE.test(getRightId(), other.getRightId());
     }
