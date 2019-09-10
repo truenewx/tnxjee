@@ -37,7 +37,10 @@ public class RepositoryFactoryImpl
 
         Map<String, Repo> beans = this.context.getBeansOfType(Repo.class);
         for (Repo<?> repo : beans.values()) {
-            this.repoMapping.put(repo.getEntityClass(), repo);
+            Class<?> entityClass = getEntityClass(repo);
+            if (entityClass != null) {
+                this.repoMapping.put(entityClass, repo);
+            }
         }
 
         Map<String, Repository> repositories = this.context.getBeansOfType(Repository.class);
@@ -49,11 +52,11 @@ public class RepositoryFactoryImpl
         }
     }
 
-    private Class<?> getEntityClass(Repository<?, ?> repository) {
-        Class<?>[] interfaces = repository.getClass().getInterfaces();
+    private Class<?> getEntityClass(Repo<?> repo) {
+        Class<?>[] interfaces = repo.getClass().getInterfaces();
         for (Class<?> clazz : interfaces) {
-            if (clazz != Repository.class && Repository.class.isAssignableFrom(clazz)) {
-                return ClassUtil.getActualGenericType(clazz, Repository.class, 0);
+            if (clazz != Repo.class && Repo.class.isAssignableFrom(clazz)) {
+                return ClassUtil.getActualGenericType(clazz, Repo.class, 0);
             }
         }
         return null;
@@ -77,6 +80,16 @@ public class RepositoryFactoryImpl
             }
         }
         return repo;
+    }
+
+    private Class<?> getEntityClass(Repository<?, ?> repository) {
+        Class<?>[] interfaces = repository.getClass().getInterfaces();
+        for (Class<?> clazz : interfaces) {
+            if (clazz != Repository.class && Repository.class.isAssignableFrom(clazz)) {
+                return ClassUtil.getActualGenericType(clazz, Repository.class, 0);
+            }
+        }
+        return null;
     }
 
     @Override

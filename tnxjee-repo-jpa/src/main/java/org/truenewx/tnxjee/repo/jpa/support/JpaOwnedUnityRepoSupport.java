@@ -7,6 +7,7 @@ import java.util.Map;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.definition.unity.OwnedUnity;
+import org.truenewx.tnxjee.repo.OwnedUnityNumberIncreasable;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 
 /**
@@ -15,7 +16,8 @@ import org.truenewx.tnxjee.repo.OwnedUnityRepo;
  * @author jianglei
  */
 public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
-        extends JpaUnityRepoSupport<T, K> implements OwnedUnityRepo<T, K, O> {
+        extends JpaUnityRepoSupport<T, K>
+        implements OwnedUnityRepo<T, K, O>, OwnedUnityNumberIncreasable<T, K, O> {
 
     /**
      * 获取所属者属性名<br/>

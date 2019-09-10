@@ -11,12 +11,6 @@ import org.truenewx.tnxjee.model.definition.Entity;
 public interface Repo<T extends Entity> {
 
     /**
-     *
-     * @return 实体类型
-     */
-    Class<T> getEntityClass();
-
-    /**
      * 保存指定实体对象
      *
      * @param <S>    实际实体类型
@@ -46,10 +40,4 @@ public interface Repo<T extends Entity> {
      */
     Iterable<T> findAll();
 
-    /**
-     * 获取实体的第一条数据，一般在单元测试中才有意义
-     *
-     * @return 实体的第一条数据
-     */
-    T first();
 }

@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.model.definition.unity.Unity;
  * @param <T> 单体类型
  * @param <K> 单体标识类型
  */
-public interface UnityRepo<T extends Unity<K>, K extends Serializable> extends UnitaryRepo<T, K> {
+public interface UnityRepo<T extends Unity<K>, K extends Serializable> extends UnitaryEntityRepo<T, K> {
 
     Optional<T> findById(K id);
 

@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 
@@ -27,9 +26,8 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
      *
      * @return 实体类型
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public Class<T> getEntityClass() {
+    protected Class<T> getEntityClass() {
         return (Class<T>) ClassUtil.getActualGenericType(getClass(), 0);
     }
 
@@ -59,12 +57,6 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
     @Override
     public Iterable<T> findAll() {
         return getRepository().findAll();
-    }
-
-    @Override
-    public T first() {
-        Iterable<T> iterable = findAll();
-        return iterable == null ? null : CollectionUtil.getFirst(iterable, null);
     }
 
     protected Class<?> getPropertyClass(String propertyName) {

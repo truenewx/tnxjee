@@ -31,15 +31,4 @@ public interface OwnedUnityRepo<T extends OwnedUnity<K, O>, K extends Serializab
      */
     T findByOwnerAndId(O owner, K id);
 
-    /**
-     * 递增指定单体的指定数值属性值
-     *
-     * @param owner        所属者
-     * @param id           单体标识
-     * @param propertyName 数值属性名
-     * @param step         递增的值，为负值即表示递减
-     * @param limit        增减后允许的最大/最小值，设定以避免数值超限
-     * @return 单体
-     */
-    T increaseNumber(O owner, K id, String propertyName, Number step, Number limit);
 }

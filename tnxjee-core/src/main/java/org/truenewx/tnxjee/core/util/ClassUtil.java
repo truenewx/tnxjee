@@ -187,14 +187,19 @@ public class ClassUtil {
     private static Collection<ParameterizedType> findParameterizedGenericInterfaces(
             Class<?> clazz) {
         List<ParameterizedType> types = new ArrayList<>();
-        for (Type type : clazz.getGenericInterfaces()) {
+        Type[] interfaces = clazz.getGenericInterfaces();
+        for (Type type : interfaces) {
             if (type instanceof ParameterizedType) {
                 types.add((ParameterizedType) type);
+            } else if (type instanceof Class) {
+                types.addAll(findParameterizedGenericInterfaces((Class<?>) type));
             }
         }
         Type superclass = clazz.getGenericSuperclass();
         if (superclass instanceof ParameterizedType) {
             types.add((ParameterizedType) superclass);
+        } else if (superclass instanceof Class<?>) {
+            types.addAll(findParameterizedGenericInterfaces((Class<?>) superclass));
         }
         return types;
     }

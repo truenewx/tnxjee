@@ -5,16 +5,14 @@ import java.io.Serializable;
 import org.truenewx.tnxjee.model.definition.UnitaryEntity;
 
 /**
- * 具有单一标识的实体的数据访问仓库
+ * 单一标识实体的数值属性可递增
  *
  * @author jianglei
- * @param <T> 实体类型
- * @param <K> 标识类型
  */
-public interface UnitaryRepo<T extends UnitaryEntity<K>, K extends Serializable> extends Repo<T> {
+public interface UnitaryEntityNumberIncreasable<T extends UnitaryEntity<K>, K extends Serializable> {
 
     /**
-     * 递增指定单体的指定数值属性值
+     * 递增指定实体的指定数值属性值
      *
      * @param key          单体标识
      * @param propertyName 数值属性名
@@ -23,5 +21,4 @@ public interface UnitaryRepo<T extends UnitaryEntity<K>, K extends Serializable>
      * @return 单体
      */
     T increaseNumber(K key, String propertyName, Number step, Number limit);
-
 }

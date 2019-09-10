@@ -47,11 +47,6 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
     }
 
     @Override
-    public T first() {
-        return getSchemaTemplate().first("from " + getEntityName(), (Map<String, Object>) null);
-    }
-
-    @Override
     public void flush() {
         ((JpaRepository<T, ?>) getRepository()).flush();
     }

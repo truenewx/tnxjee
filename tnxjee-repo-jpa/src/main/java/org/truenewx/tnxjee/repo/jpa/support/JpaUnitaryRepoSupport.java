@@ -7,7 +7,8 @@ import java.util.Map;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.definition.UnitaryEntity;
-import org.truenewx.tnxjee.repo.UnitaryRepo;
+import org.truenewx.tnxjee.repo.UnitaryEntityNumberIncreasable;
+import org.truenewx.tnxjee.repo.UnitaryEntityRepo;
 
 /**
  * 具有单一标识属性的实体JPA数据访问仓库支持
@@ -15,7 +16,8 @@ import org.truenewx.tnxjee.repo.UnitaryRepo;
  * @author jianglei
  */
 public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extends Serializable>
-        extends JpaRepoSupport<T> implements UnitaryRepo<T, K> {
+        extends JpaRepoSupport<T>
+        implements UnitaryEntityRepo<T, K>, UnitaryEntityNumberIncreasable<T, K> {
 
     protected T find(K key) {
         return getSchemaTemplate().find(getEntityClass(), key);

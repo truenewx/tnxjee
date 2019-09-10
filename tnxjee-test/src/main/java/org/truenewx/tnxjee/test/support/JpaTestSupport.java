@@ -30,8 +30,7 @@ public abstract class JpaTestSupport extends TransactionalJUnit4SpringContextTes
     }
 
     protected <T extends Entity> T getFirstData(Class<T> entityClass) {
-        Repo<T> repo = this.repoFactory.getRepoByEntityClass(entityClass);
-        return repo.first();
+        return getData(entityClass, 0);
     }
 
 }
