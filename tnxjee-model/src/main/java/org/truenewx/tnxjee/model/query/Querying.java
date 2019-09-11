@@ -1,15 +1,11 @@
 package org.truenewx.tnxjee.model.query;
 
-import java.io.Serializable;
-
 /**
  * 分页查询条件。通过创建子类附带更多的查询条件
  *
  * @author jianglei
  */
-public abstract class Querying implements Serializable {
-
-    private static final long serialVersionUID = 1766849422293534482L;
+public abstract class Querying {
 
     private Paging paging = new Paging();
     private boolean totalable = true;

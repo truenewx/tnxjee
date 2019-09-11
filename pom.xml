@@ -16,7 +16,6 @@
         <module>tnxjee-core</module>
         <module>tnxjee-model</module>
         <module>tnxjee-repo</module>
-        <module>tnxjee-repo-hibernate</module>
         <module>tnxjee-repo-jpa</module>
         <module>tnxjee-service-api</module>
         <module>tnxjee-service-impl</module>
@@ -141,7 +140,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.58</version>
+                <version>1.2.60</version>
             </dependency>
             <dependency>
                 <groupId>org.dom4j</groupId>

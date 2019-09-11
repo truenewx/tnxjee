@@ -1,0 +1,50 @@
+package org.truenewx.tnxjee.test.support;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
+import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.test.context.config.EmbeddedMongoConfiguration;
+import org.truenewx.tnxjee.test.data.TestDataProvider;
+
+/**
+ * 带自动事务的JUnit4+Spring环境测试
+ *
+ * @author jianglei
+ */
+@TestExecutionListeners(TransactionalTestExecutionListener.class)
+@Transactional
+@Import(EmbeddedMongoConfiguration.class)
+public abstract class TransactionalSpringTestSupport extends SpringTestSupport {
+
+    @Autowired
+    private TestDataProvider dataProvider;
+
+    protected <T extends Entity> List<T> getDataList(Class<T> entityClass) {
+        return this.dataProvider.getDataList(entityClass);
+    }
+
+    protected <T extends Entity> T getData(Class<T> entityClass, int index) {
+        List<T> list = getDataList(entityClass);
+        return list == null ? null : list.get(index);
+    }
+
+    protected <T extends Entity> T getFirstData(Class<T> entityClass) {
+        return getData(entityClass, 0);
+    }
+
+    @Before
+    public void before() {
+        this.dataProvider.reset(getEntityClasses());
+    }
+
+    protected Class<?>[] getEntityClasses() {
+        return null;
+    }
+
+}
