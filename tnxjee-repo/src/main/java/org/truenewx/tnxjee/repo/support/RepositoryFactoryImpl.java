@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.repo.support;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.aop.framework.Advised;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -53,7 +54,15 @@ public class RepositoryFactoryImpl
     }
 
     private Class<?> getEntityClass(Repo<?> repo) {
-        Class<?>[] interfaces = repo.getClass().getInterfaces();
+        Class<?> entityClass = getEntityClass(repo.getClass());
+        if (entityClass == null && repo instanceof Advised) {
+            entityClass = getEntityClass(((Advised) repo).getTargetClass());
+        }
+        return entityClass;
+    }
+
+    private Class<?> getEntityClass(Class<?> repoClass) {
+        Class<?>[] interfaces = repoClass.getInterfaces();
         for (Class<?> clazz : interfaces) {
             if (clazz != Repo.class && Repo.class.isAssignableFrom(clazz)) {
                 return ClassUtil.getActualGenericType(clazz, Repo.class, 0);
