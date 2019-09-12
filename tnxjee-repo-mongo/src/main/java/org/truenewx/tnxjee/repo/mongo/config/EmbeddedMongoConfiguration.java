@@ -1,11 +1,9 @@
-package org.truenewx.tnxjee.test.context.config;
+package org.truenewx.tnxjee.repo.mongo.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -18,16 +16,12 @@ import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
  *
  * @author jianglei
  */
-@TestConfiguration
 @AutoConfigureBefore(MongoDataAutoConfiguration.class)
 public class EmbeddedMongoConfiguration extends AbstractMongoConfiguration {
 
-    @Autowired
-    private Environment env;
-
     @Override
     protected String getDatabaseName() {
-        return this.env.getProperty("spring.data.mongodb.database", "test");
+        return RepoUtil.DEFAULT_SCHEMA_NAME;
     }
 
     @Override

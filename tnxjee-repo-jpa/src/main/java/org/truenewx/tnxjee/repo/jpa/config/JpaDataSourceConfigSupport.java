@@ -30,7 +30,7 @@ import org.truenewx.tnxjee.repo.jpa.support.JpaSchemaTemplate;
 import org.truenewx.tnxjee.repo.support.SchemaTemplate;
 
 /**
- * JPA事务配置支持
+ * JPA数据源配置支持
  *
  * @author jianglei
  */

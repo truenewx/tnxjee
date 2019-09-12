@@ -17,8 +17,8 @@ import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.definition.Entity;
-import org.truenewx.tnxjee.repo.jpa.util.RepoConstants;
 import org.truenewx.tnxjee.repo.support.SchemaTemplate;
+import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 /**
  * JPA的数据库模式访问模板
@@ -27,7 +27,7 @@ import org.truenewx.tnxjee.repo.support.SchemaTemplate;
  */
 public class JpaSchemaTemplate implements SchemaTemplate {
 
-    private String schema = RepoConstants.DEFAULT_SCHEMA_NAME;
+    private String schema = RepoUtil.DEFAULT_SCHEMA_NAME;
     private EntityManager entityManager;
     private boolean nativeMode;
 
