@@ -17,6 +17,7 @@
         <module>tnxjee-model</module>
         <module>tnxjee-repo</module>
         <module>tnxjee-repo-jpa</module>
+        <module>tnxjee-repo-mongo</module>
         <module>tnxjee-service-api</module>
         <module>tnxjee-service-impl</module>
         <module>tnxjee-test</module>
