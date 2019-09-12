@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.test.support;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -9,8 +10,8 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.repo.data.DataProviderFactory;
 import org.truenewx.tnxjee.test.context.config.EmbeddedMongoConfiguration;
-import org.truenewx.tnxjee.test.data.TestDataProvider;
 
 /**
  * 带自动事务的JUnit4+Spring环境测试
@@ -23,10 +24,10 @@ import org.truenewx.tnxjee.test.data.TestDataProvider;
 public abstract class TransactionalSpringTestSupport extends SpringTestSupport {
 
     @Autowired
-    private TestDataProvider dataProvider;
+    private DataProviderFactory dataProviderFactory;
 
     protected <T extends Entity> List<T> getDataList(Class<T> entityClass) {
-        return this.dataProvider.getDataList(entityClass);
+        return this.dataProviderFactory.getDataList(entityClass);
     }
 
     protected <T extends Entity> T getData(Class<T> entityClass, int index) {
@@ -40,7 +41,12 @@ public abstract class TransactionalSpringTestSupport extends SpringTestSupport {
 
     @Before
     public void before() {
-        this.dataProvider.reset(getEntityClasses());
+        this.dataProviderFactory.init(getEntityClasses());
+    }
+
+    @After
+    public void after() {
+        this.dataProviderFactory.clear(getEntityClasses());
     }
 
     protected Class<?>[] getEntityClasses() {
