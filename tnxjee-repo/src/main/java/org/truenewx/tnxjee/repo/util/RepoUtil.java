@@ -39,7 +39,7 @@ public class RepoUtil {
 
     public static Sort toSort(QuerySort querySort) {
         if (querySort == null) {
-            return null;
+            return Sort.unsorted();
         }
         List<Order> orders = new ArrayList<>();
         List<FieldOrder> fieldOrders = querySort.getOrders();
@@ -52,11 +52,14 @@ public class RepoUtil {
     }
 
     public static Pageable toPageable(Paging paging) {
-        if (paging == null) {
-            return null;
+        if (paging == null || paging.getPageSize() <= 0) {
+            return Pageable.unpaged();
         }
         Sort sort = toSort(paging.getSort());
         int pageNo = paging.getPageNo() - 1; // Pageable的页码从0开始计数
+        if (pageNo < 0) {
+            pageNo = 0;
+        }
         return PageRequest.of(pageNo, paging.getPageSize(), sort);
     }
 
@@ -68,7 +71,7 @@ public class RepoUtil {
     }
 
     public static QuerySort toQuerySort(Sort sort) {
-        if (sort == null) {
+        if (sort == null || sort.isUnsorted()) {
             return null;
         }
         List<FieldOrder> fieldOrders = new ArrayList<>();
@@ -81,6 +84,9 @@ public class RepoUtil {
     public static Paging toPaging(Pageable pageable) {
         QuerySort querySort = toQuerySort(pageable.getSort());
         int pageNo = pageable.getPageNumber() + 1; // Paging的页码从1开始计数
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
         return new Paging(pageable.getPageSize(), pageNo, querySort);
     }
 
