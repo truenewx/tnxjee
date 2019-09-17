@@ -42,7 +42,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         return (JpaSchemaTemplate) super.getSchemaTemplate();
     }
 
-    protected String getEntityName() {
+    @Override
+    public String getEntityName() {
         return getEntityClass().getName();
     }
 
