@@ -1,8 +1,10 @@
 package org.truenewx.tnxjee.model.query;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * 分页查询结果
@@ -39,7 +41,7 @@ public class Queried<T> implements Iterable<T> {
             }
             paged = new Paged(pageSize, pageNo, morePage);
         }
-        return new Queried<T>(records, paged);
+        return new Queried<>(records, paged);
     }
 
     public List<T> getRecords() {
@@ -53,6 +55,14 @@ public class Queried<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return this.records.iterator();
+    }
+
+    public <R> Queried<R> transfer(Function<T, R> function) {
+        List<R> list = new ArrayList<>();
+        this.records.forEach(record -> {
+            list.add(function.apply(record));
+        });
+        return new Queried<>(list, this.paged);
     }
 
 }

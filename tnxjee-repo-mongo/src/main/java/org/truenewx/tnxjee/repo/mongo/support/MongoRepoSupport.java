@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
+import org.truenewx.tnxjee.model.query.QuerySort;
 import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.repo.mongo.util.MongoQueryUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
@@ -24,17 +25,35 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
         return (MongoSchemaTemplate) super.getSchemaTemplate();
     }
 
-    protected Queried<T> query(List<Criteria> criterias, Querying querying) {
+    private Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort,
+            boolean totalable, boolean listable) {
         Query query = MongoQueryUtil.buildQuery(criterias);
-        long total = getSchemaTemplate().count(getEntityClass(), query);
-        Paging paging = querying.getPaging();
+        Long total = null;
+        // 需分页查询且需要获取总数时，才获取总数
+        if ((pageSize > 0 || !listable) && totalable) {
+            total = getSchemaTemplate().count(getEntityClass(), query);
+        }
         List<T> records;
-        if (total == 0) {
+        if ((total != null && total == 0) || !listable) {
             records = new ArrayList<>();
         } else {
-            records = getSchemaTemplate().list(getEntityClass(), query, paging);
+            records = getSchemaTemplate().list(getEntityClass(), query, pageSize, pageNo, sort);
         }
-        return Queried.of(records, paging.getPageSize(), paging.getPageNo(), total);
+        return Queried.of(records, pageSize, pageNo, total);
+    }
+
+    protected Queried<T> query(List<Criteria> criterias, Querying querying) {
+        Paging paging = querying.getPaging();
+        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort(),
+                querying.isTotalable(), querying.isListable());
+    }
+
+    protected Queried<T> query(List<Criteria> criterias, Paging paging) {
+        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort());
+    }
+
+    protected Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort) {
+        return query(criterias, pageSize, pageNo, sort, true, true);
     }
 
 }

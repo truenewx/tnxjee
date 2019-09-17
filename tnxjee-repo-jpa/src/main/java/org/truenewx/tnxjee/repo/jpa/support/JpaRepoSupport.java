@@ -63,10 +63,10 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
             total = getSchemaTemplate().count("select count(*) " + ql, params);
         }
 
-        List<T> dataList;
+        List<T> records;
         // 已知总数为0或无需查询记录清单，则不查询记录清单
         if ((total != null && total == 0) || !listable) {
-            dataList = new ArrayList<>();
+            records = new ArrayList<>();
         } else {
             String orderString = OqlUtil.buildOrderString(sort);
             if (StringUtils.isNotBlank(orderString)) {
@@ -76,12 +76,12 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                     ql = ql.toString() + orderString;
                 }
             }
-            dataList = getSchemaTemplate().list(ql, params, pageSize, pageNo);
+            records = getSchemaTemplate().list(ql, params, pageSize, pageNo);
             if (pageSize <= 0) { // 非分页查询，总数为结果记录条数
-                total = (long) dataList.size();
+                total = (long) records.size();
             }
         }
-        return Queried.of(dataList, pageSize, pageNo, total);
+        return Queried.of(records, pageSize, pageNo, total);
     }
 
     protected Queried<T> query(CharSequence ql, Map<String, Object> params, Querying querying) {
