@@ -3,7 +3,6 @@ package org.truenewx.tnxjee.service.impl.unity;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.exception.HandleableException;
 import org.truenewx.tnxjee.model.definition.SubmitModel;
 import org.truenewx.tnxjee.model.definition.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
@@ -54,13 +53,13 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
         if (id == null) {
             return null;
         }
-        unity = beforeSave(id, unity);
-        if (unity != null) {
-            Assert.isTrue(id.equals(unity.getId()), "id must equal unity's id");
-            getRepo().save(unity);
-            afterSave(unity);
+        T newUnity = beforeSave(id, unity);
+        if (newUnity != null) {
+            Assert.isTrue(id.equals(newUnity.getId()), "id must equal unity's id");
+            getRepo().save(newUnity);
+            afterSave(newUnity);
         }
-        return unity;
+        return newUnity;
     }
 
     /**
@@ -70,7 +69,6 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * @param id    要修改的单体标识，为null时表示是添加动作
      * @param unity 存放添加/修改数据的单体对象
      * @return 已写入数据，即将保存的单体
-     * @throws HandleableException 如果数据验证失败
      */
     protected T beforeSave(K id, T unity) {
         throw new UnsupportedOperationException();
@@ -80,7 +78,6 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * 单体保存之后调用，负责后续处理
      *
      * @param unity 被保存的单体
-     * @throws HandleableException 如果处理过程中出现错误
      */
     protected void afterSave(T unity) {
     }
@@ -116,7 +113,6 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * @param id          要修改的单体标识，为null时表示是添加动作
      * @param submitModel 存放添加/修改数据的单体对象
      * @return 已写入数据，即将保存的单体
-     * @throws HandleableException 如果数据验证失败
      */
     protected T beforeSave(K id, SubmitModel<T> submitModel) {
         throw new UnsupportedOperationException();
@@ -126,7 +122,6 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * 删除单体
      *
      * @param id 要删除的单体的标识
-     * @throws HandleableException 如果删除校验失败
      */
     @Override
     public void delete(K id) {
@@ -145,7 +140,6 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      *
      * @param id 要删除的单体的标识
      * @return 要删除的单体，可返回null，返回非null值有助于提高性能
-     * @throws HandleableException 如果校验不通过
      */
     protected T beforeDelete(K id) {
         throw new UnsupportedOperationException();

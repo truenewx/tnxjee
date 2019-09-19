@@ -1,0 +1,153 @@
+package org.truenewx.tnxjee.service.impl.relation;
+
+import java.io.Serializable;
+
+import org.springframework.util.Assert;
+import org.truenewx.tnxjee.model.definition.SubmitModel;
+import org.truenewx.tnxjee.model.definition.relation.Relation;
+import org.truenewx.tnxjee.repo.RelationRepo;
+import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
+import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;
+import org.truenewx.tnxjee.service.impl.AbstractService;
+
+/**
+ * 抽象关系服务
+ *
+ * @author jianglei
+ * @since JDK 1.8
+ * @param <T> 关系类型
+ * @param <L> 左标识类型
+ * @param <R> 右标识类型
+ */
+public abstract class AbstractRelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
+        extends AbstractService<T>
+        implements SimpleRelationService<T, L, R>, ModelRelationService<T, L, R> {
+
+    @Override
+    protected RelationRepo<T, L, R> getRepo() {
+        return getRepo(getEntityClass());
+    }
+
+    @Override
+    public T find(L leftId, R rightId) {
+        return getRepo().findById(leftId, rightId).orElse(null);
+    }
+
+    @Override
+    public T load(L leftId, R rightId) {
+        T relation = find(leftId, rightId);
+        assertNotNull(relation);
+        return relation;
+    }
+
+    @Override
+    public T add(T relation) {
+        T newRelation = beforeSave(null, null, relation);
+        Assert.isTrue(newRelation != relation,
+                "the returned relation must not be the input relation");
+        if (newRelation != null) {
+            getRepo().save(newRelation);
+            afterSave(newRelation);
+        }
+        return newRelation;
+    }
+
+    @Override
+    public T update(L leftId, R rightId, T relation) {
+        if (leftId == null || rightId == null) {
+            return null;
+        }
+        T newRelation = beforeSave(leftId, rightId, relation);
+        if (newRelation != null) {
+            Assert.isTrue(leftId.equals(newRelation.getLeftId()),
+                    "leftId must equal relation's leftId");
+            Assert.isTrue(rightId.equals(newRelation.getRightId()),
+                    "rightId must equal relation's rightId");
+            getRepo().save(newRelation);
+            afterSave(newRelation);
+        }
+        return newRelation;
+    }
+
+    /**
+     * 在保存关系前调用，由子类覆写
+     *
+     * @param leftId   左标识
+     * @param rightId  右标识
+     * @param relation 存放保存数据的关系对象
+     *
+     * @return 要保存的关系，可返回null，返回非null值有助于提高性能
+     */
+    protected T beforeSave(L leftId, R rightId, T relation) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 关系保存之后调用，负责后续处理
+     *
+     * @param relation 被保存的关系
+     */
+    protected void afterSave(T relation) {
+    }
+
+    @Override
+    public T add(SubmitModel<T> submitModel) {
+        T relation = beforeSave(null, null, submitModel);
+        if (relation != null) {
+            getRepo().save(relation);
+            afterSave(relation);
+        }
+        return relation;
+    }
+
+    @Override
+    public T update(L leftId, R rightId, SubmitModel<T> submitModel) {
+        if (leftId == null || rightId == null) {
+            return null;
+        }
+        T relation = beforeSave(leftId, rightId, submitModel);
+        if (relation != null) {
+            Assert.isTrue(leftId.equals(relation.getLeftId()),
+                    "leftId must equal relation's leftId");
+            Assert.isTrue(rightId.equals(relation.getRightId()),
+                    "rightId must equal relation's rightId");
+            getRepo().save(relation);
+            afterSave(relation);
+        }
+        return relation;
+    }
+
+    /**
+     * 在保存关系前调用，由子类覆写
+     *
+     * @param leftId      左标识
+     * @param rightId     右标识
+     * @param submitModel 存放保存数据的提交模型对象
+     *
+     * @return 要保存的关系，可返回null，返回非null值有助于提高性能
+     */
+    protected T beforeSave(L leftId, R rightId, SubmitModel<T> submitModel) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(L leftId, R rightId) {
+        T relation = beforeDelete(leftId, rightId);
+        if (relation == null) {
+            relation = find(leftId, rightId);
+        }
+        getRepo().delete(relation);
+    }
+
+    /**
+     * 根据标识删除关系前调用，由子类覆写<br/>
+     * 不覆写或子类调用父类的本方法，将无法删除关系
+     *
+     * @param id 要删除的关系的标识
+     * @return 要删除的关系，可返回null，返回非null值有助于提高性能
+     */
+    protected T beforeDelete(L leftId, R rightId) {
+        throw new UnsupportedOperationException();
+    }
+
+}

@@ -3,8 +3,6 @@ package org.truenewx.tnxjee.service.impl.unity;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.exception.BusinessException;
-import org.truenewx.tnxjee.core.exception.HandleableException;
 import org.truenewx.tnxjee.model.definition.SubmitModel;
 import org.truenewx.tnxjee.model.definition.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
@@ -34,14 +32,14 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public T load(O owner, K id) throws BusinessException {
+    public T load(O owner, K id) {
         T unity = find(owner, id);
         assertNotNull(unity);
         return unity;
     }
 
     @Override
-    public T add(O owner, T unity) throws HandleableException {
+    public T add(O owner, T unity) {
         if (owner == null) {
             return null;
         }
@@ -58,7 +56,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      * 注意：子类不应修改单体的所属者
      */
     @Override
-    public T update(O owner, K id, T unity) throws HandleableException {
+    public T update(O owner, K id, T unity) {
         if (owner == null || id == null) {
             return null;
         }
@@ -80,14 +78,13 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      * @param id    要修改的单体标识，为null时表示是添加动作
      * @param unity 存放添加/修改数据的单体对象
      * @return 已写入数据，即将保存的单体
-     * @throws HandleableException 如果数据验证失败
      */
-    protected T beforeSave(O owner, K id, T unity) throws HandleableException {
+    protected T beforeSave(O owner, K id, T unity) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public T add(O owner, SubmitModel<T> submitModel) throws HandleableException {
+    public T add(O owner, SubmitModel<T> submitModel) {
         if (owner == null) {
             return null;
         }
@@ -101,7 +98,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public T update(O owner, K id, SubmitModel<T> submitModel) throws HandleableException {
+    public T update(O owner, K id, SubmitModel<T> submitModel) {
         if (owner == null || id == null) {
             return null;
         }
@@ -123,14 +120,13 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      * @param id          要修改的单体标识，为null时表示是添加动作
      * @param submitModel 存放添加/修改数据的单体对象
      * @return 已写入数据，即将保存的单体
-     * @throws HandleableException 如果数据验证失败
      */
-    protected T beforeSave(O owner, K id, SubmitModel<T> submitModel) throws HandleableException {
+    protected T beforeSave(O owner, K id, SubmitModel<T> submitModel) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void delete(O owner, K id) throws HandleableException {
+    public void delete(O owner, K id) {
         if (owner != null && id != null) {
             T unity = beforeDelete(owner, id);
             if (unity == null) {
@@ -147,9 +143,8 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      * @param owner 所属者
      * @param id    要删除的单体的标识
      * @return 要删除的单体，可返回null，返回非null值有助于提高性能
-     * @throws HandleableException 如果校验不通过
      */
-    protected T beforeDelete(O owner, K id) throws HandleableException {
+    protected T beforeDelete(O owner, K id) {
         throw new UnsupportedOperationException();
     }
 
