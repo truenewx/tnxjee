@@ -632,4 +632,24 @@ public class ClassUtil {
         }
     }
 
+    public static <T> T newInstance(Class<T> clazz, Class<?>[] argTypes, Object[] args) {
+        try {
+            return clazz.getConstructor(argTypes).newInstance(args);
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static <T> T newInstance(Class<T> clazz, Object... args) {
+        Class<?>[] argTypes = new Class<?>[args.length];
+        for (int i = 0; i < args.length; i++) {
+            argTypes[i] = args[i].getClass();
+        }
+        return newInstance(clazz, argTypes, args);
+    }
+
 }
