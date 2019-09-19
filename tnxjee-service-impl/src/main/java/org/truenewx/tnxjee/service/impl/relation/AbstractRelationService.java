@@ -70,13 +70,13 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     /**
-     * 在保存关系前调用，由子类覆写
+     * 在保存添加/修改关系前调用，负责验证改动的关系数据，并写入返回的结果关系中<br/>
+     * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果关系的标识等于传入的指定标识参数
      *
-     * @param leftId   左标识
-     * @param rightId  右标识
-     * @param relation 存放保存数据的关系对象
-     *
-     * @return 要保存的关系，可返回null，返回非null值有助于提高性能
+     * @param leftId  要修改的关系左标识，为null时表示是添加动作
+     * @param rightId 要修改的关系右标识，为null时表示是添加动作
+     * @param unity   存放添加/修改数据的关系对象
+     * @return 已写入数据，即将保存的关系
      */
     protected T beforeSave(L leftId, R rightId, T relation) {
         throw new UnsupportedOperationException();
@@ -118,13 +118,13 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     /**
-     * 在保存关系前调用，由子类覆写
+     * 在保存添加/修改关系前调用，负责验证改动的模型数据，并写入返回的结果关系中<br/>
+     * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果关系的标识等于传入的指定标识参数
      *
-     * @param leftId      左标识
-     * @param rightId     右标识
-     * @param submitModel 存放保存数据的提交模型对象
-     *
-     * @return 要保存的关系，可返回null，返回非null值有助于提高性能
+     * @param leftId      要修改的关系左标识，为null时表示是添加动作
+     * @param rightId     要修改的关系右标识，为null时表示是添加动作
+     * @param submitModel 存放添加/修改数据的提交模型
+     * @return 已写入数据，即将保存的关系
      */
     protected T beforeSave(L leftId, R rightId, SubmitModel<T> submitModel) {
         throw new UnsupportedOperationException();

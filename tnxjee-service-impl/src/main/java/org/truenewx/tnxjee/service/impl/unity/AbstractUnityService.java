@@ -111,7 +111,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果单体的标识等于传入的指定标识参数
      *
      * @param id          要修改的单体标识，为null时表示是添加动作
-     * @param submitModel 存放添加/修改数据的单体对象
+     * @param submitModel 存放添加/修改数据的提交模型
      * @return 已写入数据，即将保存的单体
      */
     protected T beforeSave(K id, SubmitModel<T> submitModel) {

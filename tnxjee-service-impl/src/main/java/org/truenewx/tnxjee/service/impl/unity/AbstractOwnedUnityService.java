@@ -118,8 +118,8 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      *
      * @param owner       所属者
      * @param id          要修改的单体标识，为null时表示是添加动作
-     * @param submitModel 存放添加/修改数据的单体对象
-     * @return 已写入数据，即将保存的单体
+     * @param submitModel 存放添加/修改数据的提交模型
+     * @return 已写入数据，即将保存的从属单体
      */
     protected T beforeSave(O owner, K id, SubmitModel<T> submitModel) {
         throw new UnsupportedOperationException();
