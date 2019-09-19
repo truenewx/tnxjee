@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.spring.beans.factory.TransactionalBeanFactory;
+import org.truenewx.tnxjee.model.definition.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.support.RepoFactory;
 import org.truenewx.tnxjee.service.api.Service;
@@ -47,8 +48,8 @@ public abstract class ServiceSupport {
         return bean;
     }
 
-    protected <R extends Repo<?>> R getRepo(Class<R> repoClass) {
-        return this.repoFactory.getRepoByRepoClass(repoClass);
+    protected <R extends Repo<T>, T extends Entity> R getRepo(Class<T> entityClass) {
+        return this.repoFactory.getRepoByEntityClass(entityClass);
     }
 
     protected <S extends Service> S getTransactionalService(Class<S> serviceClass) {

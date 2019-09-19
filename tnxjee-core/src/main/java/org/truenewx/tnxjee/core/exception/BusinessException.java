@@ -8,7 +8,6 @@ import org.truenewx.tnxjee.core.util.function.FuncHashCode;
  * 业务异常，可以绑定属性，默认未绑定属性
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class BusinessException extends SingleException {
 

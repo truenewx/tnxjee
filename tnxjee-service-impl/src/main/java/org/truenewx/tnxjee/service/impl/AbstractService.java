@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.exception.BusinessException;
 import org.truenewx.tnxjee.core.util.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.service.api.Service;
 
 /**
@@ -13,10 +15,14 @@ import org.truenewx.tnxjee.service.api.Service;
  * @since JDK 1.8
  * @param <T> 关联类型
  */
-public abstract class AbstractService<T> extends ServiceSupport implements Service {
+public abstract class AbstractService<T extends Entity> extends ServiceSupport implements Service {
 
     protected Class<T> getEntityClass() {
         return ClassUtil.getActualGenericType(getClass(), 0);
+    }
+
+    protected Repo<T> getRepo() {
+        return getRepo(getEntityClass());
     }
 
     /**
@@ -40,7 +46,7 @@ public abstract class AbstractService<T> extends ServiceSupport implements Servi
      * @param entity 实体
      * @throws 如果实体为null
      */
-    protected void assertNotNull(T entity) throws BusinessException {
+    protected void assertNotNull(T entity) {
         if (entity == null) {
             String code = getNonexistentErorrCode();
             if (code != null) {

@@ -7,7 +7,6 @@ import org.truenewx.tnxjee.core.Strings;
  * 仅作为标识，在进行异常处理时便于判断
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public abstract class SingleException extends HandleableException {
 
