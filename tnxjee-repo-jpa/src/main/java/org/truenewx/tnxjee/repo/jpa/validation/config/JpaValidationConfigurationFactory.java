@@ -169,7 +169,7 @@ public class JpaValidationConfigurationFactory
         if (schemaTemplate instanceof JpaSchemaTemplate) {
             JpaSchemaTemplate jst = (JpaSchemaTemplate) schemaTemplate;
             // 此时获取的repo必然为JpaRepo，否则说明代码有错
-            JpaRepo<?> repo = this.repoFactory.getRepoByEntityClass(entityClass);
+            JpaRepo<?> repo = (JpaRepo<?>) this.repoFactory.getRepoByEntityClass(entityClass);
             PersistentClass persistentClass = jst.getPersistentClass(repo.getEntityName());
             if (persistentClass != null) {
                 @SuppressWarnings("unchecked")
