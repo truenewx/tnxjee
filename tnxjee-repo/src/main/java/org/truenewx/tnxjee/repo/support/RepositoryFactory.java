@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.repo.support;
 
 import org.springframework.data.repository.Repository;
-import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.model.Entity;
 
 /**
  *

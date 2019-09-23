@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.repo.validation.config;
 
-import org.truenewx.tnxjee.model.definition.Model;
+import org.truenewx.tnxjee.model.Model;
 
 /**
  * 校验配置工厂

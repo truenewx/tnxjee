@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.tuple.Binate;
-import org.truenewx.tnxjee.model.definition.relation.Relation;
+import org.truenewx.tnxjee.model.relation.Relation;
 import org.truenewx.tnxjee.repo.RelationNumberIncreasable;
 import org.truenewx.tnxjee.repo.RelationRepo;
 

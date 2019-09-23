@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.exception;
+package org.truenewx.tnxjee.model.exception;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.BeanUtil;
@@ -16,10 +16,14 @@ public class BusinessException extends SingleException {
     private String code;
     private Object[] args;
 
-    public BusinessException(String code, Object... args) {
-        super(code);
+    public BusinessException(String code, String message, Object... args) {
+        super(message);
         this.code = code;
-        this.args = args == null ? new Object[0] : args;
+        this.args = args;
+    }
+
+    public BusinessException(String code, Object... args) {
+        this(code, code, args);
     }
 
     public String getCode() {
@@ -28,6 +32,15 @@ public class BusinessException extends SingleException {
 
     public Object[] getArgs() {
         return this.args;
+    }
+
+    /**
+     * 判断异常错误消息是否已经过本地化处理，经过本地化处理后方可呈现给用户查看
+     *
+     * @return 异常错误消息是否已经过本地化处理
+     */
+    public boolean isMessageLocalized() {
+        return !this.code.equals(getMessage());
     }
 
     /**

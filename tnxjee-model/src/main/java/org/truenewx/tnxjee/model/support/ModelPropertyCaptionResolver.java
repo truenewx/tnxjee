@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.definition.support;
+package org.truenewx.tnxjee.model.support;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.core.util.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.definition.Entity;
-import org.truenewx.tnxjee.model.definition.TransportModel;
+import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.TransportModel;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
 
 /**

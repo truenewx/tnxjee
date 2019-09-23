@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.repo.support;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.model.Entity;
 
 /**
  * 数据库模式访问模板

@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.repo.data;
 
 import java.util.List;
 
-import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.model.Entity;
 
 /**
  * 

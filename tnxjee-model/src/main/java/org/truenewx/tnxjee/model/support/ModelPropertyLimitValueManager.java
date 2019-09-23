@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.definition.support;
+package org.truenewx.tnxjee.model.support;
 
 import java.util.HashMap;
 import java.util.HashSet;

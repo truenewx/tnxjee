@@ -1,10 +1,10 @@
 package org.truenewx.tnxjee.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.exception.BusinessException;
 import org.truenewx.tnxjee.core.util.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.exception.BusinessException;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.service.api.Service;
 

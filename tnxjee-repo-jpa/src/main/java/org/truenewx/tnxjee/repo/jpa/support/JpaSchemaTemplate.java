@@ -16,7 +16,7 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
-import org.truenewx.tnxjee.model.definition.Entity;
+import org.truenewx.tnxjee.model.Entity;
 import org.truenewx.tnxjee.repo.support.SchemaTemplate;
 import org.truenewx.tnxjee.repo.util.RepoUtil;
 

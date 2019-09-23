@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.exception;
+package org.truenewx.tnxjee.model.exception;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.exception;
+package org.truenewx.tnxjee.model.exception;
 
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.BeanUtil;
@@ -16,25 +16,20 @@ public class FormatException extends SingleException {
     private static final long serialVersionUID = -7599751978935457915L;
 
     private Class<?> beanClass;
-    private String violationMessage;
 
-    public FormatException(Class<?> beanClass, String property, String violationMessage) {
-        super(violationMessage);
+    public FormatException(Class<?> beanClass, String property, String message) {
+        super(message);
         this.beanClass = beanClass;
         Assert.notNull(property, "property must be not null");
         this.property = property;
     }
 
-    public FormatException(String property, String violationMessage) {
-        this(null, property, violationMessage);
+    public FormatException(String property, String message) {
+        this(null, property, message);
     }
 
     public Class<?> getBeanClass() {
         return this.beanClass;
-    }
-
-    public String getViolationMessage() {
-        return this.violationMessage;
     }
 
     @Override
@@ -52,7 +47,7 @@ public class FormatException extends SingleException {
 
     @Override
     public int hashCode() {
-        Object[] array = { this.beanClass, this.violationMessage };
+        Object[] array = { this.beanClass, this.property, getMessage() };
         return FuncHashCode.INSTANCE.apply(array);
     }
 
@@ -66,6 +61,7 @@ public class FormatException extends SingleException {
         }
         FormatException other = (FormatException) obj;
         return BeanUtil.equals(this.beanClass, other.beanClass)
-                && BeanUtil.equals(this.violationMessage, other.violationMessage);
+                && BeanUtil.equals(this.property, other.property)
+                && BeanUtil.equals(getMessage(), other.getMessage());
     }
 }

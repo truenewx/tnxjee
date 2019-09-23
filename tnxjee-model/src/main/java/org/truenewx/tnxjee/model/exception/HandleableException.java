@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.exception;
+package org.truenewx.tnxjee.model.exception;
 
 /**
  * 可处理的异常<br/>

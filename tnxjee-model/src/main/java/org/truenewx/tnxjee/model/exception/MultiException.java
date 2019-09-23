@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.exception;
+package org.truenewx.tnxjee.model.exception;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;

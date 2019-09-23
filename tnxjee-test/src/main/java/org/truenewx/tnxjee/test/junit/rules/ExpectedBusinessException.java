@@ -4,9 +4,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.truenewx.tnxjee.core.exception.BusinessException;
-import org.truenewx.tnxjee.core.exception.MultiException;
-import org.truenewx.tnxjee.core.exception.SingleException;
+import org.truenewx.tnxjee.model.exception.BusinessException;
+import org.truenewx.tnxjee.model.exception.MultiException;
+import org.truenewx.tnxjee.model.exception.SingleException;
 import org.truenewx.tnxjee.test.annotation.TestBusinessException;
 
 /**

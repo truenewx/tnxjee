@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.definition;
+package org.truenewx.tnxjee.model;
 
 /**
  * 视图模型，用于视图层显示数据

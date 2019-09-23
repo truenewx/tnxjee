@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.service.api.unity;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.definition.unity.Unity;
+import org.truenewx.tnxjee.model.unity.Unity;
 import org.truenewx.tnxjee.service.api.Service;
 
 /**

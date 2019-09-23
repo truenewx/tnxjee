@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.definition;
+package org.truenewx.tnxjee.model;
 
 import java.io.Serializable;
 

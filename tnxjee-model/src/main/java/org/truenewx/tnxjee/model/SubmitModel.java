@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.definition;
+package org.truenewx.tnxjee.model;
 
 /**
  * 提交模型，用于视图层向逻辑层提交数据

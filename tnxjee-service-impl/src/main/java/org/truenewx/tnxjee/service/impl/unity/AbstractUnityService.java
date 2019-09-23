@@ -3,8 +3,8 @@ package org.truenewx.tnxjee.service.impl.unity;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.model.definition.SubmitModel;
-import org.truenewx.tnxjee.model.definition.unity.Unity;
+import org.truenewx.tnxjee.model.SubmitModel;
+import org.truenewx.tnxjee.model.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleUnityService;
