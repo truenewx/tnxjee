@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.repo.jpa.support;
 import java.io.Serializable;
 import java.util.Optional;
 
-import org.truenewx.tnxjee.model.unity.Unity;
+import org.truenewx.tnxjee.model.core.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
 
 /**

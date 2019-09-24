@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.repo.support;
 
-import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 
 /**

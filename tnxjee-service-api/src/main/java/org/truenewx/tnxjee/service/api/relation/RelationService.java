@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.service.api.relation;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.relation.Relation;
+import org.truenewx.tnxjee.model.core.relation.Relation;
 import org.truenewx.tnxjee.service.api.Service;
 
 /**

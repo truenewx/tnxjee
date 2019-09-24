@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.truenewx.tnxjee.model.Model;
+import org.truenewx.tnxjee.model.core.Model;
 import org.truenewx.tnxjee.repo.validation.rule.ValidationRule;
 
 /**

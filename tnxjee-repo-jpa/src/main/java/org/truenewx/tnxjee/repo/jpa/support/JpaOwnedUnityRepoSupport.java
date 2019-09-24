@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.model.unity.OwnedUnity;
+import org.truenewx.tnxjee.model.core.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityNumberIncreasable;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 

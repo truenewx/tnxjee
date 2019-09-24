@@ -3,8 +3,8 @@ package org.truenewx.tnxjee.service.impl.relation;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.model.SubmitModel;
-import org.truenewx.tnxjee.model.relation.Relation;
+import org.truenewx.tnxjee.model.core.SubmitModel;
+import org.truenewx.tnxjee.model.core.relation.Relation;
 import org.truenewx.tnxjee.repo.RelationRepo;
 import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
 import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;

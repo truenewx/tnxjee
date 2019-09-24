@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.service.api.unity;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.unity.Unity;
+import org.truenewx.tnxjee.model.core.unity.Unity;
 
 /**
  * 通过简单单体传递数据的单体业务逻辑校验器<br/>

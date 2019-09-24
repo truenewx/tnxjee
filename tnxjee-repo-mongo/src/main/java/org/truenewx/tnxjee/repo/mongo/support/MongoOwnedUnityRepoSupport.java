@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.truenewx.tnxjee.model.unity.OwnedUnity;
+import org.truenewx.tnxjee.model.core.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 
 /**

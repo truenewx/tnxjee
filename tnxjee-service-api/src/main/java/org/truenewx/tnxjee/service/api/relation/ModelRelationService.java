@@ -2,8 +2,8 @@ package org.truenewx.tnxjee.service.api.relation;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.SubmitModel;
-import org.truenewx.tnxjee.model.relation.Relation;
+import org.truenewx.tnxjee.model.core.SubmitModel;
+import org.truenewx.tnxjee.model.core.relation.Relation;
 
 /**
  * 基于传输模型的关系服务

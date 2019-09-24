@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.repo.data.DataProviderFactory;
 
 /**

@@ -2,8 +2,8 @@ package org.truenewx.tnxjee.service.api.unity;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.SubmitModel;
-import org.truenewx.tnxjee.model.unity.Unity;
+import org.truenewx.tnxjee.model.core.SubmitModel;
+import org.truenewx.tnxjee.model.core.unity.Unity;
 
 /**
  * 基于传输模型的单体服务

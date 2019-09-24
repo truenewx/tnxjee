@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.repo;
 
-import org.truenewx.tnxjee.model.Entity;
+import org.truenewx.tnxjee.model.core.Entity;
 
 /**
  * 数据访问仓库

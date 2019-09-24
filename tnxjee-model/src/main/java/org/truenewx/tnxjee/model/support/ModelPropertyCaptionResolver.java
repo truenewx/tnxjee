@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.core.util.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.Entity;
-import org.truenewx.tnxjee.model.TransportModel;
+import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.core.TransportModel;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
 
 /**

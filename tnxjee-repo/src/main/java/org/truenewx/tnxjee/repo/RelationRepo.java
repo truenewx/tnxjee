@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.repo;
 import java.io.Serializable;
 import java.util.Optional;
 
-import org.truenewx.tnxjee.model.relation.Relation;
+import org.truenewx.tnxjee.model.core.relation.Relation;
 
 /**
  * 关系数据访问仓库
