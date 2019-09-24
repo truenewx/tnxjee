@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.model.query;
 
+import org.springframework.util.Assert;
+
 /**
  * 分页查询条件。通过创建子类附带更多的查询条件
  *
@@ -16,9 +18,7 @@ public abstract class Querying {
     }
 
     public void setPaging(Paging paging) {
-        if (paging == null) { // 确保paging不为null
-            paging = new Paging();
-        }
+        Assert.notNull(paging, "paging must not be null");
         this.paging = paging;
     }
 
@@ -28,6 +28,10 @@ public abstract class Querying {
 
     public void setPageNo(int pageNo) {
         this.paging.setPageNo(pageNo);
+    }
+
+    public void setSort(QuerySort sort) {
+        this.paging.setSort(sort);
     }
 
     public boolean isTotalable() {
