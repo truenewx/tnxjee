@@ -69,4 +69,11 @@ public class Paging implements Serializable {
             this.pageSize = pageSize;
         }
     }
+
+    public void addOrder(String fieldName, Boolean desc) {
+        if (this.sort == null) {
+            this.sort = new QuerySort();
+        }
+        this.sort.addOrder(fieldName, desc);
+    }
 }

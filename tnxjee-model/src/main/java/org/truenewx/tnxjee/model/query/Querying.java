@@ -51,12 +51,7 @@ public abstract class Querying {
     }
 
     public void addOrder(String fieldName, Boolean desc) {
-        QuerySort sort = this.paging.getSort();
-        if (sort == null) {
-            sort = new QuerySort();
-            this.paging.setSort(sort);
-        }
-        sort.addOrder(fieldName, desc);
+        this.paging.addOrder(fieldName, desc);
     }
 
 }
