@@ -46,4 +46,13 @@ public abstract class Querying {
         this.listable = listable;
     }
 
+    public void addOrder(String fieldName, Boolean desc) {
+        QuerySort sort = this.paging.getSort();
+        if (sort == null) {
+            sort = new QuerySort();
+            this.paging.setSort(sort);
+        }
+        sort.addOrder(fieldName, desc);
+    }
+
 }
