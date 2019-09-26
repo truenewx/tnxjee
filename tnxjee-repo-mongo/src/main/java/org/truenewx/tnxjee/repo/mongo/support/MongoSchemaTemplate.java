@@ -17,7 +17,7 @@ import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 /**
  * MongoDB的数据库模式访问模板
- * 
+ *
  * @author jianglei
  */
 public class MongoSchemaTemplate implements SchemaTemplate {
@@ -52,6 +52,31 @@ public class MongoSchemaTemplate implements SchemaTemplate {
     @Override
     public <T extends Entity> T find(Class<T> entityClass, Serializable key) {
         return this.mongoOperations.findById(key, entityClass);
+    }
+
+    @Override
+    public <T extends Entity> List<T> findAll(Class<T> entityClass) {
+        return this.mongoOperations.findAll(entityClass);
+    }
+
+    @Override
+    public long countAll(Class<?> entityClass) {
+        return this.mongoOperations.count(new Query(), entityClass);
+    }
+
+    @Override
+    public <T extends Entity> T save(T entity) {
+        return this.mongoOperations.save(entity);
+    }
+
+    @Override
+    public void delete(Entity entity) {
+        this.mongoOperations.remove(entity);
+    }
+
+    @Override
+    public void deleteAll(Class<?> entityClass) {
+        this.mongoOperations.remove(new Query(), entityClass);
     }
 
     public MongoOperations getMongoOperations() {

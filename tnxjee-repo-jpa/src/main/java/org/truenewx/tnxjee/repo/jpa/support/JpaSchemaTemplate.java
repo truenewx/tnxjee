@@ -61,6 +61,32 @@ public class JpaSchemaTemplate implements SchemaTemplate {
         return this.entityManager.find(entityClass, key);
     }
 
+    @Override
+    public <T extends Entity> List<T> findAll(Class<T> entityClass) {
+        return list("from " + entityClass.getName());
+    }
+
+    @Override
+    public long countAll(Class<?> entityClass) {
+        return count("select count(*) from " + entityClass.getName());
+    }
+
+    @Override
+    public <T extends Entity> T save(T entity) {
+        this.entityManager.persist(entity);
+        return entity;
+    }
+
+    @Override
+    public void delete(Entity entity) {
+        this.entityManager.remove(entity);
+    }
+
+    @Override
+    public void deleteAll(Class<?> entityClass) {
+        update("delete from " + entityClass.getName());
+    }
+
     public EntityManager getEntityManager() {
         return this.entityManager;
     }

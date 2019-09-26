@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.core.Entity;
@@ -22,15 +21,15 @@ import org.truenewx.tnxjee.repo.support.RepoFactory;
  * 单元测试数据提供者工厂
  */
 @Component
-public class TestDataProviderFactory implements DataProviderFactory, ApplicationContextAware {
+public class TestDataProviderFactory implements DataProviderFactory, ContextInitializedBean {
     @Autowired
     private RepoFactory repoFacotory;
     private Map<Class<?>, DataProvider<?>> providers = new HashMap<>();
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void afterInitialized(ApplicationContext context) throws Exception {
         @SuppressWarnings("rawtypes")
-        Map<String, DataProvider> beans = applicationContext.getBeansOfType(DataProvider.class);
+        Map<String, DataProvider> beans = context.getBeansOfType(DataProvider.class);
         beans.values().forEach(provider -> {
             Class<?> entityClass = ClassUtil.getActualGenericType(provider.getClass(),
                     DataProvider.class, 0);
@@ -38,6 +37,7 @@ public class TestDataProviderFactory implements DataProviderFactory, Application
         });
     }
 
+    @Override
     public void init(Class<?>... entityClasses) {
         if (ArrayUtils.isEmpty(entityClasses)) {
             this.providers.values().forEach(provider -> {
@@ -68,6 +68,7 @@ public class TestDataProviderFactory implements DataProviderFactory, Application
         return null;
     }
 
+    @Override
     public void clear(Class<?>... entityClasses) {
         if (ArrayUtils.isEmpty(entityClasses)) {
             this.providers.values().forEach(provider -> {

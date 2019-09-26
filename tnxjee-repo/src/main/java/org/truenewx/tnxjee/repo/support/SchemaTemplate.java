@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo.support;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.truenewx.tnxjee.model.core.Entity;
 
@@ -30,5 +31,15 @@ public interface SchemaTemplate {
      * @return 实体对象
      */
     <T extends Entity> T find(Class<T> entityClass, Serializable key);
+
+    <T extends Entity> List<T> findAll(Class<T> entityClass);
+
+    long countAll(Class<?> entityClass);
+
+    <T extends Entity> T save(T entity);
+
+    void delete(Entity entity);
+
+    void deleteAll(Class<?> entityClass);
 
 }

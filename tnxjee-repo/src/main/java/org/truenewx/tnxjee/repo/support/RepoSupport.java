@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.repo.support;
 import java.lang.reflect.Field;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.Repository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.repo.Repo;
@@ -31,7 +31,7 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
         return (Class<T>) ClassUtil.getActualGenericType(getClass(), 0);
     }
 
-    protected <R extends CrudRepository<T, ?>> R getRepository() {
+    protected <R extends Repository<T, ?>> R getRepository() {
         return this.repositoryFactory.getRepositoryByEntityClass(getEntityClass());
     }
 
@@ -41,22 +41,22 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
 
     @Override
     public <S extends T> S save(S entity) {
-        return getRepository().save(entity);
+        return getSchemaTemplate().save(entity);
     }
 
     @Override
     public void delete(T entity) {
-        getRepository().delete(entity);
+        getSchemaTemplate().delete(entity);
     }
 
     @Override
     public long count() {
-        return getRepository().count();
+        return getSchemaTemplate().countAll(getEntityClass());
     }
 
     @Override
     public Iterable<T> findAll() {
-        return getRepository().findAll();
+        return getSchemaTemplate().findAll(getEntityClass());
     }
 
     protected Class<?> getPropertyClass(String propertyName) {
