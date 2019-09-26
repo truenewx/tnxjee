@@ -61,6 +61,7 @@ public class TransactionalAutoProxyCreator
         this.beanFactory = beanFactory;
     }
 
+    @Autowired
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
