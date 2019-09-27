@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.repo.jpa.support;
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.model.core.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
 
@@ -21,7 +22,8 @@ public abstract class JpaUnityRepoSupport<T extends Unity<K>, K extends Serializ
 
     @Override
     public Optional<T> findById(K id) {
-        return Optional.ofNullable(find(id));
+        CrudRepository<T, K> repository = getRepository();
+        return repository.findById(id);
     }
 
 }

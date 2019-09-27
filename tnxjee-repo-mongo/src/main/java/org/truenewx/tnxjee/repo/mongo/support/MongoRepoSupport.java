@@ -3,8 +3,13 @@ package org.truenewx.tnxjee.repo.mongo.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
@@ -19,6 +24,15 @@ import org.truenewx.tnxjee.repo.support.RepoSupport;
  * @author jianglei
  */
 public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
+        MongoOperations mongoOperations = getSchemaTemplate().getMongoOperations();
+        MongoEntityInformation<T, ?> metadata = new MongoRepositoryFactory(mongoOperations)
+                .getEntityInformation(getEntityClass());
+        return (R) new SimpleMongoRepository<>(metadata, mongoOperations);
+    }
 
     @Override
     protected MongoSchemaTemplate getSchemaTemplate() {

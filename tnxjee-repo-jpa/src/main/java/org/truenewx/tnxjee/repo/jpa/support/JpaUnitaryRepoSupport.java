@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.core.UnitaryEntity;
@@ -20,7 +21,8 @@ public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extend
         implements UnitaryEntityRepo<T, K>, UnitaryEntityNumberIncreasable<T, K> {
 
     protected T find(K key) {
-        return getSchemaTemplate().find(getEntityClass(), key);
+        CrudRepository<T, K> repository = getRepository();
+        return repository.findById(key).orElse(null);
     }
 
     @Override

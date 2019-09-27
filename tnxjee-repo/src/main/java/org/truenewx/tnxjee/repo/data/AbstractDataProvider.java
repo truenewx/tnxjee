@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.core.Entity;
-import org.truenewx.tnxjee.repo.support.SchemaTemplate;
-import org.truenewx.tnxjee.repo.support.SchemaTemplateFactory;
+import org.truenewx.tnxjee.repo.Repo;
+import org.truenewx.tnxjee.repo.support.RepoFactory;
 
 /**
  * 抽象的数据提供者
@@ -15,10 +16,10 @@ import org.truenewx.tnxjee.repo.support.SchemaTemplateFactory;
  */
 public abstract class AbstractDataProvider<T extends Entity> implements DataProvider<T> {
     @Autowired
-    private SchemaTemplateFactory schemaTemplateFactory;
+    private RepoFactory repoFactory;
 
-    private SchemaTemplate getSchemaTemplate() {
-        return this.schemaTemplateFactory.getSchemaTemplate(getEntityClass());
+    private <R extends Repo<T>> R getRepo() {
+        return this.repoFactory.getRepoByEntityClass(getEntityClass());
     }
 
     private Class<T> getEntityClass() {
@@ -27,21 +28,21 @@ public abstract class AbstractDataProvider<T extends Entity> implements DataProv
 
     @Override
     public List<T> getDataList(DataPool pool) {
-        if (getSchemaTemplate().countAll(getEntityClass()) == 0) {
+        if (getRepo().count() == 0) {
             init(pool);
         }
-        return getSchemaTemplate().findAll(getEntityClass());
+        return CollectionUtil.toList(getRepo().findAll());
     }
 
     protected final void save(T entity) {
-        getSchemaTemplate().save(entity);
+        getRepo().save(entity);
     }
 
     protected abstract void init(DataPool pool);
 
     @Override
     public void clear() {
-        getSchemaTemplate().deleteAll(getEntityClass());
+        getRepo().deleteAll();
     }
 
 }

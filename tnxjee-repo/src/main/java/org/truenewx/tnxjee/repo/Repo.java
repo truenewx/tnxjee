@@ -27,6 +27,11 @@ public interface Repo<T extends Entity> {
     void delete(T entity);
 
     /**
+     * 删除所有实体对象，请谨慎使用
+     */
+    void deleteAll();
+
+    /**
      * 获取所有实体的总数
      *
      * @return 所有实体的总数

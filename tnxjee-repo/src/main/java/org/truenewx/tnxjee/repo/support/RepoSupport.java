@@ -32,8 +32,17 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
     }
 
     protected <R extends CrudRepository<T, ?>> R getRepository() {
-        return this.repositoryFactory.getRepositoryByEntityClass(getEntityClass());
+        R repository = this.repositoryFactory.getRepositoryByEntityClass(getEntityClass());
+        if (repository == null) {
+            repository = buildDefaultRepository();
+            if (repository != null) {
+                this.repositoryFactory.putRepositoryIfAbsent(getEntityClass(), repository);
+            }
+        }
+        return repository;
     }
+
+    protected abstract <R extends CrudRepository<T, ?>> R buildDefaultRepository();
 
     protected SchemaTemplate getSchemaTemplate() {
         return this.schemaTemplateFactory.getSchemaTemplate(getEntityClass());
@@ -41,22 +50,27 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
 
     @Override
     public <S extends T> S save(S entity) {
-        return getSchemaTemplate().save(entity);
+        return getRepository().save(entity);
     }
 
     @Override
     public void delete(T entity) {
-        getSchemaTemplate().delete(entity);
+        getRepository().delete(entity);
+    }
+
+    @Override
+    public void deleteAll() {
+        getRepository().deleteAll();
     }
 
     @Override
     public long count() {
-        return getSchemaTemplate().countAll(getEntityClass());
+        return getRepository().count();
     }
 
     @Override
     public Iterable<T> findAll() {
-        return getSchemaTemplate().findAll(getEntityClass());
+        return getRepository().findAll();
     }
 
     protected Class<?> getPropertyClass(String propertyName) {

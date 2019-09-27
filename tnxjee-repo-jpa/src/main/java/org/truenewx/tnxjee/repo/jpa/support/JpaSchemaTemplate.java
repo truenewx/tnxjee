@@ -1,10 +1,8 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,8 +13,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.core.Entity;
@@ -32,7 +28,6 @@ public class JpaSchemaTemplate implements SchemaTemplate {
 
     private String schema = RepoUtil.DEFAULT_SCHEMA_NAME;
     private EntityManager entityManager;
-    private Map<Class<? extends Entity>, JpaEntityInformation<? extends Entity, ?>> entityInformationMapping = new HashMap<>();
     private boolean nativeMode;
 
     public JpaSchemaTemplate(EntityManager entityManager) {
@@ -58,55 +53,6 @@ public class JpaSchemaTemplate implements SchemaTemplate {
             entityClasses.add(type.getJavaType());
         });
         return entityClasses;
-    }
-
-    @Override
-    public <T extends Entity> T find(Class<T> entityClass, Serializable key) {
-        return this.entityManager.find(entityClass, key);
-    }
-
-    @Override
-    public <T extends Entity> List<T> findAll(Class<T> entityClass) {
-        return list("from " + entityClass.getName());
-    }
-
-    @Override
-    public long countAll(Class<?> entityClass) {
-        return count("select count(*) from " + entityClass.getName());
-    }
-
-    @Override
-    public <T extends Entity> T save(T entity) {
-        if (isNew(entity)) {
-            this.entityManager.persist(entity);
-        } else {
-            entity = this.entityManager.merge(entity);
-        }
-        flush(); // 此处如果不flush，则保存的数据未同步至数据库，在提交事务之前，如果紧接着通过条件查询实体将得到修改之前的实体
-        return entity;
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean isNew(Entity entity) {
-        Class<? extends Entity> entityClass = entity.getClass();
-        JpaEntityInformation<? extends Entity, ?> entityInformation = this.entityInformationMapping
-                .get(entityClass);
-        if (entityInformation == null) {
-            entityInformation = JpaEntityInformationSupport.getEntityInformation(entityClass,
-                    this.entityManager);
-            this.entityInformationMapping.put(entityClass, entityInformation);
-        }
-        return ((JpaEntityInformation<Entity, ?>) entityInformation).isNew(entity);
-    }
-
-    @Override
-    public void delete(Entity entity) {
-        this.entityManager.remove(entity);
-    }
-
-    @Override
-    public void deleteAll(Class<?> entityClass) {
-        update("delete from " + entityClass.getName());
     }
 
     public EntityManager getEntityManager() {

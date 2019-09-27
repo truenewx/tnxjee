@@ -1,6 +1,5 @@
 package org.truenewx.tnxjee.repo.mongo.support;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,36 +46,6 @@ public class MongoSchemaTemplate implements SchemaTemplate {
                     entityClasses.add(entity.getType());
                 });
         return entityClasses;
-    }
-
-    @Override
-    public <T extends Entity> T find(Class<T> entityClass, Serializable key) {
-        return this.mongoOperations.findById(key, entityClass);
-    }
-
-    @Override
-    public <T extends Entity> List<T> findAll(Class<T> entityClass) {
-        return this.mongoOperations.findAll(entityClass);
-    }
-
-    @Override
-    public long countAll(Class<?> entityClass) {
-        return this.mongoOperations.count(new Query(), entityClass);
-    }
-
-    @Override
-    public <T extends Entity> T save(T entity) {
-        return this.mongoOperations.save(entity);
-    }
-
-    @Override
-    public void delete(Entity entity) {
-        this.mongoOperations.remove(entity);
-    }
-
-    @Override
-    public void deleteAll(Class<?> entityClass) {
-        this.mongoOperations.remove(new Query(), entityClass);
     }
 
     public MongoOperations getMongoOperations() {

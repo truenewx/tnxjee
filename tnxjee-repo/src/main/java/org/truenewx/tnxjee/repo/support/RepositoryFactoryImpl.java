@@ -109,6 +109,12 @@ public class RepositoryFactoryImpl
     }
 
     @Override
+    public <T extends Entity, R extends Repository<T, ?>> void putRepositoryIfAbsent(
+            Class<T> entityClass, R repository) {
+        this.repositoryMapping.putIfAbsent(entityClass, repository);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <R extends Repository<?, ?>> R getRepositoryByRepositoryClass(Class<R> repositoryClass) {
         R repository = (R) this.repositoryMapping.get(repositoryClass);

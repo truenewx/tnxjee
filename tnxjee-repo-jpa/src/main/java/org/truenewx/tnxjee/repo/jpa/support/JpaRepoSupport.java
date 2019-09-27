@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.core.Entity;
@@ -36,6 +39,13 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
 
     @Autowired
     private ModelPropertyLimitValueManager propertyLimitValueManager;
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
+        return (R) new SimpleJpaRepository<T, Serializable>(getEntityClass(),
+                getSchemaTemplate().getEntityManager());
+    }
 
     @Override
     protected JpaSchemaTemplate getSchemaTemplate() {
