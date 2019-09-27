@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -54,48 +55,50 @@ public abstract class JpaDataSourceConfigSupport implements ApplicationContextAw
         return null;
     }
 
-    public JpaDataSourceProperties dataSourceProperties() {
+    public DataSourceProperties dataSourceProperties() {
         return new JpaDataSourceProperties();
     }
 
     public DataSource dataSource() {
-        XADataSource xaDataSource = xaDataSource();
-        if (xaDataSource == null) {
-            return DataSourceBuilder.create().build();
+        if (isJta()) {
+            return buildDataSource(xaDataSource());
         } else {
-            return buildDataSource(xaDataSource);
+            return DataSourceBuilder.create().build();
         }
     }
 
     protected XADataSource xaDataSource() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     protected DataSource buildDataSource(XADataSource xaDataSource) {
         AtomikosDataSourceBean dataSource = new AtomikosDataSourceBean();
         dataSource.setXaDataSource(xaDataSource);
         dataSource.setUniqueResourceName(getDataSourceBeanName());
-        JpaDataSourceProperties properties = dataSourceProperties();
-        if (properties.getMaxIdleTime() != null) {
-            dataSource.setMaxIdleTime(properties.getMaxIdleTime());
-        }
-        if (properties.getMaxLifetime() != null) {
-            dataSource.setMaxLifetime(properties.getMaxLifetime());
-        }
-        if (properties.getMaxPoolSize() != null) {
-            dataSource.setMaxPoolSize(properties.getMaxPoolSize());
-        }
-        if (properties.getMinPoolSize() != null) {
-            dataSource.setMinPoolSize(properties.getMinPoolSize());
-        }
-        if (properties.getPoolSize() != null) {
-            dataSource.setPoolSize(properties.getPoolSize());
-        }
-        if (properties.getReapTimeout() != null) {
-            dataSource.setReapTimeout(properties.getReapTimeout());
-        }
-        if (properties.getTestQuery() != null) {
-            dataSource.setTestQuery(properties.getTestQuery());
+        DataSourceProperties dataSourceProperties = dataSourceProperties();
+        if (dataSourceProperties instanceof JpaDataSourceProperties) {
+            JpaDataSourceProperties properties = (JpaDataSourceProperties) dataSourceProperties;
+            if (properties.getMaxIdleTime() != null) {
+                dataSource.setMaxIdleTime(properties.getMaxIdleTime());
+            }
+            if (properties.getMaxLifetime() != null) {
+                dataSource.setMaxLifetime(properties.getMaxLifetime());
+            }
+            if (properties.getMaxPoolSize() != null) {
+                dataSource.setMaxPoolSize(properties.getMaxPoolSize());
+            }
+            if (properties.getMinPoolSize() != null) {
+                dataSource.setMinPoolSize(properties.getMinPoolSize());
+            }
+            if (properties.getPoolSize() != null) {
+                dataSource.setPoolSize(properties.getPoolSize());
+            }
+            if (properties.getReapTimeout() != null) {
+                dataSource.setReapTimeout(properties.getReapTimeout());
+            }
+            if (properties.getTestQuery() != null) {
+                dataSource.setTestQuery(properties.getTestQuery());
+            }
         }
         return dataSource;
     }
