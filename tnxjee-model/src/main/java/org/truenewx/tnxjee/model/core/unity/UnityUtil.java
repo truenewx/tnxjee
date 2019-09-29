@@ -32,6 +32,51 @@ public class UnityUtil {
     }
 
     /**
+     * 获取指定单体集合的整型id数组
+     *
+     * @param unities 单体集合
+     * @return id数组
+     */
+    public static int[] getIntIdArray(Collection<? extends Unity<Integer>> unities) {
+        int[] idArray = new int[unities.size()];
+        int i = 0;
+        for (Unity<Integer> unity : unities) {
+            idArray[i++] = unity.getId();
+        }
+        return idArray;
+    }
+
+    /**
+     * 获取指定单体集合的长整型id数组
+     *
+     * @param unities 单体集合
+     * @return id数组
+     */
+    public static long[] getLongIdArray(Collection<? extends Unity<Long>> unities) {
+        long[] idArray = new long[unities.size()];
+        int i = 0;
+        for (Unity<Long> unity : unities) {
+            idArray[i++] = unity.getId();
+        }
+        return idArray;
+    }
+
+    /**
+     * 获取指定单体集合的字符串id数组
+     *
+     * @param unities 单体集合
+     * @return id数组
+     */
+    public static String[] getStringIdArray(Collection<? extends Unity<String>> unities) {
+        String[] idArray = new String[unities.size()];
+        int i = 0;
+        for (Unity<String> unity : unities) {
+            idArray[i++] = unity.getId();
+        }
+        return idArray;
+    }
+
+    /**
      * 判断指定单体集合中是否包含指定id的单体
      *
      * @param unities 单体集合

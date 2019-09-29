@@ -2,7 +2,6 @@ package org.truenewx.tnxjee.core.version;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @since JDK 1.8
  */
 @Component
-@PropertySource("classpath:maven.properties")
 @ConfigurationProperties(prefix = "project")
 public class MavenVersionReader extends AbstractVersionReader {
 

@@ -3,10 +3,12 @@ package org.truenewx.tnxjee.core.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -162,6 +164,24 @@ public class CollectionUtil {
         return false;
     }
 
+    public static boolean equals(Collection<?> collection, Object[] array) {
+        if (collection == null && array == null) {
+            return true;
+        }
+        if (collection == null || array == null) {
+            return false;
+        }
+        if (collection.size() != array.length) {
+            return false;
+        }
+        for (Object obj : array) {
+            if (!collection.contains(obj)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * 将指定数据中的所有元素添加到指定集合中
      *
@@ -269,6 +289,17 @@ public class CollectionUtil {
             });
             return list;
         }
+    }
+
+    public static <T> Set<T> toSet(T[] array) {
+        if (array == null) {
+            return null;
+        }
+        Set<T> set = new HashSet<>();
+        for (T obj : array) {
+            set.add(obj);
+        }
+        return set;
     }
 
     public static <K, V> Map<K, V> clone(Map<K, V> map) {
