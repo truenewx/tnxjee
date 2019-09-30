@@ -56,7 +56,7 @@ public abstract class JpaDataSourceConfigSupport implements ApplicationContextAw
     }
 
     public DataSourceProperties dataSourceProperties() {
-        return new JpaDataSourceProperties();
+        return new DataSourceProperties();
     }
 
     public DataSource dataSource() {
@@ -75,31 +75,6 @@ public abstract class JpaDataSourceConfigSupport implements ApplicationContextAw
         AtomikosDataSourceBean dataSource = new AtomikosDataSourceBean();
         dataSource.setXaDataSource(xaDataSource);
         dataSource.setUniqueResourceName(getDataSourceBeanName());
-        DataSourceProperties dataSourceProperties = dataSourceProperties();
-        if (dataSourceProperties instanceof JpaDataSourceProperties) {
-            JpaDataSourceProperties properties = (JpaDataSourceProperties) dataSourceProperties;
-            if (properties.getMaxIdleTime() != null) {
-                dataSource.setMaxIdleTime(properties.getMaxIdleTime());
-            }
-            if (properties.getMaxLifetime() != null) {
-                dataSource.setMaxLifetime(properties.getMaxLifetime());
-            }
-            if (properties.getMaxPoolSize() != null) {
-                dataSource.setMaxPoolSize(properties.getMaxPoolSize());
-            }
-            if (properties.getMinPoolSize() != null) {
-                dataSource.setMinPoolSize(properties.getMinPoolSize());
-            }
-            if (properties.getPoolSize() != null) {
-                dataSource.setPoolSize(properties.getPoolSize());
-            }
-            if (properties.getReapTimeout() != null) {
-                dataSource.setReapTimeout(properties.getReapTimeout());
-            }
-            if (properties.getTestQuery() != null) {
-                dataSource.setTestQuery(properties.getTestQuery());
-            }
-        }
         return dataSource;
     }
 
