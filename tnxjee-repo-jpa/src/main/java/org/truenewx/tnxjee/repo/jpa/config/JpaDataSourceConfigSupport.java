@@ -71,7 +71,7 @@ public abstract class JpaDataSourceConfigSupport implements ApplicationContextAw
         throw new UnsupportedOperationException();
     }
 
-    protected DataSource buildDataSource(XADataSource xaDataSource) {
+    private DataSource buildDataSource(XADataSource xaDataSource) {
         AtomikosDataSourceBean dataSource = new AtomikosDataSourceBean();
         dataSource.setXaDataSource(xaDataSource);
         dataSource.setUniqueResourceName(getDataSourceBeanName());
