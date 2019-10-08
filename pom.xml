@@ -89,11 +89,6 @@
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-repo-hibernate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo-jpa</artifactId>
                 <version>${project.version}</version>
             </dependency>
