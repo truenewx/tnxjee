@@ -8,11 +8,15 @@
         <version>3.0.0</version>
     </parent>
     <groupId>org.truenewx.tnxjee</groupId>
-    <artifactId>tnxjee-web-controller</artifactId>
+    <artifactId>tnxjee-web-view</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-service-api</artifactId>
+            <artifactId>tnxjee-web-controller</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yahoo.platform.yui</groupId>
+            <artifactId>yuicompressor</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -24,8 +28,8 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
         </dependency>
     </dependencies>
 </project>

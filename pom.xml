@@ -22,7 +22,7 @@
         <module>tnxjee-service-impl</module>
         <module>tnxjee-test</module>
         <module>tnxjee-web-controller</module>
-        <module>tnxjee-web-servlet</module>
+        <module>tnxjee-web-view</module>
     </modules>
     <organization>
         <name>truenewx</name>
@@ -120,7 +120,7 @@
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-web-servlet</artifactId>
+                <artifactId>tnxjee-web-view</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -152,6 +152,17 @@
                 <groupId>de.bwaldvogel</groupId>
                 <artifactId>mongo-java-server</artifactId>
                 <version>1.18.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yahoo.platform.yui</groupId>
+                <artifactId>yuicompressor</artifactId>
+                <version>2.4.8</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api</artifactId>
+                <version>2.3.3</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
