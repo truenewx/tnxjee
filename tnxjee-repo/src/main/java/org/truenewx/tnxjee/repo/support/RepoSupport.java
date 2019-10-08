@@ -26,9 +26,10 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
      *
      * @return 实体类型
      */
-    @SuppressWarnings("unchecked")
     protected Class<T> getEntityClass() {
-        return (Class<T>) ClassUtil.getActualGenericType(getClass(), 0);
+        // 用指定类型的局部变量，以更好地类型转换，直接类型转换返回在IDEA中会编译失败
+        Class<T> entityClass = ClassUtil.getActualGenericType(getClass(), 0);
+        return entityClass;
     }
 
     protected <R extends CrudRepository<T, ?>> R getRepository() {
