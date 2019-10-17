@@ -5,8 +5,8 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
-import org.truenewx.tnxjee.model.exception.FormatException;
-import org.truenewx.tnxjee.model.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.FormatException;
+import org.truenewx.tnxjee.service.api.exception.SingleException;
 
 /**
  * 格式异常消息解决器

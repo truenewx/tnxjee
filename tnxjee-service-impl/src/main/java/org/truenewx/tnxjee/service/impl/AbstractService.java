@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.core.Entity;
-import org.truenewx.tnxjee.model.exception.BusinessException;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.service.api.Service;
+import org.truenewx.tnxjee.service.api.exception.BusinessException;
 
 /**
  * 抽象服务

@@ -5,8 +5,8 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
-import org.truenewx.tnxjee.model.exception.BusinessException;
-import org.truenewx.tnxjee.model.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.BusinessException;
+import org.truenewx.tnxjee.service.api.exception.SingleException;
 
 /**
  * Spring的业务异常消息解决器

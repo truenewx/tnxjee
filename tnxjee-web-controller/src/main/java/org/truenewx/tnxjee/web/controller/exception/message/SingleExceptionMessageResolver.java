@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.web.controller.exception.message;
 
 import java.util.Locale;
 
-import org.truenewx.tnxjee.model.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.SingleException;
 
 /**
  * 单异常消息解决器

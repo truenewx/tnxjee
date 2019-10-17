@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
-import org.truenewx.tnxjee.model.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.SingleException;
 
 /**
  * 复合的单异常消息解决器

@@ -8,8 +8,8 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.model.exception.MultiException;
-import org.truenewx.tnxjee.model.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.MultiException;
+import org.truenewx.tnxjee.service.api.exception.SingleException;
 import org.truenewx.tnxjee.web.controller.exception.message.SingleExceptionMessageResolver;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;

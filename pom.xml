@@ -20,7 +20,9 @@
         <module>tnxjee-repo-mongo</module>
         <module>tnxjee-service-api</module>
         <module>tnxjee-service-impl</module>
-        <module>tnxjee-test</module>
+        <module>tnxjee-test-core</module>
+        <module>tnxjee-test-repo</module>
+        <module>tnxjee-test-service</module>
         <module>tnxjee-web-controller</module>
         <module>tnxjee-web-view</module>
     </modules>
@@ -109,9 +111,18 @@
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-test</artifactId>
+                <artifactId>tnxjee-test-core</artifactId>
                 <version>${project.version}</version>
-                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.truenewx.tnxjee</groupId>
+                <artifactId>tnxjee-test-repo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.truenewx.tnxjee</groupId>
+                <artifactId>tnxjee-test-service</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
