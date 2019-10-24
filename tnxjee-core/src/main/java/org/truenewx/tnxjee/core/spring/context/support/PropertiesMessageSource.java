@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.truenewx.tnxjee.core.Strings;
@@ -17,25 +19,22 @@ import org.truenewx.tnxjee.core.spring.context.MessagesSource;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
- * 基于资源包属性集的消息来源
+ * 属性消息来源
  *
  * @author jianglei
- * @since JDK 1.8
  */
-public class ReloadableResourceBundleMessageSource
-        extends org.springframework.context.support.ReloadableResourceBundleMessageSource
+public class PropertiesMessageSource extends ReloadableResourceBundleMessageSource
         implements MessagesSource {
 
     private static String PROPERTIES_SUFFIX = ".properties";
+
+    @Autowired
+    private Environment environment;
     private ResourcePatternResolver resourcePatternResolver;
     private Locale[] locales;
 
-    public ReloadableResourceBundleMessageSource(Locale[] locales) {
+    public PropertiesMessageSource(Locale... locales) {
         this.locales = locales;
-    }
-
-    public ReloadableResourceBundleMessageSource() {
-        this(new Locale[0]);
     }
 
     @Autowired
@@ -73,6 +72,15 @@ public class ReloadableResourceBundleMessageSource
             }
         }
         super.setBasenames(set.toArray(new String[set.size()]));
+    }
+
+    @Override
+    protected String getMessageInternal(String code, Object[] args, Locale locale) {
+        String message = super.getMessageInternal(code, args, locale);
+        if (message == null || message.equals(code)) {
+            message = this.environment.getProperty(code, code);
+        }
+        return message;
     }
 
     @Override

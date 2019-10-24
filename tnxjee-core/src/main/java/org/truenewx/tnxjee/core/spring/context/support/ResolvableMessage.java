@@ -3,10 +3,9 @@ package org.truenewx.tnxjee.core.spring.context.support;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 /**
- * 可解析的消息，简化的默认消息资源可解析实现
+ * 可解决的消息，简化的默认消息资源可解析实现
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class ResolvableMessage extends DefaultMessageSourceResolvable {
 

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.context.MessagesSource;
-import org.truenewx.tnxjee.core.spring.context.support.ReloadableResourceBundleMessageSource;
+import org.truenewx.tnxjee.core.spring.context.support.PropertiesMessageSource;
 
 /**
  * 基于资源绑定属性文件的国家级区划来源实现
@@ -30,7 +30,7 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
 
     @Override
     public void setBasename(String basename) {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        PropertiesMessageSource messageSource = new PropertiesMessageSource();
         messageSource.setBasenames(basename);
         this.messagesSource = messageSource;
     }
