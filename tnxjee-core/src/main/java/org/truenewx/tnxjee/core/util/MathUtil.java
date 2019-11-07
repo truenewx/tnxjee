@@ -134,6 +134,17 @@ public class MathUtil {
         }
     }
 
+    public static Long parseLongObject(String s, Long defaultValue) {
+        if (StringUtils.isBlank(s)) {
+            return defaultValue;
+        }
+        try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     /**
      * 以指定分隔符拆分指定字符串，并解析为长整数数组
      *
@@ -205,13 +216,17 @@ public class MathUtil {
     }
 
     public static Integer parseInteger(String s) {
+        return parseInteger(s, null);
+    }
+
+    public static Integer parseInteger(String s, Integer defaultValue) {
         if (StringUtils.isBlank(s)) {
-            return null;
+            return defaultValue;
         }
         try {
             return Integer.valueOf(s);
         } catch (NumberFormatException e) {
-            return null;
+            return defaultValue;
         }
     }
 

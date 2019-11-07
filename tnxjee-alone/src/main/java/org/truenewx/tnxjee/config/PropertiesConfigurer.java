@@ -17,7 +17,7 @@ public class PropertiesConfigurer implements PropertiesProvider {
         return this.properties;
     }
 
-    public void setProperties(final Map<String, String> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
