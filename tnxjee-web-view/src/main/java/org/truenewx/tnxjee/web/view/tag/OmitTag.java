@@ -26,12 +26,12 @@ public class OmitTag extends ThymeleafTagSupport {
     protected void doProcess(ITemplateContext context, ThymeleafElementTag tag,
             IElementTagStructureHandler handler) {
         String value = tag.getAttributeValue("value");
-        int size = tag.getAttributeValue("size", 0);
         if (StringUtils.isNotEmpty(value)) {
+            int size = tag.getAttributeValue("size", 0);
             if (0 < size && size < value.length()) {
                 value = value.substring(0, size - 1) + REPLACE_OPERATOR;
             }
-            handler.setBody(value, false);
         }
+        handler.replaceWith(value, false);
     }
 }
