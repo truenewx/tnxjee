@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.web.view.thymeleaf.processor;
 
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.AttributeNames;
 import org.thymeleaf.engine.ElementNames;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.model.IProcessableElementTag;
@@ -10,54 +11,54 @@ import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.processor.element.MatchingAttributeName;
 import org.thymeleaf.processor.element.MatchingElementName;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.truenewx.tnxjee.web.view.thymeleaf.dialect.ThymeleafDialect;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ProcessableElementTag;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTag;
 
 /**
- * 抽象的元素标签处理器
+ * Thymeleaf的元素标签处理器
  */
-public abstract class AbstractElementTagProcessor extends AbstractProcessor
+public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
         implements IElementTagProcessor, ThymeleafProcessor {
 
     public static final int PRECEDENCE = 1000;
 
-    private String dialectPrefix;
     private MatchingElementName matchingElementName;
+    private MatchingAttributeName matchingAttributeName;
 
-    public AbstractElementTagProcessor(String dialectPrefix, String elementName) {
+    public ThymeleafElementTagProcessor() {
         super(TemplateMode.HTML, PRECEDENCE);
 
-        this.dialectPrefix = dialectPrefix;
         TemplateMode templateMode = getTemplateMode();
-        if (elementName != null) {
+        String dialectPrefix = getDialectPrefix();
+        String tagName = getTagName();
+        if (tagName != null) {
             this.matchingElementName = MatchingElementName.forElementName(templateMode,
-                    ElementNames.forName(templateMode, this.dialectPrefix, elementName));
+                    ElementNames.forName(templateMode, dialectPrefix, tagName));
+        }
+        String attributeName = getAttributeName();
+        if (attributeName != null) {
+            this.matchingAttributeName = MatchingAttributeName.forAttributeName(templateMode,
+                    AttributeNames.forName(templateMode, dialectPrefix, attributeName));
         }
     }
 
-    public AbstractElementTagProcessor(String elementName) {
-        this(ThymeleafDialect.PREFIX, elementName);
-    }
+    protected abstract String getTagName();
+
+    protected abstract String getAttributeName();
 
     @Override
-    public final String getDialectPrefix() {
-        return this.dialectPrefix;
-    }
-
-    @Override
-    public final MatchingElementName getMatchingElementName() {
+    public MatchingElementName getMatchingElementName() {
         return this.matchingElementName;
     }
 
     @Override
     public MatchingAttributeName getMatchingAttributeName() {
-        return null;
+        return this.matchingAttributeName;
     }
 
     public final void process(ITemplateContext context, IProcessableElementTag tag,
             IElementTagStructureHandler structureHandler) {
         try {
-            doProcess(context, new ProcessableElementTag(tag), structureHandler);
+            doProcess(context, new ThymeleafElementTag(tag), structureHandler);
         } catch (TemplateProcessingException e) {
             // This is a nice moment to check whether the execution raised an error and, if so, add location information
             if (tag.hasLocation()) {
@@ -76,7 +77,7 @@ public abstract class AbstractElementTagProcessor extends AbstractProcessor
         }
     }
 
-    protected abstract void doProcess(ITemplateContext context, ProcessableElementTag tag,
-            IElementTagStructureHandler structureHandler);
+    protected abstract void doProcess(ITemplateContext context, ThymeleafElementTag tag,
+            IElementTagStructureHandler handler);
 }
 

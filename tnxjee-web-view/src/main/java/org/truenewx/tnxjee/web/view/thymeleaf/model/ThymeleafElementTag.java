@@ -5,14 +5,14 @@ import org.truenewx.tnxjee.core.util.AttributeMap;
 import org.truenewx.tnxjee.core.util.Attributes;
 
 /**
- * 可处理的元素标签
+ * Thymeleaf元素标签
  */
-public class ProcessableElementTag {
+public class ThymeleafElementTag {
 
     private IProcessableElementTag origin;
     private Attributes attributes;
 
-    public ProcessableElementTag(IProcessableElementTag origin) {
+    public ThymeleafElementTag(IProcessableElementTag origin) {
         this.origin = origin;
         this.attributes = new AttributeMap(origin.getAttributeMap());
     }
@@ -28,4 +28,5 @@ public class ProcessableElementTag {
     public <V> V getAttributeValue(String name, V defaultValue) {
         return this.attributes.get(name, defaultValue);
     }
+
 }

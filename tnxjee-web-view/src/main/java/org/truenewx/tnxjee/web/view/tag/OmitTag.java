@@ -1,48 +1,37 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
+import org.springframework.stereotype.Component;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTag;
+import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafTagSupport;
 
 /**
  * 截取字符串标签
  *
  * @author jianglei
  */
-public class OmitTag extends SimpleDynamicAttributeTagSupport {
+@Component
+public class OmitTag extends ThymeleafTagSupport {
 
     private final static String REPLACE_OPERATOR = "...";
 
-    /**
-     * 显示长度
-     */
-    private int length;
-
-    /**
-     * 需处理超长的文本
-     */
-    private String value;
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    @Override
+    protected String getTagName() {
+        return "omit";
     }
 
     @Override
-    public void doTag() throws JspException, IOException {
-        if (StringUtils.isNotEmpty(this.value) && this.length > 0) {
-            if (this.value.length() <= this.length) {
-                print(this.value);
-            } else {
-                print(this.value.substring(0, this.length - 1) + REPLACE_OPERATOR);
+    protected void doProcess(ITemplateContext context, ThymeleafElementTag tag,
+            IElementTagStructureHandler handler) {
+        String value = tag.getAttributeValue("value");
+        int size = tag.getAttributeValue("size", 0);
+        if (StringUtils.isNotEmpty(value)) {
+            if (0 < size && size < value.length()) {
+                value = value.substring(0, size - 1) + REPLACE_OPERATOR;
             }
+            handler.setBody(value, false);
         }
     }
-
 }
