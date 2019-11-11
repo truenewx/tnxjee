@@ -11,12 +11,12 @@ import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.processor.element.MatchingAttributeName;
 import org.thymeleaf.processor.element.MatchingElementName;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTag;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafHtmlTag;
 
 /**
- * Thymeleaf的元素标签处理器
+ * Thymeleaf的HTML元素标签处理器
  */
-public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
+public abstract class ThymeleafHtmlTagProcessor extends AbstractProcessor
         implements IElementTagProcessor, ThymeleafProcessor {
 
     public static final int PRECEDENCE = 1000;
@@ -24,7 +24,7 @@ public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
     private MatchingElementName matchingElementName;
     private MatchingAttributeName matchingAttributeName;
 
-    public ThymeleafElementTagProcessor() {
+    public ThymeleafHtmlTagProcessor() {
         super(TemplateMode.HTML, PRECEDENCE);
 
         TemplateMode templateMode = getTemplateMode();
@@ -58,7 +58,7 @@ public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
     public final void process(ITemplateContext context, IProcessableElementTag tag,
             IElementTagStructureHandler structureHandler) {
         try {
-            doProcess(context, new ThymeleafElementTag(tag), structureHandler);
+            doProcess(new ThymeleafHtmlTag(context, tag), structureHandler);
         } catch (TemplateProcessingException e) {
             // This is a nice moment to check whether the execution raised an error and, if so, add location information
             if (tag.hasLocation()) {
@@ -77,7 +77,6 @@ public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
         }
     }
 
-    protected abstract void doProcess(ITemplateContext context, ThymeleafElementTag tag,
-            IElementTagStructureHandler handler);
+    protected abstract void doProcess(ThymeleafHtmlTag tag, IElementTagStructureHandler handler);
 }
 

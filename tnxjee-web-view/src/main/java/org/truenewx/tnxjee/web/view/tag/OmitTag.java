@@ -2,9 +2,8 @@ package org.truenewx.tnxjee.web.view.tag;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTag;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafHtmlTag;
 import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafTagSupport;
 
 /**
@@ -23,8 +22,7 @@ public class OmitTag extends ThymeleafTagSupport {
     }
 
     @Override
-    protected void doProcess(ITemplateContext context, ThymeleafElementTag tag,
-            IElementTagStructureHandler handler) {
+    protected void doProcess(ThymeleafHtmlTag tag, IElementTagStructureHandler handler) {
         String value = tag.getAttributeValue("value");
         if (StringUtils.isNotEmpty(value)) {
             int size = tag.getAttributeValue("size", 0);

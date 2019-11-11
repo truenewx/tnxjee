@@ -5,7 +5,7 @@ import org.thymeleaf.processor.element.MatchingElementName;
 /**
  * Thymeleaf自定义属性支持
  */
-public abstract class ThymeleafAttributeSupport extends ThymeleafElementTagProcessor {
+public abstract class ThymeleafAttributeSupport extends ThymeleafHtmlTagProcessor {
 
     @Override
     protected final String getTagName() {
