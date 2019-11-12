@@ -130,35 +130,35 @@ public class StringUtil {
     public static String random(int type, int length) {
         byte[] b = new byte[length];
         switch (type) {
-        case RANDOM_TYPE_NUMBER: {
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-            }
-            break;
-        }
-        case RANDOM_TYPE_LETTER: {
-            Random random = new Random();
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
-                if (random.nextBoolean()) {
-                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+            case RANDOM_TYPE_NUMBER: {
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
                 }
+                break;
             }
-            break;
-        }
-        case RANDOM_TYPE_MIXED: {
-            Random random = new Random();
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-                if (random.nextBoolean()) {
+            case RANDOM_TYPE_LETTER: {
+                Random random = new Random();
+                for (int i = 0; i < b.length; i++) {
                     b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+                    }
                 }
-                if (random.nextBoolean()) {
-                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
-                }
+                break;
             }
-            break;
-        }
+            case RANDOM_TYPE_MIXED: {
+                Random random = new Random();
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
+                    }
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+                    }
+                }
+                break;
+            }
         }
         return new String(b);
     }
@@ -466,7 +466,7 @@ public class StringUtil {
     /**
      * 判断字符串是否是标准的URL
      *
-     * @param 字符串
+     * @param s 字符串
      * @return true if 是标准URL，otherwise false
      */
     public static boolean isUrl(String s) {
@@ -505,8 +505,15 @@ public class StringUtil {
      * @return true if 指定字符串是IP地址, otherwise false
      */
     public static boolean isIp(String s) {
-        return s != null
-                && (s.matches(StringUtil.IPv4_PATTERN) || s.matches(StringUtil.IPv6_PATTERN));
+        return isIpv4(s) || isIpv6(s);
+    }
+
+    public static boolean isIpv4(String s) {
+        return s != null && s.matches(StringUtil.IPv4_PATTERN);
+    }
+
+    public static boolean isIpv6(String s) {
+        return s != null && s.matches(StringUtil.IPv6_PATTERN);
     }
 
     /**
@@ -617,7 +624,7 @@ public class StringUtil {
      * @param key      文本关键字
      * @param args     文本替换参数
      * @return 指定的基本名称、语言环境下的资源文件中的指定关键字对应的文本
-     * @exception MissingResourceException 如果未找到指定基本名称的资源文件
+     * @throws MissingResourceException 如果未找到指定基本名称的资源文件
      */
     public static String getPropertiesText(String baseName, Locale locale, String key,
             String... args) {
@@ -888,7 +895,7 @@ public class StringUtil {
         return result.toString();
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> T parse(String s, Class<T> type) {
         if (type == String.class) {
             return (T) s;

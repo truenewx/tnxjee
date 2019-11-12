@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
  * @author jianglei
  */
 @Component
-public class OmitHtmlTag extends ThymeleafHtmlTagSupport {
+public class OmitTag extends ThymeleafHtmlTagSupport {
 
     private final static String REPLACE_OPERATOR = "...";
 

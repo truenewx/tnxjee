@@ -1,12 +1,5 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-
 import org.springframework.stereotype.Component;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.truenewx.tnxjee.core.util.DateUtil;
@@ -14,13 +7,20 @@ import org.truenewx.tnxjee.core.util.TemporalUtil;
 import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
 
+import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
+
 /**
  * 格式化输出标签
  *
  * @author jianglei
  */
 @Component
-public class FormatHtmlTag extends ThymeleafHtmlTagSupport {
+public class FormatTag extends ThymeleafHtmlTagSupport {
 
     @Override
     protected String getTagName() {

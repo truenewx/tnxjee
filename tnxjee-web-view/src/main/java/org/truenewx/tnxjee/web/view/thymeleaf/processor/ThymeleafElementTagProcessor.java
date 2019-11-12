@@ -14,9 +14,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 
 /**
- * Thymeleaf的HTML元素标签处理器
+ * Thymeleaf的元素标签处理器
  */
-public abstract class ThymeleafHtmlTagProcessor extends AbstractProcessor
+public abstract class ThymeleafElementTagProcessor extends AbstractProcessor
         implements IElementTagProcessor, ThymeleafProcessor {
 
     public static final int PRECEDENCE = 1000;
@@ -24,7 +24,7 @@ public abstract class ThymeleafHtmlTagProcessor extends AbstractProcessor
     private MatchingElementName matchingElementName;
     private MatchingAttributeName matchingAttributeName;
 
-    public ThymeleafHtmlTagProcessor() {
+    public ThymeleafElementTagProcessor() {
         super(TemplateMode.HTML, PRECEDENCE);
 
         TemplateMode templateMode = getTemplateMode();
