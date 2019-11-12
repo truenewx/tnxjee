@@ -11,7 +11,7 @@ import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.processor.element.MatchingAttributeName;
 import org.thymeleaf.processor.element.MatchingElementName;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafHtmlTag;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 
 /**
  * Thymeleaf的HTML元素标签处理器
@@ -58,7 +58,7 @@ public abstract class ThymeleafHtmlTagProcessor extends AbstractProcessor
     public final void process(ITemplateContext context, IProcessableElementTag tag,
             IElementTagStructureHandler structureHandler) {
         try {
-            doProcess(new ThymeleafHtmlTag(context, tag), structureHandler);
+            doProcess(new ThymeleafElementTagContext(context, tag), structureHandler);
         } catch (TemplateProcessingException e) {
             // This is a nice moment to check whether the execution raised an error and, if so, add location information
             if (tag.hasLocation()) {
@@ -77,6 +77,8 @@ public abstract class ThymeleafHtmlTagProcessor extends AbstractProcessor
         }
     }
 
-    protected abstract void doProcess(ThymeleafHtmlTag tag, IElementTagStructureHandler handler);
+    protected abstract void doProcess(ThymeleafElementTagContext context,
+            IElementTagStructureHandler handler);
+
 }
 

@@ -3,9 +3,9 @@ package org.truenewx.tnxjee.web.view.thymeleaf.processor;
 import org.thymeleaf.processor.element.MatchingAttributeName;
 
 /**
- * Thymeleaf自定义标签支持
+ * Thymeleaf自定义HTML标签支持
  */
-public abstract class ThymeleafTagSupport extends ThymeleafHtmlTagProcessor {
+public abstract class ThymeleafHtmlTagSupport extends ThymeleafHtmlTagProcessor {
 
     @Override
     protected final String getAttributeName() {

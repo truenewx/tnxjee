@@ -1,12 +1,16 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.util.Map;
+
 /**
  * 属性集
  */
 public interface Attributes {
 
-    String get(String key);
+    String getAttribute(String key);
 
-    <V> V get(String key, V defaultValue);
+    <V> V getAttribute(String key, V defaultValue);
+
+    Map<String, String> getAttributes(String... excludedKeys);
 
 }

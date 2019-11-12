@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 
 import java.math.BigDecimal;
@@ -68,13 +69,13 @@ public class AttributeMap extends AbstractMap<String, String> implements Attribu
     }
 
     @Override
-    public String get(String key) {
+    public String getAttribute(String key) {
         return this.map.get(key);
     }
 
     @Override
-    public <V> V get(String key, V defaultValue) {
-        String value = get(key);
+    public <V> V getAttribute(String key, V defaultValue) {
+        String value = getAttribute(key);
         if (value == null) {
             return defaultValue;
         }
@@ -93,5 +94,16 @@ public class AttributeMap extends AbstractMap<String, String> implements Attribu
             }
             return transfer.apply(value);
         }
+    }
+
+    @Override
+    public Map<String, String> getAttributes(String... excludedKeys) {
+        Map<String, String> attributes = new HashMap<>();
+        this.map.forEach((key, value) -> {
+            if (!ArrayUtils.contains(excludedKeys, key)) {
+                attributes.put(key, value);
+            }
+        });
+        return attributes;
     }
 }

@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.web.view.tag;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,16 +8,11 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
-import org.thymeleaf.engine.AttributeName;
-import org.thymeleaf.engine.AttributeNames;
-import org.thymeleaf.engine.EngineEventUtils;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.thymeleaf.standard.expression.IStandardExpression;
-import org.thymeleaf.standard.expression.StandardExpressionExecutionContext;
 import org.truenewx.tnxjee.core.util.DateUtil;
 import org.truenewx.tnxjee.core.util.TemporalUtil;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafHtmlTag;
-import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafTagSupport;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
+import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
 
 /**
  * 格式化输出标签
@@ -24,7 +20,7 @@ import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafTagSupport;
  * @author jianglei
  */
 @Component
-public class FormatTag extends ThymeleafTagSupport {
+public class FormatHtmlTag extends ThymeleafHtmlTagSupport {
 
     @Override
     protected String getTagName() {
@@ -32,10 +28,10 @@ public class FormatTag extends ThymeleafTagSupport {
     }
 
     @Override
-    protected void doProcess(ThymeleafHtmlTag tag,
+    protected void doProcess(ThymeleafElementTagContext context,
             IElementTagStructureHandler handler) {
-        Object value = tag.getAttributeValue("value");
-        String pattern = tag.getAttributeValue("pattern");
+        Object value = context.getAttributeValue("value");
+        String pattern = context.getAttributeValue("pattern");
         String result = null;
         if (value instanceof Date) {
             if (pattern == null) {
@@ -62,6 +58,11 @@ public class FormatTag extends ThymeleafTagSupport {
                 pattern = DateUtil.LONG_DATE_PATTERN;
             }
             result = TemporalUtil.format((LocalDateTime) value, pattern);
+        } else if (value instanceof Number) {
+            if (pattern == null) {
+                pattern = "0.##";
+            }
+            result = new DecimalFormat(pattern).format(value);
         }
         if (result != null) {
             handler.replaceWith(result, false);

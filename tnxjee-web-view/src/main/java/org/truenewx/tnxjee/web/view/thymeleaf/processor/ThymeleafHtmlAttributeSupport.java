@@ -3,9 +3,9 @@ package org.truenewx.tnxjee.web.view.thymeleaf.processor;
 import org.thymeleaf.processor.element.MatchingElementName;
 
 /**
- * Thymeleaf自定义属性支持
+ * Thymeleaf自定义HTML属性支持
  */
-public abstract class ThymeleafAttributeSupport extends ThymeleafHtmlTagProcessor {
+public abstract class ThymeleafHtmlAttributeSupport extends ThymeleafHtmlTagProcessor {
 
     @Override
     protected final String getTagName() {
@@ -16,5 +16,5 @@ public abstract class ThymeleafAttributeSupport extends ThymeleafHtmlTagProcesso
     public final MatchingElementName getMatchingElementName() {
         return super.getMatchingElementName();
     }
-    
+
 }
