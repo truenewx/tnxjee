@@ -10,6 +10,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
+import org.truenewx.tnxjee.web.controller.spring.servlet.mvc.Loginer;
 
 /**
  * Spring Web工具类
@@ -72,4 +73,5 @@ public class SpringWebUtil {
             return request.getLocale();
         }
     }
+
 }

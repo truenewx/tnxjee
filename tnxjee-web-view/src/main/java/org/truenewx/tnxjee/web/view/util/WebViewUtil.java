@@ -1,24 +1,6 @@
 package org.truenewx.tnxjee.web.view.util;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.aliyun.oss.internal.Mimetypes;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +10,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.util.WebUtils;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.web.controller.spring.servlet.mvc.Loginer;
+import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 
-import com.aliyun.oss.internal.Mimetypes;
+import javax.servlet.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Web视图层工具类
@@ -683,6 +680,23 @@ public class WebViewUtil {
             LoggerFactory.getLogger(WebViewUtil.class).error(e.getLocalizedMessage(), e);
         }
         response.setHeader("content-disposition", "attachment;filename=" + filename);
+    }
+
+
+    public static String getPrevUrl(HttpServletRequest request){
+        String prevUrl = getRelativePreviousUrl(request, true);
+        if (prevUrl != null) {
+            String action = getRelativeRequestAction(request);
+            if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
+                prevUrl = null;
+            } else {
+                Loginer loginer = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request), Loginer.class);
+                if (loginer != null && prevUrl != null && loginer.isLoginUrl(prevUrl)) {
+                    prevUrl = null;
+                }
+            }
+        }
+        return prevUrl;
     }
 
 }

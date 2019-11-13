@@ -4,6 +4,7 @@ import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.engine.AttributeNames;
 import org.thymeleaf.engine.EngineEventUtils;
+import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.StandardExpressionExecutionContext;
@@ -29,7 +30,11 @@ public class ThymeleafElementTagContext {
     }
 
     public ITemplateContext getContext() {
-        return context;
+        return this.context;
+    }
+
+    public IModelFactory getModelFactory() {
+        return this.context.getModelFactory();
     }
 
     public IProcessableElementTag getTag() {
@@ -41,10 +46,10 @@ public class ThymeleafElementTagContext {
         if (value != null) {
             // 含有表达式，则进行表达式计算
             if (value.contains("${") && value.contains("}")) {
-                AttributeName attributeName = AttributeNames.forName(TemplateMode.HTML, null, "value");
-                IStandardExpression expression = EngineEventUtils.computeAttributeExpression(context,
-                        this.tag, attributeName, value);
-                return (V) expression.execute(context, StandardExpressionExecutionContext.NORMAL);
+                AttributeName attributeName = AttributeNames.forName(TemplateMode.HTML, null, name);
+                IStandardExpression expression = EngineEventUtils.computeAttributeExpression(
+                        this.context, this.tag, attributeName, value);
+                return (V) expression.execute(this.context, StandardExpressionExecutionContext.NORMAL);
             }
         }
         return (V) value;
