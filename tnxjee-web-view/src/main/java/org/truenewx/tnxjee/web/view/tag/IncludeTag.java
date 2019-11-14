@@ -1,5 +1,11 @@
 package org.truenewx.tnxjee.web.view.tag;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -10,11 +16,6 @@ import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
 import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 转调控件
@@ -35,6 +36,7 @@ public class IncludeTag extends ThymeleafHtmlTagSupport {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doProcess(ThymeleafElementTagContext context,
             IElementTagStructureHandler handler) {
         ServletContext application = SpringWebContext.getServletContext();

@@ -1,21 +1,20 @@
 package org.truenewx.tnxjee.web.controller.version;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.version.VersionGetter;
 
-import javax.servlet.ServletContext;
-
 /**
  * 将版本号加载到ServletContext的初始化器
  */
 @Component
-public class ServletContextVersionInitializer implements ServletContextAware,
-        ContextInitializedBean {
+public class ServletContextVersionInitializer
+        implements ServletContextAware, ContextInitializedBean {
     @Autowired
     private VersionGetter versionGetter;
     private ServletContext servletContext;

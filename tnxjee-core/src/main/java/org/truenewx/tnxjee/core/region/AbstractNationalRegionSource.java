@@ -1,24 +1,21 @@
 package org.truenewx.tnxjee.core.region;
 
+import org.springframework.util.Assert;
+import org.truenewx.tnxjee.core.Strings;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.Strings;
-
 /**
  * @author jianglei
  */
-public abstract class AbstractNationalRegionSource
-        implements NationalRegionSource, InitializingBean {
+public abstract class AbstractNationalRegionSource implements NationalRegionSource {
 
     /**
      * 国家代号
      */
     private String nation;
-    protected String basename;
     /**
      * 显示区域-当前国家级行政区划的映射集
      */
@@ -32,21 +29,11 @@ public abstract class AbstractNationalRegionSource
      */
     protected Map<Locale, Map<String, Region>> localeCaptionSubsMap = new HashMap<>();
 
-    public void setBasename(String basename) {
-        this.basename = basename;
-    }
 
     public void setNation(String nation) {
         Assert.isTrue(nation.length() == RegionSource.NATION_LENGTH,
                 "The length of nation must be " + RegionSource.NATION_LENGTH);
         this.nation = nation.toUpperCase();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (this.basename == null) { // 如果未配置则按照默认规则确定资源文件基本名称
-            setBasename("classpath:META-INF/region/" + this.nation);
-        }
     }
 
     @Override

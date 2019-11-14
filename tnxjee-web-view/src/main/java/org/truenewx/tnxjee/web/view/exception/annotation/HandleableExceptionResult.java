@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.exception.annotation;
+package org.truenewx.tnxjee.web.view.exception.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

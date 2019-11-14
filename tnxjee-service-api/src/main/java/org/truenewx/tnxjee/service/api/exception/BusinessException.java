@@ -16,7 +16,7 @@ public class BusinessException extends SingleException {
     private String code;
     private Object[] args;
 
-    public BusinessException(String code, String message, Object... args) {
+    public BusinessException(String message, String code, Object[] args) {
         super(message);
         this.code = code;
         this.args = args;

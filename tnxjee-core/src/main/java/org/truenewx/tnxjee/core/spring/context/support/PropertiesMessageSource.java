@@ -9,12 +9,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
 import org.truenewx.tnxjee.core.spring.context.MessagesSource;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
@@ -24,28 +26,29 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * @author jianglei
  */
 public class PropertiesMessageSource extends ReloadableResourceBundleMessageSource
-        implements MessagesSource {
+        implements MessagesSource, InitializingBean {
 
     private static String PROPERTIES_SUFFIX = ".properties";
 
     @Autowired
     private Environment environment;
+    @Autowired
     private ResourcePatternResolver resourcePatternResolver;
+    @Autowired
+    private EnumDictResolver enumDictResolver;
     private Locale[] locales;
 
-    public PropertiesMessageSource(Locale... locales) {
+    public PropertiesMessageSource() {
+    }
+
+    public void setLocales(Locale... locales) {
         this.locales = locales;
     }
 
-    @Autowired
-    public void setResourcePatternResolver(ResourcePatternResolver resourcePatternResolver) {
-        this.resourcePatternResolver = resourcePatternResolver;
-    }
-
     @Override
-    public void setBasenames(String... basenames) {
+    public void afterPropertiesSet() throws Exception {
         Set<String> set = new LinkedHashSet<>();
-        for (String basename : basenames) {
+        for (String basename : getBasenameSet()) {
             basename = basename.trim();
             if (basename.startsWith(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX)) {
                 try {
@@ -55,11 +58,13 @@ public class PropertiesMessageSource extends ReloadableResourceBundleMessageSour
                         String path = resource.getURI().toString();
                         path = path.substring(0, path.length() - PROPERTIES_SUFFIX.length());
                         // 去掉路径中可能的Locale后缀
-                        for (Locale locale : this.locales) {
-                            String suffix = Strings.UNDERLINE + locale.toString();
-                            if (path.endsWith(suffix)) {
-                                path = path.substring(0, path.length() - suffix.length());
-                                break;
+                        if (this.locales != null) {
+                            for (Locale locale : this.locales) {
+                                String suffix = Strings.UNDERLINE + locale.toString();
+                                if (path.endsWith(suffix)) {
+                                    path = path.substring(0, path.length() - suffix.length());
+                                    break;
+                                }
                             }
                         }
                         set.add(path);
@@ -71,11 +76,18 @@ public class PropertiesMessageSource extends ReloadableResourceBundleMessageSour
                 set.add(basename);
             }
         }
-        super.setBasenames(set.toArray(new String[set.size()]));
+        setBasenames(set.toArray(new String[set.size()]));
     }
 
     @Override
     protected String getMessageInternal(String code, Object[] args, Locale locale) {
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Enum) {
+                    args[i] = this.enumDictResolver.getText((Enum<?>) args[i], locale);
+                }
+            }
+        }
         String message = super.getMessageInternal(code, args, locale);
         if (message == null || message.equals(code)) {
             message = this.environment.getProperty(code, code);

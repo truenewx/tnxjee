@@ -6,13 +6,11 @@ import java.util.Map;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.context.MessagesSource;
-import org.truenewx.tnxjee.core.spring.context.support.PropertiesMessageSource;
 
 /**
  * 基于资源绑定属性文件的国家级区划来源实现
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSource {
     /**
@@ -24,15 +22,12 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
      */
     private RegionMapParser parser;
 
-    public void setParser(RegionMapParser parser) {
-        this.parser = parser;
+    public void setMessagesSource(MessagesSource messagesSource) {
+        this.messagesSource = messagesSource;
     }
 
-    @Override
-    public void setBasename(String basename) {
-        PropertiesMessageSource messageSource = new PropertiesMessageSource();
-        messageSource.setBasenames(basename);
-        this.messagesSource = messageSource;
+    public void setParser(RegionMapParser parser) {
+        this.parser = parser;
     }
 
     /**
@@ -42,7 +37,6 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
      * @return 当前国家行政区划
      */
     @Override
-
     protected Region buildNationalRegion(Locale locale) {
         Map<String, String> messages = this.messagesSource.getMessages(locale);
         String nation = getNation();

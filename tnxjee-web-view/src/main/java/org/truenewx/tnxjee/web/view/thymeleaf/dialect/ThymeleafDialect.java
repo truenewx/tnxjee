@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.web.view.thymeleaf.dialect;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -9,10 +12,6 @@ import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 import org.truenewx.tnxjee.Framework;
 import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafProcessor;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 自定义的Thymeleaf方言

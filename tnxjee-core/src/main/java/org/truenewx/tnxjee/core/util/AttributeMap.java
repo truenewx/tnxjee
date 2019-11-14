@@ -1,8 +1,5 @@
 package org.truenewx.tnxjee.core.util;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.EnumUtils;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -13,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.EnumUtils;
 
 /**
  * 属性Map
@@ -64,6 +64,7 @@ public class AttributeMap extends AbstractMap<String, String> implements Attribu
         return this.map.entrySet();
     }
 
+    @Override
     public String put(String key, String value) {
         return this.map.put(key, value);
     }
@@ -74,6 +75,7 @@ public class AttributeMap extends AbstractMap<String, String> implements Attribu
     }
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <V> V getAttribute(String key, V defaultValue) {
         String value = getAttribute(key);
         if (value == null) {

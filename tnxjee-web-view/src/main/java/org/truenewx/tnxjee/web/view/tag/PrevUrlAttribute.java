@@ -1,22 +1,15 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Component;
 import org.thymeleaf.engine.AttributeNames;
-import org.thymeleaf.model.IModel;
-import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
-import org.truenewx.tnxjee.web.controller.spring.servlet.mvc.Loginer;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlAttributeSupport;
-import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 输出前一个请求URL的属性

@@ -18,11 +18,15 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 基于JSON文件的国家级区划来源实现
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class JsonFileNationalRegionSource extends AbstractNationalRegionSource {
 
+    private String basename;
     private String encoding = Strings.ENCODING_UTF8;
+
+    public JsonFileNationalRegionSource(String basename) {
+        this.basename = basename;
+    }
 
     /**
      * @param encoding 从配置文件中读取内容时使用的字符集

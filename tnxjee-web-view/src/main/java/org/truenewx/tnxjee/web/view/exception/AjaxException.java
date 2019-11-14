@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.exception;
+package org.truenewx.tnxjee.web.view.exception;
 
 import java.util.Collections;
 import java.util.HashMap;

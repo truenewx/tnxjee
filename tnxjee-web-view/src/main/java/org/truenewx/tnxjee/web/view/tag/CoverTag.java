@@ -1,11 +1,5 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
@@ -40,7 +34,7 @@ public class CoverTag extends ThymeleafHtmlTagSupport {
                 coverIndex = value.lastIndexOf(Strings.DOT) + 1;
                 coverLength = value.length() - coverIndex;
                 distLength = 1;
-            } else if (StringUtil.isIpv6(value)) {  // ipv6掩盖最后一节为一个掩盖字符
+            } else if (StringUtil.isIpv6(value)) { // ipv6掩盖最后一节为一个掩盖字符
                 coverIndex = value.lastIndexOf(Strings.DOT); // ipv6兼容ipv4时，最后为ipv4结尾
                 if (coverIndex < 0) {
                     coverIndex = value.lastIndexOf(Strings.COLON);
