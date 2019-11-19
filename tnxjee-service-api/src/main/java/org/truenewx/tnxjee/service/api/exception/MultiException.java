@@ -10,7 +10,7 @@ import java.util.Set;
  * @author jianglei
  * @since JDK 1.8
  */
-public class MultiException extends HandleableException implements Iterable<SingleException> {
+public class MultiException extends ResolvableException implements Iterable<SingleException> {
 
     private static final long serialVersionUID = -6695356656790082971L;
     /**
@@ -54,7 +54,7 @@ public class MultiException extends HandleableException implements Iterable<Sing
      * @param exception 可处理异常
      * @return 当前多异常对象
      */
-    public MultiException merge(HandleableException exception) {
+    public MultiException merge(ResolvableException exception) {
         if (exception instanceof SingleException) {
             this.exceptions.add((SingleException) exception);
         } else if (exception instanceof MultiException) {

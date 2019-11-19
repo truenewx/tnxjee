@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.Strings;
  *
  * @author jianglei
  */
-public abstract class SingleException extends HandleableException {
+public abstract class SingleException extends ResolvableException {
 
     private static final long serialVersionUID = -7817976044788876682L;
 

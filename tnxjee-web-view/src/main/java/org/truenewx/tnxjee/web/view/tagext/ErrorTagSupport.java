@@ -4,7 +4,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.service.api.exception.BusinessException;
-import org.truenewx.tnxjee.service.api.exception.HandleableException;
+import org.truenewx.tnxjee.service.api.exception.ResolvableException;
 import org.truenewx.tnxjee.service.api.exception.MultiException;
 import org.truenewx.tnxjee.service.api.exception.SingleException;
 
@@ -20,7 +20,7 @@ public class ErrorTagSupport extends TagSupport {
     /**
      * 存放可处理异常的关键字
      */
-    public static final String EXCEPTION_KEY = HandleableException.class.getName();
+    public static final String EXCEPTION_KEY = ResolvableException.class.getName();
 
     protected String field;
     private String code;
