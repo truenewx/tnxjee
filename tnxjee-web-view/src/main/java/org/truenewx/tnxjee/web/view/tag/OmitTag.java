@@ -23,9 +23,9 @@ public class OmitTag extends ThymeleafHtmlTagSupport {
 
     @Override
     protected void doProcess(ThymeleafElementTagContext context, IElementTagStructureHandler handler) {
-        String value = context.getAttributeValue("value");
+        String value = context.getTagAttributeValue("value");
         if (StringUtils.isNotEmpty(value)) {
-            int size = context.getAttributeValue("size", 0);
+            int size = context.getTagAttributeValue("size", 0);
             if (0 < size && size < value.length()) {
                 value = value.substring(0, size - 1) + REPLACE_OPERATOR;
             }

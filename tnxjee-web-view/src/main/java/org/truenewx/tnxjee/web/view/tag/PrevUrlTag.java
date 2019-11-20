@@ -31,7 +31,7 @@ public class PrevUrlTag extends ThymeleafHtmlTagSupport {
             IElementTagStructureHandler handler) {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("type", "hidden");
-        attributes.put("name", context.getAttributeValue("name", "prev"));
+        attributes.put("name", context.getTagAttributeValue("name", "prev"));
         String prevUrl = WebViewUtil.getPrevUrl(SpringWebContext.getRequest());
         if (prevUrl != null) {
             attributes.put("value", prevUrl);

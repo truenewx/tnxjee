@@ -30,8 +30,8 @@ public class FormatTag extends ThymeleafHtmlTagSupport {
     @Override
     protected void doProcess(ThymeleafElementTagContext context,
             IElementTagStructureHandler handler) {
-        Object value = context.getAttributeValue("value");
-        String pattern = context.getAttributeValue("pattern");
+        Object value = context.getTagAttributeValue("value");
+        String pattern = context.getTagAttributeValue("pattern");
         String result = null;
         if (value instanceof Date) {
             if (pattern == null) {

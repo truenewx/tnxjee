@@ -41,13 +41,13 @@ public class IncludeTag extends ThymeleafHtmlTagSupport {
             IElementTagStructureHandler handler) {
         ServletContext application = SpringWebContext.getServletContext();
         HttpServletRequest request = SpringWebContext.getRequest();
-        String url = context.getAttributeValue("url");
+        String url = context.getTagAttributeValue("url");
         if (url.startsWith(Strings.SLASH)) {
             String host = WebViewUtil.getHost(request);
             url = request.getScheme() + "://" + host + url;
         }
-        boolean cached = context.getAttributeValue("cached", Boolean.FALSE);
-        Map<String, Object> attributes = context.getAttributes("url", "cached");
+        boolean cached = context.getTagAttributeValue("cached", Boolean.FALSE);
+        Map<String, Object> attributes = context.getTagAttributes("url", "cached");
         try {
             String result;
             if (cached) { // 需数据缓存

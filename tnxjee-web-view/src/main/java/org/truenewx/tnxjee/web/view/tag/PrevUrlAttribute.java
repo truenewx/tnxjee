@@ -33,7 +33,7 @@ public class PrevUrlAttribute extends ThymeleafHtmlAttributeSupport {
         if (prevUrl != null) {
             href = prevUrl;
         } else {
-            href = context.getAttributeValue("href");
+            href = context.getTagAttributeValue("href");
         }
         if (href != null) {
             String contextPath = request.getContextPath();

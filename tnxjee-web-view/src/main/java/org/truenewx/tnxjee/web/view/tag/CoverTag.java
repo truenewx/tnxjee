@@ -25,7 +25,7 @@ public class CoverTag extends ThymeleafHtmlTagSupport {
     protected void doProcess(ThymeleafElementTagContext context,
             IElementTagStructureHandler handler) {
         String result = "";
-        String value = context.getAttributeValue("value");
+        String value = context.getTagAttributeValue("value");
         if (StringUtils.isNotBlank(value)) {
             int coverIndex = -1; // 掩盖的起始位置
             int coverLength = 0; // 掩盖部分的长度
@@ -63,7 +63,7 @@ public class CoverTag extends ThymeleafHtmlTagSupport {
             }
             if (coverIndex >= 0) {
                 result += value.substring(0, coverIndex); // 先取掩盖位置之前的字符串
-                String cover = context.getAttributeValue("cover", Strings.ASTERISK);
+                String cover = context.getTagAttributeValue("cover", Strings.ASTERISK);
                 for (int i = 0; i < distLength; i++) { // 拼接目标长度的掩盖字符
                     result += cover;
                 }

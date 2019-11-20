@@ -1,79 +1,44 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.Tag;
-
-import org.springframework.context.ApplicationContext;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.service.api.exception.MultiException;
-import org.truenewx.tnxjee.service.api.exception.SingleException;
-import org.truenewx.tnxjee.web.controller.exception.message.SingleExceptionMessageResolver;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.springframework.stereotype.Component;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
+import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
+
+import java.util.List;
 
 /**
  * 输出错误消息的标签
  *
  * @author jianglei
  */
+@Component
 public class ErrorsTag extends ErrorTagSupport {
 
-    private static final long serialVersionUID = -8236304660577964951L;
-
-    private String delimiter = "<br/>";
-    private String suffix;
-
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
+    @Override
+    protected String getTagName() {
+        return "errors";
     }
 
     @Override
-    public int doEndTag() throws JspException {
-        Object obj = getException();
-        if (obj != null) {
-            ApplicationContext context = SpringWebUtil.getApplicationContext(this.pageContext);
-            SingleExceptionMessageResolver messageResolver = SpringUtil
-                    .getBeanByDefaultName(context, SingleExceptionMessageResolver.class);
-
-            StringBuffer message = new StringBuffer();
-            if (obj instanceof SingleException) {
-                SingleException se = (SingleException) obj;
-                if (se.matches(this.field)) {
-                    message.append(messageResolver.resolveMessage(se,
-                            this.pageContext.getRequest().getLocale()));
+    protected void doProcess(ThymeleafElementTagContext context,
+            IElementTagStructureHandler handler) {
+        StringBuffer message = new StringBuffer();
+        List<ResolvedBusinessError> errors = getErrors(context);
+        if (errors != null) {
+            String field = context.getTagAttributeValue("field", Strings.ASTERISK);
+            String delimiter = context.getTagAttributeValue("delimiter", "<br>");
+            errors.forEach(error -> {
+                if (Strings.ASTERISK.equals(field) || field.equals(error.getField())) {
+                    message.append(delimiter).append(error.getMessage());
                 }
-            } else if (obj instanceof MultiException) {
-                MultiException me = (MultiException) obj;
-                // 遍历同一filed中的多个异常信息
-                for (SingleException se : me) {
-                    if (se.matches(this.field)) {
-                        message.append(messageResolver.resolveMessage(se,
-                                this.pageContext.getRequest().getLocale()));
-                        message.append(this.delimiter);
-                    }
-                }
-                if (message.length() > 0) {
-                    message.delete(message.length() - this.delimiter.length(), message.length());
-                }
-            }
-            if (message.length() > 0 && this.suffix != null) { // 有内容时才加后缀
-                message.append(this.suffix);
-            }
-
-            JspWriter out = this.pageContext.getOut();
-            try {
-                out.print(message);
-            } catch (IOException e) {
-                throw new JspException(e);
+            });
+            if (message.length() > 0) {
+                message.delete(0, delimiter.length());
             }
         }
-        return Tag.EVAL_PAGE;
+        handler.replaceWith(message, false);
     }
 }
