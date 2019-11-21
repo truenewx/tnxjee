@@ -1,10 +1,7 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-
+import org.springframework.stereotype.Component;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
 import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
 
 /**
@@ -12,18 +9,8 @@ import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
  *
  * @author jianglei
  */
-public class NoErrorTag extends ErrorTagSupport {
-
-
-//    @Override
-//    public int doStartTag() throws JspException {
-//        return matches() ? Tag.SKIP_BODY : Tag.EVAL_BODY_INCLUDE;
-//    }
-//
-//    @Override
-//    public int doEndTag() throws JspException {
-//        return Tag.EVAL_PAGE;
-//    }
+@Component
+public class NoErrorTag extends HasErrorTag {
 
     @Override
     protected String getTagName() {
@@ -33,6 +20,10 @@ public class NoErrorTag extends ErrorTagSupport {
     @Override
     protected void doProcess(ThymeleafElementTagContext context,
             IElementTagStructureHandler handler) {
-
+        if (hasError(context)) {
+            handler.removeElement();
+        } else {
+            handler.removeTags();
+        }
     }
 }
