@@ -1,44 +1,53 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import org.springframework.stereotype.Component;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.Tag;
+
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
-
-import java.util.List;
 
 /**
  * 输出错误消息的标签
  *
  * @author jianglei
  */
-@Component
 public class ErrorsTag extends ErrorTagSupport {
 
-    @Override
-    protected String getTagName() {
-        return "errors";
+    private static final long serialVersionUID = -8236304660577964951L;
+
+    private String delimiter = "<br/>";
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     @Override
-    protected void doProcess(ThymeleafElementTagContext context,
-            IElementTagStructureHandler handler) {
+    public int doEndTag() throws JspException {
         StringBuffer message = new StringBuffer();
-        List<ResolvedBusinessError> errors = getErrors(context);
+        List<ResolvedBusinessError> errors = getErrors();
         if (errors != null) {
-            String field = context.getTagAttributeValue("field", Strings.ASTERISK);
-            String delimiter = context.getTagAttributeValue("delimiter", "<br>");
             errors.forEach(error -> {
-                if (Strings.ASTERISK.equals(field) || field.equals(error.getField())) {
-                    message.append(delimiter).append(error.getMessage());
+                if (Strings.ASTERISK.equals(this.field) || this.field.equals(error.getField())) {
+                    message.append(this.delimiter).append(error.getMessage());
                 }
             });
             if (message.length() > 0) {
-                message.delete(0, delimiter.length());
+                message.delete(0, this.delimiter.length());
             }
         }
-        handler.replaceWith(message, false);
+        if (message.length() > 0) {
+            JspWriter out = this.pageContext.getOut();
+            try {
+                out.print(message);
+            } catch (IOException e) {
+                throw new JspException(e);
+            }
+        }
+        return Tag.EVAL_PAGE;
     }
 }

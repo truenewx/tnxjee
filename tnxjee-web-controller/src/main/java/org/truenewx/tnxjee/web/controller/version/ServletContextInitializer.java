@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.version.VersionGetter;
 
 /**
- * 将版本号加载到ServletContext的初始化器
+ * ServletContext初始化器
  */
 @Component
-public class ServletContextVersionInitializer
-        implements ServletContextAware, ContextInitializedBean {
+public class ServletContextInitializer implements ServletContextAware, ContextInitializedBean {
     @Autowired
     private VersionGetter versionGetter;
     private ServletContext servletContext;
@@ -28,6 +28,12 @@ public class ServletContextVersionInitializer
     public void afterInitialized(ApplicationContext context) throws Exception {
         // 在取得ServletContext时可能VersionGetter尚未完成初始化，所以等容器全部初始化完成后再进行下列动作
         this.servletContext.setAttribute("version", this.versionGetter.getVersion());
+
+        String contextPath = this.servletContext.getContextPath();
+        if (Strings.SLASH.equals(contextPath)) {
+            contextPath = Strings.EMPTY;
+        }
+        this.servletContext.setAttribute("context", contextPath);
     }
 
 }

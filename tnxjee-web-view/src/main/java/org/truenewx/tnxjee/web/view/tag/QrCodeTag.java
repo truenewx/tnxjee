@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.qrcode;
+package org.truenewx.tnxjee.web.view.tag;
 
 import java.io.IOException;
 

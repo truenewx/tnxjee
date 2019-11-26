@@ -1,20 +1,18 @@
 package org.truenewx.tnxjee.web.view.tag;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
-import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
+import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
 
 /**
@@ -22,52 +20,55 @@ import org.truenewx.tnxjee.web.view.util.WebViewUtil;
  *
  * @author jianglei
  */
-@Component
-public class IncludeTag extends ThymeleafHtmlTagSupport {
+public class IncludeTag extends SimpleDynamicAttributeTagSupport {
 
     /**
      * 转调缓存
      */
     public static final String INCLUDE_CACHED = "_APPLICATION_INCLUDE_CACHED";
+    /**
+     * 是否缓存
+     */
+    private boolean cached;
+    private String url;
 
-    @Override
-    protected String getTagName() {
-        return "include";
+    public void setCached(boolean cached) {
+        this.cached = cached;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void doProcess(ThymeleafElementTagContext context,
-            IElementTagStructureHandler handler) {
-        ServletContext application = SpringWebContext.getServletContext();
-        HttpServletRequest request = SpringWebContext.getRequest();
-        String url = context.getTagAttributeValue("url");
-        if (url.startsWith(Strings.SLASH)) {
+    public void doTag() throws JspException, IOException {
+        HttpServletRequest request = getRequest();
+        ServletContext servletContext = request.getServletContext();
+        if (this.url.startsWith(Strings.SLASH)) {
             String host = WebViewUtil.getHost(request);
-            url = request.getScheme() + "://" + host + url;
+            this.url = request.getScheme() + "://" + host + this.url;
         }
-        boolean cached = context.getTagAttributeValue("cached", Boolean.FALSE);
-        Map<String, Object> attributes = context.getTagAttributes("url", "cached");
         try {
             String result;
-            if (cached) { // 需数据缓存
-                Object includeCached = application.getAttribute(INCLUDE_CACHED);
+            if (this.cached) { // 需数据缓存
+                Object includeCached = servletContext.getAttribute(INCLUDE_CACHED);
                 Map<String, String> cachedMap = null;
                 if (includeCached != null) {
                     cachedMap = (Map<String, String>) includeCached;
                 } else {
                     cachedMap = new HashMap<>();
                 }
-                result = cachedMap.get(url);
+                result = cachedMap.get(this.url);
                 if (StringUtils.isEmpty(result)) {
-                    result = NetUtil.requestByGet(url, attributes, null);
-                    cachedMap.put(url, result);
+                    result = NetUtil.requestByGet(this.url, this.attributes, null);
+                    cachedMap.put(this.url, result);
                 }
-                application.setAttribute(INCLUDE_CACHED, cachedMap);
+                servletContext.setAttribute(INCLUDE_CACHED, cachedMap);
             } else {
-                result = NetUtil.requestByGet(url, attributes, null);
+                result = NetUtil.requestByGet(this.url, this.attributes, null);
             }
-            handler.replaceWith(result, false);
+            print(result);
         } catch (Throwable e) {
             // 任何异常均只打印堆栈日志，以避免影响页面整体显示
             LoggerFactory.getLogger(getClass()).error(e.getMessage(), e);

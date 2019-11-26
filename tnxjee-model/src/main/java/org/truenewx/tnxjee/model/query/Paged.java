@@ -68,4 +68,36 @@ public class Paged implements Serializable {
         return this.morePage;
     }
 
+    public boolean isPageable() {
+        return this.pageSize > 0;
+    }
+
+    public boolean isCountable() {
+        return this.total != null && this.total >= 0;
+    }
+
+    public int getPageCount() {
+        if (isPageable()) {
+            if (isCountable()) {
+                int pageCount = (int) (this.total / this.pageSize);
+                if (this.total % this.pageSize != 0) {
+                    pageCount++;
+                }
+                return pageCount;
+            } else if (!this.morePage) { // 无总数但没有更多页时，当前页码即为总页数
+                return this.pageNo;
+            }
+        }
+        return 0;
+    }
+
+    public int getPreviousPage() {
+        return this.pageNo <= 1 ? 1 : (this.pageNo - 1);
+    }
+
+    public int getNextPage() {
+        int pageCount = getPageCount();
+        return (this.total >= 0 && this.pageNo >= pageCount) ? pageCount : (this.pageNo + 1);
+    }
+
 }

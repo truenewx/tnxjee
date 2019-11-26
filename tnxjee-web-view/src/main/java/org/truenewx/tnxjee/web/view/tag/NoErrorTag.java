@@ -1,29 +1,20 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import org.springframework.stereotype.Component;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
 
 /**
  * 判断是否没有错误消息的标签
  *
  * @author jianglei
  */
-@Component
 public class NoErrorTag extends HasErrorTag {
 
-    @Override
-    protected String getTagName() {
-        return "no-error";
-    }
+    private static final long serialVersionUID = 7787334341554597267L;
 
     @Override
-    protected void doProcess(ThymeleafElementTagContext context,
-            IElementTagStructureHandler handler) {
-        if (hasError(context)) {
-            handler.removeElement();
-        } else {
-            handler.removeTags();
-        }
+    public int doStartTag() throws JspException {
+        return hasError() ? Tag.SKIP_BODY : Tag.EVAL_BODY_INCLUDE;
     }
+
 }

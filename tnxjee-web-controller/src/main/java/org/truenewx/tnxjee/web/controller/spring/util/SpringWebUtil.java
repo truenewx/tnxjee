@@ -27,8 +27,8 @@ public class SpringWebUtil {
      * @param pageContext
      * @return ApplicationContext实例
      */
-    public static ApplicationContext getApplicationContext(final PageContext pageContext) {
-        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+    public static ApplicationContext getApplicationContext(PageContext pageContext) {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         return RequestContextUtils.findWebApplicationContext(request,
                 pageContext.getServletContext());
     }
@@ -39,10 +39,10 @@ public class SpringWebUtil {
      * @param request HTTP请求
      * @return ApplicationContext实例
      */
-    public static ApplicationContext getApplicationContext(final HttpServletRequest request) {
+    public static ApplicationContext getApplicationContext(HttpServletRequest request) {
         try {
             return RequestContextUtils.findWebApplicationContext(request);
-        } catch (final IllegalStateException e) {
+        } catch (IllegalStateException e) {
             return null;
         }
     }
@@ -62,8 +62,8 @@ public class SpringWebUtil {
      * @param request 请求
      * @return 区域
      */
-    public static Locale getLocale(final HttpServletRequest request) {
-        final LocaleResolver localeResolver = SpringUtil
+    public static Locale getLocale(HttpServletRequest request) {
+        LocaleResolver localeResolver = SpringUtil
                 .getFirstBeanByClass(getApplicationContext(request), LocaleResolver.class);
         if (localeResolver != null) {
             return localeResolver.resolveLocale(request);

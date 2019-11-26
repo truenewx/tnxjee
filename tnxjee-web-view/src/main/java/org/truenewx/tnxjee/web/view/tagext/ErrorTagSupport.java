@@ -1,32 +1,33 @@
 package org.truenewx.tnxjee.web.view.tagext;
 
+import java.util.List;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.commons.lang3.StringUtils;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.api.exception.BusinessException;
-import org.truenewx.tnxjee.service.api.exception.ResolvableException;
-import org.truenewx.tnxjee.service.api.exception.MultiException;
-import org.truenewx.tnxjee.service.api.exception.SingleException;
 import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
-import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 错误标签支持
  *
  * @author jianglei
- * @since JDK 1.8
  */
-public abstract class ErrorTagSupport extends ThymeleafHtmlTagSupport {
+public abstract class ErrorTagSupport extends TagSupport {
 
-    protected List<ResolvedBusinessError> getErrors(ThymeleafElementTagContext context) {
-        return context.getRequestAttributeValue(ViewBusinessExceptionResolver.ATTRIBUTE_ERRORS);
+    private static final long serialVersionUID = -1567572110106962210L;
+
+    protected String field;
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<ResolvedBusinessError> getErrors() {
+        ServletRequest request = this.pageContext.getRequest();
+        return (List<ResolvedBusinessError>) request
+                .getAttribute(ViewBusinessExceptionResolver.ATTRIBUTE_ERRORS);
     }
 
 }

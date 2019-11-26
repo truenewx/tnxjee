@@ -1,35 +1,39 @@
 package org.truenewx.tnxjee.web.view.tag;
 
+import java.io.IOException;
+
+import javax.servlet.jsp.JspException;
+
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.truenewx.tnxjee.web.view.thymeleaf.model.ThymeleafElementTagContext;
-import org.truenewx.tnxjee.web.view.thymeleaf.processor.ThymeleafHtmlTagSupport;
+import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
 
 /**
  * 截取字符串标签
  *
  * @author jianglei
  */
-@Component
-public class OmitTag extends ThymeleafHtmlTagSupport {
+public class OmitTag extends SimpleDynamicAttributeTagSupport {
 
     private final static String REPLACE_OPERATOR = "...";
 
-    @Override
-    protected String getTagName() {
-        return "omit";
+    private String value;
+    private int size;
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
-    protected void doProcess(ThymeleafElementTagContext context, IElementTagStructureHandler handler) {
-        String value = context.getTagAttributeValue("value");
-        if (StringUtils.isNotEmpty(value)) {
-            int size = context.getTagAttributeValue("size", 0);
-            if (0 < size && size < value.length()) {
-                value = value.substring(0, size - 1) + REPLACE_OPERATOR;
+    public void doTag() throws JspException, IOException {
+        if (StringUtils.isNotEmpty(this.value)) {
+            if (0 < this.size && this.size < this.value.length()) {
+                this.value = this.value.substring(0, this.size - 1) + REPLACE_OPERATOR;
             }
+            print(this.value);
         }
-        handler.replaceWith(value, false);
     }
 }

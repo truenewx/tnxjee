@@ -6,7 +6,6 @@ import java.io.Serializable;
  * 分页请求
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class Paging implements Serializable {
 
