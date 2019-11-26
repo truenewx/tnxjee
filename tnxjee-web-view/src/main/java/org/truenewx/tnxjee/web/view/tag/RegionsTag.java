@@ -76,12 +76,16 @@ public class RegionsTag extends TagSupport {
     }
 
     private Locale getLocale() {
-        HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+        HttpServletRequest request = getRequest();
         return SpringWebUtil.getLocale(request);
     }
 
+    private HttpServletRequest getRequest() {
+        return (HttpServletRequest) this.pageContext.getRequest();
+    }
+
     private String appendCaptions() {
-        ApplicationContext context = SpringWebUtil.getApplicationContext(this.pageContext);
+        ApplicationContext context = SpringWebUtil.getApplicationContext(getRequest());
         RegionSource regionSource = SpringUtil.getFirstBeanByClass(context, RegionSource.class);
         Region region = regionSource.getRegion(this.value, getLocale());
 

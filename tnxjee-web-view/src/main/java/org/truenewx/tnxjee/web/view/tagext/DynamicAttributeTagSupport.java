@@ -6,9 +6,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -58,12 +58,12 @@ public class DynamicAttributeTagSupport extends TagSupport implements DynamicAtt
         return sb.toString();
     }
 
-    protected final PageContext getPageContext() {
-        return this.pageContext;
+    protected final Locale getLocale() {
+        return getRequest().getLocale();
     }
 
-    protected final Locale getLocale() {
-        return getPageContext().getRequest().getLocale();
+    protected HttpServletRequest getRequest() {
+        return (HttpServletRequest) this.pageContext.getRequest();
     }
 
     /**
@@ -73,7 +73,7 @@ public class DynamicAttributeTagSupport extends TagSupport implements DynamicAtt
      * @return bean对象
      */
     protected final <T> T getBeanFromApplicationContext(Class<T> beanClass) {
-        ApplicationContext context = SpringWebUtil.getApplicationContext(getPageContext());
+        ApplicationContext context = SpringWebUtil.getApplicationContext(getRequest());
         if (context != null) {
             return SpringUtil.getFirstBeanByClass(context, beanClass);
         }
@@ -88,7 +88,7 @@ public class DynamicAttributeTagSupport extends TagSupport implements DynamicAtt
      */
     protected final void print(Object... values) throws IOException {
         if (values != null) {
-            JspWriter writer = getPageContext().getOut();
+            JspWriter writer = this.pageContext.getOut();
             for (Object value : values) {
                 writer.print(value);
             }

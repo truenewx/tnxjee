@@ -3,7 +3,6 @@ package org.truenewx.tnxjee.web.controller.spring.util;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.LocaleResolver;
@@ -19,18 +18,6 @@ import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
 public class SpringWebUtil {
 
     private SpringWebUtil() {
-    }
-
-    /**
-     * 获取web项目应用范围内的ApplicationContext实例
-     *
-     * @param pageContext
-     * @return ApplicationContext实例
-     */
-    public static ApplicationContext getApplicationContext(PageContext pageContext) {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        return RequestContextUtils.findWebApplicationContext(request,
-                pageContext.getServletContext());
     }
 
     /**

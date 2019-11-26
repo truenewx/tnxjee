@@ -68,7 +68,7 @@ public class SimpleDynamicAttributeTagSupport extends SimpleTagSupport
     }
 
     protected final Locale getLocale() {
-        return getPageContext().getRequest().getLocale();
+        return getRequest().getLocale();
     }
 
     /**
@@ -78,7 +78,7 @@ public class SimpleDynamicAttributeTagSupport extends SimpleTagSupport
      * @return bean对象
      */
     protected final <T> T getBeanFromApplicationContext(Class<T> beanClass) {
-        ApplicationContext context = SpringWebUtil.getApplicationContext(getPageContext());
+        ApplicationContext context = SpringWebUtil.getApplicationContext(getRequest());
         if (context != null) {
             return SpringUtil.getFirstBeanByClass(context, beanClass);
         }

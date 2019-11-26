@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.view.enums.tag;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.jstl.core.LoopTag;
@@ -53,7 +54,8 @@ public class EnumForEachTag extends ForEachSupport implements LoopTag, Iteration
     }
 
     private <T> T getBeanFromApplicationContext(Class<T> beanClass) {
-        ApplicationContext context = SpringWebUtil.getApplicationContext(this.pageContext);
+        HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+        ApplicationContext context = SpringWebUtil.getApplicationContext(request);
         if (context != null) {
             return SpringUtil.getFirstBeanByClass(context, beanClass);
         }

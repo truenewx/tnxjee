@@ -34,7 +34,9 @@ public class MessageTag extends SimpleTagSupport {
 
     private ApplicationContext getApplicationContext() {
         if (this.context == null) {
-            this.context = SpringWebUtil.getApplicationContext((PageContext) getJspContext());
+            HttpServletRequest request = (HttpServletRequest) ((PageContext) getJspContext())
+                    .getRequest();
+            this.context = SpringWebUtil.getApplicationContext(request);
         }
         return this.context;
     }

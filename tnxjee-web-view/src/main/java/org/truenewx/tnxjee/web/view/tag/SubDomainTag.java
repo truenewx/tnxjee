@@ -38,7 +38,8 @@ public class SubDomainTag extends TagSupport {
     }
 
     public void setTopDomainPlaceholder(String topDomainPlaceholder) {
-        ApplicationContext context = SpringWebUtil.getApplicationContext(this.pageContext);
+        HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
+        ApplicationContext context = SpringWebUtil.getApplicationContext(request);
         if (context != null) {
             this.topDomain = SpringUtil.getBeanByDefaultName(context, PlaceholderResolver.class)
                     .resolvePlaceholder(topDomainPlaceholder);
