@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
@@ -18,6 +19,7 @@ import org.truenewx.tnxjee.web.controller.exception.resolver.AbstractBusinessExc
 import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
+import org.truenewx.tnxjee.web.view.util.WebViewPropertyConstant;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
 import org.truenewx.tnxjee.web.view.validation.generate.HandlerValidationApplier;
 
@@ -27,12 +29,17 @@ import org.truenewx.tnxjee.web.view.validation.generate.HandlerValidationApplier
  * @author jianglei
  */
 @Component
-public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver {
+public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver implements
+        EnvironmentAware {
 
     public static final String ATTRIBUTE_ERRORS = BusinessException.class.getName() + ".errors";
 
-    @Autowired
-    private ErrorController errorController;
+    private String errorPath;
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS, "/error/business");
+    }
 
     /**
      * 处理器校验规则填充者
@@ -49,7 +56,7 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
             HandlerMethod handlerMethod, List<ResolvedBusinessError> errors) {
         if (handlerMethod.getMethodAnnotation(ResponseBody.class) == null) {
             request.setAttribute(ATTRIBUTE_ERRORS, errors);
-            ModelAndView mav = new ModelAndView(this.errorController.getErrorPath());
+            ModelAndView mav = new ModelAndView(this.errorPath);
             mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
             ResolvableExceptionResult her = handlerMethod
                     .getMethodAnnotation(ResolvableExceptionResult.class);
