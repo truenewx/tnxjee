@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.web.view.resource;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
@@ -12,9 +15,6 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.view.util.WebViewPropertyConstant;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 资源路径配置
@@ -32,7 +32,8 @@ public class ResourceUrlConfiguration {
     public SimpleUrlHandlerMapping resourceUrlHandlerMapping(ResourceHttpRequestHandler handler) {
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         Map<String, ResourceHttpRequestHandler> urlMap = new LinkedHashMap<>();
-        String staticPattern = this.environment.getProperty(WebViewPropertyConstant.RESOURCES_STATIC_PATTERN, DEFAULT_RESOURCES_STATIC_PATTERN);
+        String staticPattern = this.environment.getProperty(
+                WebViewPropertyConstant.RESOURCES_STATIC_PATTERN, DEFAULT_RESOURCES_STATIC_PATTERN);
         String[] patterns = staticPattern.split(Strings.COMMA);
         for (String pattern : patterns) {
             pattern = pattern.trim();
