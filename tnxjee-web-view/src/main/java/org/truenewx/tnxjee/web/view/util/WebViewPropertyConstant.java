@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.web.view.util;
 
 /**
- * WEB视图层环境属性常量类
+ * 视图层环境属性常量集
  */
 public class WebViewPropertyConstant {
 
