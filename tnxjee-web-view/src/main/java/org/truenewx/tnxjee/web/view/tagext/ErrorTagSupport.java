@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 
@@ -17,7 +18,7 @@ public abstract class ErrorTagSupport extends TagSupport {
 
     private static final long serialVersionUID = -1567572110106962210L;
 
-    protected String field;
+    protected String field = Strings.ASTERISK;
 
     public void setField(String field) {
         this.field = field;
