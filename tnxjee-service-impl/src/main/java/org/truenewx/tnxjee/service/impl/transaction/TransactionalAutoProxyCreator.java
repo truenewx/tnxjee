@@ -83,23 +83,6 @@ public class TransactionalAutoProxyCreator
         return Ordered.LOWEST_PRECEDENCE;
     }
 
-    @Override
-    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName)
-            throws BeansException {
-        return null;
-    }
-
-    @Override
-    public boolean postProcessAfterInstantiation(Object bean, String beanName)
-            throws BeansException {
-        return true;
-    }
-
-    @Override
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds,
-            Object bean, String beanName) throws BeansException {
-        return pvs;
-    }
 
     @Override
     public Class<?> predictBeanType(Class<?> beanClass, String beanName) throws BeansException {
@@ -112,20 +95,8 @@ public class TransactionalAutoProxyCreator
     }
 
     @Override
-    public Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName)
-            throws BeansException {
-        return null;
-    }
-
-    @Override
     public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException {
         return wrapIfNecessary(bean, beanName);
-    }
-
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName)
-            throws BeansException {
-        return bean;
     }
 
     @Override
@@ -179,8 +150,8 @@ public class TransactionalAutoProxyCreator
         } else { // 否则，需同时使用方法级别的注解配置和类级别的事务属性配置
             NameMatchTransactionAttributeSource nmtas = new NameMatchTransactionAttributeSource();
             nmtas.setProperties(attributes);
-            return new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
-                    new AnnotationTransactionAttributeSource(), nmtas }); // 方法级别优先
+            return new CompositeTransactionAttributeSource(new TransactionAttributeSource[]{
+                    new AnnotationTransactionAttributeSource(), nmtas}); // 方法级别优先
         }
     }
 
