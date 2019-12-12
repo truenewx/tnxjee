@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.web.controller.version;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -11,9 +9,11 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
-import org.truenewx.tnxjee.core.version.VersionGetter;
+import org.truenewx.tnxjee.core.spring.core.env.ProfileSupplier;
+import org.truenewx.tnxjee.core.version.VersionReader;
 import org.truenewx.tnxjee.web.controller.util.WebControllerPropertyConstant;
 
+import javax.servlet.ServletContext;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +25,9 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
     @Autowired
     private Environment environment;
     @Autowired
-    private VersionGetter versionGetter;
+    private VersionReader versionReader;
+    @Autowired
+    private ProfileSupplier profileSupplier;
     private ServletContext servletContext;
 
     @Override
@@ -50,7 +52,11 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
         }
         this.servletContext.setAttribute("properties", properties);
 
-        this.servletContext.setAttribute("version", this.versionGetter.getVersion());
+        this.servletContext.setAttribute("version", this.versionReader.getVersion());
+
+        boolean formalProfile = this.profileSupplier.isFormal();
+        this.servletContext.setAttribute("formalProfile", formalProfile);
+        this.servletContext.setAttribute("resourceMin", formalProfile ? ".min" : Strings.EMPTY);
 
         String contextPath = this.servletContext.getContextPath();
         if (Strings.SLASH.equals(contextPath)) {

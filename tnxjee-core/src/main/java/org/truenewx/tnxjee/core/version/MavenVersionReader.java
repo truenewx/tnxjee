@@ -13,18 +13,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @PropertySource("classpath:maven.properties")
-@ConfigurationProperties(prefix = "project")
 public class MavenVersionReader extends AbstractVersionReader {
-
-    private String version;
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
 
     @Override
     protected String readFullVersion(ApplicationContext context) {
-        return this.version;
+        return context.getEnvironment().getProperty("project.version");
     }
 
 }

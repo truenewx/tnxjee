@@ -2,7 +2,11 @@ package org.truenewx.tnxjee.core.spring.core.env;
 
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
@@ -14,35 +18,30 @@ import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
  * @since JDK 1.8
  */
 @Component
-public class ProfileSupplier implements Supplier<String>, ContextInitializedBean {
-    /**
-     * 当前profile
-     */
-    private static String PROFILE = Strings.EMPTY; // 默认为空，表示无profile区分
-    /**
-     * 实例
-     */
-    public static ProfileSupplier INSTANCE = null;
+public class ProfileSupplier implements Supplier<String>, ApplicationContextAware {
 
-    public static String getProfile(ApplicationContext context) {
-        String[] profiles = context.getEnvironment().getActiveProfiles();
-        if (profiles.length > 0) {
-            return profiles[0];
-        }
-        return Strings.EMPTY;
-    }
+    private String profile = Strings.EMPTY; // 默认为空，表示无profile区分
+    /**
+     * 是否正式环境
+     */
+    private boolean formal;
 
     @Override
-    public void afterInitialized(ApplicationContext context) throws Exception {
-        if (INSTANCE == null) {
-            PROFILE = getProfile(context);
-            INSTANCE = context.getBean(ProfileSupplier.class);
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        String[] profiles = context.getEnvironment().getActiveProfiles();
+        if (profiles.length > 0) {
+            this.profile = profiles[0];
+            String formal = context.getEnvironment().getProperty("tnxjee.profile.formal", "false");
+            this.formal = Boolean.valueOf(formal);
         }
     }
 
     @Override
     public String get() {
-        return PROFILE;
+        return this.profile;
     }
 
+    public boolean isFormal() {
+        return this.formal;
+    }
 }

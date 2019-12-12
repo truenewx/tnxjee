@@ -1,22 +1,26 @@
 package org.truenewx.tnxjee.core.version;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.spring.core.env.ProfileSupplier;
 
 /**
  * 抽象的版本号读取器
  *
  * @author jianglei
- * @since JDK 1.8
  */
-public abstract class AbstractVersionReader implements VersionReader, ContextInitializedBean {
+public abstract class AbstractVersionReader implements VersionReader, ApplicationContextAware {
 
+    @Autowired
+    private ProfileSupplier profileSupplier;
     private String base;
     private String build = "0";
 
     @Override
-    public void afterInitialized(ApplicationContext context) throws Exception {
+    public void setApplicationContext(ApplicationContext context) {
         String version = readFullVersion(context);
         if (version != null) {
             int baseLevel = 3;
@@ -54,11 +58,6 @@ public abstract class AbstractVersionReader implements VersionReader, ContextIni
     protected abstract String readFullVersion(ApplicationContext context);
 
     @Override
-    public String getBuild() {
-        return this.build;
-    }
-
-    @Override
     public String getVersion(boolean withBuild) {
         if (this.base == null) {
             return null;
@@ -69,4 +68,16 @@ public abstract class AbstractVersionReader implements VersionReader, ContextIni
             return this.base;
         }
     }
+
+    @Override
+    public String getVersion() {
+        boolean withBuild = !this.profileSupplier.isFormal();
+        return getVersion(withBuild);
+    }
+
+    @Override
+    public String getBuild() {
+        return this.build;
+    }
+
 }
