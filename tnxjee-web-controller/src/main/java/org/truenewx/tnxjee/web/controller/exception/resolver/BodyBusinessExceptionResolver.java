@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 
 /**
  * 业务异常处理至响应体中的解决器
@@ -30,7 +30,7 @@ public class BodyBusinessExceptionResolver extends AbstractBusinessExceptionReso
     @Override
     protected ModelAndView doResolveErrors(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod, List<ResolvedBusinessError> errors) {
-        if (handlerMethod.getMethodAnnotation(ResponseBody.class) != null) {
+        if (SpringWebUtil.isResponseBody(handlerMethod)) {
             try {
                 Map<String, Object> map = Map.of(ATTRIBUTE_ERRORS, errors);
                 response.getWriter().print(JsonUtil.toJson(map));

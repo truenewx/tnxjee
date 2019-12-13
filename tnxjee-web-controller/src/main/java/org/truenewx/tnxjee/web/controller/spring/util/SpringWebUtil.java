@@ -5,6 +5,9 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
@@ -57,6 +60,11 @@ public class SpringWebUtil {
         } else {
             return request.getLocale();
         }
+    }
+
+    public static boolean isResponseBody(HandlerMethod handlerMethod) {
+        return handlerMethod.getMethodAnnotation(ResponseBody.class) != null
+                || handlerMethod.getBeanType().getAnnotation(RestController.class) != null;
     }
 
 }

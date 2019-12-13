@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.service.api.exception.BusinessException;
@@ -29,8 +28,8 @@ import org.truenewx.tnxjee.web.view.validation.generate.HandlerValidationApplier
  * @author jianglei
  */
 @Component
-public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver implements
-        EnvironmentAware {
+public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver
+        implements EnvironmentAware {
 
     public static final String ATTRIBUTE_ERRORS = BusinessException.class.getName() + ".errors";
 
@@ -38,7 +37,8 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS, "/error/business");
+        this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS,
+                "/error/business");
     }
 
     /**
@@ -54,7 +54,7 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
     @Override
     protected ModelAndView doResolveErrors(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod, List<ResolvedBusinessError> errors) {
-        if (handlerMethod.getMethodAnnotation(ResponseBody.class) == null) {
+        if (!SpringWebUtil.isResponseBody(handlerMethod)) {
             request.setAttribute(ATTRIBUTE_ERRORS, errors);
             ModelAndView mav = new ModelAndView(this.errorPath);
             mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
