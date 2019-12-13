@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 
@@ -33,6 +34,7 @@ public class BodyBusinessExceptionResolver extends AbstractBusinessExceptionReso
         if (SpringWebUtil.isResponseBody(handlerMethod)) {
             try {
                 Map<String, Object> map = Map.of(ATTRIBUTE_ERRORS, errors);
+                response.setContentType("application/json;charset=" + Strings.ENCODING_UTF8);
                 response.getWriter().print(JsonUtil.toJson(map));
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return new ModelAndView();
