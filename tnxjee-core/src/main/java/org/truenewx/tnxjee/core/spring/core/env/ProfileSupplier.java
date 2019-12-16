@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.util.CorePropertyConstant;
 
 /**
  * 函数：获取当前profile
@@ -31,7 +32,7 @@ public class ProfileSupplier implements Supplier<String>, ApplicationContextAwar
         String[] profiles = context.getEnvironment().getActiveProfiles();
         if (profiles.length > 0) {
             this.profile = profiles[0];
-            String formal = context.getEnvironment().getProperty("tnxjee.profile.formal", "false");
+            String formal = context.getEnvironment().getProperty(CorePropertyConstant.PROFILE_FORMAL, "false");
             this.formal = Boolean.valueOf(formal);
         }
     }
