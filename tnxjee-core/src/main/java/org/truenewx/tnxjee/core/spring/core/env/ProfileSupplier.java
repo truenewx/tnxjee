@@ -2,14 +2,11 @@ package org.truenewx.tnxjee.core.spring.core.env;
 
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.CorePropertyConstant;
 
 /**

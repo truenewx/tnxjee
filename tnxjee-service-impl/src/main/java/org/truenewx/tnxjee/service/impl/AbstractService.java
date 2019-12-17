@@ -44,7 +44,6 @@ public abstract class AbstractService<T extends Entity> extends ServiceSupport i
      * 断言指定实体不为null
      *
      * @param entity 实体
-     * @throws 如果实体为null
      */
     protected void assertNotNull(T entity) {
         if (entity == null) {

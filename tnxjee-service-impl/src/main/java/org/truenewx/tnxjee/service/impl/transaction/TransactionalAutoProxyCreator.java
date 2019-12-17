@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.impl.transaction;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -9,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
@@ -83,7 +80,6 @@ public class TransactionalAutoProxyCreator
         return Ordered.LOWEST_PRECEDENCE;
     }
 
-
     @Override
     public Class<?> predictBeanType(Class<?> beanClass, String beanName) throws BeansException {
         Object proxy = getCachedProxy(beanName);
@@ -100,8 +96,7 @@ public class TransactionalAutoProxyCreator
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName)
-            throws BeansException {
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return wrapIfNecessary(bean, beanName);
     }
 
@@ -150,8 +145,8 @@ public class TransactionalAutoProxyCreator
         } else { // 否则，需同时使用方法级别的注解配置和类级别的事务属性配置
             NameMatchTransactionAttributeSource nmtas = new NameMatchTransactionAttributeSource();
             nmtas.setProperties(attributes);
-            return new CompositeTransactionAttributeSource(new TransactionAttributeSource[]{
-                    new AnnotationTransactionAttributeSource(), nmtas}); // 方法级别优先
+            return new CompositeTransactionAttributeSource(
+                    new TransactionAttributeSource[] { new AnnotationTransactionAttributeSource(), nmtas }); // 方法级别优先
         }
     }
 

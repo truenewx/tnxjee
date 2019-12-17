@@ -27,14 +27,18 @@ public class ResourceUrlConfiguration {
     @Autowired
     private Environment environment;
 
+    public static String[] getStaticPatterns(Environment environment) {
+        String staticPattern = environment.getProperty(
+                WebViewPropertyConstant.RESOURCES_STATIC_PATTERN, DEFAULT_RESOURCES_STATIC_PATTERN);
+        return staticPattern.split(Strings.COMMA);
+    }
+
     @Bean("resourceUrlHandlerMapping")
     @ConditionalOnMissingBean(value = AbstractUrlHandlerMapping.class, name = "resourceUrlHandlerMapping", search = SearchStrategy.CURRENT)
     public SimpleUrlHandlerMapping resourceUrlHandlerMapping(ResourceHttpRequestHandler handler) {
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         Map<String, ResourceHttpRequestHandler> urlMap = new LinkedHashMap<>();
-        String staticPattern = this.environment.getProperty(
-                WebViewPropertyConstant.RESOURCES_STATIC_PATTERN, DEFAULT_RESOURCES_STATIC_PATTERN);
-        String[] patterns = staticPattern.split(Strings.COMMA);
+        String[] patterns = getStaticPatterns(this.environment);
         for (String pattern : patterns) {
             pattern = pattern.trim();
             urlMap.put(pattern, handler);
