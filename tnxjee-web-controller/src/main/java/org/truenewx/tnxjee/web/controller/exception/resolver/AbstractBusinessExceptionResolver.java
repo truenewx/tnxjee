@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
@@ -18,6 +17,7 @@ import org.truenewx.tnxjee.service.api.exception.BusinessException;
 import org.truenewx.tnxjee.service.api.exception.MultiException;
 import org.truenewx.tnxjee.service.api.exception.ResolvableException;
 import org.truenewx.tnxjee.service.api.exception.SingleException;
+import org.truenewx.tnxjee.service.api.exception.message.BusinessExceptionMessageResolver;
 
 /**
  * 业务异常解决器
@@ -25,7 +25,7 @@ import org.truenewx.tnxjee.service.api.exception.SingleException;
 public abstract class AbstractBusinessExceptionResolver extends AbstractHandlerExceptionResolver {
 
     @Autowired
-    private MessageSource messageSource;
+    private BusinessExceptionMessageResolver messageResolver;
 
     @Override
     protected final ModelAndView doResolveException(HttpServletRequest request,
@@ -45,26 +45,19 @@ public abstract class AbstractBusinessExceptionResolver extends AbstractHandlerE
         List<ResolvedBusinessError> errors = new ArrayList<>();
         if (he instanceof BusinessException) { // 业务异常，转换错误消息
             BusinessException be = (BusinessException) he;
-            String message = resolveExceptionMessage(be, locale);
+            String message = this.messageResolver.resolveMessage(be, locale);
             errors.add(ResolvedBusinessError.of(message, be));
         } else if (he instanceof MultiException) { // 业务异常集，转换错误消息
             MultiException me = (MultiException) he;
             for (SingleException se : me) {
                 if (se instanceof BusinessException) {
                     BusinessException be = (BusinessException) se;
-                    String message = resolveExceptionMessage(be, locale);
+                    String message = this.messageResolver.resolveMessage(be, locale);
                     errors.add(ResolvedBusinessError.of(message, be));
                 }
             }
         }
         return errors;
-    }
-
-    private String resolveExceptionMessage(BusinessException be, Locale locale) {
-        if (be.isMessageLocalized()) {
-            return be.getLocalizedMessage();
-        }
-        return this.messageSource.getMessage(be.getCode(), be.getArgs(), be.getCode(), locale);
     }
 
     @Override
