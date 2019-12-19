@@ -2,21 +2,21 @@ package org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.security.access.WebAccessDecisionManager;
-import org.truenewx.tnxjee.web.controller.spring.security.user.UserAuthenticationService;
+import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.HttpSecurityConfigurer;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * WEB安全配置
+ * WEB安全配置器支持
  */
-@EnableWebSecurity
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -38,13 +38,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return interceptor;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserAuthenticationService userAuthenticationService = SpringUtil.getFirstBeanByClass(getApplicationContext(),
-                UserAuthenticationService.class);
-        Assert.notNull(userAuthenticationService, "Can not find bean of type: UserAuthenticationService");
-        auth.userDetailsService(userAuthenticationService);
-        auth.authenticationProvider(userAuthenticationService);
+    protected final HttpSecurity applyConfigurer(HttpSecurity http) throws Exception {
+        Collection<HttpSecurityConfigurer> configurers = getApplicationContext().getBeansOfType(HttpSecurityConfigurer.class).values();
+        for (HttpSecurityConfigurer configurer : configurers) {
+            http = http.apply(configurer).and();
+        }
+        return http;
     }
 
 }
