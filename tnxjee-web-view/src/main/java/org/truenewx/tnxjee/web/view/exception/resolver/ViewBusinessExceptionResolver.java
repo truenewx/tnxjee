@@ -52,33 +52,39 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
     }
 
     @Override
-    protected ModelAndView doResolveErrors(HttpServletRequest request, HttpServletResponse response,
-            HandlerMethod handlerMethod, List<ResolvedBusinessError> errors) {
-        if (!SpringWebUtil.isResponseBody(handlerMethod)) {
-            request.setAttribute(ATTRIBUTE_ERRORS, errors);
-            ModelAndView mav = new ModelAndView(this.errorPath);
-            mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
-            ResolvableExceptionResult her = handlerMethod
-                    .getMethodAnnotation(ResolvableExceptionResult.class);
-            if (her != null) {
-                String view = her.value();
-                if (ResolvableExceptionResult.PREV_VIEW.equals(view)) {
-                    view = WebViewUtil.getRelativePreviousUrl(request, false);
-                }
-                if (StringUtils.isEmpty(view)) { // 跳转到全局错误页面，则需设置返回按钮地址
-                    mav.addObject("back", her.back());
-                } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
-                    mav.setViewName(view);
-                    WebViewUtil.copyParameters2Attributes(request);
-                }
-                // 生成校验规则的模型类集合
-                Locale locale = SpringWebUtil.getLocale(request);
-                if (this.handlerValidationApplier != null) {
-                    this.handlerValidationApplier.applyValidation(mav, her.validate(), locale);
-                }
+    protected boolean supports(HandlerMethod handlerMethod) {
+        return !SpringWebUtil.isResponseBody(handlerMethod);
+    }
+
+    @Override
+    protected void saveErrors(HttpServletRequest request, HttpServletResponse response,
+            List<ResolvedBusinessError> errors) {
+        request.setAttribute(ATTRIBUTE_ERRORS, errors);
+    }
+
+    @Override
+    protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
+            HandlerMethod handlerMethod) {
+        ModelAndView mav = new ModelAndView(this.errorPath);
+        mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
+        ResolvableExceptionResult her = handlerMethod.getMethodAnnotation(ResolvableExceptionResult.class);
+        if (her != null) {
+            String view = her.value();
+            if (ResolvableExceptionResult.PREV_VIEW.equals(view)) {
+                view = WebViewUtil.getRelativePreviousUrl(request, false);
             }
-            return mav;
+            if (StringUtils.isEmpty(view)) { // 跳转到全局错误页面，则需设置返回按钮地址
+                mav.addObject("back", her.back());
+            } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
+                mav.setViewName(view);
+                WebViewUtil.copyParameters2Attributes(request);
+            }
+            // 生成校验规则的模型类集合
+            Locale locale = SpringWebUtil.getLocale(request);
+            if (this.handlerValidationApplier != null) {
+                this.handlerValidationApplier.applyValidation(mav, her.validate(), locale);
+            }
         }
-        return null;
+        return mav;
     }
 }

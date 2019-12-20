@@ -31,24 +31,43 @@ public abstract class AbstractBusinessExceptionResolver extends AbstractHandlerE
     protected final ModelAndView doResolveException(HttpServletRequest request,
             HttpServletResponse response, Object handler, Exception ex) {
         if (handler instanceof HandlerMethod && ex instanceof ResolvableException) {
-            ResolvableException he = (ResolvableException) ex;
-            List<ResolvedBusinessError> errors = buildErrors(he, request.getLocale());
-            if (errors.size() > 0) {
-                HandlerMethod handlerMethod = (HandlerMethod) handler;
-                return doResolveErrors(request, response, handlerMethod, errors);
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            if (supports(handlerMethod)) {
+                ResolvableException re = (ResolvableException) ex;
+                if (saveException(request, response, re)) {
+                    return getResult(request, response, handlerMethod);
+                }
             }
         }
         return null;
     }
 
-    private List<ResolvedBusinessError> buildErrors(ResolvableException he, Locale locale) {
+    protected abstract boolean supports(HandlerMethod handlerMethod);
+
+    protected abstract void saveErrors(HttpServletRequest request, HttpServletResponse response,
+            List<ResolvedBusinessError> errors);
+
+    protected abstract ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
+            HandlerMethod handlerMethod);
+
+    public final boolean saveException(HttpServletRequest request, HttpServletResponse response,
+            ResolvableException re) {
+        List<ResolvedBusinessError> errors = buildErrors(re, request.getLocale());
+        if (errors.size() > 0) {
+            saveErrors(request, response, errors);
+            return true;
+        }
+        return false;
+    }
+
+    private List<ResolvedBusinessError> buildErrors(ResolvableException re, Locale locale) {
         List<ResolvedBusinessError> errors = new ArrayList<>();
-        if (he instanceof BusinessException) { // 业务异常，转换错误消息
-            BusinessException be = (BusinessException) he;
+        if (re instanceof BusinessException) { // 业务异常，转换错误消息
+            BusinessException be = (BusinessException) re;
             String message = this.messageResolver.resolveMessage(be, locale);
             errors.add(ResolvedBusinessError.of(message, be));
-        } else if (he instanceof MultiException) { // 业务异常集，转换错误消息
-            MultiException me = (MultiException) he;
+        } else if (re instanceof MultiException) { // 业务异常集，转换错误消息
+            MultiException me = (MultiException) re;
             for (SingleException se : me) {
                 if (se instanceof BusinessException) {
                     BusinessException be = (BusinessException) se;
@@ -89,8 +108,5 @@ public abstract class AbstractBusinessExceptionResolver extends AbstractHandlerE
         return message.toString();
     }
 
-    protected abstract ModelAndView doResolveErrors(HttpServletRequest request,
-            HttpServletResponse response, HandlerMethod handlerMethod,
-            List<ResolvedBusinessError> errors);
 
 }

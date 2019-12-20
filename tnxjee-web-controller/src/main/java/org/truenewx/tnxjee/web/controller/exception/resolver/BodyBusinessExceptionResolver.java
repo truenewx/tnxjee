@@ -29,20 +29,27 @@ public class BodyBusinessExceptionResolver extends AbstractBusinessExceptionReso
     }
 
     @Override
-    protected ModelAndView doResolveErrors(HttpServletRequest request, HttpServletResponse response,
-            HandlerMethod handlerMethod, List<ResolvedBusinessError> errors) {
-        if (SpringWebUtil.isResponseBody(handlerMethod)) {
-            try {
-                Map<String, Object> map = Map.of(ATTRIBUTE_ERRORS, errors);
-                response.setContentType("application/json;charset=" + Strings.ENCODING_UTF8);
-                response.getWriter().print(JsonUtil.toJson(map));
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return new ModelAndView();
-            } catch (IOException e) {
-                logException(e, request);
-            }
+    protected boolean supports(HandlerMethod handlerMethod) {
+        return SpringWebUtil.isResponseBody(handlerMethod);
+    }
+
+    @Override
+    protected void saveErrors(HttpServletRequest request, HttpServletResponse response,
+            List<ResolvedBusinessError> errors) {
+        try {
+            Map<String, Object> map = Map.of(ATTRIBUTE_ERRORS, errors);
+            response.setContentType("application/json;charset=" + Strings.ENCODING_UTF8);
+            response.getWriter().print(JsonUtil.toJson(map));
+        } catch (IOException e) {
+            logException(e, request);
         }
-        return null;
+    }
+
+    @Override
+    protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
+            HandlerMethod handlerMethod) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        return new ModelAndView();
     }
 
 }
