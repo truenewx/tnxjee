@@ -1,26 +1,24 @@
 package org.truenewx.tnxjee.web.view.spring.security.web.authentication;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.service.api.exception.BusinessException;
-import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.truenewx.tnxjee.core.spring.util.SpringUtil;
+import org.truenewx.tnxjee.service.api.exception.BusinessException;
+import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 
 /**
  * WEB视图层鉴权失败处理器
  */
-public class WebViewAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler implements
-        ApplicationContextAware {
+public class WebViewAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler
+        implements ApplicationContextAware {
 
     private ViewBusinessExceptionResolver businessExceptionResolver;
 
