@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -11,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.truenewx.tnxjee.web.controller.spring.security.access.WebAccessDecisionManager;
-import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.HttpSecurityConfigurer;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 
 /**
@@ -20,7 +20,7 @@ import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.W
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public FilterInvocationSecurityMetadataSource securityMetadataSource() {
+    public WebFilterInvocationSecurityMetadataSource securityMetadataSource() {
         return new WebFilterInvocationSecurityMetadataSource();
     }
 
@@ -33,12 +33,17 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     public void init(WebSecurity web) throws Exception {
         HttpSecurity http = getHttp();
         web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
+            @Override
             public void run() {
-                FilterSecurityInterceptor securityInterceptor = http
-                        .getSharedObject(FilterSecurityInterceptor.class);
-                securityInterceptor.setSecurityMetadataSource(securityMetadataSource());
-                securityInterceptor.setAccessDecisionManager(accessDecisionManager());
-                web.securityInterceptor(securityInterceptor);
+                FilterSecurityInterceptor interceptor = http.getSharedObject(FilterSecurityInterceptor.class);
+                WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
+                FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor.getSecurityMetadataSource();
+                if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
+                    metadataSource.setOriginal(originalMetadataSource);
+                }
+                interceptor.setSecurityMetadataSource(metadataSource);
+                interceptor.setAccessDecisionManager(accessDecisionManager());
+                web.securityInterceptor(interceptor);
             }
         });
     }
@@ -53,10 +58,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         applyConfigurers(http);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected final void applyConfigurers(HttpSecurity http) throws Exception {
-        Collection<HttpSecurityConfigurer> configurers = getApplicationContext()
-                .getBeansOfType(HttpSecurityConfigurer.class).values();
-        for (HttpSecurityConfigurer configurer : configurers) {
+        Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
+                .getBeansOfType(SecurityConfigurerAdapter.class).values();
+        for (SecurityConfigurerAdapter configurer : configurers) {
             http.apply(configurer);
         }
     }

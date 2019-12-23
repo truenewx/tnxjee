@@ -15,8 +15,13 @@ import org.truenewx.tnxjee.web.controller.spring.web.servlet.RequestHandlerSourc
  */
 public class WebFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
+    private FilterInvocationSecurityMetadataSource original;
     @Autowired
     private RequestHandlerSource handlerSource;
+
+    public void setOriginal(FilterInvocationSecurityMetadataSource original) {
+        this.original = original;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -30,6 +35,10 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
+        Collection<ConfigAttribute> attributes = null;
+        if (this.original != null) {
+            attributes = this.original.getAttributes(object);
+        }
         FilterInvocation fi = (FilterInvocation) object;
         try {
             HandlerExecutionChain chain = this.handlerSource.getHandler(fi.getRequest());
@@ -43,6 +52,6 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-        return null;
+        return attributes;
     }
 }

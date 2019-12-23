@@ -15,8 +15,11 @@ import java.util.function.Consumer;
 /**
  * WEB视图层配置支持
  */
-public abstract class WebViewConfigurationSupport extends WebSecurityConfigurerSupport {
+public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupport {
 
+    /**
+     * 子类覆写，声明为Bean，以禁止直接访问jsp文件
+     */
     public FilterRegistrationBean<ForbidAccessFilter> forbidAccessFilter() {
         FilterRegistrationBean<ForbidAccessFilter> frb = new FilterRegistrationBean<>();
         frb.setFilter(new ForbidAccessFilter());
@@ -25,6 +28,9 @@ public abstract class WebViewConfigurationSupport extends WebSecurityConfigurerS
         return frb;
     }
 
+    /**
+     * 子类覆写，声明为Bean，并提供SiteMesh装饰配置
+     */
     public FilterRegistrationBean<BuildableSiteMeshFilter> siteMeshFilter(
             Consumer<SiteMeshFilterBuilder> buildConsumer) {
         FilterRegistrationBean<BuildableSiteMeshFilter> frb = new FilterRegistrationBean<>();
@@ -34,9 +40,15 @@ public abstract class WebViewConfigurationSupport extends WebSecurityConfigurerS
         return frb;
     }
 
-    protected final String[] getAnonymousPatterns(String... appendedPatterns) {
+    /**
+     * 读取静态资源URL样式集合，以获取可匿名访问的URL样式集合
+     *
+     * @param appendedUrlPatterns 额外附加的URL样式集合
+     * @return 可匿名访问的URL样式集合
+     */
+    protected final String[] getAnonymousUrlPatterns(String... appendedUrlPatterns) {
         Set<String> set = new HashSet<>();
-        for (String pattern : appendedPatterns) {
+        for (String pattern : appendedUrlPatterns) {
             set.add(pattern.trim());
         }
         String[] staticResourcePatterns = ResourceUrlConfiguration
