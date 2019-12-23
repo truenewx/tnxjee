@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 
@@ -7,11 +7,11 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  *
  * @author jianglei
  */
-public class Base64Encrypter implements BidirectionalEncrypter {
+public class Base64Encryptor implements BidirectionalEncryptor {
 
-    public final static Base64Encrypter INSTANCE = new Base64Encrypter();
+    public final static Base64Encryptor INSTANCE = new Base64Encryptor();
 
-    private Base64Encrypter() {
+    private Base64Encryptor() {
     }
 
     @Override

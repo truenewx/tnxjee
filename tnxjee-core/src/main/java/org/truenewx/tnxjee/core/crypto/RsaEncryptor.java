@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import java.io.InputStream;
 
@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * @author jianglei
  *
  */
-public class RsaEncrypter implements KeyBidirectionalEncrypter {
+public class RsaEncryptor implements KeyBidirectionalEncryptor {
 
     @Override
     public String encrypt(Object source, Object key) {

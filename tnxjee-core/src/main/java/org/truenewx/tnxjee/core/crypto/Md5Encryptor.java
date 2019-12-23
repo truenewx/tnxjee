@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 
@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * @author jianglei
  *
  */
-public class Md5Encrypter implements Encrypter {
+public class Md5Encryptor implements Encryptor {
 
     @Override
     public String encrypt(Object source) {

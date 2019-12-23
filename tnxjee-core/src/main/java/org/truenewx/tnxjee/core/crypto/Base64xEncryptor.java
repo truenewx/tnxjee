@@ -1,14 +1,14 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import java.util.Random;
 
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 
-public class Base64xEncrypter implements KeyBidirectionalEncrypter {
+public class Base64xEncryptor implements KeyBidirectionalEncryptor {
 
-    public final static Base64xEncrypter INSTANCE = new Base64xEncrypter();
+    public final static Base64xEncryptor INSTANCE = new Base64xEncryptor();
 
-    private Base64xEncrypter() {
+    private Base64xEncryptor() {
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * @author jianglei
  *
  */
-public class Md5xEncrypter implements KeyEncrypter {
+public class Md5xEncryptor implements KeyEncryptor {
     /**
      * 密文长度
      */
@@ -24,7 +24,7 @@ public class Md5xEncrypter implements KeyEncrypter {
 
     private final long staticKey;
 
-    public Md5xEncrypter(long staticKey) {
+    public Md5xEncryptor(long staticKey) {
         this.staticKey = staticKey;
     }
 

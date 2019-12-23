@@ -17,7 +17,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.encrypt.Md5Encrypter;
+import org.truenewx.tnxjee.core.crypto.Md5Encryptor;
 
 /**
  * 加密工具类
@@ -41,7 +41,7 @@ public class EncryptUtil {
                 return source.toString().getBytes();
             }
         } catch (IOException e) {
-            LogUtil.error(Md5Encrypter.class, e);
+            LogUtil.error(Md5Encryptor.class, e);
             return null;
         }
     }

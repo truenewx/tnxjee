@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 /**
  * 带密钥的加密器
@@ -6,7 +6,7 @@ package org.truenewx.tnxjee.core.encrypt;
  * @author jianglei
  * @since JDK 1.8
  */
-public interface KeyEncrypter {
+public interface KeyEncryptor {
 
     String encrypt(Object source, Object key);
 

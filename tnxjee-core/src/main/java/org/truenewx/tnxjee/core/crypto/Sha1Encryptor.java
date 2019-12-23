@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.encrypt;
+package org.truenewx.tnxjee.core.crypto;
 
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 
@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * @author jianglei
  * @since JDK 1.8
  */
-public class Sha1Encrypter implements Encrypter {
+public class Sha1Encryptor implements Encryptor {
 
     @Override
     public String encrypt(Object source) {
