@@ -39,7 +39,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
                 WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
                 FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor.getSecurityMetadataSource();
                 if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
-                    metadataSource.setOriginal(originalMetadataSource);
+                    metadataSource.setOrigin(originalMetadataSource);
                 }
                 interceptor.setSecurityMetadataSource(metadataSource);
                 interceptor.setAccessDecisionManager(accessDecisionManager());
