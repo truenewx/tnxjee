@@ -37,7 +37,7 @@ import org.truenewx.tnxjee.repo.support.SchemaTemplate;
  *
  * @author jianglei
  */
-public abstract class JpaDataSourceConfigSupport implements ApplicationContextAware {
+public abstract class JpaDataSourceConfigurationSupport implements ApplicationContextAware {
 
     @Autowired
     private JpaProperties jpaProperties;

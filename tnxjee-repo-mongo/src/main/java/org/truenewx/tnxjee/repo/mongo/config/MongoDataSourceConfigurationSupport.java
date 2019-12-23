@@ -12,7 +12,7 @@ import com.mongodb.MongoClientURI;
  *
  * @author jianglei
  */
-public abstract class MongoDataSourceConfigSupport extends EmbeddedMongoConfiguration {
+public abstract class MongoDataSourceConfigurationSupport extends EmbeddedMongoConfiguration {
 
     private String uri;
 
