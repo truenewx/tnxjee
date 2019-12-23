@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
@@ -19,7 +20,7 @@ import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.W
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public FilterInvocationSecurityMetadataSource metadataSource() {
+    public FilterInvocationSecurityMetadataSource securityMetadataSource() {
         return new WebFilterInvocationSecurityMetadataSource();
     }
 
@@ -28,13 +29,18 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return new WebAccessDecisionManager();
     }
 
-    @Bean
-    public FilterSecurityInterceptor interceptor(FilterInvocationSecurityMetadataSource metadataSource,
-            AccessDecisionManager accessDecisionManager) {
-        FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
-        interceptor.setSecurityMetadataSource(metadataSource);
-        interceptor.setAccessDecisionManager(accessDecisionManager);
-        return interceptor;
+    @Override
+    public void init(WebSecurity web) throws Exception {
+        HttpSecurity http = getHttp();
+        web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
+            public void run() {
+                FilterSecurityInterceptor securityInterceptor = http
+                        .getSharedObject(FilterSecurityInterceptor.class);
+                securityInterceptor.setSecurityMetadataSource(securityMetadataSource());
+                securityInterceptor.setAccessDecisionManager(accessDecisionManager());
+                web.securityInterceptor(securityInterceptor);
+            }
+        });
     }
 
     @Override
@@ -42,13 +48,16 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         // 覆盖父类的方法实现，且不调用父类方法实现，以标记AuthenticationManager由自定义创建，避免创建多个实例
     }
 
-    protected final HttpSecurity applyConfigurer(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        applyConfigurers(http);
+    }
+
+    protected final void applyConfigurers(HttpSecurity http) throws Exception {
         Collection<HttpSecurityConfigurer> configurers = getApplicationContext()
                 .getBeansOfType(HttpSecurityConfigurer.class).values();
         for (HttpSecurityConfigurer configurer : configurers) {
-            http = http.apply(configurer).and();
+            http.apply(configurer);
         }
-        return http;
     }
-
 }
