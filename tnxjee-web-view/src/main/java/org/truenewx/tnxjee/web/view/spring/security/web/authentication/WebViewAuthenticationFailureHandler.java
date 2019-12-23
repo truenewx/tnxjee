@@ -15,7 +15,7 @@ import org.truenewx.tnxjee.service.api.exception.BusinessException;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 
 /**
- * WEB视图层鉴权失败处理器
+ * WEB视图层认证失败处理器
  */
 public class WebViewAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler
         implements ApplicationContextAware {

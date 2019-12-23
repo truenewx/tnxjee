@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.web.view.config;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.core.Ordered;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration.WebSecurityConfigurerSupport;
 import org.truenewx.tnxjee.web.view.resource.ResourceUrlConfiguration;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
@@ -40,23 +41,25 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
         return frb;
     }
 
-    /**
-     * 读取静态资源URL样式集合，以获取可匿名访问的URL样式集合
-     *
-     * @param appendedUrlPatterns 额外附加的URL样式集合
-     * @return 可匿名访问的URL样式集合
-     */
-    protected final String[] getAnonymousUrlPatterns(String... appendedUrlPatterns) {
+    protected String[] getAnonymousUrlPatterns() {
         Set<String> set = new HashSet<>();
-        for (String pattern : appendedUrlPatterns) {
+        for (String pattern : super.getAnonymousUrlPatterns()) {
             set.add(pattern.trim());
         }
+        // 静态资源全部可匿名访问
         String[] staticResourcePatterns = ResourceUrlConfiguration
                 .getStaticPatterns(getApplicationContext().getEnvironment());
         for (String pattern : staticResourcePatterns) {
             set.add(pattern.trim());
         }
         return set.toArray(new String[set.size()]);
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        super.configure(http);
+
+        http.logout().logoutSuccessUrl(getLoginUrl());
     }
 
 }

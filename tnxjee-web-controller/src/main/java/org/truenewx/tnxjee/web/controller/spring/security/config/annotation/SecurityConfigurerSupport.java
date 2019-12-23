@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 
 /**
  * 安全配置器支持
- * @param <AP> 使用的AuthenticationProvider实现类型
+ * @param <AP> 认证提供器实现类型
  */
 public abstract class SecurityConfigurerSupport<AP extends AuthenticationProvider> extends
         SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
