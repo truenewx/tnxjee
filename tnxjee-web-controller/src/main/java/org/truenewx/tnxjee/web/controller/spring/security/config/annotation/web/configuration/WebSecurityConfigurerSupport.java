@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration;
 
-import java.util.Collection;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -13,9 +11,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.truenewx.tnxjee.web.controller.spring.security.access.WebAccessDecisionManager;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
+
+import java.util.Collection;
 
 /**
  * WEB安全配置器支持
@@ -74,11 +75,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .accessDeniedPage("/error/403")
                 .and()
-                .logout().logoutUrl(getLogoutUrl());
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
+                .deleteCookies("JSESSIONID").permitAll();
         // @formatter:on
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected final void applyConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
@@ -93,7 +95,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      * @return 可匿名访问的URL样式集合
      */
     protected String[] getAnonymousUrlPatterns() {
-        return new String[] { getLoginUrl(), "/error/**" };
+        return new String[]{getLoginUrl(), "/error/**"};
     }
 
     protected String getLoginUrl() {
