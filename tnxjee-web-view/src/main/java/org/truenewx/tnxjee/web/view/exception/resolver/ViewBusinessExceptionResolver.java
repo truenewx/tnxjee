@@ -1,6 +1,5 @@
 package org.truenewx.tnxjee.web.view.exception.resolver;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,9 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.truenewx.tnxjee.service.api.exception.BusinessException;
 import org.truenewx.tnxjee.web.controller.exception.resolver.AbstractBusinessExceptionResolver;
-import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.web.view.util.WebViewPropertyConstant;
@@ -28,17 +25,13 @@ import org.truenewx.tnxjee.web.view.validation.generate.HandlerValidationApplier
  * @author jianglei
  */
 @Component
-public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver
-        implements EnvironmentAware {
-
-    public static final String ATTRIBUTE_ERRORS = BusinessException.class.getName() + ".errors";
+public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver implements EnvironmentAware {
 
     private String errorPath;
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS,
-                "/error/business");
+        this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS, "/error/business");
     }
 
     /**
@@ -52,39 +45,31 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
     }
 
     @Override
-    protected boolean supports(HandlerMethod handlerMethod) {
-        return !SpringWebUtil.isResponseBody(handlerMethod);
-    }
-
-    @Override
-    protected void saveErrors(HttpServletRequest request, HttpServletResponse response,
-            List<ResolvedBusinessError> errors) {
-        request.setAttribute(ATTRIBUTE_ERRORS, errors);
-    }
-
-    @Override
     protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod) {
-        ModelAndView mav = new ModelAndView(this.errorPath);
-        mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
-        ResolvableExceptionResult her = handlerMethod.getMethodAnnotation(ResolvableExceptionResult.class);
-        if (her != null) {
-            String view = her.value();
-            if (ResolvableExceptionResult.PREV_VIEW.equals(view)) {
-                view = WebViewUtil.getRelativePreviousUrl(request, false);
+        if (!SpringWebUtil.isResponseBody(handlerMethod)) {
+            ModelAndView mav = new ModelAndView(this.errorPath);
+            mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
+            ResolvableExceptionResult her = handlerMethod.getMethodAnnotation(ResolvableExceptionResult.class);
+            if (her != null) {
+                String view = her.value();
+                if (ResolvableExceptionResult.PREV_VIEW.equals(view)) {
+                    view = WebViewUtil.getRelativePreviousUrl(request, false);
+                }
+                if (StringUtils.isEmpty(view)) { // 跳转到全局错误页面，则需设置返回按钮地址
+                    mav.addObject("back", her.back());
+                } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
+                    mav.setViewName(view);
+                    WebViewUtil.copyParameters2Attributes(request);
+                }
+                // 生成校验规则的模型类集合
+                Locale locale = SpringWebUtil.getLocale(request);
+                if (this.handlerValidationApplier != null) {
+                    this.handlerValidationApplier.applyValidation(mav, her.validate(), locale);
+                }
             }
-            if (StringUtils.isEmpty(view)) { // 跳转到全局错误页面，则需设置返回按钮地址
-                mav.addObject("back", her.back());
-            } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
-                mav.setViewName(view);
-                WebViewUtil.copyParameters2Attributes(request);
-            }
-            // 生成校验规则的模型类集合
-            Locale locale = SpringWebUtil.getLocale(request);
-            if (this.handlerValidationApplier != null) {
-                this.handlerValidationApplier.applyValidation(mav, her.validate(), locale);
-            }
+            return mav;
         }
-        return mav;
+        return null;
     }
 }

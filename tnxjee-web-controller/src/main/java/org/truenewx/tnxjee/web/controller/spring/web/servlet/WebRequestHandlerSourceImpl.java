@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 请求处理器源的实现
+ * WEB请求处理器源的实现
  */
 @Component
-public class RequestHandlerSourceImpl implements RequestHandlerSource, ContextInitializedBean {
+public class WebRequestHandlerSourceImpl implements WebRequestHandlerSource, ContextInitializedBean {
 
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
@@ -32,7 +32,7 @@ public class RequestHandlerSourceImpl implements RequestHandlerSource, ContextIn
     }
 
     @Override
-    public HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+    public HandlerExecutionChain getHandlerChain(HttpServletRequest request) throws Exception {
         for (HandlerMapping mapping : this.handlerMappings) {
             HandlerExecutionChain handler = mapping.getHandler(request);
             if (handler != null) {

@@ -7,8 +7,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerExecutionChain;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.RequestHandlerSource;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.WebRequestHandlerSource;
 
 /**
  * WEB过滤器调用安全元数据源
@@ -17,7 +16,7 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
-    private RequestHandlerSource handlerSource;
+    private WebRequestHandlerSource requestHandlerSource;
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -41,14 +40,8 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
         }
         FilterInvocation fi = (FilterInvocation) object;
         try {
-            HandlerExecutionChain chain = this.handlerSource.getHandler(fi.getRequest());
-            if (chain != null) {
-                Object handler = chain.getHandler();
-                if (handler instanceof HandlerMethod) {
-                    HandlerMethod method = (HandlerMethod) handler;
+            HandlerMethod handlerMethod = this.requestHandlerSource.getHandlerMethod(fi.getRequest());
 
-                }
-            }
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
