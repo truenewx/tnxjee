@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration;
 
+import java.util.Collection;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -8,13 +10,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.controller.spring.security.access.WebAccessDecisionManager;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
-
-import java.util.Collection;
+import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
 
 /**
  * WEB安全配置器支持
@@ -25,6 +26,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Bean
     public WebFilterInvocationSecurityMetadataSource securityMetadataSource() {
         return new WebFilterInvocationSecurityMetadataSource();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new WebAuthenticationEntryPoint(getLoginUrl());
     }
 
     @Bean
@@ -59,21 +65,20 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         applyConfigurers(http);
-        String loginUrl = getLoginUrl();
         // @formatter:off
         http.authorizeRequests()
                 .antMatchers(getAnonymousUrlPatterns()).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(loginUrl))
-                .accessDeniedPage("/error/401")
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedPage("/error/403")
                 .and()
                 .logout().logoutUrl(getLogoutUrl());
         // @formatter:on
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected final void applyConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
@@ -88,7 +93,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      * @return 可匿名访问的URL样式集合
      */
     protected String[] getAnonymousUrlPatterns() {
-        return new String[]{getLoginUrl(), "/error/**"};
+        return new String[] { getLoginUrl(), "/error/**" };
     }
 
     protected String getLoginUrl() {
