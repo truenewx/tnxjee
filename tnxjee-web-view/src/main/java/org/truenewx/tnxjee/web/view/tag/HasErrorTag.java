@@ -1,45 +1,31 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.util.List;
+import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
 
 /**
- * 判断是否存在错误消息的标签
+ * 是否存在错误消息的输出标签
  *
  * @author jianglei
  */
 public class HasErrorTag extends ErrorTagSupport {
 
-    private static final long serialVersionUID = -8236304660577964951L;
-
-    @Override
-    public int doStartTag() throws JspException {
-        return hasError() ? Tag.EVAL_BODY_INCLUDE : Tag.SKIP_BODY;
-    }
-
-    protected final boolean hasError() {
-        List<ResolvedBusinessError> errors = getErrors();
-        if (errors != null) {
-            if (Strings.ASTERISK.equals(this.field)) {
-                return errors.size() > 0;
-            }
-            for (ResolvedBusinessError error : errors) {
-                if (this.field.equals(error.getField())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    private static final long serialVersionUID = -5895134371553366753L;
 
     @Override
     public int doEndTag() throws JspException {
+        JspWriter out = this.pageContext.getOut();
+        try {
+            out.print(matches());
+        } catch (IOException e) {
+            throw new JspException(e);
+        }
         return Tag.EVAL_PAGE;
     }
+
 }

@@ -51,8 +51,8 @@
     </tag>
 
     <tag>
-        <name>haserror</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.HasErrorTag</tag-class>
+        <name>iferror</name>
+        <tag-class>org.truenewx.tnxjee.web.view.tag.IfErrorTag</tag-class>
         <body-content>JSP</body-content>
         <description>判断字段是否有错误信息</description>
         <attribute>
@@ -61,18 +61,30 @@
             <rtexprvalue>false</rtexprvalue>
             <description>绑定字段名称</description>
         </attribute>
+        <attribute>
+            <name>inverse</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>是否反转判断</description>
+        </attribute>
     </tag>
 
     <tag>
-        <name>noerror</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.NoErrorTag</tag-class>
-        <body-content>JSP</body-content>
-        <description>判断字段是否没有错误信息</description>
+        <name>haserror</name>
+        <tag-class>org.truenewx.tnxjee.web.view.tag.HasErrorTag</tag-class>
+        <body-content>empty</body-content>
+        <description>输出字段是否有错误信息</description>
         <attribute>
             <name>field</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <description>绑定字段名称</description>
+        </attribute>
+        <attribute>
+            <name>inverse</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>是否反转判断</description>
         </attribute>
     </tag>
 
