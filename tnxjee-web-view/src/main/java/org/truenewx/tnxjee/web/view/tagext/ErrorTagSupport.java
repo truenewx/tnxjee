@@ -18,15 +18,12 @@ public abstract class ErrorTagSupport extends TagSupport {
     private static final long serialVersionUID = -1567572110106962210L;
 
     protected String field = Strings.ASTERISK;
-    private boolean inverse;
+
 
     public void setField(String field) {
         this.field = field;
     }
 
-    public void setInverse(boolean inverse) {
-        this.inverse = inverse;
-    }
 
     @SuppressWarnings("unchecked")
     protected List<ResolvedBusinessError> getErrors() {
@@ -35,8 +32,8 @@ public abstract class ErrorTagSupport extends TagSupport {
                 .getAttribute(BusinessExceptionMessageSaver.ATTRIBUTE);
     }
 
-    protected final boolean matches() {
-        if (this.inverse) {
+    protected final boolean matches(boolean inverse) {
+        if (inverse) {
             return !hasError();
         } else {
             return hasError();

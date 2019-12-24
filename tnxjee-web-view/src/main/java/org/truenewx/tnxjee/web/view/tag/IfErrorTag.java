@@ -14,9 +14,15 @@ public class IfErrorTag extends ErrorTagSupport {
 
     private static final long serialVersionUID = -8236304660577964951L;
 
+    private boolean inverse;
+
+    public void setInverse(boolean inverse) {
+        this.inverse = inverse;
+    }
+
     @Override
     public int doStartTag() throws JspException {
-        return matches() ? Tag.EVAL_BODY_INCLUDE : Tag.SKIP_BODY;
+        return matches(this.inverse) ? Tag.EVAL_BODY_INCLUDE : Tag.SKIP_BODY;
     }
 
     @Override

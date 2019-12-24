@@ -65,7 +65,7 @@
             <name>inverse</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-            <description>是否反转判断</description>
+            <description>是否反转判断，false（默认）-有错误时执行标签体，true-无错误时执行标签体</description>
         </attribute>
     </tag>
 
@@ -80,11 +80,18 @@
             <rtexprvalue>false</rtexprvalue>
             <description>绑定字段名称</description>
         </attribute>
+    </tag>
+
+    <tag>
+        <name>noerror</name>
+        <tag-class>org.truenewx.tnxjee.web.view.tag.NoErrorTag</tag-class>
+        <body-content>empty</body-content>
+        <description>输出字段是否没有错误信息</description>
         <attribute>
-            <name>inverse</name>
+            <name>field</name>
             <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>是否反转判断</description>
+            <rtexprvalue>false</rtexprvalue>
+            <description>绑定字段名称</description>
         </attribute>
     </tag>
 

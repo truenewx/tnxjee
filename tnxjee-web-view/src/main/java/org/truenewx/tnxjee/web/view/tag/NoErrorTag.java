@@ -9,19 +9,19 @@ import javax.servlet.jsp.tagext.Tag;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
 
 /**
- * 是否有错误消息的输出标签
+ * 是否没有错误消息的输出标签
  *
  * @author jianglei
  */
-public class HasErrorTag extends ErrorTagSupport {
+public class NoErrorTag extends ErrorTagSupport {
 
-    private static final long serialVersionUID = -5895134371553366753L;
+    private static final long serialVersionUID = 4561458789317014954L;
 
     @Override
     public int doEndTag() throws JspException {
         JspWriter out = this.pageContext.getOut();
         try {
-            out.print(matches(false));
+            out.print(matches(true));
         } catch (IOException e) {
             throw new JspException(e);
         }
