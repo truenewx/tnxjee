@@ -14,6 +14,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.web.controller.exception.resolver.AbstractBusinessExceptionResolver;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.web.view.util.WebViewPropertyConstant;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
@@ -60,7 +61,7 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
                     mav.addObject("back", her.back());
                 } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
                     mav.setViewName(view);
-                    WebViewUtil.copyParameters2Attributes(request);
+                    WebControllerUtil.copyParameters2Attributes(request);
                 }
                 // 生成校验规则的模型类集合
                 Locale locale = SpringWebUtil.getLocale(request);

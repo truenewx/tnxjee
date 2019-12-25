@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,13 +10,15 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.truenewx.tnxjee.web.controller.spring.security.access.WebAccessDecisionManager;
+import org.truenewx.tnxjee.web.controller.spring.security.access.UserAuthorityVoter;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -36,7 +39,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
 
     @Bean
     public AccessDecisionManager accessDecisionManager() {
-        return new WebAccessDecisionManager();
+        return new UnanimousBased(Arrays.asList(
+                // 顺序不能改动
+                new WebExpressionVoter(), // 负责校验是否已登录
+                new UserAuthorityVoter() // 负责校验已登录用户的具体权限
+        ));
     }
 
     @Override
@@ -52,7 +59,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
                     metadataSource.setOrigin(originalMetadataSource);
                 }
                 interceptor.setSecurityMetadataSource(metadataSource);
-//                interceptor.setAccessDecisionManager(accessDecisionManager());
+                interceptor.setAccessDecisionManager(accessDecisionManager());
                 web.securityInterceptor(interceptor);
             }
         });
@@ -73,7 +80,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedPage("/error/403")
+                .accessDeniedPage("/error/denied")
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
                 .deleteCookies("JSESSIONID").permitAll();

@@ -12,7 +12,7 @@ import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.view.util.WebViewUtil;
+import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 
 /**
  * 子域名标签
@@ -51,7 +51,7 @@ public class SubDomainTag extends TagSupport {
         HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
         if (this.topDomain != null && !this.topDomain.startsWith("localhost")
                 && !this.topDomain.startsWith("127.0.0.1")) {
-            String host = WebViewUtil.getHost(request);
+            String host = WebControllerUtil.getHost(request);
             String subDomain = "";
             if (host.length() > this.topDomain.length()) {
                 subDomain = host.substring(0, host.length() - this.topDomain.length());

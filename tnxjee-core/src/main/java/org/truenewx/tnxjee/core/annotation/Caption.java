@@ -13,7 +13,6 @@ import org.truenewx.tnxjee.core.Strings;
  * 说明注解，用于注释、说明、解释
  *
  * @author jianglei
- * @since JDK 1.8
  */
 @Documented
 @Target({ ElementType.PACKAGE, ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD,

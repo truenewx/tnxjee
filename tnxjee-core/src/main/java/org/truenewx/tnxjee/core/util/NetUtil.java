@@ -76,7 +76,7 @@ public class NetUtil {
                 Enumeration<InetAddress> ias = ni.getInetAddresses();
                 while (ias.hasMoreElements()) {
                     String ip = ias.nextElement().getHostAddress();
-                    if (NetUtil.isLanIp(ip) && !"127.0.0.1".equals(ip)) {
+                    if (NetUtil.isIntranetIp(ip) && !"127.0.0.1".equals(ip)) {
                         return ip;
                     }
                 }
@@ -105,12 +105,12 @@ public class NetUtil {
     }
 
     /**
-     * 判断指定字符串是否局域网IP地址
+     * 判断指定字符串是否内网IP地址
      *
      * @param s 字符串
-     * @return true if 指定字符串是局域网IP地址, otherwise false
+     * @return true if 指定字符串是内网IP地址, otherwise false
      */
-    public static boolean isLanIp(String s) {
+    public static boolean isIntranetIp(String s) {
         if (StringUtil.isIp(s)) {
             if (s.startsWith("192.168.") || s.startsWith("10.") || s.equals("127.0.0.1")
                     || s.equals("0:0:0:0:0:0:0:1")) {

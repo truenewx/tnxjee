@@ -13,6 +13,7 @@ import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
 import org.truenewx.tnxjee.web.controller.spring.servlet.mvc.Loginer;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
 
 /**
@@ -39,7 +40,7 @@ public class PrevUrlTag extends TagSupport {
     public int doEndTag() throws JspException {
         // 使用pageContext中的request会得到jsp页面的访问路径，这可能导致错误
         HttpServletRequest request = SpringWebContext.getRequest();
-        String currentAction = WebViewUtil.getRelativeRequestAction(request);
+        String currentAction = WebControllerUtil.getRelativeRequestAction(request);
         String prevUrl = WebViewUtil.getRelativePreviousUrl(request, true);
         if (prevUrl != null) {
             if (prevUrl.startsWith(currentAction)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页

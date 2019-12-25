@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.annotation;
+package org.truenewx.tnxjee.web.controller.spring.security.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,16 +7,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 说明注解集
+ * 配置权限集
  *
  * @author jianglei
  */
 @Documented
-@Target({ ElementType.PACKAGE, ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD,
-        ElementType.FIELD, ElementType.PARAMETER })
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Captions {
+public @interface ConfigAuthorities {
 
-    Caption[] value() default {};
+    ConfigAuthority[] value() default {};
 
 }
