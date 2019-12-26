@@ -1,40 +1,52 @@
 package org.truenewx.tnxjee.model.user.security;
 
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.util.Assert;
+import org.truenewx.tnxjee.core.Strings;
 
 /**
  * 要求用户必须具备的权限
  */
-public class UserConfigAuthority extends UserAuthority implements ConfigAttribute {
+public class UserConfigAuthority implements ConfigAttribute {
 
     private static final long serialVersionUID = 912979753766969750L;
 
-    /**
-     * 是否匿名即可访问
-     */
-    private boolean anonymous;
+    public static final String SEPARATOR = Strings.PLUS;
 
+    private String role;
+    private String permission;
     /**
      * 是否仅限内网访问
      */
     private boolean intranet;
 
     public UserConfigAuthority(String role, String permission, boolean intranet) {
-        super(role, permission);
+        if (role == null) {
+            role = Strings.EMPTY;
+        }
+        Assert.isTrue(!role.contains(SEPARATOR), () -> "The role can not contain '" + SEPARATOR + "'");
+        if (permission == null) {
+            permission = Strings.EMPTY;
+        }
+        Assert.isTrue(!permission.contains(SEPARATOR), () -> "The permission can not contain '" + SEPARATOR + "'");
+        this.role = role;
+        this.permission = permission;
         this.intranet = intranet;
     }
 
     /**
-     * 构建表示匿名即可访问的必备权限
+     * 构建没有权限限制、登录即可访问的必备权限
      */
-    public static UserConfigAuthority ofAnonymous(boolean intranet) {
-        UserConfigAuthority configAuthority = new UserConfigAuthority(null, null, intranet);
-        configAuthority.anonymous = true;
-        return configAuthority;
+    public UserConfigAuthority() {
+        this(null,null,false);
     }
 
-    public boolean isAnonymous() {
-        return this.anonymous;
+    public String getRole() {
+        return this.role;
+    }
+
+    public String getPermission() {
+        return this.permission;
     }
 
     public boolean isIntranet() {
@@ -43,14 +55,12 @@ public class UserConfigAuthority extends UserAuthority implements ConfigAttribut
 
     @Override
     public String getAttribute() {
-        return toString();
+        return this.role + SEPARATOR + this.permission;
     }
 
     @Override
     public String toString() {
-        if (isAnonymous()) {
-            return "anonymous"; // 匿名权限字符串中不包含分隔符
-        }
-        return super.toString();
+        return getAttribute();
     }
+
 }

@@ -5,8 +5,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,14 +25,14 @@ import org.truenewx.tnxjee.web.controller.spring.web.servlet.WebRequestHandlerSo
 /**
  * WEB过滤器调用安全元数据源
  */
-public class WebFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource,
-        ApplicationContextAware {
+public class WebFilterInvocationSecurityMetadataSource
+        implements FilterInvocationSecurityMetadataSource, ApplicationContextAware {
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
     private WebRequestHandlerSource requestHandlerSource;
 
-    private Map<Method, Collection<ConfigAttribute>> methodAttributesMap = new HashMap<>();
+    private Map<String, Collection<UserConfigAuthority>> configAttributesMap = new HashMap<>();
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -40,30 +42,27 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         Collection<Object> controllers = context.getBeansWithAnnotation(Controller.class).values();
         controllers.forEach(controller -> {
-            Method[] methods = controller.getClass().getDeclaredMethods();
+            Method[] methods = controller.getClass().getMethods();
             for (Method method : methods) {
                 if (Modifier.isPublic(method.getModifiers())) {
-                    Collection<ConfigAttribute> configAttributes = getConfigAttributes(method);
-                    if (configAttributes.size() > 0) {
-                        this.methodAttributesMap.put(method, configAttributes);
+                    Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
+                    if (userConfigAuthorities.size() > 0) {
+                        this.configAttributesMap.put(method.toString(), userConfigAuthorities);
                     }
                 }
             }
         });
     }
 
-    private Collection<ConfigAttribute> getConfigAttributes(Method method) {
-        Collection<ConfigAttribute> attributes = new ArrayList<>();
+    private Collection<UserConfigAuthority> getConfigAttributes(Method method) {
+        Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
         ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
         for (ConfigAuthority configAuthority : configAuthorities) {
-            boolean intranet = configAuthority.intranet();
-            if (configAuthority.anonymous()) {
-                attributes.add(UserConfigAuthority.ofAnonymous(intranet));
-            } else {
-                attributes.add(new UserConfigAuthority(configAuthority.role(), configAuthority.permission(), intranet));
-            }
+            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
+                    configAuthority.permission(), configAuthority.intranet());
+            userConfigAuthorities.add(userConfigAuthority);
         }
-        return attributes;
+        return userConfigAuthorities;
     }
 
     @Override
@@ -73,7 +72,11 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return null;
+        Collection<ConfigAttribute> result = new HashSet<>();
+        this.configAttributesMap.values().forEach(attributes -> {
+            result.addAll(attributes);
+        });
+        return result;
     }
 
     @Override
@@ -82,15 +85,18 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
         if (this.origin != null) {
             attributes = this.origin.getAttributes(object);
         }
-        if (attributes != null) { // 从原始元数据源中取得登录限定，才考虑配置权限
+        if (supports(attributes)) {
+            attributes = new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
             try {
                 HandlerMethod handlerMethod = this.requestHandlerSource.getHandlerMethod(fi.getRequest());
                 if (handlerMethod != null) {
-                    Method method = handlerMethod.getMethod();
-                    Collection<ConfigAttribute> methodAttributes = this.methodAttributesMap.get(method);
-                    if (methodAttributes != null) {
-                        attributes.addAll(methodAttributes);
+                    String methodKey = handlerMethod.getMethod().toString();
+                    Collection<UserConfigAuthority> userConfigAuthorities = this.configAttributesMap.get(methodKey);
+                    if (userConfigAuthorities == null) { // 加入一个没有权限限制的必备权限，以标记进行过处理
+                        attributes.add(new UserConfigAuthority());
+                    } else {
+                        attributes.addAll(userConfigAuthorities);
                     }
                 }
             } catch (Exception e) {
@@ -98,6 +104,20 @@ public class WebFilterInvocationSecurityMetadataSource implements FilterInvocati
             }
         }
         return attributes;
+    }
+
+    private boolean supports(Collection<ConfigAttribute> originalAttributes) {
+        // 原始配置属性为空，一定不是登录才能访问，不支持
+        if (CollectionUtils.isEmpty(originalAttributes)) {
+            return false;
+        }
+        for (ConfigAttribute attribute : originalAttributes) {
+            // 原始配置属性包含不限制访问，说明也不是登录才能访问，不支持
+            if ("permitAll".equals(attribute.getAttribute()) || "permitAll".equals(attribute.toString())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

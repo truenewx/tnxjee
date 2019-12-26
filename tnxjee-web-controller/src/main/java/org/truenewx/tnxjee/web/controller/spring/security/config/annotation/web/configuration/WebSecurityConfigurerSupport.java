@@ -14,7 +14,7 @@ import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.truenewx.tnxjee.web.controller.spring.security.access.UserAuthorityVoter;
+import org.truenewx.tnxjee.web.controller.spring.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
 
@@ -42,7 +42,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return new UnanimousBased(Arrays.asList(
                 // 顺序不能改动
                 new WebExpressionVoter(), // 负责校验是否已登录
-                new UserAuthorityVoter() // 负责校验已登录用户的具体权限
+                new UserAuthorityAccessDecisionManager() // 负责校验已登录用户的具体权限
         ));
     }
 
