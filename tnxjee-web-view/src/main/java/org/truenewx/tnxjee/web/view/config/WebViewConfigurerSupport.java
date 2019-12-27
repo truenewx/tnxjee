@@ -1,5 +1,10 @@
 package org.truenewx.tnxjee.web.view.config;
 
+import java.util.function.Consumer;
+
+import javax.servlet.DispatcherType;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -13,11 +18,6 @@ import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionReso
 import org.truenewx.tnxjee.web.view.resource.ResourceUrlConfiguration;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
-
-import javax.servlet.DispatcherType;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * WEB视图层配置支持
@@ -53,18 +53,13 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
         return accessDeniedHandler;
     }
 
+    @Override
     protected String[] getAnonymousUrlPatterns() {
-        Set<String> set = new HashSet<>();
-        for (String pattern : super.getAnonymousUrlPatterns()) {
-            set.add(pattern.trim());
-        }
+        String[] patterns = super.getAnonymousUrlPatterns();
         // 静态资源全部可匿名访问
         String[] staticResourcePatterns = ResourceUrlConfiguration
                 .getStaticPatterns(getApplicationContext().getEnvironment());
-        for (String pattern : staticResourcePatterns) {
-            set.add(pattern.trim());
-        }
-        return set.toArray(new String[set.size()]);
+        return ArrayUtils.addAll(patterns, staticResourcePatterns);
     }
 
     @Override

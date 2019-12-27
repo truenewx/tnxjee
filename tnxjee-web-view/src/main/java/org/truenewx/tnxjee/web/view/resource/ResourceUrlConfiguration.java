@@ -27,10 +27,20 @@ public class ResourceUrlConfiguration {
     @Autowired
     private Environment environment;
 
+    /**
+     * 获取配置的静态资源路径样式集合，所有样式均已去除前后空格
+     *
+     * @param environment
+     * @return 配置的静态资源路径样式集合
+     */
     public static String[] getStaticPatterns(Environment environment) {
         String staticPattern = environment.getProperty(
                 WebViewPropertyConstant.RESOURCES_STATIC_PATTERN, DEFAULT_RESOURCES_STATIC_PATTERN);
-        return staticPattern.split(Strings.COMMA);
+        String[] patterns = staticPattern.split(Strings.COMMA);
+        for (int i = 0; i < patterns.length; i++) {
+            patterns[i] = patterns[i].trim();
+        }
+        return patterns;
     }
 
     @Bean("resourceUrlHandlerMapping")
@@ -40,7 +50,6 @@ public class ResourceUrlConfiguration {
         Map<String, ResourceHttpRequestHandler> urlMap = new LinkedHashMap<>();
         String[] patterns = getStaticPatterns(this.environment);
         for (String pattern : patterns) {
-            pattern = pattern.trim();
             urlMap.put(pattern, handler);
         }
         mapping.setUrlMap(urlMap);
