@@ -14,6 +14,7 @@ import org.truenewx.tnxjee.web.view.resource.ResourceUrlConfiguration;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
 
+import javax.servlet.DispatcherType;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -26,9 +27,7 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
     @Autowired
     private ViewBusinessExceptionResolver viewBusinessExceptionResolver;
 
-    /**
-     * 子类覆写，声明为Bean，以禁止直接访问jsp文件
-     */
+    @Bean
     public FilterRegistrationBean<ForbidAccessFilter> forbidAccessFilter() {
         FilterRegistrationBean<ForbidAccessFilter> frb = new FilterRegistrationBean<>();
         frb.setFilter(new ForbidAccessFilter());
@@ -37,15 +36,12 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
         return frb;
     }
 
-    /**
-     * 子类覆写，声明为Bean，并提供SiteMesh装饰配置
-     */
-    public FilterRegistrationBean<BuildableSiteMeshFilter> siteMeshFilter(
+    protected FilterRegistrationBean<BuildableSiteMeshFilter> siteMeshFilter(
             Consumer<SiteMeshFilterBuilder> buildConsumer) {
         FilterRegistrationBean<BuildableSiteMeshFilter> frb = new FilterRegistrationBean<>();
         frb.setFilter(new BuildableSiteMeshFilter(buildConsumer));
         frb.addUrlPatterns("/*");
-        frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1); // 优先级尽量靠前，仅次于禁止访问过滤器，以确保页面被装饰
+        frb.setDispatcherTypes(DispatcherType.FORWARD, DispatcherType.REQUEST, DispatcherType.ERROR);
         return frb;
     }
 
