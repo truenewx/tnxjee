@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.model.user.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.truenewx.tnxjee.model.core.CloneableForSession;
 import org.truenewx.tnxjee.model.user.UserIdentity;
 import org.truenewx.tnxjee.model.user.UserSpecific;
 
@@ -9,7 +10,8 @@ import org.truenewx.tnxjee.model.user.UserSpecific;
  *
  * @param <I> 用户标识类型
  */
-public interface UserSpecificDetails<I extends UserIdentity> extends UserSpecific<I>, UserDetails {
+public interface UserSpecificDetails<I extends UserIdentity>
+        extends UserSpecific<I>, UserDetails, CloneableForSession<UserSpecificDetails<I>> {
 
     @Override
     default boolean isAccountNonExpired() {

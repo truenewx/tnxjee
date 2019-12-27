@@ -1,10 +1,15 @@
 package org.truenewx.tnxjee.web.view.config;
 
 import org.sitemesh.builder.SiteMeshFilterBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration.WebSecurityConfigurerSupport;
+import org.truenewx.tnxjee.web.controller.spring.security.web.access.BusinessExceptionAccessDeniedHandler;
+import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 import org.truenewx.tnxjee.web.view.resource.ResourceUrlConfiguration;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
@@ -17,6 +22,9 @@ import java.util.function.Consumer;
  * WEB视图层配置支持
  */
 public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupport {
+
+    @Autowired
+    private ViewBusinessExceptionResolver viewBusinessExceptionResolver;
 
     /**
      * 子类覆写，声明为Bean，以禁止直接访问jsp文件
@@ -39,6 +47,14 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
         frb.addUrlPatterns("/*");
         frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1); // 优先级尽量靠前，仅次于禁止访问过滤器，以确保页面被装饰
         return frb;
+    }
+
+    @Bean
+    @Override
+    public AccessDeniedHandler accessDeniedHandler() {
+        BusinessExceptionAccessDeniedHandler accessDeniedHandler = (BusinessExceptionAccessDeniedHandler) super.accessDeniedHandler();
+        accessDeniedHandler.setErrorPage(this.viewBusinessExceptionResolver.getErrorPath());
+        return accessDeniedHandler;
     }
 
     protected String[] getAnonymousUrlPatterns() {

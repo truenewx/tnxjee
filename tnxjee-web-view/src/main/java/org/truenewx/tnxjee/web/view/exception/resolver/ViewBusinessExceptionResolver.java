@@ -35,6 +35,10 @@ public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionReso
         this.errorPath = environment.getProperty(WebViewPropertyConstant.ERROR_PATH_BUSINESS, "/error/business");
     }
 
+    public String getErrorPath() {
+        return this.errorPath;
+    }
+
     /**
      * 处理器校验规则填充者
      */
