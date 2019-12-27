@@ -14,7 +14,7 @@ import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
  * @author jianglei
  */
 @Component
-public class BodyBusinessExceptionResolver extends AbstractBusinessExceptionResolver {
+public class BodyBusinessExceptionResolver extends BusinessExceptionResolver {
 
     public BodyBusinessExceptionResolver() {
         setOrder(getOrder() + 2); // 默认顺序提升2

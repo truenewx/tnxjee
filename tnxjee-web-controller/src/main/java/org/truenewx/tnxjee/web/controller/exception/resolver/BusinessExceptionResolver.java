@@ -18,7 +18,7 @@ import org.truenewx.tnxjee.web.controller.exception.message.BusinessExceptionMes
 /**
  * 业务异常解决器
  */
-public abstract class AbstractBusinessExceptionResolver extends AbstractHandlerExceptionResolver {
+public abstract class BusinessExceptionResolver extends AbstractHandlerExceptionResolver {
 
     @Autowired
     private BusinessExceptionMessageSaver messageSaver;

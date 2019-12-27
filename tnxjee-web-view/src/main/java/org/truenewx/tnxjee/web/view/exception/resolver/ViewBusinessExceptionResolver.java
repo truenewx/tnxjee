@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.truenewx.tnxjee.web.controller.exception.resolver.AbstractBusinessExceptionResolver;
+import org.truenewx.tnxjee.web.controller.exception.resolver.BusinessExceptionResolver;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
@@ -26,7 +26,7 @@ import org.truenewx.tnxjee.web.view.validation.generate.HandlerValidationApplier
  * @author jianglei
  */
 @Component
-public class ViewBusinessExceptionResolver extends AbstractBusinessExceptionResolver implements EnvironmentAware {
+public class ViewBusinessExceptionResolver extends BusinessExceptionResolver implements EnvironmentAware {
 
     private String errorPath;
 
