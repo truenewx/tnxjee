@@ -5,9 +5,9 @@ import java.util.Locale;
 import java.util.function.BiFunction;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.annotation.Caption;
-import org.truenewx.tnxjee.core.annotation.Name;
-import org.truenewx.tnxjee.core.util.CaptionUtil;
+import org.truenewx.tnxjee.core.caption.Caption;
+import org.truenewx.tnxjee.core.caption.CaptionUtil;
+import org.truenewx.tnxjee.core.spec.Name;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 
 /**

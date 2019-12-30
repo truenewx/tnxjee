@@ -1,6 +1,6 @@
-package org.truenewx.tnxjee.core.enums;
+package org.truenewx.tnxjee.core.spec;
 
-import org.truenewx.tnxjee.core.annotation.Caption;
+import org.truenewx.tnxjee.core.caption.Caption;
 
 /**
  * 数值偏差

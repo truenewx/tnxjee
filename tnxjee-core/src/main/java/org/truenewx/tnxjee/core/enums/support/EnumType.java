@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.truenewx.tnxjee.core.enums.BooleanEnum;
-import org.truenewx.tnxjee.core.model.Named;
+import org.truenewx.tnxjee.core.spec.BooleanEnum;
+import org.truenewx.tnxjee.core.spec.Named;
 
 /**
  * 枚举类型

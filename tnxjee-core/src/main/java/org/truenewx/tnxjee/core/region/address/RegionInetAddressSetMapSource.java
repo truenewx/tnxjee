@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.core.region.address;
 
 import java.util.Map;
 
-import org.truenewx.tnxjee.core.net.InetAddressSet;
+import org.truenewx.tnxjee.core.spec.InetAddressSet;
 
 /**
  * 区划-网络地址集合的映射集来源

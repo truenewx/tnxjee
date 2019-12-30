@@ -20,7 +20,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.BooleanEnum;
+import org.truenewx.tnxjee.core.spec.BooleanEnum;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;

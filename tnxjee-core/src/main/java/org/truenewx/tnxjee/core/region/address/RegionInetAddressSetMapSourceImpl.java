@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.net.InetAddressSet;
+import org.truenewx.tnxjee.core.spec.InetAddressSet;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**

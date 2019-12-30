@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.model.spec.enums;
 
-import org.truenewx.tnxjee.core.annotation.Caption;
+import org.truenewx.tnxjee.core.caption.Caption;
 import org.truenewx.tnxjee.model.annotation.EnumValue;
 
 /**

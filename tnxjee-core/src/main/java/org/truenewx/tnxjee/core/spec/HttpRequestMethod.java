@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.enums;
+package org.truenewx.tnxjee.core.spec;
 
 /**
  * HTTP请求方式

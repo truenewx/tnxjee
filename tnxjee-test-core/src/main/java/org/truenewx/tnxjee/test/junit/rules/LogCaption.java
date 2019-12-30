@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.test.junit.rules;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
-import org.truenewx.tnxjee.core.annotation.Caption;
+import org.truenewx.tnxjee.core.caption.Caption;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.model;
+package org.truenewx.tnxjee.core.spec;
 
 /**
  * 命名支持

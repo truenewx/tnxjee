@@ -22,7 +22,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.HttpRequestMethod;
+import org.truenewx.tnxjee.core.spec.HttpRequestMethod;
 import org.truenewx.tnxjee.core.util.tuple.Binary;
 import org.truenewx.tnxjee.core.util.tuple.Binate;
 

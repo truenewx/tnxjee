@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.util;
+package org.truenewx.tnxjee.core.caption;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.annotation.Caption;
 
 /**
  * 显示名称工具类

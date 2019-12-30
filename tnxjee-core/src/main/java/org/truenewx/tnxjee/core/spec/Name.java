@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.annotation;
+package org.truenewx.tnxjee.core.spec;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.net;
+package org.truenewx.tnxjee.core.spec;
 
 import java.net.InetAddress;
 import java.util.ArrayList;

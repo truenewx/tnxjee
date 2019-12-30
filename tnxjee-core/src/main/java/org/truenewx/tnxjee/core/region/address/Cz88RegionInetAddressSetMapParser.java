@@ -12,11 +12,11 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.net.InetAddressRange;
-import org.truenewx.tnxjee.core.net.InetAddressSet;
 import org.truenewx.tnxjee.core.region.Region;
 import org.truenewx.tnxjee.core.region.RegionNationCodes;
 import org.truenewx.tnxjee.core.region.RegionSource;
+import org.truenewx.tnxjee.core.spec.InetAddressRange;
+import org.truenewx.tnxjee.core.spec.InetAddressSet;
 import org.truenewx.tnxjee.core.util.ArrayUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.NetUtil;

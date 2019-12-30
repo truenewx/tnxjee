@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.core.util.tuple;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.core.enums.Deviation;
+import org.truenewx.tnxjee.core.spec.Deviation;
 
 /**
  * 有偏差的数值

@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
 
-import org.truenewx.tnxjee.core.net.InetAddressSet;
+import org.truenewx.tnxjee.core.spec.InetAddressSet;
 
 /**
  * 区划-网络地址集合映射集解析器

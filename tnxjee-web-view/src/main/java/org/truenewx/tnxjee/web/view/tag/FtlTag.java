@@ -9,7 +9,7 @@ import javax.servlet.jsp.JspException;
 
 import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.parser.util.FreeMarkerUtil;
+import org.truenewx.tnxjee.core.parser.FreeMarkerHelper;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
 
@@ -42,7 +42,7 @@ public class FtlTag extends SimpleDynamicAttributeTagSupport {
         Locale locale = getLocale();
         File file = IOUtil.findI18nFileByDir(baseDir, baseName, "ftl", locale);
         if (file != null) {
-            Configuration config = FreeMarkerUtil.getDefaultConfiguration();
+            Configuration config = FreeMarkerHelper.getDefaultConfiguration();
             config.setDirectoryForTemplateLoading(file.getParentFile());
             this.template = config.getTemplate(file.getName(), locale);
         }

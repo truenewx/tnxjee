@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.truenewx.tnxjee.core.net.InetAddressSet;
+import org.truenewx.tnxjee.core.spec.InetAddressSet;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
