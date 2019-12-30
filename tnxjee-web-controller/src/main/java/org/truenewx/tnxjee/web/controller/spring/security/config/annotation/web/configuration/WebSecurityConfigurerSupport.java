@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -123,9 +124,10 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             if (isAnonymous(handlerMethod.getMethod())) {
-                String uri = action.getUri();
-                String pattern = uri.replaceAll("\\{\\S\\}", Strings.ASTERISK);
-                matchers.add(new AntPathRequestMatcher(pattern, action.getMethod().name()));
+                String pattern = action.getUri().replaceAll("\\{\\S+\\}", Strings.ASTERISK);
+                HttpMethod httpMethod = action.getMethod();
+                String method = httpMethod == null ? null : httpMethod.name();
+                matchers.add(new AntPathRequestMatcher(pattern, method));
             }
         });
 
