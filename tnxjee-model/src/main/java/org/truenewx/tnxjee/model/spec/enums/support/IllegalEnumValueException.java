@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.enums.support;
+package org.truenewx.tnxjee.model.spec.enums.support;
 
 /**
  * 非法的枚举值异常

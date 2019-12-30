@@ -1,7 +1,7 @@
-package org.truenewx.tnxjee.core.enums;
+package org.truenewx.tnxjee.model.spec.enums;
 
 import org.truenewx.tnxjee.core.annotation.Caption;
-import org.truenewx.tnxjee.core.enums.annotation.EnumValue;
+import org.truenewx.tnxjee.model.annotation.EnumValue;
 
 /**
  * 设备类型

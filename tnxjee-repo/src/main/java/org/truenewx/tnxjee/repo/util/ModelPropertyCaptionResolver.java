@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.support;
+package org.truenewx.tnxjee.repo.util;
 
 import java.lang.reflect.Field;
 import java.util.Locale;

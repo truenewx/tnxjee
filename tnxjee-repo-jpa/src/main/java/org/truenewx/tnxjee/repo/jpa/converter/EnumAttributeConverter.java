@@ -3,8 +3,8 @@ package org.truenewx.tnxjee.repo.jpa.converter;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.truenewx.tnxjee.core.enums.support.EnumValueHelper;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.model.spec.enums.support.EnumValueHelper;
 
 /**
  * 枚举属性转换器

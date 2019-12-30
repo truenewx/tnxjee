@@ -1,9 +1,9 @@
-package org.truenewx.tnxjee.model.user.security;
+package org.truenewx.tnxjee.model.spec.user.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import org.truenewx.tnxjee.model.core.CloneableForSession;
-import org.truenewx.tnxjee.model.user.UserIdentity;
-import org.truenewx.tnxjee.model.user.UserSpecific;
+import org.truenewx.tnxjee.model.spec.CloneableForSession;
+import org.truenewx.tnxjee.model.spec.user.UserIdentity;
+import org.truenewx.tnxjee.model.spec.user.UserSpecific;
 
 /**
  * 具有用户特性细节的

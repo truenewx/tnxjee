@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.user;
+package org.truenewx.tnxjee.model.spec.user;
 
 /**
  * 整数型用户标识

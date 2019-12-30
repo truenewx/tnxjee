@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.web.controller.spring.security.authentication;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.truenewx.tnxjee.model.user.security.UserSpecificDetails;
+import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 
 /**
  * 用户特性细节的认证令牌

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.user.security;
+package org.truenewx.tnxjee.model.spec.user.security;
 
 import org.springframework.security.core.GrantedAuthority;
 

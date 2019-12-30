@@ -1,12 +1,12 @@
-package org.truenewx.tnxjee.core.model;
+package org.truenewx.tnxjee.model.spec;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.Device;
-import org.truenewx.tnxjee.core.enums.OS;
-import org.truenewx.tnxjee.core.enums.Program;
 import org.truenewx.tnxjee.core.util.ArrayUtil;
+import org.truenewx.tnxjee.model.spec.enums.Device;
+import org.truenewx.tnxjee.model.spec.enums.OS;
+import org.truenewx.tnxjee.model.spec.enums.Program;
 
 /**
  * 终端类型

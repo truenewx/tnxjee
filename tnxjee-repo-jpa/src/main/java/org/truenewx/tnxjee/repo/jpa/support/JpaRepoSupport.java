@@ -24,10 +24,10 @@ import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
 import org.truenewx.tnxjee.model.query.QuerySort;
 import org.truenewx.tnxjee.model.query.Querying;
-import org.truenewx.tnxjee.model.support.ModelPropertyLimitValueManager;
 import org.truenewx.tnxjee.repo.jpa.JpaRepo;
 import org.truenewx.tnxjee.repo.jpa.util.OqlUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
+import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
 
 /**
  * JPA的数据访问仓库支持

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.enums.annotation;
+package org.truenewx.tnxjee.model.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

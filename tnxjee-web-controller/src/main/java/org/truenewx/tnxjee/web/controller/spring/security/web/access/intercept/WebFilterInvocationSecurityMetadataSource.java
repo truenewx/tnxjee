@@ -18,7 +18,7 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.method.HandlerMethod;
-import org.truenewx.tnxjee.model.user.security.UserConfigAuthority;
+import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.ConfigAuthority;
 import org.truenewx.tnxjee.web.controller.spring.web.servlet.WebRequestHandlerSource;
 

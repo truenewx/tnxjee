@@ -1,9 +1,9 @@
-package org.truenewx.tnxjee.core.enums.support;
+package org.truenewx.tnxjee.model.spec.enums.support;
 
 import java.lang.reflect.Field;
 
-import org.truenewx.tnxjee.core.enums.annotation.EnumValue;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.model.annotation.EnumValue;
 
 /**
  * 算法：获取枚举值对应的枚举常量
