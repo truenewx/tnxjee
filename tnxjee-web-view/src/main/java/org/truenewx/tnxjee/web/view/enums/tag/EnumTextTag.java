@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 
-import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.web.view.tagext.UiTagSupport;
 
 /**
@@ -32,10 +32,8 @@ public class EnumTextTag extends UiTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         if (this.value != null) {
-            EnumDictResolver enumDictResolver = getBeanFromApplicationContext(
-                    EnumDictResolver.class);
-            String caption = enumDictResolver.getText(this.type, this.subtype, this.value,
-                    getLocale());
+            EnumDictResolver enumDictResolver = getBeanFromApplicationContext(EnumDictResolver.class);
+            String caption = enumDictResolver.getText(this.type, this.subtype, this.value, getLocale());
             if (caption != null) {
                 print(caption);
             }

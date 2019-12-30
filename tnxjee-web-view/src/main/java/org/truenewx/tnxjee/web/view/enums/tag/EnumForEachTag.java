@@ -11,8 +11,8 @@ import javax.servlet.jsp.tagext.IterationTag;
 import org.apache.taglibs.standard.lang.support.ExpressionEvaluatorManager;
 import org.apache.taglibs.standard.tag.common.core.ForEachSupport;
 import org.springframework.context.ApplicationContext;
-import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
-import org.truenewx.tnxjee.core.enums.support.EnumType;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
+import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 
@@ -37,10 +37,9 @@ public class EnumForEachTag extends ForEachSupport implements LoopTag, Iteration
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getElExpressionValue(String attributeName, String expression,
-            Class<T> expectedType) throws JspException {
-        return (T) ExpressionEvaluatorManager.evaluate(attributeName, expression, expectedType,
-                this.pageContext);
+    private <T> T getElExpressionValue(String attributeName, String expression, Class<T> expectedType)
+            throws JspException {
+        return (T) ExpressionEvaluatorManager.evaluate(attributeName, expression, expectedType, this.pageContext);
     }
 
     @Override

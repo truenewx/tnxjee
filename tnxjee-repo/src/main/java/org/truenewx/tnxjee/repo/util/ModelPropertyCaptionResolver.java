@@ -39,8 +39,7 @@ public class ModelPropertyCaptionResolver implements PropertyCaptionResolver {
             }
             // 如果从关联实体模型中仍然无法获取，则尝试从@InheritConstraint注解的关联实体和属性上获取
             if (caption == null) {
-                InheritConstraint ic = ClassUtil.findAnnotation(clazz, propertyName,
-                        InheritConstraint.class);
+                InheritConstraint ic = ClassUtil.findAnnotation(clazz, propertyName, InheritConstraint.class);
                 if (ic != null) {
                     if (StringUtils.isNotBlank(ic.value())) {
                         propertyName = ic.value();
@@ -60,11 +59,9 @@ public class ModelPropertyCaptionResolver implements PropertyCaptionResolver {
         if (field != null) {
             String caption = CaptionUtil.getCaption(field, locale);
             if (StringUtils.isEmpty(caption)) {
-                caption = getPropertyPathCaption(ClassUtil.getFullPropertyPath(clazz, propertyName),
-                        locale); // 先尝试取完全路径的
+                caption = getPropertyPathCaption(ClassUtil.getFullPropertyPath(clazz, propertyName), locale); // 先尝试取完全路径的
                 if (caption == null) {
-                    String simplePropertyPath = ClassUtil.getSimplePropertyPath(clazz,
-                            propertyName);
+                    String simplePropertyPath = ClassUtil.getSimplePropertyPath(clazz, propertyName);
                     caption = getPropertyPathCaption(simplePropertyPath, locale); // 再尝试取简短路径的
                     if (caption == null) {
                         caption = getPropertyPathCaption(propertyName, locale); // 最后尝试取仅属性的

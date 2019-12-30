@@ -13,9 +13,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationContext;
-import org.truenewx.tnxjee.core.region.Region;
-import org.truenewx.tnxjee.core.region.RegionSource;
 import org.truenewx.tnxjee.core.spring.util.SpringUtil;
+import org.truenewx.tnxjee.service.api.spec.region.Region;
+import org.truenewx.tnxjee.service.api.spec.region.RegionSource;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
 
 /**

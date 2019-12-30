@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
-import org.truenewx.tnxjee.core.spring.core.env.ProfileSupplier;
+import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 import org.truenewx.tnxjee.core.version.VersionReader;
 import org.truenewx.tnxjee.web.controller.util.WebControllerPropertyConstant;
 

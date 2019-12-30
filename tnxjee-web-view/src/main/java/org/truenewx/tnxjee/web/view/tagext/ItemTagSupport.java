@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 
 /**
@@ -114,8 +114,7 @@ public abstract class ItemTagSupport extends UiTagSupport {
         if (item instanceof Entry) {
             text = ((Entry<?, ?>) item).getValue();
         } else if (item instanceof Enum) {
-            EnumDictResolver enumDictResolver = getBeanFromApplicationContext(
-                    EnumDictResolver.class);
+            EnumDictResolver enumDictResolver = getBeanFromApplicationContext(EnumDictResolver.class);
             return enumDictResolver.getText((Enum<?>) item, getLocale());
         } else if (StringUtils.isNotBlank(this.itemTextProperty)) {
             text = BeanUtil.getPropertyValue(item, this.itemTextProperty);

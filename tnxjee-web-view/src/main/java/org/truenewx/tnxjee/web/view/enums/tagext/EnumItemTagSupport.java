@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 
-import org.truenewx.tnxjee.core.enums.support.EnumDictResolver;
-import org.truenewx.tnxjee.core.enums.support.EnumItem;
-import org.truenewx.tnxjee.core.enums.support.EnumType;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
+import org.truenewx.tnxjee.core.enums.EnumItem;
+import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.web.view.tagext.ItemTagSupport;
 
 /**

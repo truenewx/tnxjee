@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.core.env.ProfileSupplier;
+import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 
 /**
  * 抽象的版本号读取器
