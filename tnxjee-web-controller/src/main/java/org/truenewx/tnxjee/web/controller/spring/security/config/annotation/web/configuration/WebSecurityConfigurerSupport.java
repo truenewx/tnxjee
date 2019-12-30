@@ -1,5 +1,12 @@
 package org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -13,18 +20,23 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.controller.spring.security.access.UserAuthorityAccessDecisionManager;
+import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.ConfigAuthority;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.BusinessExceptionAccessDeniedHandler;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
-
-import java.util.Collection;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.HandlerMethodMapping;
 
 /**
  * WEB安全配置器支持
  */
 @EnableWebSecurity
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private HandlerMethodMapping handlerMethodMapping;
 
     @Bean
     public WebFilterInvocationSecurityMetadataSource securityMetadataSource() {
@@ -73,9 +85,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         applyConfigurers(http);
+        Collection<RequestMatcher> anonymousMatcherCollection = getAnonymousRequestMatchers();
+        RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
+                .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
         http.authorizeRequests()
-                .antMatchers(getAnonymousUrlPatterns()).permitAll()
+                .requestMatchers(anonymousMatchers).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
@@ -97,12 +112,36 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     }
 
     /**
-     * 获取可匿名访问的URL样式集合
+     * 获取可匿名访问的请求匹配器集合
      *
-     * @return 可匿名访问的URL样式集合
+     * @return 可匿名访问的请求匹配器集合
      */
-    protected String[] getAnonymousUrlPatterns() {
-        return new String[]{getLoginUrl(), "/error/**"};
+    protected Collection<RequestMatcher> getAnonymousRequestMatchers() {
+        List<RequestMatcher> matchers = new ArrayList<>();
+        matchers.add(new AntPathRequestMatcher(getLoginUrl()));
+        matchers.add(new AntPathRequestMatcher("/error/**"));
+
+        this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
+            if (isAnonymous(handlerMethod.getMethod())) {
+                String uri = action.getUri();
+                String pattern = uri.replaceAll("\\{\\S\\}", Strings.ASTERISK);
+                matchers.add(new AntPathRequestMatcher(pattern, action.getMethod().name()));
+            }
+        });
+
+        return matchers;
+    }
+
+    private boolean isAnonymous(Method method) {
+        if (Modifier.isPublic(method.getModifiers())) {
+            ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
+            for (ConfigAuthority configAuthority : configAuthorities) {
+                if (configAuthority.anonymous()) { // 有一个匿名配置，即视为匿名
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected String getLoginUrl() {

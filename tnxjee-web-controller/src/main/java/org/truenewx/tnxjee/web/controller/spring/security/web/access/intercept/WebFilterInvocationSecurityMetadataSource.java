@@ -1,37 +1,29 @@
 package org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.method.HandlerMethod;
+import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.ConfigAuthority;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.WebRequestHandlerSource;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.HandlerMethodMapping;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * WEB过滤器调用安全元数据源
  */
 public class WebFilterInvocationSecurityMetadataSource
-        implements FilterInvocationSecurityMetadataSource, ApplicationContextAware {
+        implements FilterInvocationSecurityMetadataSource, ContextInitializedBean {
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
-    private WebRequestHandlerSource requestHandlerSource;
-
+    private HandlerMethodMapping handlerMethodMapping;
     private Map<String, Collection<UserConfigAuthority>> configAttributesMap = new HashMap<>();
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
@@ -39,17 +31,12 @@ public class WebFilterInvocationSecurityMetadataSource
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        Collection<Object> controllers = context.getBeansWithAnnotation(Controller.class).values();
-        controllers.forEach(controller -> {
-            Method[] methods = controller.getClass().getMethods();
-            for (Method method : methods) {
-                if (Modifier.isPublic(method.getModifiers())) {
-                    Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
-                    if (userConfigAuthorities.size() > 0) {
-                        this.configAttributesMap.put(method.toString(), userConfigAuthorities);
-                    }
-                }
+    public void afterInitialized(ApplicationContext context) throws Exception {
+        this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
+            Method method = handlerMethod.getMethod();
+            Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
+            if (userConfigAuthorities.size() > 0) {
+                this.configAttributesMap.put(method.toString(), userConfigAuthorities);
             }
         });
     }
@@ -58,9 +45,11 @@ public class WebFilterInvocationSecurityMetadataSource
         Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
         ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
         for (ConfigAuthority configAuthority : configAuthorities) {
-            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
-                    configAuthority.permission(), configAuthority.intranet());
-            userConfigAuthorities.add(userConfigAuthority);
+            if (!configAuthority.anonymous()) { // 仅包含非匿名的
+                UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
+                        configAuthority.permission(), configAuthority.intranet());
+                userConfigAuthorities.add(userConfigAuthority);
+            }
         }
         return userConfigAuthorities;
     }
@@ -89,7 +78,7 @@ public class WebFilterInvocationSecurityMetadataSource
             attributes = new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
             try {
-                HandlerMethod handlerMethod = this.requestHandlerSource.getHandlerMethod(fi.getRequest());
+                HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(fi.getRequest());
                 if (handlerMethod != null) {
                     String methodKey = handlerMethod.getMethod().toString();
                     Collection<UserConfigAuthority> userConfigAuthorities = this.configAttributesMap.get(methodKey);

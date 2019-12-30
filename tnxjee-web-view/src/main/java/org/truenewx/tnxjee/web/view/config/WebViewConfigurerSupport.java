@@ -1,10 +1,10 @@
 package org.truenewx.tnxjee.web.view.config;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import javax.servlet.DispatcherType;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.web.configuration.WebSecurityConfigurerSupport;
 import org.truenewx.tnxjee.web.controller.spring.security.web.access.BusinessExceptionAccessDeniedHandler;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
@@ -54,12 +56,15 @@ public abstract class WebViewConfigurerSupport extends WebSecurityConfigurerSupp
     }
 
     @Override
-    protected String[] getAnonymousUrlPatterns() {
-        String[] patterns = super.getAnonymousUrlPatterns();
+    protected Collection<RequestMatcher> getAnonymousRequestMatchers() {
+        Collection<RequestMatcher> matchers = super.getAnonymousRequestMatchers();
         // 静态资源全部可匿名访问
         String[] staticResourcePatterns = ResourceUrlConfiguration
                 .getStaticPatterns(getApplicationContext().getEnvironment());
-        return ArrayUtils.addAll(patterns, staticResourcePatterns);
+        for (String pattern : staticResourcePatterns) {
+            matchers.add(new AntPathRequestMatcher(pattern));
+        }
+        return matchers;
     }
 
     @Override

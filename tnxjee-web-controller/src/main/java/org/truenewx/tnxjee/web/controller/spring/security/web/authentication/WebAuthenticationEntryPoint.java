@@ -5,7 +5,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.WebRequestHandlerSource;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.HandlerMethodMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
     @Autowired
-    private WebRequestHandlerSource requestHandlerSource;
+    private HandlerMethodMapping handlerMethodMapping;
 
     /**
      * @param loginFormUrl URL where the login page can be found. Should either be
@@ -33,7 +33,7 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
         try {
-            HandlerMethod handlerMethod = this.requestHandlerSource.getHandlerMethod(request);
+            HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(request);
             if (handlerMethod != null) {
                 if (SpringWebUtil.isResponseBody(handlerMethod)) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // 未授权错误

@@ -1,5 +1,10 @@
 package org.truenewx.tnxjee.web.controller.version;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -12,10 +17,6 @@ import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 import org.truenewx.tnxjee.core.version.VersionReader;
 import org.truenewx.tnxjee.web.controller.util.WebControllerPropertyConstant;
-
-import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * ServletContext初始化Bean
@@ -44,9 +45,8 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
         if (StringUtils.isNotBlank(contextProperties)) {
             String[] propertyKeys = contextProperties.split(Strings.COMMA);
             for (String propertyKey : propertyKeys) {
-                String value = this.environment.getProperty(propertyKey);
-                Assert.notNull(value,
-                        "The property '" + propertyKey + "' is required, but it is null.");
+                String value = this.environment.getProperty(propertyKey.trim());
+                Assert.notNull(value, "The property '" + propertyKey + "' is required, but it is null.");
                 properties.put(propertyKey, value);
             }
         }

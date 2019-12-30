@@ -2,13 +2,15 @@ package org.truenewx.tnxjee.web.controller.spring.web.servlet;
 
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
+import org.truenewx.tnxjee.web.controller.http.HttpAction;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
- * WEB请求处理器源
+ * 请求处理方法映射
  */
-public interface WebRequestHandlerSource {
+public interface HandlerMethodMapping {
 
     HandlerExecutionChain getHandlerChain(HttpServletRequest request) throws Exception;
 
@@ -23,4 +25,5 @@ public interface WebRequestHandlerSource {
         return null;
     }
 
+    Map<HttpAction, HandlerMethod> getAllHandlerMethods();
 }

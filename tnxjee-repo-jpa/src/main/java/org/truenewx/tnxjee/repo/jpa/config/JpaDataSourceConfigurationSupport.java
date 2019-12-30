@@ -26,7 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.repo.jpa.hibernate.JtaPlatformImpl;
+import org.truenewx.tnxjee.repo.jpa.hibernate.DefaultJtaPlatform;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.EmbeddedDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.H2XaDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.support.JpaSchemaTemplate;
@@ -43,6 +43,8 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
     private JpaProperties jpaProperties;
     @Autowired
     private HibernateProperties hibernateProperties;
+    @Autowired
+    private DefaultJtaPlatform jtaPlatform; // 确保已被实例化
 
     private ApplicationContext context;
 
@@ -122,7 +124,7 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
         Map<String, Object> properties = this.hibernateProperties.determineHibernateProperties(
                 this.jpaProperties.getProperties(), new HibernateSettings());
         if (isJta()) {
-            properties.put("hibernate.transaction.jta.platform", JtaPlatformImpl.class.getName());
+            properties.put("hibernate.transaction.jta.platform", this.jtaPlatform.getClass().getName());
             properties.put("javax.persistence.transactionType", "JTA");
         }
         return properties;
