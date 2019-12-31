@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.spring.web.servlet;
+package org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method;
 
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;

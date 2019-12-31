@@ -5,7 +5,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method.HandlerMethodMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

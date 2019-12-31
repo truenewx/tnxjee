@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.spring.security.config.annotation;
+package org.truenewx.tnxjee.web.controller.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -9,10 +9,10 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 
 /**
- * 安全配置器支持
+ * 安全登录配置器支持
  * @param <AP> 认证提供器实现类型
  */
-public abstract class SecurityConfigurerSupport<AP extends AuthenticationProvider> extends
+public abstract class SecurityLoginConfigurerSupport<AP extends AuthenticationProvider> extends
         SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     @Autowired

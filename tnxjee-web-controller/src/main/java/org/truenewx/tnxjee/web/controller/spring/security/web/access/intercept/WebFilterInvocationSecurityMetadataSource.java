@@ -9,14 +9,16 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
-import org.truenewx.tnxjee.web.controller.spring.security.config.annotation.ConfigAuthority;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAnonymous;
+import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAuthority;
+import org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method.HandlerMethodMapping;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * WEB过滤器调用安全元数据源
+ * WEB过滤器调用安全元数据源<br>
+ * 用于获取访问资源需要具备的权限
  */
 public class WebFilterInvocationSecurityMetadataSource
         implements FilterInvocationSecurityMetadataSource, ContextInitializedBean {
@@ -35,21 +37,22 @@ public class WebFilterInvocationSecurityMetadataSource
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
             Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
-            if (userConfigAuthorities.size() > 0) {
+            if (userConfigAuthorities != null && userConfigAuthorities.size() > 0) {
                 this.configAttributesMap.put(method.toString(), userConfigAuthorities);
             }
         });
     }
 
     private Collection<UserConfigAuthority> getConfigAttributes(Method method) {
+        if (method.getAnnotation(ConfigAnonymous.class) != null) { // 允许匿名访问，则忽略权限限定
+            return null;
+        }
         Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
         ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
         for (ConfigAuthority configAuthority : configAuthorities) {
-            if (!configAuthority.anonymous()) { // 仅包含非匿名的
-                UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
-                        configAuthority.permission(), configAuthority.intranet());
-                userConfigAuthorities.add(userConfigAuthority);
-            }
+            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
+                    configAuthority.permission(), configAuthority.intranet());
+            userConfigAuthorities.add(userConfigAuthority);
         }
         return userConfigAuthorities;
     }

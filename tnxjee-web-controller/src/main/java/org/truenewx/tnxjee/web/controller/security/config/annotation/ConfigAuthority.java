@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.spring.security.config.annotation;
+package org.truenewx.tnxjee.web.controller.security.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.truenewx.tnxjee.core.Strings;
 
 /**
- * 配置权限
+ * 配置权限限定
  *
  * @author jianglei
  */
@@ -19,10 +19,6 @@ import org.truenewx.tnxjee.core.Strings;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(ConfigAuthorities.class)
 public @interface ConfigAuthority {
-    /**
-     * @return 是否匿名即可访问，一旦设为true，则角色和许可设置将被忽略
-     */
-    boolean anonymous() default false;
 
     /**
      * @return 所需角色

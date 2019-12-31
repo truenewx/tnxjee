@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.spring.security.config.annotation;
+package org.truenewx.tnxjee.web.controller.security.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

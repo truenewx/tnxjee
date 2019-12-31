@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.version;
+package org.truenewx.tnxjee.web.controller.spring.web.servlet;
 
 import java.util.HashMap;
 import java.util.Map;

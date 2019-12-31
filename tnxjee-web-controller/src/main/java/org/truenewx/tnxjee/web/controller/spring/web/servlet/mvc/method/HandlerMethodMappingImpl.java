@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.controller.spring.web.servlet;
+package org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method;
 
 import java.util.Collections;
 import java.util.HashMap;
