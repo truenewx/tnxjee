@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 
 /**
  * 数据库模式访问模板工厂实现

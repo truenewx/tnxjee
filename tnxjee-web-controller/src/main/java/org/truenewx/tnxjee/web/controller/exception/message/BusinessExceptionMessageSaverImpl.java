@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.service.api.exception.ResolvableException;
 import org.truenewx.tnxjee.service.api.exception.SingleException;
 import org.truenewx.tnxjee.service.api.exception.message.BusinessExceptionMessageResolver;
 import org.truenewx.tnxjee.web.controller.exception.resolver.ResolvedBusinessError;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

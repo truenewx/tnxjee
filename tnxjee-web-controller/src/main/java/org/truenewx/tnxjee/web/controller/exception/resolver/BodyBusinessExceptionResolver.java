@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 
 /**
  * 业务异常处理至响应体中的解决器

@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.model.core.Model;

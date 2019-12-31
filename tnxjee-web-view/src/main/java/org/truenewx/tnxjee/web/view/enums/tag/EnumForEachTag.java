@@ -13,8 +13,8 @@ import org.apache.taglibs.standard.tag.common.core.ForEachSupport;
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.enums.EnumType;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 
 /**
  * 枚举类型遍历标签

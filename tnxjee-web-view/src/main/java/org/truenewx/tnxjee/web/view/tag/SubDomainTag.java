@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 
 /**

@@ -8,7 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.repository.Repository;
-import org.truenewx.tnxjee.core.spring.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.repo.Repo;

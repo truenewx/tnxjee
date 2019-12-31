@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.query.Paged;
-import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
+import org.truenewx.tnxjee.web.controller.context.SpringWebContext;
 import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 
 import freemarker.template.Configuration;

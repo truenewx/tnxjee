@@ -25,12 +25,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.web.controller.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAnonymous;
-import org.truenewx.tnxjee.web.controller.spring.security.access.UserAuthorityAccessDecisionManager;
-import org.truenewx.tnxjee.web.controller.spring.security.web.access.BusinessExceptionAccessDeniedHandler;
-import org.truenewx.tnxjee.web.controller.spring.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
-import org.truenewx.tnxjee.web.controller.spring.security.web.authentication.WebAuthenticationEntryPoint;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.controller.security.web.access.BusinessExceptionAccessDeniedHandler;
+import org.truenewx.tnxjee.web.controller.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
+import org.truenewx.tnxjee.web.controller.security.web.authentication.WebAuthenticationEntryPoint;
+import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMapping;
 
 /**
  * WEB安全配置器支持

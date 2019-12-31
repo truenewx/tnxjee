@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.service.api.exception.ResolvableException;
-import org.truenewx.tnxjee.web.controller.spring.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMapping;
 
 /**
  * 业务异常作为异常原因的消息保存器

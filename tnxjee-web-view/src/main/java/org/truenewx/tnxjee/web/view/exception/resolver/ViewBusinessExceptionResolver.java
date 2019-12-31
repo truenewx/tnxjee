@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.web.controller.exception.resolver.BusinessExceptionResolver;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.web.view.util.WebViewPropertyConstant;

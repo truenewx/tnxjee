@@ -21,7 +21,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.ImageUtil;
-import org.truenewx.tnxjee.web.controller.spring.context.SpringWebContext;
+import org.truenewx.tnxjee.web.controller.context.SpringWebContext;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;

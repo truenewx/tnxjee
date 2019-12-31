@@ -7,7 +7,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.truenewx.tnxjee.web.controller.security.config.WebSecurityConfigurerSupport;
-import org.truenewx.tnxjee.web.controller.spring.security.web.access.BusinessExceptionAccessDeniedHandler;
+import org.truenewx.tnxjee.web.controller.security.web.access.BusinessExceptionAccessDeniedHandler;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 import org.truenewx.tnxjee.web.view.resource.ResourceUrlConfiguration;
 

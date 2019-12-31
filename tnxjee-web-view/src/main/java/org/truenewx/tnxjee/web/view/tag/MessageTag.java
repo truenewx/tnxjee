@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 
 /**
  * 国际化消息标签

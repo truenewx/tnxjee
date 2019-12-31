@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spring.util.SpringUtil;
-import org.truenewx.tnxjee.web.controller.spring.servlet.mvc.Loginer;
-import org.truenewx.tnxjee.web.controller.spring.util.SpringWebUtil;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.controller.servlet.mvc.Loginer;
+import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 
 /**
