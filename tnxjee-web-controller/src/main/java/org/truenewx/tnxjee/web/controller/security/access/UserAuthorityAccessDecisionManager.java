@@ -57,6 +57,9 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased {
             ConfigAttribute attribute) {
         if (supports(attribute)) {
             UserConfigAuthority configAuthority = (UserConfigAuthority) attribute;
+            if (configAuthority.isDenyAll()) {
+                return false;
+            }
             if (configAuthority.isIntranet()) { // 如果限制内网访问
                 String ip = WebControllerUtil.getRemoteAddress(fi.getHttpRequest());
                 if (!NetUtil.isIntranetIp(ip)) {

@@ -1,5 +1,12 @@
 package org.truenewx.tnxjee.web.controller.security.web.access.intercept;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -12,9 +19,6 @@ import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAuthority;
 import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMapping;
-
-import java.lang.reflect.Method;
-import java.util.*;
 
 /**
  * WEB过滤器调用安全元数据源<br>
@@ -49,10 +53,14 @@ public class WebFilterInvocationSecurityMetadataSource
         }
         Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
         ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
-        for (ConfigAuthority configAuthority : configAuthorities) {
-            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
-                    configAuthority.permission(), configAuthority.intranet());
-            userConfigAuthorities.add(userConfigAuthority);
+        if (configAuthorities.length == 0) { // 没有配置权限限定，则拒绝所有访问
+            userConfigAuthorities.add(UserConfigAuthority.ofDenyAll());
+        } else {
+            for (ConfigAuthority configAuthority : configAuthorities) {
+                UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
+                        configAuthority.permission(), configAuthority.intranet());
+                userConfigAuthorities.add(userConfigAuthority);
+            }
         }
         return userConfigAuthorities;
     }

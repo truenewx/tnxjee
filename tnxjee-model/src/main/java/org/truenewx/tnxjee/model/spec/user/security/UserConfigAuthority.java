@@ -13,12 +13,18 @@ public class UserConfigAuthority implements ConfigAttribute {
 
     public static final String SEPARATOR = Strings.PLUS;
 
+    public static final String ATTRIBUTE_DENY_ALL = "denyAll";
+
     private String role;
     private String permission;
     /**
      * 是否仅限内网访问
      */
     private boolean intranet;
+    /**
+     * 是否拒绝所有访问
+     */
+    private boolean denyAll;
 
     public UserConfigAuthority(String role, String permission, boolean intranet) {
         if (role == null) {
@@ -35,10 +41,19 @@ public class UserConfigAuthority implements ConfigAttribute {
     }
 
     /**
+     * 构建拒绝所有访问的必备权限
+     */
+    public static UserConfigAuthority ofDenyAll() {
+        UserConfigAuthority authority = new UserConfigAuthority(null, null, false);
+        authority.denyAll = true;
+        return authority;
+    }
+
+    /**
      * 构建没有权限限制、登录即可访问的必备权限
      */
     public UserConfigAuthority() {
-        this(null,null,false);
+        this(null, null, false);
     }
 
     public String getRole() {
@@ -53,9 +68,13 @@ public class UserConfigAuthority implements ConfigAttribute {
         return this.intranet;
     }
 
+    public boolean isDenyAll() {
+        return this.denyAll;
+    }
+
     @Override
     public String getAttribute() {
-        return this.role + SEPARATOR + this.permission;
+        return this.denyAll ? ATTRIBUTE_DENY_ALL : (this.role + SEPARATOR + this.permission);
     }
 
     @Override
