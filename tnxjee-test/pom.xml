@@ -8,7 +8,7 @@
         <version>3.0.0</version>
     </parent>
     <groupId>org.truenewx.tnxjee</groupId>
-    <artifactId>tnxjee-test-core</artifactId>
+    <artifactId>tnxjee-test</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>

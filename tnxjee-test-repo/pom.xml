@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-test-core</artifactId>
+            <artifactId>tnxjee-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
