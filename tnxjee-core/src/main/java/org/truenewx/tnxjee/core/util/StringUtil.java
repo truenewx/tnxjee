@@ -565,8 +565,11 @@ public class StringUtil {
     }
 
     public static Set<String> splitToSet(String s, String regex, boolean trim) {
-        String[] array = s.split(regex);
+        if (s == null) {
+            return null;
+        }
         Set<String> set = new LinkedHashSet<>();
+        String[] array = s.split(regex);
         for (String element : array) {
             if (trim) {
                 element = element.trim();
