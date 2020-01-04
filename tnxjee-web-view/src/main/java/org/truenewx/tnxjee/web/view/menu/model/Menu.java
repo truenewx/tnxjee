@@ -33,6 +33,16 @@ public class Menu extends MenuElement implements Named {
         return this.items;
     }
 
+    @Override
+    public Menu clone() {
+        Menu menu = new Menu(this.name);
+        this.items.forEach(item -> {
+            menu.items.add(item.clone());
+        });
+        clone(this, menu);
+        return menu;
+    }
+
     /**
      * 获取已取得指定授权的菜单项清单
      *
@@ -43,5 +53,4 @@ public class Menu extends MenuElement implements Named {
         List<MenuItem> grantedItems = new ArrayList<>();
         return grantedItems;
     }
-
 }

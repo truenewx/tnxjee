@@ -50,4 +50,17 @@ public class MenuLink extends MenuItem {
         return this.subs;
     }
 
+    @Override
+    public MenuLink clone() {
+        MenuLink link = new MenuLink();
+        link.icon = this.icon;
+        link.href = this.href;
+        link.target = this.target;
+        link.assignable = this.assignable;
+        this.subs.forEach(sub -> {
+            link.getSubs().add(sub.clone());
+        });
+        clone(this, link);
+        return link;
+    }
 }

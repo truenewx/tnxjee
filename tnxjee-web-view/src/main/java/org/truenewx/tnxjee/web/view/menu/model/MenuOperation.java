@@ -24,4 +24,12 @@ public class MenuOperation extends MenuItem {
         this.permission = permission;
     }
 
+    @Override
+    public MenuOperation clone() {
+        MenuOperation operation = new MenuOperation();
+        operation.role = this.role;
+        operation.permission = this.permission;
+        clone(this, operation);
+        return operation;
+    }
 }

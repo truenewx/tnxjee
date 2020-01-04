@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 菜单元素
  */
-public abstract class MenuElement {
+public abstract class MenuElement implements Cloneable {
     /**
      * 显示名称映射集
      */
@@ -45,5 +45,14 @@ public abstract class MenuElement {
 
     public String getDesc() {
         return this.descs.get(Locale.getDefault());
+    }
+
+    protected void clone(MenuElement source, MenuElement target) {
+        target.captions.clear();
+        target.captions.putAll(source.getCaptions());
+        target.descs.clear();
+        target.descs.putAll(source.descs);
+        target.profiles.clear();
+        target.profiles.addAll(source.profiles);
     }
 }

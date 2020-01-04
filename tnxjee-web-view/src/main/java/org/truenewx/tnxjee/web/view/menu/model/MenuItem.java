@@ -16,4 +16,13 @@ public abstract class MenuItem extends MenuElement {
         return this.options;
     }
 
+    @Override
+    public abstract MenuItem clone();
+
+    protected void clone(MenuItem source, MenuItem target) {
+        target.options.clear();
+        target.options.putAll(source.options);
+        super.clone(source, target);
+    }
+
 }
