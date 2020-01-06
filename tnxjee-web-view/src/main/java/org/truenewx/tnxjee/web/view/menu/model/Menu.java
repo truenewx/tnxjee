@@ -1,11 +1,9 @@
 package org.truenewx.tnxjee.web.view.menu.model;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.spec.Named;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,24 +31,19 @@ public class Menu extends MenuElement implements Named {
         return this.items;
     }
 
-    @Override
-    public Menu clone() {
+    public Menu cloneWithoutItems() {
         Menu menu = new Menu(this.name);
-        this.items.forEach(item -> {
-            menu.items.add(item.clone());
-        });
         clone(this, menu);
         return menu;
     }
 
-    /**
-     * 获取已取得指定授权的菜单项清单
-     *
-     * @param authorities 已获授权集
-     * @return 已取得指定授权的菜单项清单
-     */
-    public List<MenuItem> getGrantedItems(Collection<? extends GrantedAuthority> authorities) {
-        List<MenuItem> grantedItems = new ArrayList<>();
-        return grantedItems;
+    @Override
+    public Menu clone() {
+        Menu menu = cloneWithoutItems();
+        this.items.forEach(item -> {
+            menu.items.add(item.clone());
+        });
+        return menu;
     }
+
 }

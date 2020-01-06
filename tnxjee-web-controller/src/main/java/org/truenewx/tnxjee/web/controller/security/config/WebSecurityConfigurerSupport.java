@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -61,7 +60,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      * 登录用户访问资源的权限判断
      */
     @Bean
-    public AccessDecisionManager accessDecisionManager() {
+    public UserAuthorityAccessDecisionManager accessDecisionManager() {
         return new UserAuthorityAccessDecisionManager();
     }
 

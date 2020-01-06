@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
@@ -18,6 +19,7 @@ import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAuthority;
+import org.truenewx.tnxjee.web.controller.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMapping;
 
 /**
@@ -25,7 +27,7 @@ import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMappin
  * 用于获取访问资源需要具备的权限
  */
 public class WebFilterInvocationSecurityMetadataSource
-        implements FilterInvocationSecurityMetadataSource, ContextInitializedBean {
+        implements FilterInvocationSecurityMetadataSource, ContextInitializedBean, ConfigAuthorityResolver {
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
@@ -118,6 +120,16 @@ public class WebFilterInvocationSecurityMetadataSource
             }
         }
         return true;
+    }
+
+    @Override
+    public Collection<UserConfigAuthority> resolveConfigAuthorities(String uri, HttpMethod method) {
+        HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(uri, method);
+        if (handlerMethod != null) {
+            String methodKey = handlerMethod.getMethod().toString();
+            return this.configAttributesMap.get(methodKey);
+        }
+        return null;
     }
 
 }

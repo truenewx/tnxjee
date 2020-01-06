@@ -23,7 +23,7 @@ import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends UnanimousBased {
+public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider{
 
     public UserAuthorityAccessDecisionManager() {
         super(Arrays.asList(new WebExpressionVoter()));
@@ -66,23 +66,27 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased {
                     return false; // 拒绝非内网访问
                 }
             }
-            return containsRole(authorities, configAuthority.getRole())
-                    && containsPermission(authorities, configAuthority.getPermission());
+            return isGranted(authorities, configAuthority.getRole(), configAuthority.getPermission());
         }
         return true; // 不支持的配置权限视为匹配
     }
 
-    private boolean containsRole(Collection<? extends GrantedAuthority> authorities, String configRole) {
-        if (StringUtils.isBlank(configRole)) { // 配置权限不限制角色，则视为匹配包含
+    @Override
+    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String role, String permission) {
+        return isGrantedRole(authorities, role) && isGrantedPermission(authorities, permission);
+    }
+
+    private boolean isGrantedRole(Collection<? extends GrantedAuthority> authorities, String role) {
+        if (StringUtils.isBlank(role)) { // 配置权限不限制角色，则视为匹配包含
             return true;
         }
         for (GrantedAuthority authority : authorities) {
-            if (configRole.equals(authority.getAuthority()) || configRole.equals(authority.toString())) {
+            if (role.equals(authority.getAuthority()) || role.equals(authority.toString())) {
                 return true;
             }
             if (authority instanceof GrantedRoleAuthority) {
                 GrantedRoleAuthority roleAuthority = (GrantedRoleAuthority) authority;
-                if (configRole.equals(roleAuthority.getRole())) {
+                if (role.equals(roleAuthority.getRole())) {
                     return true;
                 }
             }
@@ -90,17 +94,17 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased {
         return false;
     }
 
-    private boolean containsPermission(Collection<? extends GrantedAuthority> authorities, String configPermission) {
-        if (StringUtils.isBlank(configPermission)) { // 配置权限不限制许可，则视为匹配包含
+    private boolean isGrantedPermission(Collection<? extends GrantedAuthority> authorities, String permission) {
+        if (StringUtils.isBlank(permission)) { // 配置权限不限制许可，则视为匹配包含
             return true;
         }
         for (GrantedAuthority authority : authorities) {
-            if (configPermission.equals(authority.getAuthority()) || configPermission.equals(authority.toString())) {
+            if (permission.equals(authority.getAuthority()) || permission.equals(authority.toString())) {
                 return true;
             }
             if (authority instanceof GrantedPermissionAuthority) {
                 GrantedPermissionAuthority permissionAuthority = (GrantedPermissionAuthority) authority;
-                if (configPermission.equals(permissionAuthority.getPermission())) {
+                if (permission.equals(permissionAuthority.getPermission())) {
                     return true;
                 }
             }

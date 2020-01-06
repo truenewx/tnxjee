@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.web.controller.servlet.mvc.method;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.truenewx.tnxjee.web.controller.http.HttpAction;
@@ -26,4 +27,7 @@ public interface HandlerMethodMapping {
     }
 
     Map<HttpAction, HandlerMethod> getAllHandlerMethods();
+
+    HandlerMethod getHandlerMethod(String uri, HttpMethod method);
+
 }
