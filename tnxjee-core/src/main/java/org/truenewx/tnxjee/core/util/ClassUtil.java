@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.truenewx.tnxjee.core.Strings;
@@ -27,7 +27,6 @@ import org.truenewx.tnxjee.core.Strings;
  * 本类中的方法只与Class有关，不与某个具体Object相关
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class ClassUtil {
 
@@ -171,8 +170,7 @@ public class ClassUtil {
      * @param index          要取的泛型位置索引
      * @return 实际泛型类型
      */
-    public static <T> Class<T> getActualGenericType(Class<?> clazz, Class<?> interfaceClass,
-            int index) {
+    public static <T> Class<T> getActualGenericType(Class<?> clazz, Class<?> interfaceClass, int index) {
         Collection<ParameterizedType> types = findParameterizedGenericInterfaces(clazz);
         ParameterizedType superInterface = getMatchedGenericType(types, interfaceClass);
         return getActualGenericType(superInterface, index);
@@ -184,8 +182,7 @@ public class ClassUtil {
      * @param clazz 类型
      * @return 带泛型的接口类型清单
      */
-    private static Collection<ParameterizedType> findParameterizedGenericInterfaces(
-            Class<?> clazz) {
+    private static Collection<ParameterizedType> findParameterizedGenericInterfaces(Class<?> clazz) {
         List<ParameterizedType> types = new ArrayList<>();
         Type[] interfaces = clazz.getGenericInterfaces();
         for (Type type : interfaces) {
@@ -212,8 +209,7 @@ public class ClassUtil {
      * @return 注解的value()值
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getClassAnnotationValue(Class<?> clazz,
-            Class<? extends Annotation> annotationClass) {
+    public static <T> T getClassAnnotationValue(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         Annotation annotation = AnnotationUtils.findAnnotation(clazz, annotationClass);
         return annotation == null ? null : (T) AnnotationUtils.getValue(annotation);
     }
@@ -362,25 +358,24 @@ public class ClassUtil {
     }
 
     /**
-     * 查找指定类型中的属性-类型映射集
+     * 查找指定类型中的属性元数据集
      *
-     * @param clazz    类型
-     * @param gettable 是否包含可读属性
-     * @param settable 是否包含可写属性
-     * @param parent   是否包含父类中的属性
-     * @param includes 包含的属性集
-     * @param excludes 排除的属性集
-     * @return 属性-类型映射集
+     * @param clazz            类型
+     * @param gettable         是否包含可读属性
+     * @param settable         是否包含可写属性
+     * @param parent           是否包含父类中的属性
+     * @param includePredicate 属性包含判定
+     * @return 属性元数据集
      */
-    public static Collection<PropertyMeta> findPropertyMetas(Class<?> clazz, boolean gettable,
-            boolean settable, boolean parent, String[] includes, String[] excludes) {
+    public static Collection<PropertyMeta> findPropertyMetas(Class<?> clazz, boolean gettable, boolean settable,
+            boolean parent, BiPredicate<Class<?>, String> includePredicate) {
         Map<String, PropertyMeta> result = new LinkedHashMap<>();
         if (gettable || settable) {
             if (parent) { // 先加入父类的属性
                 Class<?> superclass = clazz.getSuperclass();
                 if (superclass != null && superclass != Object.class) {
-                    Collection<PropertyMeta> propertyMetas = findPropertyMetas(superclass, gettable,
-                            settable, parent, includes, excludes);
+                    Collection<PropertyMeta> propertyMetas = findPropertyMetas(superclass, gettable, settable, parent,
+                            includePredicate);
                     for (PropertyMeta propertyMeta : propertyMetas) {
                         result.put(propertyMeta.getName(), propertyMeta);
                     }
@@ -393,14 +388,18 @@ public class ClassUtil {
                         Class<?> propertyType = null;
                         String methodName = method.getName();
                         if (methodName.startsWith("get")) { // getter方法，类型取方法结果类型
-                            propertyType = method.getReturnType();
+                            if (gettable) {
+                                propertyType = method.getReturnType();
+                            }
                         } else if (methodName.startsWith("set")) { // setter方法，类型取第一个参数的类型
-                            propertyType = method.getParameterTypes()[0];
+                            if (settable) {
+                                propertyType = method.getParameterTypes()[0];
+                            }
                         }
-                        // 属于包含属性清单且不属于排除属性清单才加入
-                        if (propertyType != null && isIncluded(includes, excludes, propertyName)) {
-                            addPropertyMeta(result, propertyName, propertyType,
-                                    method.getAnnotations());
+                        // 可取得属性类型，且通过包含判断，才加入
+                        if (propertyType != null
+                                && (includePredicate == null || includePredicate.test(propertyType, propertyName))) {
+                            addPropertyMeta(result, propertyName, propertyType, method.getAnnotations());
                         }
                     }
                 }
@@ -408,22 +407,22 @@ public class ClassUtil {
                 PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
                 for (PropertyDescriptor pd : pds) {
                     String propertyName = pd.getName();
-                    Method readMethod = pd.getReadMethod();
-                    Method writeMethod = pd.getWriteMethod();
-                    if (!"class".equals(propertyName)
-                            && ((gettable && readMethod != null)
-                                    || (settable && writeMethod != null))
-                            && isIncluded(includes, excludes, propertyName)) {
-                        // 先添加声明字段上的注解
-                        addPropertyMeta(result, propertyName, pd.getPropertyType(),
-                                getDeclaredFieldAnnotations(clazz, propertyName));
-                        if (readMethod != null) { // 尝试添加读方法上的注解
+                    if (!"class".equals(propertyName) && (includePredicate == null
+                            || includePredicate.test(pd.getPropertyType(), propertyName))) {
+                        Method readMethod = pd.getReadMethod();
+                        Method writeMethod = pd.getWriteMethod();
+                        if ((gettable && readMethod != null) || (settable && writeMethod != null)) {
+                            // 先添加声明字段上的注解
                             addPropertyMeta(result, propertyName, pd.getPropertyType(),
-                                    readMethod.getAnnotations());
-                        }
-                        if (writeMethod != null) { // 尝试添加写方法上的注解
-                            addPropertyMeta(result, propertyName, pd.getPropertyType(),
-                                    writeMethod.getAnnotations());
+                                    getDeclaredFieldAnnotations(clazz, propertyName));
+                            if (readMethod != null) { // 尝试添加读方法上的注解
+                                addPropertyMeta(result, propertyName, pd.getPropertyType(),
+                                        readMethod.getAnnotations());
+                            }
+                            if (writeMethod != null) { // 尝试添加写方法上的注解
+                                addPropertyMeta(result, propertyName, pd.getPropertyType(),
+                                        writeMethod.getAnnotations());
+                            }
                         }
                     }
                 }
@@ -432,8 +431,8 @@ public class ClassUtil {
         return result.values();
     }
 
-    private static void addPropertyMeta(Map<String, PropertyMeta> result, String propertyName,
-            Class<?> propertyType, Annotation[] annotations) {
+    private static void addPropertyMeta(Map<String, PropertyMeta> result, String propertyName, Class<?> propertyType,
+            Annotation[] annotations) {
         PropertyMeta propertyMeta = result.get(propertyName);
         if (propertyMeta == null) {
             propertyMeta = new PropertyMeta(propertyName, propertyType, annotations);
@@ -450,11 +449,6 @@ public class ClassUtil {
         } catch (NoSuchFieldException | SecurityException e) {
         }
         return new Annotation[0];
-    }
-
-    private static boolean isIncluded(String[] includes, String[] excludes, String s) {
-        return (ArrayUtils.isEmpty(includes) || ArrayUtils.contains(includes, s))
-                && (ArrayUtils.isEmpty(excludes) || !ArrayUtils.contains(excludes, s));
     }
 
     /**
@@ -498,15 +492,12 @@ public class ClassUtil {
         // 必须是公开的非静态方法
         if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers())) {
             // 方法名称要匹配
-            String methodName = (getter ? "get" : "set")
-                    + StringUtil.firstToUpperCase(propertyName);
+            String methodName = (getter ? "get" : "set") + StringUtil.firstToUpperCase(propertyName);
             if (methodName.equals(method.getName())) {
                 if (getter) { // getter方法必须无参数且返回结果不为void
-                    return method.getParameterTypes().length == 0
-                            && method.getReturnType() != void.class;
+                    return method.getParameterTypes().length == 0 && method.getReturnType() != void.class;
                 } else { // setter方法必须有一个参数且返回结果为void
-                    return method.getParameterTypes().length == 1
-                            && method.getReturnType() == void.class;
+                    return method.getParameterTypes().length == 1 && method.getReturnType() == void.class;
                 }
             }
         }
@@ -542,8 +533,7 @@ public class ClassUtil {
      * @param propertyType 期望的属性类型，为空时忽略属性类型限制
      * @return 符合Bean规范的属性描述集合
      */
-    public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz,
-            Class<?> propertyType) {
+    public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz, Class<?> propertyType) {
         List<PropertyDescriptor> list = new ArrayList<>();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor pd : pds) {
@@ -593,8 +583,7 @@ public class ClassUtil {
      * @param argCount   参数个数，小于0时忽略个数，返回所有同名方法
      * @return 指定类型中指定方法名称和参数个数的公开方法清单
      */
-    public static Collection<Method> findPublicMethods(Class<?> type, String methodName,
-            int argCount) {
+    public static Collection<Method> findPublicMethods(Class<?> type, String methodName, int argCount) {
         Collection<Method> methods = new ArrayList<>();
         for (Method method : type.getMethods()) {
             if (method.getName().equals(methodName)

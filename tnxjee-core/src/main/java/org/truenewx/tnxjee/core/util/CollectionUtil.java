@@ -291,7 +291,8 @@ public class CollectionUtil {
         }
     }
 
-    public static <T> Set<T> toSet(T[] array) {
+    @SuppressWarnings("unchecked")
+    public static <T> Set<T> toSet(T... array) {
         if (array == null) {
             return null;
         }
@@ -354,6 +355,10 @@ public class CollectionUtil {
     public static <T> void remove(Iterable<T> iterable, BiPredicate<T, Integer> predicate) {
         Iterator<T> iterator = iterable.iterator();
         remove(iterator, predicate);
+    }
+
+    public static boolean isNotEmpty(Map<?, ?> map) {
+        return map != null && map.size() > 0;
     }
 
 }

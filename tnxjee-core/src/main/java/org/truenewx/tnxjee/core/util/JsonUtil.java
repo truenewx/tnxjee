@@ -1,93 +1,102 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.commons.beanutils.BeanUtils;
-import org.truenewx.tnxjee.core.serializer.JsonDateCodec;
-import org.truenewx.tnxjee.core.util.json.MultiPropertyPreFilter;
-import org.truenewx.tnxjee.core.util.json.TypeSerializeFilter;
+import org.apache.commons.lang3.ArrayUtils;
+import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.PropertyPreFilter;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.PropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 /**
  * JSON工具类
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class JsonUtil {
 
+    private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+
     static {
-        JsonDateCodec dateCodec = new JsonDateCodec();
-        SerializeConfig.getGlobalInstance().put(Date.class, dateCodec);
-        SerializeConfig.getGlobalInstance().put(java.sql.Date.class, dateCodec);
-        SerializeConfig.getGlobalInstance().put(Timestamp.class, dateCodec);
-        ParserConfig.getGlobalInstance().putDeserializer(Date.class, dateCodec);
-        ParserConfig.getGlobalInstance().putDeserializer(java.sql.Date.class, dateCodec);
-        ParserConfig.getGlobalInstance().putDeserializer(Timestamp.class, dateCodec);
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        DEFAULT_MAPPER.findAndRegisterModules();
+        DEFAULT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL); // 序列化时不输出null
+        DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
+        DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳字符串
+        DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
     }
 
-    /**
-     * 获取JSON过滤器实例
-     *
-     * @param clazz             需进行属性排除的类
-     * @param excludeProperties 需排除的属性
-     * @return JSON过滤器实例
-     */
-    private static PropertyPreFilter getFilterInstance(Class<?> clazz,
-            String... excludeProperties) {
-        SimplePropertyPreFilter filter = new SimplePropertyPreFilter(clazz);
-        Set<String> excludeList = filter.getExcludes();
-        for (String exclude : excludeProperties) {
-            excludeList.add(exclude);
-        }
-        return filter;
+    public static ObjectMapper copyDefaultMapper() {
+        return DEFAULT_MAPPER.copy();
     }
 
-    /**
-     * 获取JSON过滤器实例
-     *
-     * @param filteredPropertiesMap 过滤属性映射集
-     * @return JSON过滤器实例
-     */
-    private static PropertyPreFilter getFilterInstance(
-            Map<Class<?>, FilteredTokens> filteredPropertiesMap) {
-        MultiPropertyPreFilter filter = new MultiPropertyPreFilter();
-        for (Entry<Class<?>, FilteredTokens> entry : filteredPropertiesMap.entrySet()) {
-            FilteredTokens value = entry.getValue();
-            filter.addFilteredProperties(entry.getKey(), value.getIncludes(), value.getExcludes());
+    @JsonFilter("DynamicFilter")
+    private interface DynamicFilter {
+    }
+
+    private static void addMixIn(ObjectMapper mapper, Class<?> clazz) {
+        mapper.addMixIn(clazz, DynamicFilter.class);
+        Collection<PropertyMeta> propertyMetas = ClassUtil.findPropertyMetas(clazz, true, false, true,
+                (propertyType, propertyName) -> {
+                    return ClassUtil.isComplex(propertyType);
+                });
+        propertyMetas.forEach(meta -> {
+            addMixIn(mapper, meta.getType());
+        });
+    }
+
+    private static String toJson(Object obj, PropertyFilter filter) {
+        ObjectMapper mapper;
+        if (filter != null) {
+            String filterId = DynamicFilter.class.getAnnotation(JsonFilter.class).value();
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider().addFilter(filterId, filter);
+            mapper = copyDefaultMapper();
+            mapper.setFilterProvider(filterProvider);
+            addMixIn(mapper, obj.getClass());
+        } else {
+            mapper = DEFAULT_MAPPER;
         }
-        return filter;
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String toJson(Object obj, String... excludedProperties) {
+        PropertyFilter filter = null;
+        if (ArrayUtils.isNotEmpty(excludedProperties)) {
+            filter = SimpleBeanPropertyFilter.serializeAllExcept(excludedProperties);
+        }
+        return toJson(obj, filter);
     }
 
     /**
      * 将指定任意类型的对象转换为JSON标准格式的字符串
      *
-     * @param obj               对象
-     * @param clazz             需进行属性排除的类
-     * @param excludeProperties 需排除的属性
+     * @param obj                对象
+     * @param excludedType       需进行属性排除的类
+     * @param excludedProperties 需排除的属性
      * @return JSON格式的字符串
      */
-    public static String toJson(Object obj, Class<?> clazz, String... excludeProperties) {
-        return JSON.toJSONString(obj, getFilterInstance(clazz, excludeProperties));
+    public static String toJson(Object obj, Class<?> excludedType, String... excludedProperties) {
+        TypedPropertyFilter filter = null;
+        if (ArrayUtils.isNotEmpty(excludedProperties)) {
+            filter = new TypedPropertyFilter().addExcludedProperties(excludedType, excludedProperties);
+        }
+        return toJson(obj, filter);
     }
 
     /**
@@ -97,44 +106,42 @@ public class JsonUtil {
      * @param filteredPropertiesMap 过滤属性映射集
      * @return JSON格式的字符串
      */
-    public static String toJson(Object obj, Map<Class<?>, FilteredTokens> filteredPropertiesMap) {
-        return JSON.toJSONString(obj, getFilterInstance(filteredPropertiesMap));
-    }
-
-    /**
-     * 将指定任意类型的对象转换为JSON标准格式的字符串
-     *
-     * @param obj               对象
-     * @param appendTypeClasses 需要附加类型字段的类型集
-     * @return JSON格式的字符串
-     */
-    public static String toJson(Object obj, Class<?>... appendTypeClasses) {
-        if (appendTypeClasses.length == 0) {
-            return JSON.toJSONString(obj);
-        } else {
-            return JSON.toJSONString(obj, new TypeSerializeFilter(appendTypeClasses));
+    public static String toJson(Object obj, Map<Class<?>, FilteredNames> filteredPropertiesMap) {
+        TypedPropertyFilter filter = null;
+        if (CollectionUtil.isNotEmpty(filteredPropertiesMap)) {
+            filter = new TypedPropertyFilter().addAll(filteredPropertiesMap);
         }
+        return toJson(obj, filter);
     }
 
     /**
-     * 将JSON标准形式的字符串转换为对象
+     * 将JSON标准形式的字符串转换为Map
      *
      * @param json JSON标准形式的字符串
-     * @return 转换形成的对象
+     * @return 转换形成的Map
      */
-    public static Object json2Bean(String json) {
-        return JSON.parseObject(json);
+    public static Map<String, Object> json2Map(String json) {
+        try {
+            return DEFAULT_MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 将JSON标准形式的字符串转换为指定类型的对象
      *
-     * @param json  JSON标准形式的字符串
-     * @param clazz 要转换的类型
+     * @param json      JSON标准形式的字符串
+     * @param beanClass 要转换的目标类型
      * @return 转换形成的对象
      */
-    public static <T> T json2Bean(String json, Class<T> clazz) {
-        return JSON.parseObject(json, clazz);
+    public static <T> T json2Bean(String json, Class<T> beanClass) {
+        try {
+            return DEFAULT_MAPPER.readValue(json, beanClass);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -144,13 +151,13 @@ public class JsonUtil {
      * @param bean 要覆盖的对象
      */
     public static void jsonCoverBean(String json, Object bean) {
-        JSONObject jsonObj = JSON.parseObject(json);
-        for (Map.Entry<String, Object> entry : jsonObj.entrySet()) {
+        Map<String, Object> map = json2Map(json);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             try {
                 BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            } // 出现异常则忽略该属性的覆盖操作
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                // 出现异常则忽略该属性的覆盖操作
+            }
         }
     }
 
@@ -160,72 +167,29 @@ public class JsonUtil {
      * @param json JSON标准形式的字符串
      * @return 转换形成的对象List
      */
-    public static List<Object> json2List(String json) {
-        return JSON.parseArray(json);
+    public static List<Map<String, Object>> json2List(String json) {
+        try {
+            return DEFAULT_MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 将JSON标准形式的字符串转换为指定类型的对象List
      *
-     * @param json  JSON标准形式的字符串
-     * @param clazz 元素类型
+     * @param json        JSON标准形式的字符串
+     * @param elementType 元素类型
      * @return 转换形成的对象List
      */
-    public static <T> List<T> json2List(String json, Class<T> clazz) {
-        return JSON.parseArray(json, clazz);
-    }
-
-    /**
-     * 将JSON标准形式的字符串转换为指定类型的对象List
-     *
-     * @param json  JSON标准形式的字符串
-     * @param types 依次为结果数组的每一个元素的类型，为空则不限制类型
-     * @return 转换形成的对象List
-     */
-    public static List<Object> json2List(String json, Type[] types) {
-        if (types != null && types.length > 0) {
-            return JSON.parseArray(json, types);
-        } else {
-            return JSON.parseArray(json);
+    public static <T> List<T> json2List(String json, Class<T> elementType) {
+        CollectionType type = DEFAULT_MAPPER.getTypeFactory().constructCollectionType(List.class, elementType);
+        try {
+            return DEFAULT_MAPPER.readValue(json, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * 将JSON标准形式的字符串转换为Map
-     *
-     * @param json JSON标准形式的字符串
-     * @return 转换形成的Map
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> json2Map(String json) {
-        return JSON.parseObject(json, LinkedHashMap.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> Map<K, V> json2Map(String json, Class<K> keyClass, Class<V> valueClass) {
-        Map<K, V> result = new HashMap<>();
-        Map<String, Object> map = JSON.parseObject(json);
-        for (Entry<String, Object> entry : map.entrySet()) {
-            K key;
-            if (keyClass != String.class) {
-                key = JSON.parseObject(entry.getKey(), keyClass);
-            } else {
-                key = (K) entry.getKey();
-            }
-            V value = (V) entry.getValue();
-            result.put(key, value);
-        }
-        return result;
-    }
-
-    /**
-     * 将JSON标准形式的字符串转换为Properties
-     *
-     * @param json JSON标准形式的字符串
-     * @return 转换形成的Properties
-     */
-    public static Properties json2Properties(String json) {
-        return JSON.parseObject(json, Properties.class);
     }
 
     /**
@@ -234,25 +198,35 @@ public class JsonUtil {
      * @param json JSON标准形式的字符串
      * @return 转换形成的数组
      */
-    public static Object[] json2Array(String json) {
-        JSONArray array = JSON.parseArray(json);
-        return array == null ? null : array.toArray(new Object[array.size()]);
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object>[] json2Array(String json) {
+        List<Map<String, Object>> list = json2List(json);
+        if (list == null) {
+            return null;
+        }
+        Map<String, Object>[] array = (Map<String, Object>[]) Array.newInstance(Map.class, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 
     /**
      * 将JSON标准形式的字符串转换为数组
      *
-     * @param json  JSON标准形式的字符串
-     * @param clazz 元素类型
+     * @param json        JSON标准形式的字符串
+     * @param elementType 元素类型
      * @return 转换形成的数组
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] json2Array(String json, Class<T> clazz) {
-        List<T> list = JSON.parseArray(json, clazz);
-        T[] array = (T[]) Array.newInstance(clazz, list.size());
-        int i = 0;
-        for (T obj : list) {
-            array[i++] = obj;
+    public static <T> T[] json2Array(String json, Class<T> elementType) {
+        List<T> list = json2List(json, elementType);
+        if (list == null) {
+            return null;
+        }
+        T[] array = (T[]) Array.newInstance(elementType, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
         }
         return array;
     }

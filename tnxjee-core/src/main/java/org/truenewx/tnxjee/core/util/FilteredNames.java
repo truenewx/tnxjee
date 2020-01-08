@@ -6,12 +6,12 @@ import java.util.Set;
 import org.springframework.util.CollectionUtils;
 
 /**
- * 过滤符号集
+ * 过滤名称集
  *
  * @author jianglei
- * @since JDK 1.8
  */
-public class FilteredTokens {
+public class FilteredNames {
+
     private Set<String> includes;
     private Set<String> excludes;
 
@@ -26,38 +26,51 @@ public class FilteredTokens {
     /**
      * 添加包含的符号集
      *
-     * @param properties
-     *            包含的符号集
+     * @param names 包含的名称集
      */
-    public void addIncluded(final String... properties) {
+    public FilteredNames addIncluded(String... names) {
         if (this.includes == null) {
             this.includes = new HashSet<>();
         }
-        for (final String property : properties) {
+        for (String property : names) {
             this.includes.add(property);
         }
+        return this;
     }
 
     /**
      * 添加排除的符号集
      *
-     * @param properties
-     *            排除的符号集
+     * @param names 排除的名称集
      */
-    public void addExcluded(final String... properties) {
+    public FilteredNames addExcluded(String... names) {
         if (this.excludes == null) {
             this.excludes = new HashSet<>();
         }
-        for (final String property : properties) {
+        for (String property : names) {
             this.excludes.add(property);
         }
+        return this;
     }
 
     /**
-     *
      * @return 包含符号集和排除符号集是否均为空
      */
     public boolean isEmpty() {
         return CollectionUtils.isEmpty(this.includes) && CollectionUtils.isEmpty(this.excludes);
     }
+
+    public boolean include(String name) {
+        // 限定了包含范围，但不在包含范围内，则不匹配
+        if (!CollectionUtils.isEmpty(this.includes) && !this.includes.contains(name)) {
+            return false;
+        }
+        // 限定了排除范围，且在排除范围内，则不匹配
+        if (!CollectionUtils.isEmpty(this.excludes) && this.excludes.contains(name)) {
+            return false;
+        }
+        // 其它情况均为匹配
+        return true;
+    }
+
 }
