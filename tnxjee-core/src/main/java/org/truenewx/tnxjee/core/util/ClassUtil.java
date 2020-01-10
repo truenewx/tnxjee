@@ -61,7 +61,7 @@ public class ClassUtil {
      * @return 表示指定属性的Field对象
      */
     public static Field findField(Class<?> clazz, String propertyName) {
-        if (clazz != null && clazz != Object.class) { // Object类无法取到任何属性
+        if (clazz != null && clazz != Object.class) { // Object类无法取到任何字段
             try {
                 return clazz.getDeclaredField(propertyName);
             } catch (SecurityException e) {
@@ -71,6 +71,19 @@ public class ClassUtil {
                 // 当前类找不到，则到父类中找
                 return findField(clazz.getSuperclass(), propertyName);
             }
+        }
+        return null;
+    }
+
+    public static Field findField(Class<?> clazz, Class<?> fieldType) {
+        if (clazz != null && clazz != Object.class) { // Object类无法取到任何字段
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                if (fieldType.isAssignableFrom(field.getType())) {
+                    return field;
+                }
+            }
+            return findField(clazz.getSuperclass(), fieldType);
         }
         return null;
     }
@@ -572,7 +585,11 @@ public class ClassUtil {
      * @return 指定类型是否复合类型
      */
     public static boolean isComplex(Class<?> type) {
-        return !isSimpleValueType(type);
+        Class<?> componentType = type.getComponentType();
+        if (componentType != null) {
+            return isComplex(componentType);
+        }
+        return !isSimpleValueType(type) && !Map.class.isAssignableFrom(type) && !Collection.class.isAssignableFrom(type);
     }
 
     /**

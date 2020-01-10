@@ -95,14 +95,12 @@ public class BeanUtil {
      * @param value        属性值
      * @return 是否设置成功，当指定属性不存在或无法设置值时返回false，否则返回true
      */
-    public static boolean setPropertyValue(@Nullable Object bean, String propertyName,
-            @Nullable Object value) {
+    public static boolean setPropertyValue(@Nullable Object bean, String propertyName, @Nullable Object value) {
         if (bean != null) {
             String[] names = propertyName.split("\\.");
             if (names.length > 1) {
                 try {
-                    bean = getRefPropertyValue(bean,
-                            ArrayUtils.subarray(names, 0, names.length - 1));
+                    bean = getRefPropertyValue(bean, ArrayUtils.subarray(names, 0, names.length - 1));
                     propertyName = names[names.length - 1];
                 } catch (Exception e) {
                     return false; // 忽略属性设置错误，不能设置则不设置
@@ -115,8 +113,7 @@ public class BeanUtil {
                     try {
                         writeMethod.invoke(bean, value);
                         return true;
-                    } catch (IllegalAccessException | IllegalArgumentException
-                            | InvocationTargetException e) {
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                         return false; // 忽略属性设置错误，不能设置则不设置
                     }
                 }
@@ -155,22 +152,35 @@ public class BeanUtil {
     @SuppressWarnings("unchecked")
     public static <T> T getFieldValue(Object bean, String name) {
         if (bean != null) {
-            Class<?> type = bean.getClass();
+            Field field = ClassUtil.findField(bean.getClass(), name);
+            return (T) getFieldValue(bean, field);
+        }
+        return null;
+    }
+
+    private static Object getFieldValue(Object bean, Field field) {
+        if (field != null) {
             try {
-                Field field = ClassUtil.findField(type, name);
-                if (field != null) {
-                    boolean accessible = field.canAccess(bean);
-                    if (!accessible) {
-                        field.setAccessible(true);
-                    }
-                    Object value = field.get(bean);
-                    if (!accessible) {
-                        field.setAccessible(accessible);
-                    }
-                    return (T) value;
+                boolean accessible = field.canAccess(bean);
+                if (!accessible) {
+                    field.setAccessible(true);
                 }
+                Object value = field.get(bean);
+                if (!accessible) {
+                    field.setAccessible(false);
+                }
+                return value;
             } catch (Exception e) {
             }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getFieldValue(Object bean, Class<T> fieldType) {
+        if (bean != null) {
+            Field field = ClassUtil.findField(bean.getClass(), fieldType);
+            return (T) getFieldValue(bean, field);
         }
         return null;
     }
@@ -234,8 +244,7 @@ public class BeanUtil {
      * @param bean               bean
      * @param excludedProperties 排除的属性集
      */
-    public static void fromBean(Map<String, Object> map, Object bean,
-            String... excludedProperties) {
+    public static void fromBean(Map<String, Object> map, Object bean, String... excludedProperties) {
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(bean.getClass());
         for (PropertyDescriptor pd : pds) {
             try {
@@ -315,8 +324,7 @@ public class BeanUtil {
     }
 
     /**
-     * 获取静态属性表达式所表示的静态属性值，静态属性表达式形如：@org.truenewx.tnxjee.core.util.DateUtil@SHORT_DATE_PATTERN
-     * <br/>
+     * 获取静态属性表达式所表示的静态属性值，静态属性表达式形如：@org.truenewx.tnxjee.core.util.DateUtil@SHORT_DATE_PATTERN <br/>
      * 如果表达式错误或所表示的属性为非静态或不可访问 ，则返回null
      *
      * @param propertyExpression 静态属性表达式
@@ -344,8 +352,7 @@ public class BeanUtil {
      * @param propertyClass 属性类型
      * @return true if 指定的bean对象具有指定属性的写方法, otherwise false
      */
-    public static boolean hasWritableProperty(Object bean, String propertyName,
-            Class<?> propertyClass) {
+    public static boolean hasWritableProperty(Object bean, String propertyName, Class<?> propertyClass) {
         try {
             String methodName = "set" + StringUtil.firstToUpperCase(propertyName);
             bean.getClass().getMethod(methodName, propertyClass);
@@ -357,23 +364,20 @@ public class BeanUtil {
     }
 
     /**
-     * 将指定源对象中的简单属性的值复制到指定目标对象中，如果目标对象中无相应属性则忽略。
-     * 简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
+     * 将指定源对象中的简单属性的值复制到指定目标对象中，如果目标对象中无相应属性则忽略。 简单属性包括：原始类型，字符串，数字，日期，URI，URL，Locale
      *
      * @param source 源对象
      * @param target 目标对象
      */
     public static void copySimpleProperties(Object source, Object target) {
-        PropertyDescriptor[] propertyDescriptors = BeanUtils
-                .getPropertyDescriptors(source.getClass());
+        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(source.getClass());
         Class<?> targetClass = target.getClass();
         for (PropertyDescriptor pd : propertyDescriptors) {
             try {
                 if (ClassUtil.isSimpleValueType(pd.getPropertyType())) {
                     String name = pd.getDisplayName();
                     if (!"class".equals(name)) {
-                        PropertyDescriptor writePd = BeanUtils.getPropertyDescriptor(targetClass,
-                                name);
+                        PropertyDescriptor writePd = BeanUtils.getPropertyDescriptor(targetClass, name);
                         if (writePd != null) {
                             Method writeMethod = writePd.getWriteMethod();
                             if (writeMethod != null) {

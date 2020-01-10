@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -46,25 +47,35 @@ public class JsonUtil {
     private interface DynamicFilter {
     }
 
-    private static void addMixIn(ObjectMapper mapper, Class<?> clazz) {
-        mapper.addMixIn(clazz, DynamicFilter.class);
-        Collection<PropertyMeta> propertyMetas = ClassUtil.findPropertyMetas(clazz, true, false, true,
-                (propertyType, propertyName) -> {
-                    return ClassUtil.isComplex(propertyType);
-                });
-        propertyMetas.forEach(meta -> {
-            addMixIn(mapper, meta.getType());
-        });
+    public static ObjectMapper buildMapper(PropertyFilter filter, Class<?>... beanClasses) {
+        ObjectMapper mapper = copyDefaultMapper();
+        if (filter != null && beanClasses.length > 0) {
+            for (Class<?> beanClass : beanClasses) {
+                JsonUtil.registerFilterable(mapper, beanClass);
+            }
+            String filterId = DynamicFilter.class.getAnnotation(JsonFilter.class).value();
+            FilterProvider filterProvider = new SimpleFilterProvider().addFilter(filterId, filter);
+            mapper.setFilterProvider(filterProvider);
+        }
+        return mapper;
+    }
+
+    private static void registerFilterable(ObjectMapper mapper, Class<?> beanClass) {
+        if (mapper.addMixIn(beanClass, DynamicFilter.class) == null) { // 首次注册才考虑同时注册复合属性类型
+            Collection<PropertyMeta> propertyMetas = ClassUtil.findPropertyMetas(beanClass, true, false, true,
+                    (propertyType, propertyName) -> {
+                        return ClassUtil.isComplex(propertyType);
+                    });
+            propertyMetas.forEach(meta -> {
+                registerFilterable(mapper, meta.getType());
+            });
+        }
     }
 
     private static String toJson(Object obj, PropertyFilter filter) {
         ObjectMapper mapper;
         if (filter != null) {
-            String filterId = DynamicFilter.class.getAnnotation(JsonFilter.class).value();
-            SimpleFilterProvider filterProvider = new SimpleFilterProvider().addFilter(filterId, filter);
-            mapper = copyDefaultMapper();
-            mapper.setFilterProvider(filterProvider);
-            addMixIn(mapper, obj.getClass());
+            mapper = buildMapper(filter, obj.getClass());
         } else {
             mapper = DEFAULT_MAPPER;
         }
@@ -167,9 +178,9 @@ public class JsonUtil {
      * @param json JSON标准形式的字符串
      * @return 转换形成的对象List
      */
-    public static List<Map<String, Object>> json2List(String json) {
+    public static List<Object> json2List(String json) {
         try {
-            return DEFAULT_MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>() {
+            return DEFAULT_MAPPER.readValue(json, new TypeReference<List<Object>>() {
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -179,12 +190,12 @@ public class JsonUtil {
     /**
      * 将JSON标准形式的字符串转换为指定类型的对象List
      *
-     * @param json        JSON标准形式的字符串
-     * @param elementType 元素类型
+     * @param json          JSON标准形式的字符串
+     * @param componentType 元素类型
      * @return 转换形成的对象List
      */
-    public static <T> List<T> json2List(String json, Class<T> elementType) {
-        CollectionType type = DEFAULT_MAPPER.getTypeFactory().constructCollectionType(List.class, elementType);
+    public static <T> List<T> json2List(String json, Class<T> componentType) {
+        CollectionType type = DEFAULT_MAPPER.getTypeFactory().constructCollectionType(List.class, componentType);
         try {
             return DEFAULT_MAPPER.readValue(json, type);
         } catch (IOException e) {
@@ -198,33 +209,28 @@ public class JsonUtil {
      * @param json JSON标准形式的字符串
      * @return 转换形成的数组
      */
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object>[] json2Array(String json) {
-        List<Map<String, Object>> list = json2List(json);
+    public static Object[] json2Array(String json) {
+        List<Object> list = json2List(json);
         if (list == null) {
             return null;
         }
-        Map<String, Object>[] array = (Map<String, Object>[]) Array.newInstance(Map.class, list.size());
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-        return array;
+        return list.toArray(new Object[list.size()]);
     }
 
     /**
      * 将JSON标准形式的字符串转换为数组
      *
-     * @param json        JSON标准形式的字符串
-     * @param elementType 元素类型
+     * @param json          JSON标准形式的字符串
+     * @param componentType 元素类型
      * @return 转换形成的数组
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] json2Array(String json, Class<T> elementType) {
-        List<T> list = json2List(json, elementType);
+    public static <T> T[] json2Array(String json, Class<T> componentType) {
+        List<T> list = json2List(json, componentType);
         if (list == null) {
             return null;
         }
-        T[] array = (T[]) Array.newInstance(elementType, list.size());
+        T[] array = (T[]) Array.newInstance(componentType, list.size());
         for (int i = 0; i < list.size(); i++) {
             array[i] = list.get(i);
         }

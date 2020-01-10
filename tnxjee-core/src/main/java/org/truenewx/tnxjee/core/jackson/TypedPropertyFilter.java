@@ -7,7 +7,11 @@ import org.truenewx.tnxjee.core.util.FilteredNames;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+/**
+ * 类型区分的属性过滤器
+ */
 public class TypedPropertyFilter extends SimpleBeanPropertyFilter {
 
     private Map<Class<?>, FilteredNames> mapping = new HashMap<>();
@@ -34,6 +38,15 @@ public class TypedPropertyFilter extends SimpleBeanPropertyFilter {
     public TypedPropertyFilter addAll(Map<Class<?>, FilteredNames> map) {
         this.mapping.putAll(map);
         return this;
+    }
+
+    public Class<?>[] getTypes() {
+        Set<Class<?>> types = this.mapping.keySet();
+        return types.toArray(new Class<?>[types.size()]);
+    }
+
+    public boolean isNotEmpty() {
+        return this.mapping.size() > 0;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 元素类型
+ * 组件类型
  *
  * @author jianglei
  * @since JDK 1.8
