@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.web.controller.http.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpOutputMessage;
@@ -19,21 +20,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HTTP消息JSON转换器
+ * 基于Jackson实现的HTTP消息JSON转换器
  */
-public class JsonHttpMessageConverter extends MappingJackson2HttpMessageConverter {
+public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConverter {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
 
     private Map<String, ObjectMapper> mappers = new HashMap<>();
 
-    public JsonHttpMessageConverter() {
+    public JacksonHttpMessageConverter() {
         super(JsonUtil.copyDefaultMapper());
+        setDefaultCharset(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -68,7 +71,8 @@ public class JsonHttpMessageConverter extends MappingJackson2HttpMessageConverte
                             }
                         }
                         String json = mapper.writeValueAsString(object);
-                        System.out.println(json);
+                        IOUtils.write(json, response.getBody(), getDefaultCharset());
+                        return;
                     }
                 } catch (Exception e) {
                     LogUtil.error(getClass(), e);
