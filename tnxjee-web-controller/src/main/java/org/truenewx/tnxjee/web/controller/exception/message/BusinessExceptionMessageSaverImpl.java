@@ -32,7 +32,7 @@ public class BusinessExceptionMessageSaverImpl implements BusinessExceptionMessa
     private BusinessExceptionMessageResolver resolver;
 
     @Override
-    public boolean saveMessage(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
+    public void saveMessage(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
             ResolvableException re) {
         List<ResolvedBusinessError> errors = buildErrors(re, request.getLocale());
         if (errors.size() > 0) {
@@ -40,17 +40,15 @@ public class BusinessExceptionMessageSaverImpl implements BusinessExceptionMessa
                 try {
                     Map<String, Object> map = Map.of("errors", errors);
                     response.setContentType("application/json;charset=" + Strings.ENCODING_UTF8);
-                    response.getWriter().print(JsonUtil.toJson(map));
-                    return true;
+                    String json = JsonUtil.toJson(map);
+                    response.getWriter().print(json);
                 } catch (IOException e) {
                     LogUtil.error(getClass(), e);
                 }
             } else {
                 request.setAttribute(ATTRIBUTE, errors);
-                return true;
             }
         }
-        return false;
     }
 
     protected final List<ResolvedBusinessError> buildErrors(ResolvableException re, Locale locale) {

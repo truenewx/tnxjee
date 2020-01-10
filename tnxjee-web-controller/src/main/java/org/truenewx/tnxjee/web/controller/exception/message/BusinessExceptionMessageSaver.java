@@ -21,9 +21,8 @@ public interface BusinessExceptionMessageSaver {
      * @param response      HTTP响应
      * @param handlerMethod 处理方法
      * @param re            可解决异常
-     * @return 是否有消息被保存，指定可解决异常中如果没有业务异常则返回false
      */
-    boolean saveMessage(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
+    void saveMessage(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
             ResolvableException re);
 
 }

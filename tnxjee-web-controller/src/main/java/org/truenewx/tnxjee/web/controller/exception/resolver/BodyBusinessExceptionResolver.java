@@ -21,13 +21,15 @@ public class BodyBusinessExceptionResolver extends BusinessExceptionResolver {
     }
 
     @Override
+    protected boolean supports(HandlerMethod handlerMethod) {
+        return SpringWebUtil.isResponseBody(handlerMethod);
+    }
+
+    @Override
     protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod) {
-        if (SpringWebUtil.isResponseBody(handlerMethod)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 拒绝请求
-            return new ModelAndView();
-        }
-        return null;
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 拒绝请求
+        return new ModelAndView();
     }
 
 }

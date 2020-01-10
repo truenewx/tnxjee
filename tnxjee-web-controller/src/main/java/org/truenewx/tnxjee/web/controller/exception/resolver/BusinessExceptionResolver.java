@@ -29,12 +29,15 @@ public abstract class BusinessExceptionResolver extends AbstractHandlerException
         if (handler instanceof HandlerMethod && ex instanceof ResolvableException) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             ResolvableException re = (ResolvableException) ex;
-            if (this.messageSaver.saveMessage(request, response, handlerMethod, re)) {
+            if (supports(handlerMethod)) {
+                this.messageSaver.saveMessage(request, response, handlerMethod, re);
                 return getResult(request, response, handlerMethod);
             }
         }
         return null;
     }
+
+    protected abstract boolean supports(HandlerMethod handlerMethod);
 
     protected abstract ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod);
