@@ -12,6 +12,11 @@
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
+            <artifactId>tnxjee-repo-jpa</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-service-api</artifactId>
         </dependency>
         <dependency>

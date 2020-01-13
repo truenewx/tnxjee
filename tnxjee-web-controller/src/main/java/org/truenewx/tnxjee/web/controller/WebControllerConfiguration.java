@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.truenewx.tnxjee.web.controller.http.converter.JacksonHttpMessageConverter;
 
 /**
- * WEB控制层配置
+ * WEB控制层配置，必须的控制层配置均在此配置
  */
 @Configuration
 public class WebControllerConfiguration {
