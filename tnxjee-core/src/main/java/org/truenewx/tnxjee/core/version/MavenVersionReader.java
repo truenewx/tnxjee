@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * Maven版本号读取器
  *
  * @author jianglei
- * @since JDK 1.8
  */
 @Component
 @PropertySource("classpath:maven.properties")
