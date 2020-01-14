@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.web.controller.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,6 +11,7 @@ import org.truenewx.tnxjee.web.controller.context.request.DynamicOpenEntityManag
 
 import javax.persistence.EntityManagerFactory;
 import java.util.Collection;
+import java.util.Properties;
 
 /**
  * WEB控制层MVC配置支持，可选的控制层配置均在此配置支持体系中
@@ -20,17 +22,24 @@ public abstract class WebControllerMvcConfigurationSupport implements WebMvcConf
 
     @Autowired
     private ApplicationContext context;
+    @Autowired
+    private JpaProperties jpaProperties;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         Collection<SchemaTemplate> templates = this.context.getBeansOfType(SchemaTemplate.class).values();
-        for (SchemaTemplate template : templates) {
-            if (template instanceof JpaSchemaTemplate) {
-                JpaSchemaTemplate jst = (JpaSchemaTemplate) template;
-                EntityManagerFactory entityManagerFactory = jst.getEntityManager().getEntityManagerFactory();
-                DynamicOpenEntityManagerInViewInterceptor interceptor = new DynamicOpenEntityManagerInViewInterceptor();
-                interceptor.setEntityManagerFactory(entityManagerFactory);
-                registry.addWebRequestInterceptor(interceptor);
+        if (templates.size() > 0) {
+            Properties jpaProperties = new Properties();
+            jpaProperties.putAll(this.jpaProperties.getProperties());
+            for (SchemaTemplate template : templates) {
+                if (template instanceof JpaSchemaTemplate) {
+                    JpaSchemaTemplate jst = (JpaSchemaTemplate) template;
+                    EntityManagerFactory entityManagerFactory = jst.getEntityManager().getEntityManagerFactory();
+                    DynamicOpenEntityManagerInViewInterceptor interceptor = new DynamicOpenEntityManagerInViewInterceptor();
+                    interceptor.setEntityManagerFactory(entityManagerFactory);
+                    interceptor.setJpaProperties(jpaProperties);
+                    registry.addWebRequestInterceptor(interceptor);
+                }
             }
         }
     }
