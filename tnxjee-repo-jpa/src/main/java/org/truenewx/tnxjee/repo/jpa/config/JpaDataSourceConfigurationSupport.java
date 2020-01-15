@@ -159,14 +159,11 @@ public abstract class JpaDataSourceConfigurationSupport {
     protected final List<String> scanDefaultMappingResources() {
         List<String> list = new ArrayList<>();
         try {
-            Resource root = this.resourcePatternResolver.getResource("classpath:META-INF");
-            if (root.exists()) {
-                String rootPath = root.getURI().toString();
-                Resource[] resources = this.resourcePatternResolver.getResources("classpath*:META-INF/jpa/*.xml");
-                for (Resource resource : resources) {
-                    String path = resource.getURI().toString();
-                    list.add("META-INF" + path.substring(rootPath.length()));
-                }
+            Resource[] resources = this.resourcePatternResolver.getResources("classpath*:META-INF/jpa/*.xml");
+            for (Resource resource : resources) {
+                String path = resource.getURI().toString();
+                int index = path.lastIndexOf("/META-INF/jpa/");
+                list.add(path.substring(index + 1));
             }
         } catch (IOException e) {
             LogUtil.error(getClass(), e);
