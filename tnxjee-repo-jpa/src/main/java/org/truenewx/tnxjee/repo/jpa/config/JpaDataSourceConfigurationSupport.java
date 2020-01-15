@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.sql.XADataSource;
@@ -32,8 +31,8 @@ import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.repo.jpa.hibernate.DefaultJtaPlatform;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.EmbeddedDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.H2XaDataSourceFactoryBean;
-import org.truenewx.tnxjee.repo.jpa.support.JpaSchemaTemplate;
-import org.truenewx.tnxjee.repo.support.SchemaTemplate;
+import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 
 /**
  * JPA数据源配置支持
@@ -190,17 +189,13 @@ public abstract class JpaDataSourceConfigurationSupport {
         return b.build();
     }
 
-    public EntityManager entityManager(EntityManagerFactoryBuilder builder) throws Exception {
-        return entityManagerFactory(builder).getObject().createEntityManager();
-    }
-
-    public SchemaTemplate schemaTemplate(EntityManagerFactoryBuilder builder) throws Exception {
-        EntityManager entityManager = entityManager(builder);
+    public DataAccessTemplate dataAccessTemplate(EntityManagerFactoryBuilder builder) throws Exception {
+        EntityManagerFactory entityManagerFactory = entityManagerFactory(builder).getObject();
         String schema = getSchema();
         if (schema == null) {
-            return new JpaSchemaTemplate(entityManager);
+            return new JpaAccessTemplate(entityManagerFactory);
         } else {
-            return new JpaSchemaTemplate(schema, entityManager);
+            return new JpaAccessTemplate(schema, entityManagerFactory);
         }
     }
 

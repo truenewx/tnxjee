@@ -1,15 +1,14 @@
 package org.truenewx.tnxjee.repo.support;
 
 /**
- * 数据库模式访问模板
+ * 数据访问模板
  *
  * @author jianglei
- * @since JDK 1.8
  */
-public interface SchemaTemplate {
+public interface DataAccessTemplate {
 
     /**
-     * @return 数据库模式名称
+     * @return 数据源模式名称
      */
     String getSchema();
 

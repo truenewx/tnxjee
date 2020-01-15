@@ -11,24 +11,24 @@ import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.core.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.QuerySort;
-import org.truenewx.tnxjee.repo.support.SchemaTemplate;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 /**
- * MongoDB的数据库模式访问模板
+ * MongoDB的数据访问模板
  *
  * @author jianglei
  */
-public class MongoSchemaTemplate implements SchemaTemplate {
+public class MongoAccessTemplate implements DataAccessTemplate {
 
     private String schema = RepoUtil.DEFAULT_SCHEMA_NAME;
     private MongoOperations mongoOperations;
 
-    public MongoSchemaTemplate(MongoOperations mongoOperations) {
+    public MongoAccessTemplate(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
 
-    public MongoSchemaTemplate(String schema, MongoOperations mongoOperations) {
+    public MongoAccessTemplate(String schema, MongoOperations mongoOperations) {
         this.schema = schema;
         this.mongoOperations = mongoOperations;
     }
@@ -41,10 +41,9 @@ public class MongoSchemaTemplate implements SchemaTemplate {
     @Override
     public Iterable<Class<?>> getEntityClasses() {
         List<Class<?>> entityClasses = new ArrayList<>();
-        this.mongoOperations.getConverter().getMappingContext().getPersistentEntities()
-                .forEach(entity -> {
-                    entityClasses.add(entity.getType());
-                });
+        this.mongoOperations.getConverter().getMappingContext().getPersistentEntities().forEach(entity -> {
+            entityClasses.add(entity.getType());
+        });
         return entityClasses;
     }
 
@@ -66,14 +65,13 @@ public class MongoSchemaTemplate implements SchemaTemplate {
         return this.mongoOperations.find(query, entityClass);
     }
 
-    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, int pageSize,
-            int pageNo) {
+    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, int pageSize, int pageNo) {
         applyPagingToQuery(query, pageSize, pageNo, false);
         return list(entityClass, query);
     }
 
-    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, int pageSize,
-            int pageNo, QuerySort sort) {
+    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, int pageSize, int pageNo,
+            QuerySort sort) {
         applyPagingToQuery(query, pageSize, pageNo, false);
         query.with(RepoUtil.toSort(sort));
         return list(entityClass, query);
@@ -93,26 +91,22 @@ public class MongoSchemaTemplate implements SchemaTemplate {
         return this.mongoOperations.count(query, entityClass);
     }
 
-    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query,
-            int pageSize, int pageNo) {
+    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, int pageSize, int pageNo) {
         applyPagingToQuery(query, pageSize, pageNo, true);
         return list(entityClass, query);
     }
 
-    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query,
-            int pageSize, int pageNo, QuerySort sort) {
+    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, int pageSize, int pageNo,
+            QuerySort sort) {
         query.with(RepoUtil.toSort(sort));
         return listWithOneMore(entityClass, query, pageSize, pageNo);
     }
 
-    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query,
-            Paging paging) {
-        return listWithOneMore(entityClass, query, paging.getPageSize(), paging.getPageNo(),
-                paging.getSort());
+    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, Paging paging) {
+        return listWithOneMore(entityClass, query, paging.getPageSize(), paging.getPageNo(), paging.getSort());
     }
 
-    public long update(Class<?> entityClass, Query query, String propertyName,
-            Object propertyValue) {
+    public long update(Class<?> entityClass, Query query, String propertyName, Object propertyValue) {
         Update update = Update.update(propertyName, propertyValue);
         return this.mongoOperations.upsert(query, update, entityClass).getModifiedCount();
     }

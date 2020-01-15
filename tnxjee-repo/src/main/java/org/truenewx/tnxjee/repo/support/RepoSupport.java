@@ -18,7 +18,7 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
     @Autowired
     private RepositoryFactory repositoryFactory;
     @Autowired
-    private SchemaTemplateFactory schemaTemplateFactory;
+    private DataAccessTemplateFactory accessTemplateFactory;
 
     /**
      * 获取实体类型<br/>
@@ -45,8 +45,8 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
 
     protected abstract <R extends CrudRepository<T, ?>> R buildDefaultRepository();
 
-    protected SchemaTemplate getSchemaTemplate() {
-        return this.schemaTemplateFactory.getSchemaTemplate(getEntityClass());
+    protected DataAccessTemplate getAccessTemplate() {
+        return this.accessTemplateFactory.getDataAccessTemplate(getEntityClass());
     }
 
     @Override

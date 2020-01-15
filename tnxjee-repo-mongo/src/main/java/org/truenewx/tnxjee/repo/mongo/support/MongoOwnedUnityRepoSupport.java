@@ -33,7 +33,7 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
             throw new UnsupportedOperationException();
         }
         Query query = new Query(Criteria.where(ownerProperty).is(owner));
-        return getSchemaTemplate().count(getEntityClass(), query);
+        return getAccessTemplate().count(getEntityClass(), query);
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
             return null;
         }
         Query query = new Query(Criteria.where(ownerProperty).is(owner).and("id").is(id));
-        return getSchemaTemplate().first(getEntityClass(), query);
+        return getAccessTemplate().first(getEntityClass(), query);
     }
 
 }

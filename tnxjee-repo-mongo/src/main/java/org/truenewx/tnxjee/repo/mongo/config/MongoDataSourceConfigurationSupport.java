@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.repo.mongo.config;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.truenewx.tnxjee.repo.mongo.support.MongoSchemaTemplate;
+import org.truenewx.tnxjee.repo.mongo.support.MongoAccessTemplate;
 
 import com.mongodb.MongoClientURI;
 
@@ -30,12 +30,12 @@ public abstract class MongoDataSourceConfigurationSupport extends EmbeddedMongoC
         }
     }
 
-    public MongoSchemaTemplate schemaTemplate() throws Exception {
+    public MongoAccessTemplate schemaTemplate() throws Exception {
         String schema = getDatabaseName();
         if (schema == null) {
-            return new MongoSchemaTemplate(mongoTemplate());
+            return new MongoAccessTemplate(mongoTemplate());
         } else {
-            return new MongoSchemaTemplate(schema, mongoTemplate());
+            return new MongoAccessTemplate(schema, mongoTemplate());
         }
     }
 

@@ -37,7 +37,7 @@ public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends
         if (leftId != null && rightId != null) {
             Map<String, Object> params = new HashMap<>();
             StringBuffer ql = buildQlById(params, leftId, rightId);
-            return getSchemaTemplate().first(ql, params);
+            return getAccessTemplate().first(ql, params);
         }
         return null;
     }
@@ -58,7 +58,7 @@ public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends
             Map<String, Object> params = new HashMap<>();
             StringBuffer ql = buildQlById(params, leftId, rightId);
             ql.insert(0, "select count(*) ");
-            return getSchemaTemplate().count(ql, params) > 0;
+            return getAccessTemplate().count(ql, params) > 0;
         }
         return false;
     }

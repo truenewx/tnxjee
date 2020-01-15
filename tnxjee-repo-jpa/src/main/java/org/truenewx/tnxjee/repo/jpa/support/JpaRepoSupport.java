@@ -44,12 +44,12 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
     @SuppressWarnings("unchecked")
     protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
         return (R) new SimpleJpaRepository<T, Serializable>(getEntityClass(),
-                getSchemaTemplate().getEntityManager());
+                getAccessTemplate().getCurrentEntityManager());
     }
 
     @Override
-    protected JpaSchemaTemplate getSchemaTemplate() {
-        return (JpaSchemaTemplate) super.getSchemaTemplate();
+    protected JpaAccessTemplate getAccessTemplate() {
+        return (JpaAccessTemplate) super.getAccessTemplate();
     }
 
     @Override
@@ -64,14 +64,14 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
 
     @Override
     public void refresh(T entity) {
-        getSchemaTemplate().refresh(entity);
+        getAccessTemplate().refresh(entity);
     }
 
     private Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
             QuerySort sort, boolean totalable, boolean listable) {
         Long total = null;
         if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
-            total = getSchemaTemplate().count("select count(*) " + ql, params);
+            total = getAccessTemplate().count("select count(*) " + ql, params);
         }
 
         List<T> records;
@@ -87,7 +87,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                     ql = ql.toString() + orderString;
                 }
             }
-            records = getSchemaTemplate().list(ql, params, pageSize, pageNo);
+            records = getAccessTemplate().list(ql, params, pageSize, pageNo);
             if (pageSize <= 0) { // 非分页查询，总数为结果记录条数
                 total = (long) records.size();
             }
@@ -111,7 +111,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
     }
 
     protected final Column getColumn(String propertyName) {
-        return (Column) getSchemaTemplate().getPersistentClass(getEntityName())
+        return (Column) getAccessTemplate().getPersistentClass(getEntityName())
                 .getProperty(propertyName).getColumnIterator().next();
     }
 
@@ -137,7 +137,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                     }
                 }
 
-                Metamodel metamodel = getSchemaTemplate().getEntityManager().getMetamodel();
+                Metamodel metamodel = getAccessTemplate().getCurrentEntityManager().getMetamodel();
                 metamodel.getManagedTypes().forEach(type -> {
 
                 });
@@ -212,6 +212,6 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
             ql.append(" and ").append(propertyName).append("+:step<=:maxValue");
             params.put("maxValue", maxValue);
         }
-        return getSchemaTemplate().update(ql, params) > 0;
+        return getAccessTemplate().update(ql, params) > 0;
     }
 }

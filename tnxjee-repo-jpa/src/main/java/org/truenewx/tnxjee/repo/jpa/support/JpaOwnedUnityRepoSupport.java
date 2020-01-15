@@ -38,7 +38,7 @@ public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K ext
         }
         StringBuffer ql = new StringBuffer("select count(*) from ").append(getEntityName())
                 .append(" e where e.").append(ownerProperty).append("=:owner");
-        return getSchemaTemplate().count(ql.toString(), "owner", owner);
+        return getAccessTemplate().count(ql.toString(), "owner", owner);
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K ext
         Map<String, Object> params = new HashMap<>();
         params.put("owner", owner);
         params.put("id", id);
-        return getSchemaTemplate().first(ql.toString(), params);
+        return getAccessTemplate().first(ql.toString(), params);
     }
 
     @Override

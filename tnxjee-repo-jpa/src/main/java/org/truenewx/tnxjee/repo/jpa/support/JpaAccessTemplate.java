@@ -8,37 +8,39 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.core.Entity;
-import org.truenewx.tnxjee.repo.support.SchemaTemplate;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 /**
- * JPA的数据库模式访问模板
+ * JPA的数据访问模板
  *
  * @author jianglei
  */
-public class JpaSchemaTemplate implements SchemaTemplate {
+public class JpaAccessTemplate implements DataAccessTemplate {
 
     private String schema = RepoUtil.DEFAULT_SCHEMA_NAME;
-    private EntityManager entityManager;
+    private EntityManagerFactory entityManagerFactory;
     private boolean nativeMode;
 
-    public JpaSchemaTemplate(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public JpaAccessTemplate(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
-    public JpaSchemaTemplate(String schema, EntityManager entityManager) {
+    public JpaAccessTemplate(String schema, EntityManagerFactory entityManagerFactory) {
         Assert.notNull(schema, "schema must not be null");
-        Assert.notNull(entityManager, "entityManager must not be null");
+        Assert.notNull(entityManagerFactory, "entityManager must not be null");
         this.schema = schema;
-        this.entityManager = entityManager;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
@@ -49,36 +51,46 @@ public class JpaSchemaTemplate implements SchemaTemplate {
     @Override
     public Iterable<Class<?>> getEntityClasses() {
         List<Class<?>> entityClasses = new ArrayList<>();
-        this.entityManager.getMetamodel().getManagedTypes().forEach(type -> {
+        this.entityManagerFactory.getMetamodel().getManagedTypes().forEach(type -> {
             entityClasses.add(type.getJavaType());
         });
         return entityClasses;
     }
 
-    public EntityManager getEntityManager() {
-        return this.entityManager;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return this.entityManagerFactory;
+    }
+
+    public EntityManager getCurrentEntityManager() {
+        if (this.entityManagerFactory instanceof SessionFactory) {
+            SessionFactory sessionFactory = (SessionFactory) this.entityManagerFactory;
+            return sessionFactory.getCurrentSession();
+        }
+        return this.entityManagerFactory.createEntityManager();
     }
 
     public PersistentClass getPersistentClass(String entityName) {
-        return ((MetamodelImplementor) this.entityManager.getMetamodel()).getTypeConfiguration()
+        return ((MetamodelImplementor) this.entityManagerFactory.getMetamodel()).getTypeConfiguration()
                 .getMetadataBuildingContext().getMetadataCollector().getEntityBinding(entityName);
     }
 
     /**
-     * @return SQL方式的访问模板
+     * 创建对应的原生SQL方式的访问模板
+     *
+     * @return 原生SQL方式的访问模板
      */
-    public SchemaTemplate getNative() {
-        JpaSchemaTemplate template = new JpaSchemaTemplate(this.schema, this.entityManager);
+    public DataAccessTemplate createNative() {
+        JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory);
         template.nativeMode = true;
         return template;
     }
 
     public void flush() {
-        this.entityManager.flush();
+        getCurrentEntityManager().flush();
     }
 
     public void refresh(Entity entity) {
-        this.entityManager.refresh(entity);
+        getCurrentEntityManager().refresh(entity);
     }
 
     /**
@@ -149,14 +161,14 @@ public class JpaSchemaTemplate implements SchemaTemplate {
 
     private Query createQuery(CharSequence ql) {
         if (this.nativeMode) {
-            return this.entityManager.createNativeQuery(ql.toString());
+            return getCurrentEntityManager().createNativeQuery(ql.toString());
+        } else {
+            return getCurrentEntityManager().createQuery(ql.toString());
         }
-        return this.entityManager.createQuery(ql.toString());
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize,
-            int pageNo) {
+    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, false);
@@ -187,8 +199,7 @@ public class JpaSchemaTemplate implements SchemaTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue,
-            int pageSize, int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, true);
@@ -196,8 +207,7 @@ public class JpaSchemaTemplate implements SchemaTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize,
-            int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamsToQuery(query, params);
         applyPagingToQuery(query, pageSize, pageNo, true);

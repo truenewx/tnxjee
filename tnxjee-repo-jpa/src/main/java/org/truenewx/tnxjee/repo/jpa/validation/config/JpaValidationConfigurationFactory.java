@@ -33,10 +33,10 @@ import org.truenewx.tnxjee.model.core.TransportModel;
 import org.truenewx.tnxjee.model.core.ValueModel;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
 import org.truenewx.tnxjee.repo.jpa.JpaRepo;
-import org.truenewx.tnxjee.repo.jpa.support.JpaSchemaTemplate;
+import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 import org.truenewx.tnxjee.repo.support.RepoFactory;
-import org.truenewx.tnxjee.repo.support.SchemaTemplate;
-import org.truenewx.tnxjee.repo.support.SchemaTemplateFactory;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplateFactory;
 import org.truenewx.tnxjee.repo.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.repo.validation.config.ValidationConfigurationFactory;
 import org.truenewx.tnxjee.repo.validation.rule.DecimalRule;
@@ -55,7 +55,7 @@ public class JpaValidationConfigurationFactory
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();
     private Map<Class<Annotation>, ValidationRuleBuilder<?>> ruleBuilders = new HashMap<>();
     @Autowired
-    private SchemaTemplateFactory schemaTemplateFactory;
+    private DataAccessTemplateFactory dataAccessTemplateFactory;
     @Autowired
     private RepoFactory repoFactory;
 
@@ -165,12 +165,12 @@ public class JpaValidationConfigurationFactory
      */
     private void addEntityClassRulesFromPersistentConfig(ValidationConfiguration configuration,
             Class<? extends Entity> entityClass) {
-        SchemaTemplate schemaTemplate = this.schemaTemplateFactory.getSchemaTemplate(entityClass);
-        if (schemaTemplate instanceof JpaSchemaTemplate) {
-            JpaSchemaTemplate jst = (JpaSchemaTemplate) schemaTemplate;
+        DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory.getDataAccessTemplate(entityClass);
+        if (accessTemplate instanceof JpaAccessTemplate) {
+            JpaAccessTemplate jat = (JpaAccessTemplate) accessTemplate;
             // 此时获取的repo必然为JpaRepo，否则说明代码有错
             JpaRepo<?> repo = (JpaRepo<?>) this.repoFactory.getRepoByEntityClass(entityClass);
-            PersistentClass persistentClass = jst.getPersistentClass(repo.getEntityName());
+            PersistentClass persistentClass = jat.getPersistentClass(repo.getEntityName());
             if (persistentClass != null) {
                 @SuppressWarnings("unchecked")
                 Iterator<Property> properties = persistentClass.getPropertyIterator();

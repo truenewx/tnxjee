@@ -28,15 +28,15 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
     @Override
     @SuppressWarnings("unchecked")
     protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
-        MongoOperations mongoOperations = getSchemaTemplate().getMongoOperations();
+        MongoOperations mongoOperations = getAccessTemplate().getMongoOperations();
         MongoEntityInformation<T, ?> metadata = new MongoRepositoryFactory(mongoOperations)
                 .getEntityInformation(getEntityClass());
         return (R) new SimpleMongoRepository<>(metadata, mongoOperations);
     }
 
     @Override
-    protected MongoSchemaTemplate getSchemaTemplate() {
-        return (MongoSchemaTemplate) super.getSchemaTemplate();
+    protected MongoAccessTemplate getAccessTemplate() {
+        return (MongoAccessTemplate) super.getAccessTemplate();
     }
 
     private Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort,
@@ -45,13 +45,13 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
         Long total = null;
         // 需分页查询且需要获取总数时，才获取总数
         if ((pageSize > 0 || !listable) && totalable) {
-            total = getSchemaTemplate().count(getEntityClass(), query);
+            total = getAccessTemplate().count(getEntityClass(), query);
         }
         List<T> records;
         if ((total != null && total == 0) || !listable) {
             records = new ArrayList<>();
         } else {
-            records = getSchemaTemplate().list(getEntityClass(), query, pageSize, pageNo, sort);
+            records = getAccessTemplate().list(getEntityClass(), query, pageSize, pageNo, sort);
         }
         return Queried.of(records, pageSize, pageNo, total);
     }
