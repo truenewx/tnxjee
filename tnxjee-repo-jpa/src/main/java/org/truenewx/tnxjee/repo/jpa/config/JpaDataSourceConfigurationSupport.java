@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.repo.jpa.config;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -9,7 +12,6 @@ import javax.sql.XADataSource;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -21,10 +23,11 @@ import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder.Builder;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.repo.jpa.hibernate.DefaultJtaPlatform;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.EmbeddedDataSourceFactoryBean;
@@ -37,7 +40,7 @@ import org.truenewx.tnxjee.repo.support.SchemaTemplate;
  *
  * @author jianglei
  */
-public abstract class JpaDataSourceConfigurationSupport implements ApplicationContextAware {
+public abstract class JpaDataSourceConfigurationSupport {
 
     @Autowired
     private JpaProperties jpaProperties;
@@ -45,13 +48,10 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
     private HibernateProperties hibernateProperties;
     @Autowired
     private DefaultJtaPlatform jtaPlatform; // 确保已被实例化
-
+    @Autowired
+    private ResourcePatternResolver resourcePatternResolver;
+    @Autowired
     private ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.context = context;
-    }
 
     protected String getSchema() {
         return null;
@@ -80,6 +80,7 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
         return dataSource;
     }
 
+    // 由于Service层需要用到Repo层的单元测试环境，故内嵌数据源构建方法必须显式声明，Repo层和Service层注意将单元测试相关依赖标记为test范围
     public DataSource embeddedDataSource(String... scriptLocations) throws Exception {
         EmbeddedDataSourceFactoryBean factory = new EmbeddedDataSourceFactoryBean();
         factory.setDatabaseType(EmbeddedDatabaseType.H2);
@@ -112,17 +113,12 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
     }
 
     protected String getDataSourceBeanName() {
-        String beanName = "dataSource";
-        String schema = getSchema();
-        if (StringUtils.isNotBlank(schema)) {
-            beanName += StringUtil.firstToUpperCase(schema);
-        }
-        return beanName;
+        return null;
     }
 
     private Map<String, Object> getVendorProperties() {
-        Map<String, Object> properties = this.hibernateProperties.determineHibernateProperties(
-                this.jpaProperties.getProperties(), new HibernateSettings());
+        Map<String, Object> properties = this.hibernateProperties
+                .determineHibernateProperties(this.jpaProperties.getProperties(), new HibernateSettings());
         if (isJta()) {
             properties.put("hibernate.transaction.jta.platform", this.jtaPlatform.getClass().getName());
             properties.put("javax.persistence.transactionType", "JTA");
@@ -161,8 +157,25 @@ public abstract class JpaDataSourceConfigurationSupport implements ApplicationCo
         return null;
     }
 
-    public FactoryBean<EntityManagerFactory> entityManagerFactory(
-            EntityManagerFactoryBuilder builder) {
+    protected final List<String> scanDefaultMappingResources() {
+        List<String> list = new ArrayList<>();
+        try {
+            Resource root = this.resourcePatternResolver.getResource("classpath:META-INF");
+            if (root.exists()) {
+                String rootPath = root.getURI().toString();
+                Resource[] resources = this.resourcePatternResolver.getResources("classpath*:META-INF/jpa/*.xml");
+                for (Resource resource : resources) {
+                    String path = resource.getURI().toString();
+                    list.add("META-INF" + path.substring(rootPath.length()));
+                }
+            }
+        } catch (IOException e) {
+            LogUtil.error(getClass(), e);
+        }
+        return list;
+    }
+
+    public FactoryBean<EntityManagerFactory> entityManagerFactory(EntityManagerFactoryBuilder builder) {
         DataSource dataSource = findDataSourceBean();
         Builder b = builder.dataSource(dataSource).properties(getVendorProperties()).jta(isJta())
                 .persistenceUnit(getPersistenceUnit());
