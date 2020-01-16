@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.truenewx.tnxjee.core.Strings;
 
 /**
- * 配置权限限定
+ * 配置权限限定。不设置任何属性意味着登录用户均可访问
  *
  * @author jianglei
  */
