@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.repo;
 import java.io.Serializable;
 import java.util.Optional;
 
-import org.truenewx.tnxjee.model.core.unity.Unity;
+import org.truenewx.tnxjee.model.entity.unity.Unity;
 
 /**
  * 单体数据访问仓库

@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.web.view.validation.generate;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.truenewx.tnxjee.model.core.Model;
+import org.truenewx.tnxjee.model.Model;
 
 import java.util.Locale;
 

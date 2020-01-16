@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.data.repository.CrudRepository;
-import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
 import org.truenewx.tnxjee.model.query.QuerySort;

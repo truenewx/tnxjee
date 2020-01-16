@@ -1,8 +1,8 @@
-package org.truenewx.tnxjee.model.core.unity;
+package org.truenewx.tnxjee.model.entity.unity;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.core.UnitaryEntity;
+import org.truenewx.tnxjee.model.entity.UnitaryEntity;
 
 /**
  * 单体，用id作为标识属性的实体

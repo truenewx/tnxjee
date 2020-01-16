@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.entity.Entity;
 
 /**
  * 继承约束

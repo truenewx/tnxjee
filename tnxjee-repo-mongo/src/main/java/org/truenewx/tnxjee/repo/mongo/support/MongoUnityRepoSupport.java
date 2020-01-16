@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
-import org.truenewx.tnxjee.model.core.unity.Unity;
+import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
 
 /**

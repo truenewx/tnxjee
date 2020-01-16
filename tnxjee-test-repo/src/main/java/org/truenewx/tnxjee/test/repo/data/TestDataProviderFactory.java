@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
-import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.data.DataProvider;
 import org.truenewx.tnxjee.repo.data.DataProviderFactory;

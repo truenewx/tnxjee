@@ -1,4 +1,6 @@
-package org.truenewx.tnxjee.model.core;
+package org.truenewx.tnxjee.model.entity;
+
+import org.truenewx.tnxjee.model.Model;
 
 /**
  * 实体，具有标识属性的可持久化模型

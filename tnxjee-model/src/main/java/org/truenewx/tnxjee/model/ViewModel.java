@@ -1,4 +1,6 @@
-package org.truenewx.tnxjee.model.core;
+package org.truenewx.tnxjee.model;
+
+import org.truenewx.tnxjee.model.entity.Entity;
 
 /**
  * 视图模型，用于视图层显示数据

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.model.core.unity;
+package org.truenewx.tnxjee.model.entity.unity;
 
 import java.io.Serializable;
 import java.util.Collection;

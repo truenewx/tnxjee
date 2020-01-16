@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.repo;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.core.UnitaryEntity;
+import org.truenewx.tnxjee.model.entity.UnitaryEntity;
 
 /**
  * 单一标识实体的数值属性可递增

@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.repository.Repository;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 
 /**

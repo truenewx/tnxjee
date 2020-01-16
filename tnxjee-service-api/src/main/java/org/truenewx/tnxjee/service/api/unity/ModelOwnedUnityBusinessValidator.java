@@ -2,8 +2,8 @@ package org.truenewx.tnxjee.service.api.unity;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.core.SubmitModel;
-import org.truenewx.tnxjee.model.core.unity.OwnedUnity;
+import org.truenewx.tnxjee.model.SubmitModel;
+import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 
 /**
  * 通过提交模型传递数据的从属单体业务逻辑校验器<br/>

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.model.core.Model;
+import org.truenewx.tnxjee.model.Model;
 
 /**
  * 标注方法的可解决异常处理结果视图

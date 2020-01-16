@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.repo;
 
 import java.io.Serializable;
 
-import org.truenewx.tnxjee.model.core.relation.Relation;
+import org.truenewx.tnxjee.model.entity.relation.Relation;
 
 /**
  * 关系的数值属性可递增

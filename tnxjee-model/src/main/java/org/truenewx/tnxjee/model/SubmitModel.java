@@ -1,4 +1,6 @@
-package org.truenewx.tnxjee.model.core;
+package org.truenewx.tnxjee.model;
+
+import org.truenewx.tnxjee.model.entity.Entity;
 
 /**
  * 提交模型，用于视图层向逻辑层提交数据

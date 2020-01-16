@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.beans.factory.TransactionalBeanFactory;
-import org.truenewx.tnxjee.model.core.Entity;
+import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.support.RepoFactory;
 import org.truenewx.tnxjee.service.api.Service;
