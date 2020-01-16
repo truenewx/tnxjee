@@ -32,14 +32,13 @@ import org.truenewx.tnxjee.repo.jpa.hibernate.DefaultJtaPlatform;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.EmbeddedDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.H2XaDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
-import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 
 /**
- * JPA数据源配置支持
+ * JPA配置支持
  *
  * @author jianglei
  */
-public abstract class JpaDataSourceConfigurationSupport {
+public abstract class JpaConfigSupport {
 
     @Autowired
     private JpaProperties jpaProperties;
@@ -153,7 +152,8 @@ public abstract class JpaDataSourceConfigurationSupport {
      * @return 实体映射配置文件的classpath路径
      */
     protected String[] getMappingResources() {
-        return null;
+        List<String> resources = scanDefaultMappingResources();
+        return resources.toArray(new String[resources.size()]);
     }
 
     protected final List<String> scanDefaultMappingResources() {
@@ -178,16 +178,27 @@ public abstract class JpaDataSourceConfigurationSupport {
         String[] entityPackages = getEntityPackages();
         if (ArrayUtils.isNotEmpty(entityPackages)) {
             b.packages(entityPackages);
-        }
-        String[] mappingResources = getMappingResources();
-        if (ArrayUtils.isNotEmpty(mappingResources)) {
-            b.mappingResources(mappingResources);
+        } else { // 未指定实体类包名集，则使用映射配置文件的方式
+            String[] mappingResources = getMappingResources();
+            if (ArrayUtils.isNotEmpty(mappingResources)) {
+                b.mappingResources(mappingResources);
+            }
         }
         return b.build();
     }
 
-    public DataAccessTemplate dataAccessTemplate(EntityManagerFactoryBuilder builder) throws Exception {
+    /**
+     * 多数据源时，需要多个{@link JpaAccessTemplate}，子类必须覆写此方法构建{@link JpaAccessTemplate}实例
+     */
+    public JpaAccessTemplate jpaAccessTemplate(EntityManagerFactoryBuilder builder) throws Exception {
         EntityManagerFactory entityManagerFactory = entityManagerFactory(builder).getObject();
+        return jpaAccessTemplate(entityManagerFactory);
+    }
+
+    /**
+     * 单数据源时，只需一个{@link JpaAccessTemplate}，子类只需覆写此方法构建{@link JpaAccessTemplate}实例
+     */
+    public JpaAccessTemplate jpaAccessTemplate(EntityManagerFactory entityManagerFactory) {
         String schema = getSchema();
         if (schema == null) {
             return new JpaAccessTemplate(entityManagerFactory);
