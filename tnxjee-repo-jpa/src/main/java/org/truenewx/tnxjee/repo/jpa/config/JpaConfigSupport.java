@@ -1,16 +1,8 @@
 package org.truenewx.tnxjee.repo.jpa.config;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -22,6 +14,7 @@ import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder.Builder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -33,12 +26,20 @@ import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.EmbeddedDataSourceF
 import org.truenewx.tnxjee.repo.jpa.jdbc.datasource.embedded.H2XaDataSourceFactoryBean;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * JPA配置支持
  *
  * @author jianglei
  */
-public abstract class JpaConfigSupport {
+public abstract class JpaConfigSupport implements ApplicationContextAware {
 
     @Autowired
     private JpaProperties jpaProperties;
@@ -48,8 +49,12 @@ public abstract class JpaConfigSupport {
     private DefaultJtaPlatform jtaPlatform; // 确保已被实例化
     @Autowired
     private ResourcePatternResolver resourcePatternResolver;
-    @Autowired
     private ApplicationContext context;
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        this.context = context;
+    }
 
     protected String getSchema() {
         return null;
