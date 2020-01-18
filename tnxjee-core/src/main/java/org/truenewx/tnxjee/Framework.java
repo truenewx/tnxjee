@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 框架信息
@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author jianglei
  * @since JDK 1.8
  */
-@SpringBootApplication
+@ComponentScan(basePackageClasses = Framework.class)
 public class Framework {
 
     /**

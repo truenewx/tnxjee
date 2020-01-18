@@ -4,15 +4,13 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.truenewx.tnxjee.core" />
-
-    <bean id="regionMapParser" class="org.truenewx.tnxjee.core.region.StatsGovCnRegionMapParser">
+    <bean id="regionMapParser" class="org.truenewx.tnxjee.service.impl.spec.region.StatsGovCnRegionMapParser">
         <property name="excludedCaption" value="*市辖区,县,*行政区划,台湾*,香港*,澳门*" />
     </bean>
 
-    <bean id="regionSource" class="org.truenewx.tnxjee.core.region.RegionSourceImpl" />
+    <bean id="regionSource" class="org.truenewx.tnxjee.service.impl.spec.region.RegionSourceImpl" />
 
-    <bean id="regionInetAddressSetMapParser" class="org.truenewx.tnxjee.core.region.address.Cz88RegionInetAddressSetMapParser">
+    <bean id="regionInetAddressSetMapParser" class="org.truenewx.tnxjee.service.impl.spec.region.address.Cz88RegionInetAddressSetMapParser">
         <property name="regionSource" ref="regionSource" />
         <property name="lineMapping">
             <map>
