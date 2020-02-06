@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
@@ -10,12 +8,14 @@ import org.truenewx.tnxjee.service.api.unity.ModelUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleUnityService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
 
+import java.io.Serializable;
+
 /**
  * 抽象的单体服务
  *
- * @author jianglei
  * @param <T> 单体类型
  * @param <K> 单体标识类型
+ * @author jianglei
  */
 public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable>
         extends AbstractService<T> implements SimpleUnityService<T, K>, ModelUnityService<T, K> {
@@ -122,16 +122,21 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * 删除单体
      *
      * @param id 要删除的单体的标识
+     * @return
      */
     @Override
-    public void delete(K id) {
+    public boolean delete(K id) {
         if (id != null) {
             T unity = beforeDelete(id);
             if (unity == null) {
                 unity = find(id);
             }
-            getRepo().delete(unity);
+            if (unity != null) {
+                getRepo().delete(unity);
+                return true;
+            }
         }
+        return false;
     }
 
     /**

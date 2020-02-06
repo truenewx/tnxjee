@@ -8,9 +8,9 @@ import org.truenewx.tnxjee.service.api.Service;
 /**
  * 基于单体的服务
  *
- * @author jianglei
  * @param <T> 单体类型
  * @param <K> 单体标识类型
+ * @author jianglei
  */
 public interface UnityService<T extends Unity<K>, K extends Serializable> extends Service {
     /**
@@ -33,6 +33,7 @@ public interface UnityService<T extends Unity<K>, K extends Serializable> extend
      * 删除单体
      *
      * @param id 要删除的单体的标识
+     * @return 是否成功删除，如果要删除的单体本就不存在则返回false
      */
-    void delete(K id);
+    boolean delete(K id);
 }

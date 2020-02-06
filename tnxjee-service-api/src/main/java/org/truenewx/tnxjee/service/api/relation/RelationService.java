@@ -1,17 +1,17 @@
 package org.truenewx.tnxjee.service.api.relation;
 
-import java.io.Serializable;
-
 import org.truenewx.tnxjee.model.entity.relation.Relation;
 import org.truenewx.tnxjee.service.api.Service;
+
+import java.io.Serializable;
 
 /**
  * 关系服务
  *
- * @author jianglei
  * @param <T> 关系类型
  * @param <L> 左标识类型
  * @param <R> 右标识类型
+ * @author jianglei
  */
 public interface RelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends Service {
@@ -38,6 +38,7 @@ public interface RelationService<T extends Relation<L, R>, L extends Serializabl
      *
      * @param leftId  左标识
      * @param rightId 右标识
+     * @return 是否成功删除，如果要删除的关系本就不存在则返回false
      */
-    void delete(L leftId, R rightId);
+    boolean delete(L leftId, R rightId);
 }

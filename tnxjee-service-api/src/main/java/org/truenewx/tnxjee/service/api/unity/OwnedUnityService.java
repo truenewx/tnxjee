@@ -1,16 +1,16 @@
 package org.truenewx.tnxjee.service.api.unity;
 
-import java.io.Serializable;
-
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
+
+import java.io.Serializable;
 
 /**
  * 从属单体服务
  *
- * @author jianglei
  * @param <T> 单体类型
  * @param <K> 标识类型
  * @param <O> 所属者类型
+ * @author jianglei
  */
 public interface OwnedUnityService<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
         extends UnityService<T, K> {
@@ -37,6 +37,7 @@ public interface OwnedUnityService<T extends OwnedUnity<K, O>, K extends Seriali
      *
      * @param owner 所属者
      * @param id    要删除的单体的标识
+     * @return 是否成功删除，如果要删除的单体本就不存在则返回false
      */
-    void delete(O owner, K id);
+    boolean delete(O owner, K id);
 }

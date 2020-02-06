@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.impl.relation;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
@@ -10,14 +8,16 @@ import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
 import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
 
+import java.io.Serializable;
+
 /**
  * 抽象关系服务
  *
- * @author jianglei
- * @since JDK 1.8
  * @param <T> 关系类型
  * @param <L> 左标识类型
  * @param <R> 右标识类型
+ * @author jianglei
+ * @since JDK 1.8
  */
 public abstract class AbstractRelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends AbstractService<T>
@@ -131,19 +131,24 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     @Override
-    public void delete(L leftId, R rightId) {
+    public boolean delete(L leftId, R rightId) {
         T relation = beforeDelete(leftId, rightId);
         if (relation == null) {
             relation = find(leftId, rightId);
         }
-        getRepo().delete(relation);
+        if (relation != null) {
+            getRepo().delete(relation);
+            return true;
+        }
+        return false;
     }
 
     /**
      * 根据标识删除关系前调用，由子类覆写<br/>
      * 不覆写或子类调用父类的本方法，将无法删除关系
      *
-     * @param id 要删除的关系的标识
+     * @param leftId  要删除的关系左标识，为null时表示是添加动作
+     * @param rightId 要删除的关系右标识，为null时表示是添加动作
      * @return 要删除的关系，可返回null，返回非null值有助于提高性能
      */
     protected T beforeDelete(L leftId, R rightId) {

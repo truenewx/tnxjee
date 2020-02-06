@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
@@ -9,13 +7,15 @@ import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelOwnedUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleOwnedUnityService;
 
+import java.io.Serializable;
+
 /**
  * 抽象的从属单体的服务
  *
- * @author jianglei
  * @param <T> 单体类型
  * @param <K> 标识类型
  * @param <O> 所属者类型
+ * @author jianglei
  */
 public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
         extends AbstractUnityService<T, K>
@@ -126,14 +126,18 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public void delete(O owner, K id) {
+    public boolean delete(O owner, K id) {
         if (owner != null && id != null) {
             T unity = beforeDelete(owner, id);
             if (unity == null) {
                 unity = find(owner, id);
             }
-            getRepo().delete(unity);
+            if (unity != null) {
+                getRepo().delete(unity);
+                return true;
+            }
         }
+        return false;
     }
 
     /**
