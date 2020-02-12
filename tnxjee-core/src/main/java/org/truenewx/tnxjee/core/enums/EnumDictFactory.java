@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.core.enums;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -17,11 +18,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.caption.Caption;
+import org.truenewx.tnxjee.core.caption.CaptionUtil;
 import org.truenewx.tnxjee.core.spec.BooleanEnum;
+import org.truenewx.tnxjee.core.spec.Name;
+import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
@@ -29,9 +34,8 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 枚举字典工厂（解析器实现）
  *
  * @author jianglei
- * @since JDK 1.8
  */
-@Service("enumDictResolver")
+@Component("enumDictResolver")
 public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean {
 
     /**
@@ -44,6 +48,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     private static final String CONFIG_FILE_EXTENSION = "xml";
 
     private Map<Locale, EnumDict> dicts = new Hashtable<>();
+
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
     @Override
@@ -87,8 +92,20 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     @Override
     public EnumItem getEnumItem(Enum<?> enumConstant, Locale locale) {
         Class<?> enumClass = enumConstant.getClass();
-        String typeName = FuncBuildDefaultEnumType.INSTANCE.getEnumTypeName(enumClass);
+        String typeName = getEnumTypeName(enumClass);
         return getEnumItem(typeName, null, enumConstant.name(), locale);
+    }
+
+    private String getEnumTypeName(Class<?> enumClass) {
+        String typeName = null;
+        Name name = enumClass.getAnnotation(Name.class);
+        if (name != null) {
+            typeName = name.value();
+        }
+        if (StringUtils.isBlank(typeName)) {
+            typeName = enumClass.getName();
+        }
+        return typeName;
     }
 
     @Override
@@ -105,7 +122,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     @Override
     public String getText(Enum<?> enumConstant, Locale locale) {
         Class<?> enumClass = enumConstant.getClass();
-        String typeName = FuncBuildDefaultEnumType.INSTANCE.getEnumTypeName(enumClass);
+        String typeName = getEnumTypeName(enumClass);
         return getText(typeName, enumConstant.name(), locale);
     }
 
@@ -129,14 +146,14 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
             } else {
                 clazz = this.resourcePatternResolver.getClassLoader().loadClass(type);
             }
-            if (clazz.isEnum()) { // 忽略非枚举
+            if (clazz.isEnum()) { // 枚举类型才能动态构建
                 Class<Enum<?>> enumClass = (Class<Enum<?>>) clazz;
                 SAXReader reader = new SAXReader();
                 // 依次尝试从各级国际化配置文件中取枚举类型
                 EnumType enumType = readEnumType(reader, enumClass, subtype, locale);
-                // 配置文件中没有，且没有指定子类型，且为默认区域，则从枚举类中构建默认枚举类型
-                if (enumType == null && StringUtils.isBlank(subtype)) {
-                    enumType = FuncBuildDefaultEnumType.INSTANCE.apply(enumClass, locale);
+                // 配置文件中没有，则从枚举类中构建默认枚举类型
+                if (enumType == null) {
+                    enumType = buildEnumType(enumClass, subtype, locale);
                 }
                 return enumType;
             } else {
@@ -243,6 +260,39 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
             EnumItem child = buildEnumItem(childElement, i);
             enumItem.addChild(child);
         }
+    }
+
+    private EnumType buildEnumType(Class<Enum<?>> enumClass, String subtype, Locale locale) {
+        EnumType enumType = newEnumType(enumClass);
+        for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
+            Field field = ClassUtil.getField(enumConstant);
+            String caption = CaptionUtil.getCaption(field, locale);
+            if (caption == null) { // 默认用枚举常量名称作为显示名
+                caption = enumConstant.name();
+            }
+            enumType.addItem(new EnumItem(enumConstant.ordinal(), enumConstant.name(), caption));
+        }
+        return enumType;
+    }
+
+    /**
+     * 创建枚举类型对象，不含枚举项目
+     *
+     * @param enumClass 枚举类
+     * @return 不含枚举项目的枚举类型对象
+     */
+    private EnumType newEnumType(Class<?> enumClass) {
+        String typeCaption = null;
+        Caption captionAnno = enumClass.getAnnotation(Caption.class);
+        if (captionAnno != null) {
+            typeCaption = captionAnno.value();
+        }
+        // 默认使用枚举类型简称为显示名称
+        if (StringUtils.isBlank(typeCaption)) {
+            typeCaption = enumClass.getSimpleName();
+        }
+        String typeName = getEnumTypeName(enumClass);
+        return new EnumType(typeName, typeCaption);
     }
 
     /**
