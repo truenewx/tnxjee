@@ -1,31 +1,14 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 网络工具类
@@ -85,6 +68,27 @@ public class NetUtil {
             LogUtil.error(NetUtil.class, e);
         }
         return "127.0.0.1";
+    }
+
+    /**
+     * 获取本机的公网ip，耗时约为700ms
+     *
+     * @return 本机的公网ip
+     */
+    public static String getLocalPublicIp() {
+        String content = null;
+        try {
+            URL url = new URL("http://ip.chinaz.com");
+            content = IOUtils.toString(url, Strings.ENCODING_UTF8);
+            Pattern pattern = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
+            Matcher matcher = pattern.matcher(content);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -158,7 +162,6 @@ public class NetUtil {
      * @param encoding 字符编码
      * @return 参数字符串
      */
-    @SuppressWarnings("unchecked")
     private static String map2Params(Map<String, Object> params, String encoding) {
         StringBuffer result = new StringBuffer();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -213,7 +216,6 @@ public class NetUtil {
                 String key = entry[0];
                 Object value = map.get(key);
                 if (value instanceof Collection) {
-                    @SuppressWarnings("unchecked")
                     Collection<Object> collection = (Collection<Object>) value;
                     collection.add(entry[1]);
                 } else if (value != null) {
