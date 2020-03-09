@@ -1,14 +1,33 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
-
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 网络工具类
@@ -139,8 +158,7 @@ public class NetUtil {
     public static boolean isLanAddress(InetAddress address) {
         byte[] b = address.getAddress();
         // 暂只考虑IPv4
-        return b.length == 4 && ((b[0] == 192 && b[1] == 168) || b[0] == 10
-                || (b[0] == 172 && b[1] >= 16 && b[1] <= 31)
+        return b.length == 4 && ((b[0] == 192 && b[1] == 168) || b[0] == 10 || (b[0] == 172 && b[1] >= 16 && b[1] <= 31)
                 || (b[0] == 127 && b[1] == 0 && b[2] == 0 && b[3] == 1));
     }
 
@@ -162,7 +180,8 @@ public class NetUtil {
      * @param encoding 字符编码
      * @return 参数字符串
      */
-    private static String map2Params(Map<String, Object> params, String encoding) {
+    @SuppressWarnings("unchecked")
+    public static String map2ParamString(Map<String, Object> params, String encoding) {
         StringBuffer result = new StringBuffer();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String key = entry.getKey();
@@ -170,17 +189,14 @@ public class NetUtil {
             if (value != null) {
                 if (value instanceof Collection) {
                     for (Object o : (Collection<Object>) value) {
-                        result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding))
-                                .append(Strings.AND);
+                        result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding)).append(Strings.AND);
                     }
                 } else if (value instanceof Object[]) {
                     for (Object o : (Object[]) value) {
-                        result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding))
-                                .append(Strings.AND);
+                        result.append(key).append(Strings.EQUAL).append(encodeParam(o, encoding)).append(Strings.AND);
                     }
                 } else {
-                    result.append(key).append(Strings.EQUAL).append(encodeParam(value, encoding))
-                            .append(Strings.AND);
+                    result.append(key).append(Strings.EQUAL).append(encodeParam(value, encoding)).append(Strings.AND);
                 }
             }
         }
@@ -207,7 +223,7 @@ public class NetUtil {
      * @param paramString 参数字符串
      * @return 参数集合
      */
-    private static Map<String, Object> paramString2Map(String paramString) {
+    public static Map<String, Object> paramString2Map(String paramString) {
         Map<String, Object> map = new HashMap<>();
         String[] pairArray = paramString.split(Strings.AND);
         for (String pair : pairArray) {
@@ -216,6 +232,7 @@ public class NetUtil {
                 String key = entry[0];
                 Object value = map.get(key);
                 if (value instanceof Collection) {
+                    @SuppressWarnings("unchecked")
                     Collection<Object> collection = (Collection<Object>) value;
                     collection.add(entry[1]);
                 } else if (value != null) {
@@ -248,7 +265,7 @@ public class NetUtil {
         }
         Map<String, Object> paramMap = paramString2Map(paramString);
         paramMap.putAll(params);
-        paramString = map2Params(paramMap, encoding);
+        paramString = map2ParamString(paramMap, encoding);
         return url + "?" + paramString;
     }
 
