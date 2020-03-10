@@ -1,15 +1,14 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.entity.UnitaryEntity;
-import org.truenewx.tnxjee.repo.UnitaryEntityNumberIncreasable;
 import org.truenewx.tnxjee.repo.UnitaryEntityRepo;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 具有单一标识属性的实体JPA数据访问仓库支持
@@ -18,7 +17,7 @@ import org.truenewx.tnxjee.repo.UnitaryEntityRepo;
  */
 public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extends Serializable>
         extends JpaRepoSupport<T>
-        implements UnitaryEntityRepo<T, K>, UnitaryEntityNumberIncreasable<T, K> {
+        implements UnitaryEntityRepo<T, K> {
 
     protected T find(K key) {
         CrudRepository<T, K> repository = getRepository();

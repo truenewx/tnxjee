@@ -1,8 +1,5 @@
 package org.truenewx.tnxjee.repo.mongo.support;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.entity.Entity;
@@ -13,12 +10,20 @@ import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.repo.mongo.util.MongoQueryUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MongoDB数据访问仓库支持
  *
  * @author jianglei
  */
 public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> {
+
+    @Override
+    public String getEntityName() {
+        return getAccessTemplate().getMongoOperations().getCollectionName(getEntityClass());
+    }
 
     @Override
     protected MongoAccessTemplate getAccessTemplate() {

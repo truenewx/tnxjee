@@ -1,14 +1,13 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-import org.truenewx.tnxjee.repo.OwnedUnityNumberIncreasable;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 从属单体的数据访问仓库支持
@@ -17,7 +16,7 @@ import org.truenewx.tnxjee.repo.OwnedUnityRepo;
  */
 public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
         extends JpaUnityRepoSupport<T, K>
-        implements OwnedUnityRepo<T, K, O>, OwnedUnityNumberIncreasable<T, K, O> {
+        implements OwnedUnityRepo<T, K, O> {
 
     /**
      * 获取所属者属性名<br/>

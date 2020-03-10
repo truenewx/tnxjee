@@ -10,8 +10,6 @@ import org.truenewx.tnxjee.repo.Repo;
  */
 public interface JpaRepo<T extends Entity> extends Repo<T> {
 
-    String getEntityName();
-
     void flush();
 
     void refresh(T entity);

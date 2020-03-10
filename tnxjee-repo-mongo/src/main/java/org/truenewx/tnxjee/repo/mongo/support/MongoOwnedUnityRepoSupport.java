@@ -1,11 +1,11 @@
 package org.truenewx.tnxjee.repo.mongo.support;
 
-import java.io.Serializable;
-
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
+
+import java.io.Serializable;
 
 /**
  * MongoDB从属单体的数据访问仓库
@@ -49,8 +49,14 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
             }
             return null;
         }
-        Query query = new Query(Criteria.where(ownerProperty).is(owner).and("id").is(id));
+        Query query = new Query(Criteria.where(ownerProperty).is(owner).and(getKeyPropertyName()).is(id));
         return getAccessTemplate().first(getEntityClass(), query);
+    }
+
+    @Override
+    public T increaseNumber(O owner, K id, String propertyName, Number step, Number limit) {
+        // TODO
+        throw new UnsupportedOperationException();
     }
 
 }
