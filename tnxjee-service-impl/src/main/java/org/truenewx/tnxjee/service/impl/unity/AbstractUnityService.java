@@ -1,14 +1,13 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
+import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
-import org.truenewx.tnxjee.repo.UnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleUnityService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
-
-import java.io.Serializable;
 
 /**
  * 抽象的单体服务
@@ -17,17 +16,12 @@ import java.io.Serializable;
  * @param <K> 单体标识类型
  * @author jianglei
  */
-public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable>
-        extends AbstractService<T> implements SimpleUnityService<T, K>, ModelUnityService<T, K> {
-
-    @Override
-    protected UnityRepo<T, K> getRepo() {
-        return getRepo(getEntityClass());
-    }
+public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable> extends AbstractService<T>
+        implements SimpleUnityService<T, K>, ModelUnityService<T, K> {
 
     @Override
     public T find(K id) {
-        return getRepo().findById(id).orElse(null);
+        return getRepository().findById(id).orElse(null);
     }
 
     @Override
@@ -42,7 +36,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
         T newUnity = beforeSave(null, unity);
         Assert.isTrue(newUnity != unity, "the returned unity must not be the input unity");
         if (newUnity != null) {
-            getRepo().save(newUnity);
+            getRepository().save(newUnity);
             afterSave(newUnity);
         }
         return newUnity;
@@ -56,7 +50,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
         T newUnity = beforeSave(id, unity);
         if (newUnity != null) {
             Assert.isTrue(id.equals(newUnity.getId()), "id must equal unity's id");
-            getRepo().save(newUnity);
+            getRepository().save(newUnity);
             afterSave(newUnity);
         }
         return newUnity;
@@ -86,7 +80,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
     public T add(SubmitModel<T> submitModel) {
         T unity = beforeSave(null, submitModel);
         if (unity != null) {
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -100,7 +94,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
         T unity = beforeSave(id, submitModel);
         if (unity != null) {
             Assert.isTrue(id.equals(unity.getId()), "id must equal unity's id");
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -132,7 +126,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
                 unity = find(id);
             }
             if (unity != null) {
-                getRepo().delete(unity);
+                getRepository().delete(unity);
                 return true;
             }
         }

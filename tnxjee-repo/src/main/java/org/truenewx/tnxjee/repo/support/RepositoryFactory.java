@@ -1,20 +1,18 @@
 package org.truenewx.tnxjee.repo.support;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.model.entity.Entity;
+import org.truenewx.tnxjee.repo.Repo;
 
 /**
+ * 数据访问仓库工厂
  *
  * @author jianglei
  */
 public interface RepositoryFactory {
 
-    <T extends Entity, R extends Repository<T, ?>> R getRepositoryByEntityClass(
-            Class<T> entityClass);
+    <R extends CrudRepository<T, K>, T extends Entity, K> R getRepository(Class<T> entityClass);
 
-    <T extends Entity, R extends Repository<T, ?>> void putRepositoryIfAbsent(Class<T> entityClass,
-            R repository);
-
-    <R extends Repository<?, ?>> R getRepositoryByRepositoryClass(Class<R> repositoryClass);
+    <R extends Repo<T>, T extends Entity> R getRepo(Class<T> entityClass);
 
 }

@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
+import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelOwnedUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleOwnedUnityService;
-
-import java.io.Serializable;
 
 /**
  * 抽象的从属单体的服务
@@ -22,8 +22,9 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         implements SimpleOwnedUnityService<T, K, O>, ModelOwnedUnityService<T, K, O> {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected OwnedUnityRepo<T, K, O> getRepo() {
-        return getRepo(getEntityClass());
+        return (OwnedUnityRepo<T, K, O>) super.getRepo();
     }
 
     @Override
@@ -46,7 +47,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         unity = beforeSave(owner, null, unity);
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()), "owner must equal unity's owner");
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -64,7 +65,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()) && id.equals(unity.getId()),
                     "owner must equal unity's owner, and id must equal unity's id");
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -91,7 +92,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         T unity = beforeSave(owner, null, submitModel);
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()), "owner must equal unity's owner");
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -106,7 +107,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()) && id.equals(unity.getId()),
                     "owner must equal unity's owner, and id must equal unity's id");
-            getRepo().save(unity);
+            getRepository().save(unity);
             afterSave(unity);
         }
         return unity;
@@ -133,7 +134,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
                 unity = find(owner, id);
             }
             if (unity != null) {
-                getRepo().delete(unity);
+                getRepository().delete(unity);
                 return true;
             }
         }

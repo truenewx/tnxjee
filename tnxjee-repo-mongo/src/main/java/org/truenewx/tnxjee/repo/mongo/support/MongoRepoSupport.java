@@ -3,13 +3,8 @@ package org.truenewx.tnxjee.repo.mongo.support;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
-import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
-import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.Queried;
@@ -26,21 +21,12 @@ import org.truenewx.tnxjee.repo.support.RepoSupport;
 public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
-        MongoOperations mongoOperations = getAccessTemplate().getMongoOperations();
-        MongoEntityInformation<T, ?> metadata = new MongoRepositoryFactory(mongoOperations)
-                .getEntityInformation(getEntityClass());
-        return (R) new SimpleMongoRepository<>(metadata, mongoOperations);
-    }
-
-    @Override
     protected MongoAccessTemplate getAccessTemplate() {
         return (MongoAccessTemplate) super.getAccessTemplate();
     }
 
-    private Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort,
-            boolean totalable, boolean listable) {
+    private Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort, boolean totalable,
+            boolean listable) {
         Query query = MongoQueryUtil.buildQuery(criterias);
         Long total = null;
         // 需分页查询且需要获取总数时，才获取总数
@@ -58,8 +44,8 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
 
     protected Queried<T> query(List<Criteria> criterias, Querying querying) {
         Paging paging = querying.getPaging();
-        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort(),
-                querying.isTotalable(), querying.isListable());
+        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort(), querying.isTotalable(),
+                querying.isListable());
     }
 
     protected Queried<T> query(List<Criteria> criterias, Paging paging) {

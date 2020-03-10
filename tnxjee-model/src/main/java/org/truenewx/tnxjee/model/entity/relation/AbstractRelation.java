@@ -12,8 +12,21 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
  * @param <L> 左标识类型
  * @param <R> 右标识类型
  */
-public abstract class AbstractRelation<L extends Serializable, R extends Serializable>
-        implements Relation<L, R> {
+public abstract class AbstractRelation<L extends Serializable, R extends Serializable> implements Relation<L, R> {
+
+    public abstract <K extends RelationKey<L, R>> K getId();
+
+    @Override
+    public L getLeftId() {
+        RelationKey<L, R> id = getId();
+        return id == null ? null : id.getLeft();
+    }
+
+    @Override
+    public R getRightId() {
+        RelationKey<L, R> id = getId();
+        return id == null ? null : id.getRight();
+    }
 
     @Override
     public int hashCode() {

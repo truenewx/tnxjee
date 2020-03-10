@@ -1,6 +1,5 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +13,6 @@ import javax.validation.constraints.Min;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
@@ -34,18 +30,10 @@ import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
  *
  * @author jianglei
  */
-public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
-        implements JpaRepo<T> {
+public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> implements JpaRepo<T> {
 
     @Autowired
     private ModelPropertyLimitValueManager propertyLimitValueManager;
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final <R extends CrudRepository<T, ?>> R buildDefaultRepository() {
-        return (R) new SimpleJpaRepository<T, Serializable>(getEntityClass(),
-                getAccessTemplate().getCurrentEntityManager());
-    }
 
     @Override
     protected JpaAccessTemplate getAccessTemplate() {
@@ -59,7 +47,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
 
     @Override
     public void flush() {
-        ((JpaRepository<T, ?>) getRepository()).flush();
+        getAccessTemplate().flush();
     }
 
     @Override
@@ -67,8 +55,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         getAccessTemplate().refresh(entity);
     }
 
-    private Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
-            QuerySort sort, boolean totalable, boolean listable) {
+    private Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort,
+            boolean totalable, boolean listable) {
         Long total = null;
         if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
             total = getAccessTemplate().count("select count(*) " + ql, params);
@@ -97,22 +85,21 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
 
     protected Queried<T> query(CharSequence ql, Map<String, Object> params, Querying querying) {
         Paging paging = querying.getPaging();
-        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(),
-                querying.isTotalable(), querying.isListable());
+        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(), querying.isTotalable(),
+                querying.isListable());
     }
 
     protected Queried<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
         return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort());
     }
 
-    protected Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize,
-            int pageNo, QuerySort sort) {
+    protected Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort) {
         return query(ql, params, pageSize, pageNo, sort, true, true);
     }
 
     protected final Column getColumn(String propertyName) {
-        return (Column) getAccessTemplate().getPersistentClass(getEntityName())
-                .getProperty(propertyName).getColumnIterator().next();
+        return (Column) getAccessTemplate().getPersistentClass(getEntityName()).getProperty(propertyName)
+                .getColumnIterator().next();
     }
 
     private Number getNumberPropertyMinValue(String propertyName) {
@@ -130,8 +117,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                 if (min != null) {
                     minValue = min.value();
                 } else {
-                    DecimalMin decimalMin = ClassUtil.findAnnotation(getEntityClass(), propertyName,
-                            DecimalMin.class);
+                    DecimalMin decimalMin = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMin.class);
                     if (decimalMin != null) {
                         minValue = MathUtil.parseDecimal(decimalMin.value(), null);
                     }
@@ -172,8 +158,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                 if (max != null) {
                     maxValue = max.value();
                 } else {
-                    DecimalMax decimalMax = ClassUtil.findAnnotation(getEntityClass(), propertyName,
-                            DecimalMax.class);
+                    DecimalMax decimalMax = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMax.class);
                     if (decimalMax != null) {
                         maxValue = MathUtil.parseDecimal(decimalMax.value(), null);
                     }
@@ -195,8 +180,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         return maxValue;
     }
 
-    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params,
-            String propertyName, double stepValue) {
+    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params, String propertyName,
+            double stepValue) {
         if (stepValue < 0) { // 增量为负时需限定最小值
             Number minValue = getNumberPropertyMinValue(propertyName);
             if (minValue == null) { // 无法取得属性类型最小值，说明属性不是数值类型

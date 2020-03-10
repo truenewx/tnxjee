@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.data;
+package org.truenewx.tnxjee.repo.test.data;
 
 import java.util.List;
 

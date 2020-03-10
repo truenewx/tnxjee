@@ -1,13 +1,13 @@
-package org.truenewx.tnxjee.repo.data;
+package org.truenewx.tnxjee.repo.test.data;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.Repo;
-import org.truenewx.tnxjee.repo.support.RepoFactory;
+import org.truenewx.tnxjee.repo.support.RepositoryFactory;
 
 /**
  * 抽象的数据提供者
@@ -16,10 +16,10 @@ import org.truenewx.tnxjee.repo.support.RepoFactory;
  */
 public abstract class AbstractDataProvider<T extends Entity> implements DataProvider<T> {
     @Autowired
-    private RepoFactory repoFactory;
+    private RepositoryFactory repositoryFactory;
 
-    private <R extends Repo<T>> R getRepo() {
-        return this.repoFactory.getRepoByEntityClass(getEntityClass());
+    private <R extends CrudRepository<T, K>, K> R getRepository() {
+        return this.repositoryFactory.getRepository(getEntityClass());
     }
 
     private Class<T> getEntityClass() {
@@ -28,21 +28,21 @@ public abstract class AbstractDataProvider<T extends Entity> implements DataProv
 
     @Override
     public List<T> getDataList(DataPool pool) {
-        if (getRepo().count() == 0) {
+        if (getRepository().count() == 0) {
             init(pool);
         }
-        return CollectionUtil.toList(getRepo().findAll());
+        return CollectionUtil.toList(getRepository().findAll());
     }
 
     protected final void save(T entity) {
-        getRepo().save(entity);
+        getRepository().save(entity);
     }
 
     protected abstract void init(DataPool pool);
 
     @Override
     public void clear() {
-        getRepo().deleteAll();
+        getRepository().deleteAll();
     }
 
 }

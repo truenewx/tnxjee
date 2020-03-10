@@ -9,7 +9,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.data.DataProviderFactory;
+import org.truenewx.tnxjee.repo.test.data.DataProviderFactory;
 import org.truenewx.tnxjee.test.support.SpringTestSupport;
 
 /**

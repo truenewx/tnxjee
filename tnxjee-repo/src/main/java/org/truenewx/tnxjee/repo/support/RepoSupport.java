@@ -32,46 +32,16 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
         return entityClass;
     }
 
-    protected <R extends CrudRepository<T, ?>> R getRepository() {
-        R repository = this.repositoryFactory.getRepositoryByEntityClass(getEntityClass());
-        if (repository == null) {
-            repository = buildDefaultRepository();
-            if (repository != null) {
-                this.repositoryFactory.putRepositoryIfAbsent(getEntityClass(), repository);
-            }
+    @SuppressWarnings("unchecked")
+    protected <R extends CrudRepository<T, K>, K> R getRepository() {
+        if (this instanceof CrudRepository) {
+            return (R) this;
         }
-        return repository;
+        return this.repositoryFactory.getRepository(getEntityClass());
     }
-
-    protected abstract <R extends CrudRepository<T, ?>> R buildDefaultRepository();
 
     protected DataAccessTemplate getAccessTemplate() {
         return this.accessTemplateFactory.getDataAccessTemplate(getEntityClass());
-    }
-
-    @Override
-    public <S extends T> S save(S entity) {
-        return getRepository().save(entity);
-    }
-
-    @Override
-    public void delete(T entity) {
-        getRepository().delete(entity);
-    }
-
-    @Override
-    public void deleteAll() {
-        getRepository().deleteAll();
-    }
-
-    @Override
-    public long count() {
-        return getRepository().count();
-    }
-
-    @Override
-    public Iterable<T> findAll() {
-        return getRepository().findAll();
     }
 
     protected Class<?> getPropertyClass(String propertyName) {

@@ -7,15 +7,15 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.Repo;
-import org.truenewx.tnxjee.repo.data.DataProvider;
-import org.truenewx.tnxjee.repo.data.DataProviderFactory;
-import org.truenewx.tnxjee.repo.support.RepoFactory;
+import org.truenewx.tnxjee.repo.support.RepositoryFactory;
+import org.truenewx.tnxjee.repo.test.data.DataProvider;
+import org.truenewx.tnxjee.repo.test.data.DataProviderFactory;
 
 /**
  * 单元测试数据提供者工厂
@@ -23,7 +23,7 @@ import org.truenewx.tnxjee.repo.support.RepoFactory;
 @Component
 public class TestDataProviderFactory implements DataProviderFactory, ContextInitializedBean {
     @Autowired
-    private RepoFactory repoFacotory;
+    private RepositoryFactory repositoryFacotory;
     private Map<Class<?>, DataProvider<?>> providers = new HashMap<>();
 
     @Override
@@ -31,8 +31,7 @@ public class TestDataProviderFactory implements DataProviderFactory, ContextInit
         @SuppressWarnings("rawtypes")
         Map<String, DataProvider> beans = context.getBeansOfType(DataProvider.class);
         beans.values().forEach(provider -> {
-            Class<?> entityClass = ClassUtil.getActualGenericType(provider.getClass(),
-                    DataProvider.class, 0);
+            Class<?> entityClass = ClassUtil.getActualGenericType(provider.getClass(), DataProvider.class, 0);
             this.providers.put(entityClass, provider);
         });
     }
@@ -60,7 +59,7 @@ public class TestDataProviderFactory implements DataProviderFactory, ContextInit
         if (provider != null) {
             return provider.getDataList(this);
         } else {
-            Repo<T> repo = this.repoFacotory.getRepoByEntityClass(entityClass);
+            CrudRepository<T, ?> repo = this.repositoryFacotory.getRepository(entityClass);
             if (repo != null) {
                 return CollectionUtil.toList(repo.findAll());
             }

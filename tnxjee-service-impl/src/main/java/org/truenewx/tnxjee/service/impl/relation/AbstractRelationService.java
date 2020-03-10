@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.service.impl.relation;
 
+import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
@@ -7,8 +9,6 @@ import org.truenewx.tnxjee.repo.RelationRepo;
 import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
 import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
-
-import java.io.Serializable;
 
 /**
  * 抽象关系服务
@@ -20,12 +20,12 @@ import java.io.Serializable;
  * @since JDK 1.8
  */
 public abstract class AbstractRelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
-        extends AbstractService<T>
-        implements SimpleRelationService<T, L, R>, ModelRelationService<T, L, R> {
+        extends AbstractService<T> implements SimpleRelationService<T, L, R>, ModelRelationService<T, L, R> {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected RelationRepo<T, L, R> getRepo() {
-        return getRepo(getEntityClass());
+        return (RelationRepo<T, L, R>) super.getRepo();
     }
 
     @Override
@@ -43,10 +43,9 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     @Override
     public T add(T relation) {
         T newRelation = beforeSave(null, null, relation);
-        Assert.isTrue(newRelation != relation,
-                "the returned relation must not be the input relation");
+        Assert.isTrue(newRelation != relation, "the returned relation must not be the input relation");
         if (newRelation != null) {
-            getRepo().save(newRelation);
+            getRepository().save(newRelation);
             afterSave(newRelation);
         }
         return newRelation;
@@ -59,11 +58,9 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
         }
         T newRelation = beforeSave(leftId, rightId, relation);
         if (newRelation != null) {
-            Assert.isTrue(leftId.equals(newRelation.getLeftId()),
-                    "leftId must equal relation's leftId");
-            Assert.isTrue(rightId.equals(newRelation.getRightId()),
-                    "rightId must equal relation's rightId");
-            getRepo().save(newRelation);
+            Assert.isTrue(leftId.equals(newRelation.getLeftId()), "leftId must equal relation's leftId");
+            Assert.isTrue(rightId.equals(newRelation.getRightId()), "rightId must equal relation's rightId");
+            getRepository().save(newRelation);
             afterSave(newRelation);
         }
         return newRelation;
@@ -94,7 +91,7 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     public T add(SubmitModel<T> submitModel) {
         T relation = beforeSave(null, null, submitModel);
         if (relation != null) {
-            getRepo().save(relation);
+            getRepository().save(relation);
             afterSave(relation);
         }
         return relation;
@@ -107,11 +104,9 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
         }
         T relation = beforeSave(leftId, rightId, submitModel);
         if (relation != null) {
-            Assert.isTrue(leftId.equals(relation.getLeftId()),
-                    "leftId must equal relation's leftId");
-            Assert.isTrue(rightId.equals(relation.getRightId()),
-                    "rightId must equal relation's rightId");
-            getRepo().save(relation);
+            Assert.isTrue(leftId.equals(relation.getLeftId()), "leftId must equal relation's leftId");
+            Assert.isTrue(rightId.equals(relation.getRightId()), "rightId must equal relation's rightId");
+            getRepository().save(relation);
             afterSave(relation);
         }
         return relation;
@@ -137,7 +132,7 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
             relation = find(leftId, rightId);
         }
         if (relation != null) {
-            getRepo().delete(relation);
+            getRepository().delete(relation);
             return true;
         }
         return false;

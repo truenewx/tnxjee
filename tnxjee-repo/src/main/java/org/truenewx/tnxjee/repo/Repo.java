@@ -1,48 +1,16 @@
 package org.truenewx.tnxjee.repo;
 
+import org.springframework.data.repository.Repository;
 import org.truenewx.tnxjee.model.entity.Entity;
 
 /**
- * 数据访问仓库
+ * 数据访问仓库<br/>
+ * 用于定义在spring-data的{@link Repository}标准规范方法之外的扩展的数据访问方法<br/>
+ * 一个实体类型必须要有对应的{@link Repository}，但可以没有对应的{@link Repo}
  *
  * @author jianglei
  * @param <T> 实体类型
  */
 public interface Repo<T extends Entity> {
-
-    /**
-     * 保存指定实体对象
-     *
-     * @param <S>    实际实体类型
-     * @param entity 实体对象
-     * @return 保存后的实体对象，使用者应该用返回的新实体对象替换原来的实体对象
-     */
-    <S extends T> S save(S entity);
-
-    /**
-     * 删除指定实体对象
-     *
-     * @param entity 实体对象
-     */
-    void delete(T entity);
-
-    /**
-     * 删除所有实体对象，请谨慎使用
-     */
-    void deleteAll();
-
-    /**
-     * 获取所有实体的总数
-     *
-     * @return 所有实体的总数
-     */
-    long count();
-
-    /**
-     * 获取实体的所有数据，一般用于单元测试，请谨慎使用
-     *
-     * @return 当前实体的所有数据
-     */
-    Iterable<T> findAll();
 
 }

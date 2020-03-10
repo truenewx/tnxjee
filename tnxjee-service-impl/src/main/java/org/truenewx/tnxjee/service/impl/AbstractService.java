@@ -1,10 +1,13 @@
 package org.truenewx.tnxjee.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.caption.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.Repo;
+import org.truenewx.tnxjee.repo.support.RepositoryFactory;
 import org.truenewx.tnxjee.service.api.Service;
 import org.truenewx.tnxjee.service.api.exception.BusinessException;
 
@@ -12,17 +15,23 @@ import org.truenewx.tnxjee.service.api.exception.BusinessException;
  * 抽象服务
  *
  * @author jianglei
- * @since JDK 1.8
  * @param <T> 关联类型
  */
 public abstract class AbstractService<T extends Entity> extends ServiceSupport implements Service {
+
+    @Autowired
+    private RepositoryFactory repositoryFactory;
 
     protected Class<T> getEntityClass() {
         return ClassUtil.getActualGenericType(getClass(), 0);
     }
 
+    protected <K> CrudRepository<T, K> getRepository() {
+        return this.repositoryFactory.getRepository(getEntityClass());
+    }
+
     protected Repo<T> getRepo() {
-        return getRepo(getEntityClass());
+        return this.repositoryFactory.getRepo(getEntityClass());
     }
 
     /**
