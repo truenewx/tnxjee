@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.impl.relation;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
@@ -9,6 +7,8 @@ import org.truenewx.tnxjee.repo.RelationRepo;
 import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
 import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
+
+import java.io.Serializable;
 
 /**
  * 抽象关系服务
@@ -23,14 +23,9 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
         extends AbstractService<T> implements SimpleRelationService<T, L, R>, ModelRelationService<T, L, R> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected RelationRepo<T, L, R> getRepo() {
-        return (RelationRepo<T, L, R>) super.getRepo();
-    }
-
-    @Override
     public T find(L leftId, R rightId) {
-        return getRepo().findById(leftId, rightId).orElse(null);
+        RelationRepo<T, L, R> repo = getRepo();
+        return repo.findById(leftId, rightId).orElse(null);
     }
 
     @Override
@@ -70,9 +65,9 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
      * 在保存添加/修改关系前调用，负责验证改动的关系数据，并写入返回的结果关系中<br/>
      * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果关系的标识等于传入的指定标识参数
      *
-     * @param leftId  要修改的关系左标识，为null时表示是添加动作
-     * @param rightId 要修改的关系右标识，为null时表示是添加动作
-     * @param unity   存放添加/修改数据的关系对象
+     * @param leftId   要修改的关系左标识，为null时表示是添加动作
+     * @param rightId  要修改的关系右标识，为null时表示是添加动作
+     * @param relation 存放添加/修改数据的关系对象
      * @return 已写入数据，即将保存的关系
      */
     protected T beforeSave(L leftId, R rightId, T relation) {

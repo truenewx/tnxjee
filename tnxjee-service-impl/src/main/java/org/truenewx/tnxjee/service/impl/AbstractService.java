@@ -14,8 +14,8 @@ import org.truenewx.tnxjee.service.api.exception.BusinessException;
 /**
  * 抽象服务
  *
- * @author jianglei
  * @param <T> 关联类型
+ * @author jianglei
  */
 public abstract class AbstractService<T extends Entity> extends ServiceSupport implements Service {
 
@@ -26,11 +26,11 @@ public abstract class AbstractService<T extends Entity> extends ServiceSupport i
         return ClassUtil.getActualGenericType(getClass(), 0);
     }
 
-    protected <K> CrudRepository<T, K> getRepository() {
+    protected final <R extends CrudRepository<T, K>, K> R getRepository() {
         return this.repositoryFactory.getRepository(getEntityClass());
     }
 
-    protected Repo<T> getRepo() {
+    protected final <R extends Repo<T>> R getRepo() {
         return this.repositoryFactory.getRepo(getEntityClass());
     }
 
@@ -38,7 +38,6 @@ public abstract class AbstractService<T extends Entity> extends ServiceSupport i
      * 确保指定实体非null
      *
      * @param entity 实体
-     *
      * @return 非null的实体
      */
     protected T ensureNotNull(T entity) {

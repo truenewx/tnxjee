@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.SubmitModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelOwnedUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleOwnedUnityService;
+
+import java.io.Serializable;
 
 /**
  * 抽象的从属单体的服务
@@ -22,14 +22,9 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
         implements SimpleOwnedUnityService<T, K, O>, ModelOwnedUnityService<T, K, O> {
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected OwnedUnityRepo<T, K, O> getRepo() {
-        return (OwnedUnityRepo<T, K, O>) super.getRepo();
-    }
-
-    @Override
     public T find(O owner, K id) {
-        return getRepo().findByOwnerAndId(owner, id);
+        OwnedUnityRepo<T, K, O> repo = getRepo();
+        return repo.findByOwnerAndId(owner, id);
     }
 
     @Override
