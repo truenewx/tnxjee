@@ -17,8 +17,7 @@ import java.util.Optional;
  * @author jianglei
  */
 public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
-        extends JpaRepoSupport<T>
-        implements RelationRepo<T, L, R> {
+        extends JpaRepoSupport<T> implements RelationRepo<T, L, R> {
 
     /**
      * 获取标识属性对，left-左标识属性名，right-右标识属性名
@@ -63,7 +62,7 @@ public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends
     }
 
     @Override
-    public T increaseNumber(L leftId, R rightId, String propertyName, Number step, Number limit) {
+    public <N extends Number> T increaseNumber(L leftId, R rightId, String propertyName, N step, N limit) {
         double stepValue = step.doubleValue();
         if (stepValue != 0) { // 增量不为0时才处理
             Binate<String, String> idProperty = getIdProperty();
@@ -76,7 +75,7 @@ public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends
             params.put("rightId", rightId);
             params.put("step", step);
 
-            if (doIncreaseNumber(hql, params, propertyName, stepValue)) {
+            if (doIncreaseNumber(hql, params, propertyName, stepValue > 0, limit)) {
                 // 更新字段后需刷新实体
                 T unity = find(leftId, rightId);
                 try {

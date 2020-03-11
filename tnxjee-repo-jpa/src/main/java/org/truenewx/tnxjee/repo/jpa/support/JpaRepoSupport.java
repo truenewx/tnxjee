@@ -181,21 +181,21 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
     }
 
     protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params, String propertyName,
-            double stepValue) {
-        if (stepValue < 0) { // 增量为负时需限定最小值
-            Number minValue = getNumberPropertyMinValue(propertyName);
-            if (minValue == null) { // 无法取得属性类型最小值，说明属性不是数值类型
-                return false;
-            }
-            ql.append(" and ").append(propertyName).append("+:step>=:minValue");
-            params.put("minValue", minValue);
-        } else { // 增量为正时需限定最大值
-            Number maxValue = getNumberPropertyMaxValue(propertyName);
-            if (maxValue == null) { // 无法取得属性类型最大值，说明属性不是数值类型
+            boolean positive, Number limit) {
+        if (positive) { // 增量为正时需限定最大值
+            Number maxValue = limit == null ? getNumberPropertyMaxValue(propertyName) : limit;
+            if (maxValue == null) { // 无法取得最大限定值，则不执行更新操作
                 return false;
             }
             ql.append(" and ").append(propertyName).append("+:step<=:maxValue");
             params.put("maxValue", maxValue);
+        } else { // 增量为负时需限定最小值
+            Number minValue = limit == null ? getNumberPropertyMinValue(propertyName) : limit;
+            if (minValue == null) { // 无法取得最小限定值，则不执行更新操作
+                return false;
+            }
+            ql.append(" and ").append(propertyName).append("+:step>=:minValue");
+            params.put("minValue", minValue);
         }
         return getAccessTemplate().update(ql, params) > 0;
     }

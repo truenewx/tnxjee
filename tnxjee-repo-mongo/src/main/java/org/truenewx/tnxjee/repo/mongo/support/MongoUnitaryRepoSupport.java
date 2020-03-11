@@ -20,7 +20,7 @@ public abstract class MongoUnitaryRepoSupport<T extends UnitaryEntity<K>, K exte
     }
 
     @Override
-    public T increaseNumber(K key, String propertyName, Number step, Number limit) {
+    public <N extends Number> T increaseNumber(K key, String propertyName, N step, N limit) {
         // TODO
         throw new UnsupportedOperationException();
     }

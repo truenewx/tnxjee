@@ -22,5 +22,5 @@ public interface UnitaryEntityRepo<T extends UnitaryEntity<K>, K extends Seriali
      * @param limit        增减后允许的最大/最小值，设定以避免数值超限
      * @return 单体
      */
-    T increaseNumber(K key, String propertyName, Number step, Number limit);
+    <N extends Number> T increaseNumber(K key, String propertyName, N step, N limit);
 }

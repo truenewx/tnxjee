@@ -15,8 +15,7 @@ import java.util.Map;
  * @author jianglei
  */
 public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
-        extends JpaUnityRepoSupport<T, K>
-        implements OwnedUnityRepo<T, K, O> {
+        extends JpaUnityRepoSupport<T, K> implements OwnedUnityRepo<T, K, O> {
 
     /**
      * 获取所属者属性名<br/>
@@ -62,7 +61,7 @@ public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K ext
     }
 
     @Override
-    public T increaseNumber(O owner, K id, String propertyName, Number step, Number limit) {
+    public <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit) {
         double stepValue = step.doubleValue();
         if (stepValue != 0) { // 增量不为0时才处理
             String entityName = getEntityName();
@@ -79,7 +78,7 @@ public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K ext
                 params.put("owner", owner);
             }
 
-            if (doIncreaseNumber(hql, params, propertyName, stepValue)) {
+            if (doIncreaseNumber(hql, params, propertyName, stepValue > 0, limit)) {
                 // 更新字段后需刷新实体
                 T unity = find(id);
                 try {

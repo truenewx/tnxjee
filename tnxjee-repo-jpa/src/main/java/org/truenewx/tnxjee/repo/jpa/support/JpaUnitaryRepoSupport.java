@@ -16,8 +16,7 @@ import java.util.Map;
  * @author jianglei
  */
 public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extends Serializable>
-        extends JpaRepoSupport<T>
-        implements UnitaryEntityRepo<T, K> {
+        extends JpaRepoSupport<T> implements UnitaryEntityRepo<T, K> {
 
     protected T find(K key) {
         CrudRepository<T, K> repository = getRepository();
@@ -25,7 +24,7 @@ public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extend
     }
 
     @Override
-    public T increaseNumber(K key, String propertyName, Number step, Number limit) {
+    public <N extends Number> T increaseNumber(K key, String propertyName, N step, N limit) {
         double stepValue = step.doubleValue();
         if (stepValue != 0) { // 增量不为0时才处理
             String entityName = getEntityName();
@@ -37,7 +36,7 @@ public abstract class JpaUnitaryRepoSupport<T extends UnitaryEntity<K>, K extend
             params.put("key", key);
             params.put("step", step);
 
-            if (doIncreaseNumber(ql, params, propertyName, stepValue)) {
+            if (doIncreaseNumber(ql, params, propertyName, stepValue > 0, limit)) {
                 // 正确更新字段后需刷新实体
                 T entity = find(key);
                 try {

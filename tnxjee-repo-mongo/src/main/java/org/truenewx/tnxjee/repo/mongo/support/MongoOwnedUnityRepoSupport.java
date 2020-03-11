@@ -54,7 +54,7 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
     }
 
     @Override
-    public T increaseNumber(O owner, K id, String propertyName, Number step, Number limit) {
+    public <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit) {
         // TODO
         throw new UnsupportedOperationException();
     }
