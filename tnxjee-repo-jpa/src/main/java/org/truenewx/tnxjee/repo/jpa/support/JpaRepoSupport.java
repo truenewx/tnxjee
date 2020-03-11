@@ -1,15 +1,5 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.metamodel.Metamodel;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +7,22 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.Queried;
+import org.truenewx.tnxjee.model.query.QueryModel;
+import org.truenewx.tnxjee.model.query.QueryResult;
 import org.truenewx.tnxjee.model.query.QuerySort;
-import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.repo.jpa.JpaRepo;
 import org.truenewx.tnxjee.repo.jpa.util.OqlUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
 import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
+
+import javax.persistence.metamodel.Metamodel;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JPA的数据访问仓库支持
@@ -55,7 +54,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         getAccessTemplate().refresh(entity);
     }
 
-    private Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort,
+    private QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort,
             boolean totalable, boolean listable) {
         Long total = null;
         if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
@@ -80,20 +79,21 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 total = (long) records.size();
             }
         }
-        return Queried.of(records, pageSize, pageNo, total);
+        return QueryResult.of(records, pageSize, pageNo, total);
     }
 
-    protected Queried<T> query(CharSequence ql, Map<String, Object> params, Querying querying) {
-        Paging paging = querying.getPaging();
-        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(), querying.isTotalable(),
-                querying.isListable());
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, QueryModel queryModel) {
+        Paging paging = queryModel.getPaging();
+        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(), queryModel.isTotalable(),
+                queryModel.isListable());
     }
 
-    protected Queried<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
         return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort());
     }
 
-    protected Queried<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort) {
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
+            QuerySort sort) {
         return query(ql, params, pageSize, pageNo, sort, true, true);
     }
 

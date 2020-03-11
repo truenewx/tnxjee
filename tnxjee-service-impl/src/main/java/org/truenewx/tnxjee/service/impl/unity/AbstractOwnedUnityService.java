@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.model.SubmitModel;
+import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 import org.truenewx.tnxjee.service.api.unity.ModelOwnedUnityService;
@@ -80,11 +80,11 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public T add(O owner, SubmitModel<T> submitModel) {
+    public T add(O owner, CommandModel<T> commandModel) {
         if (owner == null) {
             return null;
         }
-        T unity = beforeSave(owner, null, submitModel);
+        T unity = beforeSave(owner, null, commandModel);
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()), "owner must equal unity's owner");
             getRepository().save(unity);
@@ -94,11 +94,11 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public T update(O owner, K id, SubmitModel<T> submitModel) {
+    public T update(O owner, K id, CommandModel<T> commandModel) {
         if (owner == null || id == null) {
             return null;
         }
-        T unity = beforeSave(owner, id, submitModel);
+        T unity = beforeSave(owner, id, commandModel);
         if (unity != null) {
             Assert.isTrue(owner.equals(unity.getOwner()) && id.equals(unity.getId()),
                     "owner must equal unity's owner, and id must equal unity's id");
@@ -112,12 +112,12 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
      * 在保存添加/修改有所属者的单体前调用，负责验证改动的模型数据，并写入返回的结果单体中<br/>
      * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果单体的标识等于传入的指定标识参数
      *
-     * @param owner       所属者
-     * @param id          要修改的单体标识，为null时表示是添加动作
-     * @param submitModel 存放添加/修改数据的提交模型
+     * @param owner        所属者
+     * @param id           要修改的单体标识，为null时表示是添加动作
+     * @param commandModel 存放添加/修改数据的命令模型
      * @return 已写入数据，即将保存的从属单体
      */
-    protected T beforeSave(O owner, K id, SubmitModel<T> submitModel) {
+    protected T beforeSave(O owner, K id, CommandModel<T> commandModel) {
         throw new UnsupportedOperationException();
     }
 

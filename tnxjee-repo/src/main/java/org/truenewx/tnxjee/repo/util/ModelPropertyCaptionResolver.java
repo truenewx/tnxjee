@@ -1,8 +1,5 @@
 package org.truenewx.tnxjee.repo.util;
 
-import java.lang.reflect.Field;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -10,9 +7,12 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.caption.CaptionUtil;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.model.TransportModel;
+import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
+
+import java.lang.reflect.Field;
+import java.util.Locale;
 
 /**
  * 模型属性显示名称解决器
@@ -29,10 +29,10 @@ public class ModelPropertyCaptionResolver implements PropertyCaptionResolver {
     public String resolveCaption(Class<?> clazz, String propertyName, Locale locale) {
         String caption = getCaption(clazz, propertyName, locale);
         if (caption == null) {
-            // 如果从指定类型中无法获取属性显示名称，而指定类型又是提交模型或视图模型，则尝试从关联的实体模型中获取
+            // 如果从指定类型中无法获取属性显示名称，而指定类型又是命令模型，则尝试从关联的实体模型中获取
             Class<?> entityClass = null;
-            if (TransportModel.class.isAssignableFrom(clazz)) {
-                entityClass = ClassUtil.getActualGenericType(clazz, TransportModel.class, 0);
+            if (CommandModel.class.isAssignableFrom(clazz)) {
+                entityClass = ClassUtil.getActualGenericType(clazz, CommandModel.class, 0);
             }
             if (entityClass != null) {
                 caption = getCaption(entityClass, propertyName, locale);

@@ -27,8 +27,8 @@ import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.Model;
-import org.truenewx.tnxjee.model.TransportModel;
 import org.truenewx.tnxjee.model.ValueModel;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
@@ -99,8 +99,8 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     @SuppressWarnings("unchecked")
     private ValidationConfiguration buildConfiguration(Class<? extends Model> modelClass) {
         ValidationConfiguration configuration = new ValidationConfiguration(modelClass);
-        if (TransportModel.class.isAssignableFrom(modelClass)) {
-            addEntityClassRulesFromTransportClass(configuration, (Class<? extends TransportModel>) modelClass);
+        if (CommandModel.class.isAssignableFrom(modelClass)) {
+            addEntityClassRulesFromTransportClass(configuration, (Class<? extends CommandModel<?>>) modelClass);
         } else if (Entity.class.isAssignableFrom(modelClass)) {
             addEntityClassRulesFromPersistentConfig(configuration, (Class<? extends Entity>) modelClass);
         }
@@ -110,15 +110,15 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     }
 
     /**
-     * 从指定传输模型类对应的实体类中添加校验规则到指定校验配置中
+     * 从指定命令模型类对应的实体类中添加校验规则到指定校验配置中
      *
-     * @param configuration  校验配置
-     * @param transportClass 传输模型类
+     * @param configuration     校验配置
+     * @param commandModelClass 命令模型类
      */
     private void addEntityClassRulesFromTransportClass(ValidationConfiguration configuration,
-            Class<? extends TransportModel> transportClass) {
-        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(transportClass, TransportModel.class, 0);
-        List<Field> fields = ClassUtil.getSimplePropertyField(transportClass);
+            Class<? extends CommandModel<?>> commandModelClass) {
+        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(commandModelClass, CommandModel.class, 0);
+        List<Field> fields = ClassUtil.getSimplePropertyField(commandModelClass);
         for (Field field : fields) {
             // 加入对应实体的校验规则
             // 只加入传输模型中存在的简单属性的校验规则

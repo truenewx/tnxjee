@@ -7,12 +7,13 @@ import org.springframework.util.Assert;
  *
  * @author jianglei
  */
-public abstract class Querying {
+public abstract class Querying implements QueryModel {
 
     private Paging paging = new Paging();
     private boolean totalable = true;
     private boolean listable = true;
 
+    @Override
     public Paging getPaging() {
         return this.paging;
     }
@@ -34,6 +35,7 @@ public abstract class Querying {
         this.paging.setSort(sort);
     }
 
+    @Override
     public boolean isTotalable() {
         return this.totalable;
     }
@@ -42,6 +44,7 @@ public abstract class Querying {
         this.totalable = totalable;
     }
 
+    @Override
     public boolean isListable() {
         return this.listable;
     }

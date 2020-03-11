@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.service.impl.relation;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.model.SubmitModel;
+import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
 import org.truenewx.tnxjee.repo.RelationRepo;
 import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
@@ -83,8 +83,8 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     @Override
-    public T add(SubmitModel<T> submitModel) {
-        T relation = beforeSave(null, null, submitModel);
+    public T add(CommandModel<T> commandModel) {
+        T relation = beforeSave(null, null, commandModel);
         if (relation != null) {
             getRepository().save(relation);
             afterSave(relation);
@@ -93,11 +93,11 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     @Override
-    public T update(L leftId, R rightId, SubmitModel<T> submitModel) {
+    public T update(L leftId, R rightId, CommandModel<T> commandModel) {
         if (leftId == null || rightId == null) {
             return null;
         }
-        T relation = beforeSave(leftId, rightId, submitModel);
+        T relation = beforeSave(leftId, rightId, commandModel);
         if (relation != null) {
             Assert.isTrue(leftId.equals(relation.getLeftId()), "leftId must equal relation's leftId");
             Assert.isTrue(rightId.equals(relation.getRightId()), "rightId must equal relation's rightId");
@@ -111,12 +111,12 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
      * 在保存添加/修改关系前调用，负责验证改动的模型数据，并写入返回的结果关系中<br/>
      * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果关系的标识等于传入的指定标识参数
      *
-     * @param leftId      要修改的关系左标识，为null时表示是添加动作
-     * @param rightId     要修改的关系右标识，为null时表示是添加动作
-     * @param submitModel 存放添加/修改数据的提交模型
+     * @param leftId       要修改的关系左标识，为null时表示是添加动作
+     * @param rightId      要修改的关系右标识，为null时表示是添加动作
+     * @param commandModel 存放添加/修改数据的命令模型
      * @return 已写入数据，即将保存的关系
      */
-    protected T beforeSave(L leftId, R rightId, SubmitModel<T> submitModel) {
+    protected T beforeSave(L leftId, R rightId, CommandModel<T> commandModel) {
         throw new UnsupportedOperationException();
     }
 

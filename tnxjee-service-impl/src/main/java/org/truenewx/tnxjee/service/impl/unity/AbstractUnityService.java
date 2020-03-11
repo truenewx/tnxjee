@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.model.SubmitModel;
+import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.service.api.unity.ModelUnityService;
 import org.truenewx.tnxjee.service.api.unity.SimpleUnityService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
+
+import java.io.Serializable;
 
 /**
  * 抽象的单体服务
@@ -77,8 +77,8 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
     }
 
     @Override
-    public T add(SubmitModel<T> submitModel) {
-        T unity = beforeSave(null, submitModel);
+    public T add(CommandModel<T> commandModel) {
+        T unity = beforeSave(null, commandModel);
         if (unity != null) {
             getRepository().save(unity);
             afterSave(unity);
@@ -87,11 +87,11 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
     }
 
     @Override
-    public T update(K id, SubmitModel<T> submitModel) {
+    public T update(K id, CommandModel<T> commandModel) {
         if (id == null) {
             return null;
         }
-        T unity = beforeSave(id, submitModel);
+        T unity = beforeSave(id, commandModel);
         if (unity != null) {
             Assert.isTrue(id.equals(unity.getId()), "id must equal unity's id");
             getRepository().save(unity);
@@ -104,11 +104,11 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
      * 在保存添加/修改单体前调用，负责验证改动的模型数据，并写入返回的结果单体中<br/>
      * <strong>注意：</strong>子类覆写时应确保结果不为null（否则将不保存），且结果单体的标识等于传入的指定标识参数
      *
-     * @param id          要修改的单体标识，为null时表示是添加动作
-     * @param submitModel 存放添加/修改数据的提交模型
+     * @param id           要修改的单体标识，为null时表示是添加动作
+     * @param commandModel 存放添加/修改数据的命令模型
      * @return 已写入数据，即将保存的单体
      */
-    protected T beforeSave(K id, SubmitModel<T> submitModel) {
+    protected T beforeSave(K id, CommandModel<T> commandModel) {
         throw new UnsupportedOperationException();
     }
 

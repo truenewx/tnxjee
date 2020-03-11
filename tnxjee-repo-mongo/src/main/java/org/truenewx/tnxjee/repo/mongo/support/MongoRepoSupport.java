@@ -4,9 +4,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.Queried;
+import org.truenewx.tnxjee.model.query.QueryModel;
+import org.truenewx.tnxjee.model.query.QueryResult;
 import org.truenewx.tnxjee.model.query.QuerySort;
-import org.truenewx.tnxjee.model.query.Querying;
 import org.truenewx.tnxjee.repo.mongo.util.MongoQueryUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
 
@@ -30,7 +30,7 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
         return (MongoAccessTemplate) super.getAccessTemplate();
     }
 
-    private Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort, boolean totalable,
+    private QueryResult<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort, boolean totalable,
             boolean listable) {
         Query query = MongoQueryUtil.buildQuery(criterias);
         Long total = null;
@@ -44,20 +44,20 @@ public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> 
         } else {
             records = getAccessTemplate().list(getEntityClass(), query, pageSize, pageNo, sort);
         }
-        return Queried.of(records, pageSize, pageNo, total);
+        return QueryResult.of(records, pageSize, pageNo, total);
     }
 
-    protected Queried<T> query(List<Criteria> criterias, Querying querying) {
-        Paging paging = querying.getPaging();
-        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort(), querying.isTotalable(),
-                querying.isListable());
+    protected QueryResult<T> query(List<Criteria> criterias, QueryModel queryModel) {
+        Paging paging = queryModel.getPaging();
+        return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort(), queryModel.isTotalable(),
+                queryModel.isListable());
     }
 
-    protected Queried<T> query(List<Criteria> criterias, Paging paging) {
+    protected QueryResult<T> query(List<Criteria> criterias, Paging paging) {
         return query(criterias, paging.getPageSize(), paging.getPageNo(), paging.getSort());
     }
 
-    protected Queried<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort) {
+    protected QueryResult<T> query(List<Criteria> criterias, int pageSize, int pageNo, QuerySort sort) {
         return query(criterias, pageSize, pageNo, sort, true, true);
     }
 
