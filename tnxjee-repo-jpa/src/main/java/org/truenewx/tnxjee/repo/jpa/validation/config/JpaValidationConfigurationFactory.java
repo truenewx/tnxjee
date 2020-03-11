@@ -1,21 +1,5 @@
 package org.truenewx.tnxjee.repo.jpa.validation.config;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.time.temporal.Temporal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.Constraint;
-import javax.validation.constraints.NotBlank;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
@@ -37,11 +21,21 @@ import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.support.DataAccessTemplateFactory;
 import org.truenewx.tnxjee.repo.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.repo.validation.config.ValidationConfigurationFactory;
+import org.truenewx.tnxjee.repo.validation.config.ValidationEntityNameStrategy;
 import org.truenewx.tnxjee.repo.validation.rule.DecimalRule;
 import org.truenewx.tnxjee.repo.validation.rule.LengthRule;
 import org.truenewx.tnxjee.repo.validation.rule.MarkRule;
 import org.truenewx.tnxjee.repo.validation.rule.ValidationRule;
 import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
+
+import javax.validation.Constraint;
+import javax.validation.constraints.NotBlank;
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.time.temporal.Temporal;
+import java.util.*;
 
 /**
  * JPA校验配置工厂
@@ -51,8 +45,13 @@ import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
 public class JpaValidationConfigurationFactory implements ValidationConfigurationFactory, ContextInitializedBean {
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();
     private Map<Class<Annotation>, ValidationRuleBuilder<?>> ruleBuilders = new HashMap<>();
+    private ValidationEntityNameStrategy entityNameStrategy = ValidationEntityNameStrategy.DEFAULT;
     @Autowired
     private DataAccessTemplateFactory dataAccessTemplateFactory;
+
+    public void setEntityNameStrategy(ValidationEntityNameStrategy entityNameStrategy) {
+        this.entityNameStrategy = entityNameStrategy;
+    }
 
     @SuppressWarnings("unchecked")
     public void setValidationRuleBuilders(Collection<ValidationRuleBuilder<?>> builders) {
@@ -66,7 +65,7 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void afterInitialized(ApplicationContext context) throws Exception {
         Map<String, ValidationRuleBuilder> beans = context.getBeansOfType(ValidationRuleBuilder.class);
         for (ValidationRuleBuilder<?> builder : beans.values()) {
@@ -157,7 +156,7 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
         DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory.getDataAccessTemplate(entityClass);
         if (accessTemplate instanceof JpaAccessTemplate) {
             JpaAccessTemplate jat = (JpaAccessTemplate) accessTemplate;
-            String entityName = getEntityName(entityClass);
+            String entityName = this.entityNameStrategy.getEntityName(entityClass);
             PersistentClass persistentClass = jat.getPersistentClass(entityName);
             if (persistentClass != null) {
                 @SuppressWarnings("unchecked")
@@ -167,11 +166,6 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
                 }
             }
         }
-    }
-
-    // TODO 需要更好的实体名称获取机制
-    private String getEntityName(Class<?> entityClass) {
-        return entityClass.getName();
     }
 
     /**
