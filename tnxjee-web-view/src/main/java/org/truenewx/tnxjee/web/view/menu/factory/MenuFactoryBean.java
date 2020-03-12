@@ -12,7 +12,13 @@ public class MenuFactoryBean implements FactoryBean<Menu> {
     private String menuName;
     private MenuFactory menuFactory;
 
-    public void setMenuName(String menuName) {
+    /**
+     * 构建默认菜单名的菜单工厂Bean
+     */
+    public MenuFactoryBean() {
+    }
+
+    public MenuFactoryBean(String menuName) {
         this.menuName = menuName;
     }
 
