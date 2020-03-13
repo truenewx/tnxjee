@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.web.controller.security.util;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * 安全工具类
@@ -39,6 +39,7 @@ public class SecurityUtil {
      * @param <U> 用户类型
      * @return 已授权的当前用户
      */
+    @SuppressWarnings("unchecked")
     public static <U extends UserSpecificDetails<?>> U getAuthorizedUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
