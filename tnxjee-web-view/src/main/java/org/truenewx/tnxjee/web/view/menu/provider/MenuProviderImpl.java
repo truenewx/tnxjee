@@ -84,14 +84,16 @@ public class MenuProviderImpl implements MenuProvider {
 
     private boolean isGranted(Collection<? extends GrantedAuthority> grantedAuthorities,
             Collection<UserConfigAuthority> configAuthorities) {
-        if (CollectionUtils.isNotEmpty(configAuthorities)) {
-            for (UserConfigAuthority configAuthority : configAuthorities) {
-                // 只要有一个必备权限未获得，则视为未获权
-                if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getRole(), configAuthority.getPermission())) {
-                    return false;
-                }
+        if (CollectionUtils.isEmpty(configAuthorities)) {
+            // 即使允许匿名访问也必须配置匿名限定，没有权限限定是不允许出现的情况，视为获权失败
+            return false;
+        }
+        for (UserConfigAuthority configAuthority : configAuthorities) {
+            // 只要有一个必备权限未获得，则视为未获权
+            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getRole(), configAuthority.getPermission())) {
+                return false;
             }
-        } // 没有权限限制，则视为已获权
+        }
         return true;
     }
 

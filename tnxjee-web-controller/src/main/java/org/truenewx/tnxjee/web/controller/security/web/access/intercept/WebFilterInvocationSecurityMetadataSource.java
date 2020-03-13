@@ -1,12 +1,5 @@
 package org.truenewx.tnxjee.web.controller.security.web.access.intercept;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,11 +9,15 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.controller.security.config.annotation.ConfigAuthority;
 import org.truenewx.tnxjee.web.controller.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.web.controller.servlet.mvc.method.HandlerMethodMapping;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * WEB过滤器调用安全元数据源<br>
@@ -125,11 +122,12 @@ public class WebFilterInvocationSecurityMetadataSource
     @Override
     public Collection<UserConfigAuthority> resolveConfigAuthorities(String uri, HttpMethod method) {
         HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(uri, method);
-        if (handlerMethod != null) {
-            String methodKey = handlerMethod.getMethod().toString();
-            return this.configAttributesMap.get(methodKey);
+        if (handlerMethod == null) {
+            LogUtil.warn(getClass(), "There is not handlerMethod for {}->{}", method.name(), uri);
+            return null;
         }
-        return null;
+        String methodKey = handlerMethod.getMethod().toString();
+        return this.configAttributesMap.get(methodKey);
     }
 
 }
