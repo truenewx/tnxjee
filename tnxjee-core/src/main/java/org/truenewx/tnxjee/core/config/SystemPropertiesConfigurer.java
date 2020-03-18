@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.properties;
+package org.truenewx.tnxjee.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

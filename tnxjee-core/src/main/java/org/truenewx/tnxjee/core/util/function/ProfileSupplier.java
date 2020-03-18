@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.properties.ProfileProperties;
+import org.truenewx.tnxjee.core.config.ProfileProperties;
 
 import java.util.function.Supplier;
 
