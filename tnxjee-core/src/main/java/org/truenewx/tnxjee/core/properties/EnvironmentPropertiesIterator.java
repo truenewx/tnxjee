@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.core.context;
+package org.truenewx.tnxjee.core.properties;
 
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.*;

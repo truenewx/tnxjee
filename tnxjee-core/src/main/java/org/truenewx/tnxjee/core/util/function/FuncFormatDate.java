@@ -1,15 +1,14 @@
 package org.truenewx.tnxjee.core.util.function;
 
+import org.truenewx.tnxjee.core.util.DateUtil;
+
 import java.util.Date;
 import java.util.function.Function;
-
-import org.truenewx.tnxjee.core.util.DateUtil;
 
 /**
  * 函数：格式化日期
  *
  * @author jianglei
- * @since JDK 1.8
  */
 public class FuncFormatDate implements Function<Date, String> {
     /**

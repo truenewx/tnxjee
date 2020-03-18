@@ -1,19 +1,19 @@
-package org.truenewx.tnxjee.core.config;
+package org.truenewx.tnxjee.core.properties;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.truenewx.tnxjee.core.context.EnvironmentPropertiesIterator;
 
 /**
- * 系统属性配置
+ * 系统属性配置器
  */
 @Configuration
-public class SystemPropertiesConfiguration {
+public class SystemPropertiesConfigurer {
 
     private static final String SYSTEM_PROPERTY_PREFIX = "system.";
 
     @Bean
-    public EnvironmentPropertiesIterator propertiesIterator() {
+    public EnvironmentPropertiesIterator systemPropertiesIterator() {
+        // 将属性配置体系中system.开头的属性写到系统环境变量中
         return new EnvironmentPropertiesIterator((name, value) -> {
             if (name.startsWith(SYSTEM_PROPERTY_PREFIX) && value != null) {
                 String key = name.substring(SYSTEM_PROPERTY_PREFIX.length());
