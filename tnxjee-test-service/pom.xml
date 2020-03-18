@@ -16,7 +16,7 @@
         </dependency>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-service-api</artifactId>
+            <artifactId>tnxjee-service</artifactId>
         </dependency>
     </dependencies>
 </project>

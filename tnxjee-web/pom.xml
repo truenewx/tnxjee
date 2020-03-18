@@ -8,7 +8,7 @@
         <version>3.0.0</version>
     </parent>
     <groupId>org.truenewx.tnxjee</groupId>
-    <artifactId>tnxjee-web-controller</artifactId>
+    <artifactId>tnxjee-web</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-service-api</artifactId>
+            <artifactId>tnxjee-service</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
