@@ -1,18 +1,17 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.util.WebControllerUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
 
 /**
  * 子域名标签
@@ -51,7 +50,7 @@ public class SubDomainTag extends TagSupport {
         HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
         if (this.topDomain != null && !this.topDomain.startsWith("localhost")
                 && !this.topDomain.startsWith("127.0.0.1")) {
-            String host = WebControllerUtil.getHost(request);
+            String host = WebUtil.getHost(request);
             String subDomain = "";
             if (host.length() > this.topDomain.length()) {
                 subDomain = host.substring(0, host.length() - this.topDomain.length());

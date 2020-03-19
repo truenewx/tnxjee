@@ -1,19 +1,18 @@
 package org.truenewx.tnxjee.web.view.tag;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.web.util.WebControllerUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 转调控件
@@ -46,7 +45,7 @@ public class IncludeTag extends SimpleDynamicAttributeTagSupport {
         HttpServletRequest request = getRequest();
         ServletContext servletContext = request.getServletContext();
         if (this.url.startsWith(Strings.SLASH)) {
-            String host = WebControllerUtil.getHost(request);
+            String host = WebUtil.getHost(request);
             this.url = request.getScheme() + "://" + host + this.url;
         }
         try {

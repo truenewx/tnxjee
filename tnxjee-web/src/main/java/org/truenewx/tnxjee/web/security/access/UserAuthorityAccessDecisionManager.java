@@ -1,8 +1,5 @@
 package org.truenewx.tnxjee.web.security.access;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -18,12 +15,15 @@ import org.truenewx.tnxjee.model.spec.user.security.GrantedRoleAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
-import org.truenewx.tnxjee.web.util.WebControllerUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider{
+public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
         super(Arrays.asList(new WebExpressionVoter()));
@@ -61,7 +61,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
                 return false;
             }
             if (configAuthority.isIntranet()) { // 如果限制内网访问
-                String ip = WebControllerUtil.getRemoteAddress(fi.getHttpRequest());
+                String ip = WebUtil.getRemoteAddress(fi.getHttpRequest());
                 if (!NetUtil.isIntranetIp(ip)) {
                     return false; // 拒绝非内网访问
                 }
