@@ -1,9 +1,12 @@
 package org.truenewx.tnxjee.web.servlet;
 
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 import org.truenewx.tnxjee.core.Strings;
@@ -11,17 +14,12 @@ import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 import org.truenewx.tnxjee.core.version.VersionReader;
 
-import javax.servlet.ServletContext;
-import java.util.Map;
-
 /**
  * ServletContext初始化Bean
  */
 @Component
 @EnableConfigurationProperties(ServletContextProperties.class)
 public class ServletContextInitializedBean implements ServletContextAware, ContextInitializedBean {
-    @Autowired
-    private Environment environment;
     @Autowired
     private VersionReader versionReader;
     @Autowired
