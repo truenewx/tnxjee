@@ -1,11 +1,11 @@
 package org.truenewx.tnxjee.repo.mongo.support;
 
+import java.io.Serializable;
+
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
-
-import java.io.Serializable;
 
 /**
  * MongoDB从属单体的数据访问仓库
@@ -16,15 +16,9 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
         extends MongoUnityRepoSupport<T, K> implements OwnedUnityRepo<T, K, O> {
 
     /**
-     * 获取所属者属性名<br/>
-     * 默认返回null，此时通过标识获取单体后判断所属者是否匹配，可由子类覆写返回非null的值，从而通过所属字段限制单体查询<br/>
-     * 建议：当所属者为引用对象下的属性时 ，子类覆写提供非null的返回值，否则不覆写
-     *
-     * @return 所属者属性
+     * @return 所属者属性名
      */
-    protected String getOwnerProperty() {
-        return null;
-    }
+    protected abstract String getOwnerProperty();
 
     @Override
     public long countByOwner(O owner) {
@@ -49,7 +43,7 @@ public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K e
             }
             return null;
         }
-        Query query = new Query(Criteria.where(ownerProperty).is(owner).and(getKeyPropertyName()).is(id));
+        Query query = new Query(Criteria.where(ownerProperty).is(owner).and("id").is(id));
         return getAccessTemplate().first(getEntityClass(), query);
     }
 

@@ -1,7 +1,11 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.repo.UnityRepo;
 
@@ -10,12 +14,38 @@ import org.truenewx.tnxjee.repo.UnityRepo;
  *
  * @author jianglei
  */
-public abstract class JpaUnityRepoSupport<T extends Unity<K>, K extends Serializable>
-        extends JpaUnitaryRepoSupport<T, K> implements UnityRepo<T, K> {
+public abstract class JpaUnityRepoSupport<T extends Unity<K>, K extends Serializable> extends JpaRepoSupport<T>
+        implements UnityRepo<T, K> {
+
+    protected final T find(K id) {
+        return getRepository().findById(id).orElse(null);
+    }
 
     @Override
-    protected String getKeyPropertyName() {
-        return "id";
+    public <N extends Number> T increaseNumber(K id, String propertyName, N step, N limit) {
+        double stepValue = step.doubleValue();
+        if (stepValue != 0) { // 增量不为0时才处理
+            String entityName = getEntityName();
+            StringBuffer ql = new StringBuffer("update ").append(entityName).append(" set ").append(propertyName)
+                    .append(Strings.EQUAL).append(propertyName).append("+:step where id=:id");
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", id);
+            params.put("step", step);
+
+            if (doIncreaseNumber(ql, params, propertyName, stepValue > 0, limit)) {
+                // 正确更新字段后需刷新实体
+                T entity = find(id);
+                if (entity != null) {
+                    try {
+                        refresh(entity);
+                    } catch (Exception e) { // 忽略刷新失败
+                        LogUtil.error(getClass(), e);
+                    }
+                }
+                return entity;
+            }
+        }
+        return null;
     }
 
 }
