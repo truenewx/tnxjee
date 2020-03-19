@@ -2,9 +2,9 @@ package org.truenewx.tnxjee.service.impl.spec.region;
 
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.api.spec.region.NationalRegionSource;
-import org.truenewx.tnxjee.service.api.spec.region.Region;
-import org.truenewx.tnxjee.service.api.spec.region.RegionSource;
+import org.truenewx.tnxjee.service.spec.region.NationalRegionSource;
+import org.truenewx.tnxjee.service.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.RegionSource;
 
 import java.util.HashMap;
 import java.util.Locale;

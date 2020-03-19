@@ -18,7 +18,7 @@ import org.springframework.transaction.interceptor.NameMatchTransactionAttribute
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionProxyFactoryBean;
 import org.truenewx.tnxjee.core.beans.factory.TransactionalBeanFactory;
-import org.truenewx.tnxjee.service.api.transaction.annotation.Transactionable;
+import org.truenewx.tnxjee.service.transaction.annotation.Transactionable;
 
 /**
  * 事务性自动代理创建器

@@ -16,7 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.util.SpringWebUtil;
 
 /**
  * 动态属性标签支持

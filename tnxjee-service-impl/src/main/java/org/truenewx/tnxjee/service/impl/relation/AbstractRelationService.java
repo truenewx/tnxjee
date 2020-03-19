@@ -4,9 +4,9 @@ import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
 import org.truenewx.tnxjee.repo.RelationRepo;
-import org.truenewx.tnxjee.service.api.relation.ModelRelationService;
-import org.truenewx.tnxjee.service.api.relation.SimpleRelationService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
+import org.truenewx.tnxjee.service.relation.ModelRelationService;
+import org.truenewx.tnxjee.service.relation.SimpleRelationService;
 
 import java.io.Serializable;
 

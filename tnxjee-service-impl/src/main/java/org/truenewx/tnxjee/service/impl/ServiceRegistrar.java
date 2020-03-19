@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.service.impl;
 
-import org.truenewx.tnxjee.service.api.Service;
+import org.truenewx.tnxjee.service.Service;
 
 /**
  * 服务注册器

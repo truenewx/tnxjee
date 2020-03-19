@@ -13,7 +13,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.service.api.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.Region;
 
 /**
  * 基于JSON文件的国家级区划来源实现

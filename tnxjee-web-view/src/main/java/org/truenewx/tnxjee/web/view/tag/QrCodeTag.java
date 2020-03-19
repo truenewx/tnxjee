@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.web.controller.qrcode.QrCodeGenerator;
+import org.truenewx.tnxjee.web.qrcode.QrCodeGenerator;
 import org.truenewx.tnxjee.web.view.tagext.UiTagSupport;
 
 import com.google.zxing.WriterException;

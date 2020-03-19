@@ -3,9 +3,9 @@ package org.truenewx.tnxjee.service.impl.unity;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
-import org.truenewx.tnxjee.service.api.unity.ModelUnityService;
-import org.truenewx.tnxjee.service.api.unity.SimpleUnityService;
 import org.truenewx.tnxjee.service.impl.AbstractService;
+import org.truenewx.tnxjee.service.unity.ModelUnityService;
+import org.truenewx.tnxjee.service.unity.SimpleUnityService;
 
 import java.io.Serializable;
 

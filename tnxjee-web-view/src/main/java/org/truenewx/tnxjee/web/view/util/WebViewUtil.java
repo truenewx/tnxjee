@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.web.controller.servlet.mvc.Loginer;
-import org.truenewx.tnxjee.web.controller.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
+import org.truenewx.tnxjee.web.servlet.mvc.Loginer;
+import org.truenewx.tnxjee.web.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.util.WebControllerUtil;
 
 /**
  * Web视图层工具类

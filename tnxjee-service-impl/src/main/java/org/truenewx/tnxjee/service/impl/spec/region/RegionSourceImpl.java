@@ -8,9 +8,9 @@ import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
-import org.truenewx.tnxjee.service.api.spec.region.NationalRegionSource;
-import org.truenewx.tnxjee.service.api.spec.region.Region;
-import org.truenewx.tnxjee.service.api.spec.region.RegionSource;
+import org.truenewx.tnxjee.service.spec.region.NationalRegionSource;
+import org.truenewx.tnxjee.service.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.RegionSource;
 
 /**
  * 行政区划来源实现

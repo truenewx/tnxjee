@@ -8,7 +8,7 @@ import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.truenewx.tnxjee.web.controller.config.WebControllerMvcConfigurationSupport;
+import org.truenewx.tnxjee.web.config.WebControllerMvcConfigurationSupport;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
 

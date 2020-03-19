@@ -17,9 +17,9 @@ import org.truenewx.tnxjee.core.spec.InetAddressSet;
 import org.truenewx.tnxjee.core.util.ArrayUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.service.api.spec.region.Region;
-import org.truenewx.tnxjee.service.api.spec.region.RegionNationCodes;
-import org.truenewx.tnxjee.service.api.spec.region.RegionSource;
+import org.truenewx.tnxjee.service.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.RegionNationCodes;
+import org.truenewx.tnxjee.service.spec.region.RegionSource;
 
 /**
  * Cz88的区划-网络地址集合映射集解析器

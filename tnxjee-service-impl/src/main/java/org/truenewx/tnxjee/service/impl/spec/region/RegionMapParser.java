@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.service.impl.spec.region;
 
 import java.util.Map;
 
-import org.truenewx.tnxjee.service.api.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.Region;
 
 /**
  * 行政区划映射集解析器

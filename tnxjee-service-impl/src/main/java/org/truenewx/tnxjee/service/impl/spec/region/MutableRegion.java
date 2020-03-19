@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
-import org.truenewx.tnxjee.service.api.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.Region;
 
 /**
  * 内容可变的行政区划

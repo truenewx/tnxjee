@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.web.controller.util.WebControllerUtil;
+import org.truenewx.tnxjee.web.util.WebControllerUtil;
 import org.truenewx.tnxjee.web.view.tagext.SimpleDynamicAttributeTagSupport;
 
 /**

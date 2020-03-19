@@ -11,7 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
-import org.truenewx.tnxjee.service.api.Service;
+import org.truenewx.tnxjee.service.Service;
 import org.truenewx.tnxjee.service.impl.ServiceRegistrar;
 
 /**

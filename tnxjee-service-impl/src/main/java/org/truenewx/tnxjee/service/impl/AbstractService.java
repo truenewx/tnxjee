@@ -8,8 +8,8 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.support.RepositoryFactory;
-import org.truenewx.tnxjee.service.api.Service;
-import org.truenewx.tnxjee.service.api.exception.BusinessException;
+import org.truenewx.tnxjee.service.Service;
+import org.truenewx.tnxjee.service.exception.BusinessException;
 
 /**
  * 抽象服务

@@ -1,8 +1,8 @@
 package org.truenewx.tnxjee.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.truenewx.tnxjee.service.api.Service;
-import org.truenewx.tnxjee.service.api.ServiceFactory;
+import org.truenewx.tnxjee.service.Service;
+import org.truenewx.tnxjee.service.ServiceFactory;
 
 /**
  * 服务支持，具有快速获取其它服务的能力
