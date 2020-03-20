@@ -21,7 +21,6 @@
         <module>tnxjee-service</module>
         <module>tnxjee-service-impl</module>
         <module>tnxjee-test</module>
-        <module>tnxjee-test-repo</module>
         <module>tnxjee-test-service</module>
         <module>tnxjee-web</module>
         <module>tnxjee-web-view</module>
@@ -112,11 +111,6 @@
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-test</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-test-repo</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

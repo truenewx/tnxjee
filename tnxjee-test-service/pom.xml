@@ -12,11 +12,15 @@
     <dependencies>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
-            <artifactId>tnxjee-test-repo</artifactId>
+            <artifactId>tnxjee-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.truenewx.tnxjee</groupId>
+            <artifactId>tnxjee-repo</artifactId>
         </dependency>
     </dependencies>
 </project>

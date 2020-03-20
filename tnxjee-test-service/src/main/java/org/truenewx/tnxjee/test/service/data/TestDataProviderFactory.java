@@ -1,8 +1,4 @@
-package org.truenewx.tnxjee.test.repo.data;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.truenewx.tnxjee.test.service.data;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +10,10 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.support.RepositoryFactory;
-import org.truenewx.tnxjee.repo.test.data.DataProvider;
-import org.truenewx.tnxjee.repo.test.data.DataProviderFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 单元测试数据提供者工厂

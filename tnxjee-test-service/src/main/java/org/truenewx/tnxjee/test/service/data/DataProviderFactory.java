@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.test.data;
+package org.truenewx.tnxjee.test.service.data;
 
 /**
  * 数据提供者工厂
