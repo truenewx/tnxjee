@@ -18,7 +18,9 @@ public class BuildableSiteMeshFilter extends ConfigurableSiteMeshFilter {
 
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-        this.buildConsumer.accept(builder);
+        if (this.buildConsumer != null) {
+            this.buildConsumer.accept(builder);
+        }
     }
 
 }
