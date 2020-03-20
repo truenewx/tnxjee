@@ -6,7 +6,7 @@ import java.net.InetAddress;
  * 网络地址->区划解决器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface InetAddressRegionResolver {
     /**

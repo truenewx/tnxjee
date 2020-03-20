@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.service.ServiceFactory;
  * 服务工厂实现
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @org.springframework.stereotype.Service
 public class ServiceFactoryImpl implements ServiceFactory, ServiceRegistrar {

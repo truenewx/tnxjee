@@ -6,7 +6,7 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * SHA1加密器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class Sha1Encryptor implements Encryptor {
 

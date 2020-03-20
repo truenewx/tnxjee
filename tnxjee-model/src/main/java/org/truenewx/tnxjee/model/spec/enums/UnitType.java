@@ -7,7 +7,7 @@ import org.truenewx.tnxjee.core.caption.Caption;
  * 单位类型
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum UnitType {
 

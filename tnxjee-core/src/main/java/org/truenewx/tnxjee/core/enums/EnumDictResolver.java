@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.i18n.TextResolver;
  * 枚举字典解析器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface EnumDictResolver extends TextResolver {
     /**

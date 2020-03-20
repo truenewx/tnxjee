@@ -6,7 +6,7 @@ import java.util.Locale;
  * 属性显示名称解决器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface PropertyCaptionResolver {
 

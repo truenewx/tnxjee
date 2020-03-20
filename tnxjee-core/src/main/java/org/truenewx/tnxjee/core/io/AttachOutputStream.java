@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.MathUtil;
  * 带有附加信息的输出流，配套使用 {@link AttachInputStream} 读取附加信息
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class AttachOutputStream extends OutputStream {
 

@@ -10,7 +10,7 @@ import java.util.function.Function;
  * 函数：获取最大数值
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FuncMaxNumber implements Function<Class<?>, Number> {
 

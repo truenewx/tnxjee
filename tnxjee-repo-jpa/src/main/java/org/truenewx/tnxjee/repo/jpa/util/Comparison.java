@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.repo.jpa.util;
  * 比较操作符
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum Comparison {
     /**

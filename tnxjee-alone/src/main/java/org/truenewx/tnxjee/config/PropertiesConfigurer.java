@@ -6,7 +6,7 @@ import java.util.Map;
  * 属性集配置器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class PropertiesConfigurer implements PropertiesProvider {
 

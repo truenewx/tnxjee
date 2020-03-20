@@ -30,7 +30,7 @@ import org.truenewx.tnxjee.core.util.tuple.Binate;
  * Http客户端工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class HttpClientUtil {
 

@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 容器初始化后执行bean代理，为目标bean提供线程执行能力
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class ContextInitializedBeanProxy implements Runnable, ContextInitializedBean {
     private Executor executor;

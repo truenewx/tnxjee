@@ -17,7 +17,7 @@ import java.io.IOException;
  * 子域名标签
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class SubDomainTag extends TagSupport {
 

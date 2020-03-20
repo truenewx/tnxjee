@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.model.spec.enums.Program;
  * 终端类型
  *
  * @author liuzhiyi
- * @since JDK 1.8
+ * 
  */
 public class Terminal {
 

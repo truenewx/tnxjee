@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.model.spec.enums.support;
  * 非法的枚举值异常
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class IllegalEnumValueException extends RuntimeException {
 

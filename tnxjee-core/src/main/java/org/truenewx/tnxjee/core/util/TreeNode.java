@@ -9,7 +9,7 @@ import java.util.List;
  * 树节点
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TreeNode<K extends Serializable> implements Serializable {
 

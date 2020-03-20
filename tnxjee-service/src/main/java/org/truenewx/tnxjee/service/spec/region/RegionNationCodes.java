@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.service.spec.region;
  * 国家/地区级行政区划编码集
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class RegionNationCodes {
 

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * IP地址集合，可同时包含IPv4和IPv6
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class InetAddressSet {
     private List<InetAddressRange<?>> ranges = new ArrayList<>();

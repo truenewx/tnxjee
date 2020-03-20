@@ -8,7 +8,7 @@ import java.util.Set;
  * 包含多个异常信息的多异常
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class MultiException extends ResolvableException implements Iterable<SingleException> {
 

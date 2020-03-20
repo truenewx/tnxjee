@@ -18,7 +18,7 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
  * Bean工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class BeanUtil {
 

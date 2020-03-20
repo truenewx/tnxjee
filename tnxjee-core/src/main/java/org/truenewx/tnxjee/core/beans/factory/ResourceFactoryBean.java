@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.core.io.WebContextResourceLoader;
  * 资源工厂Bean
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class ResourceFactoryBean implements FactoryBean<Resource> {
 

@@ -6,7 +6,7 @@ import java.util.Objects;
  * 三元体
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <L> 左元类型
  * @param <M> 中元类型
  * @param <R> 右元类型

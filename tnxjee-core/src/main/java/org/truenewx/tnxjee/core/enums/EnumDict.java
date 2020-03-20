@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.util.tuple.Binate;
  * 枚举字典
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class EnumDict {
 

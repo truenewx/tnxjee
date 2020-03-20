@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.repo.validation.rule;
  * 校验规则
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public abstract class ValidationRule {
 

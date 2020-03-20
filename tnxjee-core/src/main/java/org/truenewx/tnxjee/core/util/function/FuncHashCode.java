@@ -8,7 +8,7 @@ import java.util.function.Function;
  * 函数：计算hashCode
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FuncHashCode implements Function<Object, Integer> {
     /**

@@ -7,7 +7,7 @@ import java.util.Map.Entry;
  * 文本内容替换转换器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TextContentReplaceConverter implements TextContentConverter {
 

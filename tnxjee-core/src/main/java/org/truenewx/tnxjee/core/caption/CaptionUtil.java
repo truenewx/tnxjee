@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  * 显示名称工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class CaptionUtil {
 

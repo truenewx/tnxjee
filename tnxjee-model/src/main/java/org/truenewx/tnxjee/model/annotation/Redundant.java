@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * 标注属性冗余
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Documented
 @Target(ElementType.FIELD)

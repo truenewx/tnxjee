@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @param <L> 左标识类型
  * @param <R> 右标识类型
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public abstract class AbstractRelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends AbstractService<T> implements SimpleRelationService<T, L, R>, ModelRelationService<T, L, R> {

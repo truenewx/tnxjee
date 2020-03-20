@@ -43,7 +43,7 @@ import com.github.stuxuhai.jpinyin.PinyinHelper;
  * 字符串工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class StringUtil {
     /**

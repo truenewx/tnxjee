@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.repo.validation.rule;
  * 范围规则
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <T> 值类型
  */
 public abstract class RangeRule<T> extends ValidationRule {

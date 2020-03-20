@@ -21,7 +21,7 @@ import org.truenewx.tnxjee.core.io.WebContextResource;
  * 资源文件基本名称工厂Bean
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class ResourceBundleBasenameFactoryBean implements FactoryBean<String[]> {
 

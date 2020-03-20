@@ -6,7 +6,7 @@ import java.util.Locale;
  * 具体国家的行政区划来源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface NationalRegionSource {
     /**

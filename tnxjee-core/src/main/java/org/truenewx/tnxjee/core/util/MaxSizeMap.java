@@ -10,7 +10,7 @@ import java.util.Map;
  * 当Map大小达到最大值后，优先移除最早被加入的条目，put()和putAll()方法会更新条目的顺序
  * 
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <K>
  *            键类型
  * @param <V>

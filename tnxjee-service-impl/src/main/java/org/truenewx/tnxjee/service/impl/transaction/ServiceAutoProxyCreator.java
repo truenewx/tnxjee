@@ -18,7 +18,7 @@ import org.truenewx.tnxjee.service.impl.ServiceRegistrar;
  * 服务自动代理创建器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Component
 public class ServiceAutoProxyCreator extends TransactionalAutoProxyCreator

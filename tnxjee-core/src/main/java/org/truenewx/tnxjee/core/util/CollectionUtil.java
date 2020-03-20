@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * 集合工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class CollectionUtil {
 

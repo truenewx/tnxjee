@@ -6,7 +6,7 @@ import java.util.Locale;
  * 国际化显示文本解析器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface TextResolver {
 

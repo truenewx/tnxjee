@@ -33,7 +33,7 @@ import org.truenewx.tnxjee.core.Strings;
  * 网络工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class NetUtil {
 

@@ -8,7 +8,7 @@ import java.util.Set;
  * 标签限定规则
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TagLimitRule extends ValidationRule {
 

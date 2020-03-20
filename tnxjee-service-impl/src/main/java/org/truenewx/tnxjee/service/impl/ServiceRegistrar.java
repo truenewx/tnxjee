@@ -6,7 +6,7 @@ import org.truenewx.tnxjee.service.Service;
  * 服务注册器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface ServiceRegistrar {
     /**

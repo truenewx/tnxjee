@@ -13,7 +13,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 包资源扫描器，扫描指定包及其子包，查找满足指定文件名样式的文件资源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class PackageResourceScaner {
 

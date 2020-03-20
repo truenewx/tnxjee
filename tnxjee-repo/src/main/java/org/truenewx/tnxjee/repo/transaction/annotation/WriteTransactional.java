@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 可写事务
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

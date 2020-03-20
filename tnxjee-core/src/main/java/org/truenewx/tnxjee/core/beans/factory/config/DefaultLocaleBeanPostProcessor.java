@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * 默认区域配置处理器。为了让设置默认区域的动作在所有Bean初始化之前执行
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Component
 public class DefaultLocaleBeanPostProcessor implements BeanPostProcessor {

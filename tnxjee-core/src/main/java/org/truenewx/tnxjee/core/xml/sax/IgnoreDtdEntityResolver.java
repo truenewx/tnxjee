@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
  * 忽略DTD内容的EntityResolver
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class IgnoreDtdEntityResolver implements EntityResolver {
 

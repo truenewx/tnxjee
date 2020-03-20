@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 文本文件内容转换器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TextFileContentConverter implements FileContentConverter {
 

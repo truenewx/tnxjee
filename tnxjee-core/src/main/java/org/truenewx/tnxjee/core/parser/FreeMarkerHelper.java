@@ -9,7 +9,7 @@ import freemarker.template.Configuration;
  * FreeMarker助手
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FreeMarkerHelper {
 

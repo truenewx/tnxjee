@@ -7,7 +7,7 @@ import org.truenewx.tnxjee.core.util.StringUtil;
  * 格式化的随机字符串工厂Bean
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FormattedRandomStringFactoryBean implements FactoryBean<String> {
     /**

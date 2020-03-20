@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.core.spec;
  * 命名支持
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class NamedSupport implements Named {
     private String name;

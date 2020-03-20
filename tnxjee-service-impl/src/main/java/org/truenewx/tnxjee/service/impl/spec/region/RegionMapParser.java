@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.service.spec.region.Region;
  * 行政区划映射集解析器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface RegionMapParser {
     /**

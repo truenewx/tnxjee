@@ -24,7 +24,7 @@ import org.truenewx.tnxjee.service.transaction.annotation.Transactionable;
  * 事务性自动代理创建器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TransactionalAutoProxyCreator
         implements SmartInstantiationAwareBeanPostProcessor, BeanClassLoaderAware, Ordered {

@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.model.annotation.EnumValue;
  * 算法：获取枚举值对应的枚举常量
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class EnumValueHelper {
 

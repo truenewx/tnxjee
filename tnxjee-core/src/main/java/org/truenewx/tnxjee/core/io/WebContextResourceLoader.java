@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
  * 基于Web根目录的上下文资源加载器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class WebContextResourceLoader extends DefaultResourceLoader
         implements ContextResourceLoader {

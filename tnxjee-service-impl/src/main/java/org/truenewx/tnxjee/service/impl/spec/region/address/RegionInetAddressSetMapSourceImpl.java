@@ -14,7 +14,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 抽象的区划-网络地址集合 来源实现
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class RegionInetAddressSetMapSourceImpl
         implements RegionInetAddressSetMapSource, InitializingBean {

@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.core.util.tuple;
  * 坐标
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class Coordinate {
     /**

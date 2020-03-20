@@ -15,7 +15,7 @@ import org.truenewx.tnxjee.model.query.QuerySort;
  * 对象查询语言(OQL)工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class OqlUtil {
 

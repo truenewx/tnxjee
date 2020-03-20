@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.service.spec.region.RegionSource;
  * 行政区划来源实现
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     /**

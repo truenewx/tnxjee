@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.core.util.tuple;
  * 三元的（由三个元素组成的）
  * 
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <L>
  *            左元类型
  * @param <M>

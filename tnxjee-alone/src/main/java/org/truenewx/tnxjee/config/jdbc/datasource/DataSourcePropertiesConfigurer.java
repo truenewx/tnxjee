@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.config.PropertiesConfigurer;
  * 数据源属性配置器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class DataSourcePropertiesConfigurer extends PropertiesConfigurer {
 

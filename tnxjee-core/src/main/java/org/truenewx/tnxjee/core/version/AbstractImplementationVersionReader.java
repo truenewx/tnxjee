@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
  * 注意：使用时应创建位于目标jar包中的子类，以便读取MANIFEST.MF文件，且确保其中包含Implementation-Version属性
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public abstract class AbstractImplementationVersionReader extends AbstractVersionReader {
 

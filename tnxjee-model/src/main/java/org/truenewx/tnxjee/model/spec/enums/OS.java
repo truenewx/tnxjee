@@ -7,7 +7,7 @@ import org.truenewx.tnxjee.model.annotation.EnumValue;
  * 操作系统类型
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum OS {
 

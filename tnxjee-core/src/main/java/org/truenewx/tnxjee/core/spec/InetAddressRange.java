@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.function.FuncHashCode;
  * IP地址段
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class InetAddressRange<T extends InetAddress> {
     private T begin;

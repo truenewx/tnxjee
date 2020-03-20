@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.repo.validation.rule;
  * 字符串长度规则
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class LengthRule extends RangeRule<Integer> {
 

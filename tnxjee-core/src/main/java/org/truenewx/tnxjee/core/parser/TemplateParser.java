@@ -9,7 +9,7 @@ import java.util.Map;
  * 模板解析器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface TemplateParser {
 

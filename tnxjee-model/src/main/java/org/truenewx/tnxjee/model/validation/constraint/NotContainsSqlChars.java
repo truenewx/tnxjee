@@ -19,7 +19,7 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.NotContainsSqlC
  * 不能包含SQL字符，这些特殊字符可能影响数据查询的准确性
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Target({ FIELD, ANNOTATION_TYPE })
 @Retention(RUNTIME)

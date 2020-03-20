@@ -5,7 +5,7 @@ package org.truenewx.tnxjee.core.util.algorithm;
  * 标识接口
  * 
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface Algorithm {
 

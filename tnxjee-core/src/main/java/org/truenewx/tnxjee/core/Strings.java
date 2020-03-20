@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.core;
  * 字符串常量集
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class Strings {
 

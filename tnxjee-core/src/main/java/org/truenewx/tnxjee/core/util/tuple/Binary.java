@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.util.function.FuncHashCode;
  * 二元体
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <L> 左元类型
  * @param <R> 右元类型
  * @see Binate

@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * 抽象计数器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public abstract class AbstractCounter<K> implements Counter<K> {
 

@@ -4,7 +4,7 @@ package org.truenewx.tnxjee.service.impl;
  * 服务异常错误码集
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class ServiceExceptionCodes {
 

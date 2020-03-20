@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * 组件类型
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Documented
 @Target({ ElementType.FIELD, ElementType.PARAMETER })

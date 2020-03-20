@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
  * Bean属性值配置器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class BeanPropertyValueConfigurer implements InitializingBean, ContextInitializedBean {
     /**

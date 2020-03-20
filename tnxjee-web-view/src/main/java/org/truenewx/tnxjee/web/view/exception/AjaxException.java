@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.util.CollectionUtil;
  * AJAX访问异常
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class AjaxException extends Exception {
 

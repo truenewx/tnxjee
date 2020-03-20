@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
  * Java 8 新版时间相关类的工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class TemporalUtil {
 

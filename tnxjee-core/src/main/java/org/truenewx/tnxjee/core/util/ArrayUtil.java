@@ -10,7 +10,7 @@ import java.util.function.Predicate;
  * 数组工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class ArrayUtil {
 

@@ -6,7 +6,7 @@ import org.truenewx.tnxjee.core.caption.Caption;
  * 布尔枚举
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum BooleanEnum {
 

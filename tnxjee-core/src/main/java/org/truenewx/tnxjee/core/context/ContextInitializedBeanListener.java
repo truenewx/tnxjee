@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 如果一个bean具有代理，则只执行代理
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Component
 public class ContextInitializedBeanListener implements ApplicationListener<ContextRefreshedEvent> {

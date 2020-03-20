@@ -7,7 +7,7 @@ import java.util.Locale;
  * 行政区划来源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface RegionSource {
     /**

@@ -17,7 +17,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 网络地址->区划解决器实现
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class InetAddressRegionResolverImpl implements InetAddressRegionResolver {
     private RegionInetAddressSetMapSource regionInetAddressSetMapSource;

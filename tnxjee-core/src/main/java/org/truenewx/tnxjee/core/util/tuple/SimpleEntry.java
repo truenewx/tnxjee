@@ -6,7 +6,7 @@ import java.util.Objects;
  * 简单键值对条目
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <K>
  *            键类型
  * @param <V>

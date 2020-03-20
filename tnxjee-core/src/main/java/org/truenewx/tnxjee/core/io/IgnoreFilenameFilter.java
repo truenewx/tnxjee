@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.StringUtil;
  * 忽略文件名的文件过滤器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class IgnoreFilenameFilter implements IOFileFilter {
 

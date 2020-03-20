@@ -8,7 +8,7 @@ import org.truenewx.tnxjee.core.spec.Deviation;
  * 有偏差的数值
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class DeviatedNumber<T extends Number> implements Serializable {
 

@@ -6,7 +6,7 @@ import java.util.Map;
  * 属性动态的
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface PropertyDynamic {
 

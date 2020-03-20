@@ -26,7 +26,7 @@ import org.truenewx.tnxjee.service.spec.region.RegionSource;
  *
  * @author jianglei
  * @version 1.0.0 2014年7月14日
- * @since JDK 1.8
+ * 
  */
 public class Cz88RegionInetAddressSetMapParser implements RegionInetAddressSetMapParser {
 

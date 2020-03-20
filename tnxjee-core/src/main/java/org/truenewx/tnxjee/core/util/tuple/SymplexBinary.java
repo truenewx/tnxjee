@@ -7,7 +7,7 @@ import org.truenewx.tnxjee.core.util.function.FuncHashCode;
  * 对称二元体，其左右元顺序不敏感，(a,b)等同于(b,a)
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  * @param <T> 元素类型
  */
 public class SymplexBinary<T> extends Binary<T, T> {

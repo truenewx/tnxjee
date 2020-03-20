@@ -10,7 +10,7 @@ import java.util.function.Function;
  * 函数：获取最小数值
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FuncMinNumber implements Function<Class<?>, Number> {
 

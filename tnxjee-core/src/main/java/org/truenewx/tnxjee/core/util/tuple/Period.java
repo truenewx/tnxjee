@@ -6,7 +6,7 @@ import java.util.Date;
  * 时间区间
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class Period {
 

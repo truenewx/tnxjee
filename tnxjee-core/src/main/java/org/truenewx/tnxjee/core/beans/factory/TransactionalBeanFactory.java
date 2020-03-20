@@ -6,7 +6,7 @@ import org.springframework.beans.factory.BeanFactory;
  * 事务性Bean工厂
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface TransactionalBeanFactory extends BeanFactory {
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * 事务性Bean提交处理器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Component
 public class TransactionalBeanFactoryDelegate

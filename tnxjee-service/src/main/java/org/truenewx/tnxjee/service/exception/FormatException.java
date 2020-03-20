@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.core.util.function.FuncHashCode;
  * 格式异常，必须绑定属性
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FormatException extends SingleException {
 

@@ -12,7 +12,7 @@ import java.util.Set;
  * 枚举项
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class EnumItem implements Comparable<EnumItem> {
 

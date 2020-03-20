@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 枚举值
  * 
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

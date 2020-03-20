@@ -8,7 +8,7 @@ import java.util.Set;
  * 计数器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface Counter<K> extends Iterable<Entry<K, Integer>> {
 

@@ -8,7 +8,7 @@ import java.util.List;
  * 属性元数据
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class PropertyMeta {
     private String name;

@@ -17,7 +17,7 @@ import org.truenewx.tnxjee.core.Strings;
  * 相对于Web项目根目录的上下文资源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class WebContextResource implements ContextResource {
 

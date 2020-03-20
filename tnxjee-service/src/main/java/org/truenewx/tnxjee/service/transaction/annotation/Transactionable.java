@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * 可具有事务的
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

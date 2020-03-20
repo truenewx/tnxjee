@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.core.spec.InetAddressSet;
  *
  * @author jianglei
  * @version 1.0.0 2014年7月14日
- * @since JDK 1.8
+ * 
  */
 public interface RegionInetAddressSetMapSource {
     /**

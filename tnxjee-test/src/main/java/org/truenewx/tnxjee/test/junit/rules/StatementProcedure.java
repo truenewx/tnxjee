@@ -7,7 +7,7 @@ import org.junit.runners.model.Statement;
  * junit规则扩展语句执行过程
  * 
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface StatementProcedure {
     /**

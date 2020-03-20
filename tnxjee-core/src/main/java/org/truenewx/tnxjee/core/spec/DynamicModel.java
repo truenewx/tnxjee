@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.core.util.JsonUtil;
  * 动态模型（含有动态属性）
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class DynamicModel implements PropertyDynamic {
     /**

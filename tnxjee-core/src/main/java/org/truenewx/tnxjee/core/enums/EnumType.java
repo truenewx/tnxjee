@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.spec.Named;
  * 枚举类型
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class EnumType implements Named {
     /**

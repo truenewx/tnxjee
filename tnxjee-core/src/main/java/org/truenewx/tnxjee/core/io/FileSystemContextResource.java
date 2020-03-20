@@ -7,7 +7,7 @@ import org.springframework.core.io.FileSystemResource;
  * 基于文件系统的上下文资源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FileSystemContextResource extends FileSystemResource implements ContextResource {
 

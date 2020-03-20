@@ -7,7 +7,7 @@ import java.util.Map;
  * 消息集来源
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface MessagesSource {
     /**

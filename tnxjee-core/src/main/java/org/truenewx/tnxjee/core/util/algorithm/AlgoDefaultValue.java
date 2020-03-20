@@ -15,7 +15,7 @@ import org.truenewx.tnxjee.core.Strings;
  * 算法：获取指定类型的默认值
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class AlgoDefaultValue implements Algorithm {
 

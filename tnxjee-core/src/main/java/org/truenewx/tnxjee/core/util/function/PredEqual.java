@@ -12,7 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
  * 断言：对象相等
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class PredEqual implements BiPredicate<Object, Object> {
     /**

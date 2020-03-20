@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 默认线程池执行器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class DefaultThreadPoolExecutor extends ThreadPoolExecutor {
 

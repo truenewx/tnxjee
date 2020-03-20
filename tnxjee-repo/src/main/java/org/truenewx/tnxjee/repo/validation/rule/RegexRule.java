@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
  * 正则表达式规则
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class RegexRule extends ValidationRule {
     /**

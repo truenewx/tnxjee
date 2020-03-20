@@ -28,7 +28,7 @@ import org.truenewx.tnxjee.core.Strings;
  * IO工具类
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class IOUtil {
 

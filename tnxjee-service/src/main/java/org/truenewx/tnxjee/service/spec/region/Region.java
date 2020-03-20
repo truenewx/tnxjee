@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  * 行政区划
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class Region {
     /**

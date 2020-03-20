@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.core.util.DateUtil;
  * 函数：解析字符串为日期
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class FuncParseDate implements Function<String, Date> {
     /**

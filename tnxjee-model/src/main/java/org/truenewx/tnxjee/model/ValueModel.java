@@ -6,7 +6,7 @@ package org.truenewx.tnxjee.model;
  * {@link Object#equals(Object)} ，以便更好地区分不同实例
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public interface ValueModel extends Model {
     @Override

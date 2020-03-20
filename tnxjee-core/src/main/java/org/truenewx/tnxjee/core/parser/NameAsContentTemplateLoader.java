@@ -12,7 +12,7 @@ import freemarker.cache.TemplateLoader;
  * 将模板文件路径作为模板内容加载的模板加载器
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public class NameAsContentTemplateLoader implements TemplateLoader {
 

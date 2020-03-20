@@ -6,7 +6,7 @@ import org.truenewx.tnxjee.core.caption.Caption;
  * 数值偏差
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum Deviation {
 

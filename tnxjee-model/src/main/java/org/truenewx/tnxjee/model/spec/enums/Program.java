@@ -7,7 +7,7 @@ import org.truenewx.tnxjee.model.annotation.EnumValue;
  * 程序类型
  *
  * @author jianglei
- * @since JDK 1.8
+ * 
  */
 public enum Program {
 
