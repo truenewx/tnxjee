@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web;
+package org.truenewx.tnxjee.web.http.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +8,8 @@ import org.truenewx.tnxjee.web.http.converter.JacksonHttpMessageConverter;
 
 import java.util.List;
 
-/**
- * WEB控制层配置，必须的控制层配置均在此配置
- */
 @Configuration
-public class WebControllerConfiguration implements WebMvcConfigurer {
+public class WebHttpConfigurer implements WebMvcConfigurer {
 
     @Bean
     public JacksonHttpMessageConverter jacksonHttpMessageConverter() {
@@ -23,4 +20,5 @@ public class WebControllerConfiguration implements WebMvcConfigurer {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(jacksonHttpMessageConverter());
     }
+
 }

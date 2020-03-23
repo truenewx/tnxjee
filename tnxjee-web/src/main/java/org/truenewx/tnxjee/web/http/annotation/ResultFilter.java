@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.web.http.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 结果过滤配置
@@ -29,4 +24,9 @@ public @interface ResultFilter {
      * @return 排除的属性名称集，为空则不限定
      */
     String[] excluded() default {};
+
+    /**
+     * @return 附带caption字段的枚举字段名称集
+     */
+    String[] captionEnum() default {};
 }

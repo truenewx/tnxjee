@@ -14,39 +14,43 @@ import java.util.Set;
  */
 public class TypedPropertyFilter extends SimpleBeanPropertyFilter {
 
-    private Map<Class<?>, FilteredNames> mapping = new HashMap<>();
+    private Map<Class<?>, FilteredNames> properties = new HashMap<>();
 
     private FilteredNames getFilteredProperties(Class<?> beanClass) {
-        FilteredNames filteredProperties = this.mapping.get(beanClass);
+        FilteredNames filteredProperties = this.properties.get(beanClass);
         if (filteredProperties == null) {
             filteredProperties = new FilteredNames();
-            this.mapping.put(beanClass, filteredProperties);
+            this.properties.put(beanClass, filteredProperties);
         }
         return filteredProperties;
     }
 
     public TypedPropertyFilter addIncludedProperties(Class<?> beanClass, String... includedProperties) {
-        getFilteredProperties(beanClass).addIncluded(includedProperties);
+        if (includedProperties.length > 0) {
+            getFilteredProperties(beanClass).addIncluded(includedProperties);
+        }
         return this;
     }
 
     public TypedPropertyFilter addExcludedProperties(Class<?> beanClass, String... excludedProperties) {
-        getFilteredProperties(beanClass).addExcluded(excludedProperties);
+        if (excludedProperties.length > 0) {
+            getFilteredProperties(beanClass).addExcluded(excludedProperties);
+        }
         return this;
     }
 
-    public TypedPropertyFilter addAll(Map<Class<?>, FilteredNames> map) {
-        this.mapping.putAll(map);
+    public TypedPropertyFilter addAllProperties(Map<Class<?>, FilteredNames> map) {
+        this.properties.putAll(map);
         return this;
     }
 
     public Class<?>[] getTypes() {
-        Set<Class<?>> types = this.mapping.keySet();
+        Set<Class<?>> types = this.properties.keySet();
         return types.toArray(new Class<?>[types.size()]);
     }
 
     public boolean isNotEmpty() {
-        return this.mapping.size() > 0;
+        return this.properties.size() > 0;
     }
 
     @Override

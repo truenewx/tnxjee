@@ -9,7 +9,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.method.HandlerMethod;
-import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
@@ -31,6 +31,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
+    @Autowired
+    private EnumDictResolver enumDictResolver;
 
     private Map<String, ObjectMapper> mappers = new HashMap<>();
 
@@ -55,7 +57,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                         if (mapper == null) {
                             ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
                             if (ArrayUtils.isNotEmpty(resultFilters)) {
-                                TypedPropertyFilter filter = new TypedPropertyFilter();
+                                EnumTypePropertyFilter filter = createPropertyFilter();
+                                filter.setEnumDictResolver(this.enumDictResolver);
                                 for (ResultFilter resultFilter : resultFilters) {
                                     Class<?> beanClass = resultFilter.type();
                                     if (beanClass == Object.class) {
@@ -63,10 +66,11 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                                     }
                                     filter.addIncludedProperties(beanClass, resultFilter.included());
                                     filter.addExcludedProperties(beanClass, resultFilter.excluded());
+                                    filter.addCaptionEnumProperties(beanClass, resultFilter.captionEnum());
                                 }
                                 mapper = JsonUtil.buildMapper(filter, filter.getTypes());
                                 this.mappers.put(methodKey, mapper);
-                            } else {
+                            } else { // 没有结果过滤设置的取默认映射器
                                 mapper = getObjectMapper();
                             }
                         }
@@ -80,6 +84,10 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
         }
         super.writeInternal(object, type, outputMessage);
+    }
+
+    protected EnumTypePropertyFilter createPropertyFilter() {
+        return new EnumTypePropertyFilter();
     }
 
 }

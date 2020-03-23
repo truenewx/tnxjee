@@ -1,16 +1,5 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,9 +7,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JSON工具类
@@ -120,7 +121,7 @@ public class JsonUtil {
     public static String toJson(Object obj, Map<Class<?>, FilteredNames> filteredPropertiesMap) {
         TypedPropertyFilter filter = null;
         if (CollectionUtil.isNotEmpty(filteredPropertiesMap)) {
-            filter = new TypedPropertyFilter().addAll(filteredPropertiesMap);
+            filter = new TypedPropertyFilter().addAllProperties(filteredPropertiesMap);
         }
         return toJson(obj, filter);
     }
