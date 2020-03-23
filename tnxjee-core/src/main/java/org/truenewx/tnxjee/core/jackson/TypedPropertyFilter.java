@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.core.jackson;
 
-import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import org.truenewx.tnxjee.core.util.FilteredNames;
@@ -49,20 +50,22 @@ public class TypedPropertyFilter extends SimpleBeanPropertyFilter {
         return types.toArray(new Class<?>[types.size()]);
     }
 
-    @Override
-    protected boolean include(BeanPropertyWriter writer) {
-        Class<?> beanClass = writer.getMember().getDeclaringClass();
-        String propertyName = writer.getName();
-        return getFilteredProperties(beanClass).include(propertyName);
-    }
-
 
     @Override
     protected boolean include(PropertyWriter writer) {
-        if (writer instanceof BeanPropertyWriter) {
-            return include((BeanPropertyWriter) writer);
+        if (writer instanceof BeanTypeWarePropertyWriter) {
+            BeanTypeWarePropertyWriter typeWriter = (BeanTypeWarePropertyWriter) writer;
+            Class<?> beanType = typeWriter.getBeanType();
+            String propertyName = writer.getName();
+            return getFilteredProperties(beanType).include(propertyName);
         }
-        return super.include(writer);
+        return true;
+    }
+
+    @Override
+    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
+            throws Exception {
+        super.serializeAsField(pojo, jgen, provider, new BeanTypeWarePropertyWriter(writer, pojo.getClass()));
     }
 
 }
