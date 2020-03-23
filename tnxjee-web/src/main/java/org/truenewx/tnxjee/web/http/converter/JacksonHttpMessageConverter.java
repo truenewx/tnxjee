@@ -66,7 +66,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                                     }
                                     filter.addIncludedProperties(beanClass, resultFilter.included());
                                     filter.addExcludedProperties(beanClass, resultFilter.excluded());
-                                    filter.addCaptionEnumProperties(beanClass, resultFilter.captionEnum());
+                                    filter.addPureEnumProperties(beanClass, resultFilter.pureEnum());
                                 }
                                 mapper = JsonUtil.buildMapper(filter, filter.getTypes());
                                 this.mappers.put(methodKey, mapper);

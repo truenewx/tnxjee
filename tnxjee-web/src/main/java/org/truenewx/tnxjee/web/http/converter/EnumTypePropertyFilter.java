@@ -2,15 +2,13 @@ package org.truenewx.tnxjee.web.http.converter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.BeanUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -18,53 +16,43 @@ import java.util.*;
  */
 public class EnumTypePropertyFilter extends TypedPropertyFilter {
 
-    private Map<Class<?>, String[]> enumProperties = new HashMap<>();
+    private Map<Class<?>, String[]> pureEnumProperties = new HashMap<>();
     private EnumDictResolver enumDictResolver;
 
     public void setEnumDictResolver(EnumDictResolver enumDictResolver) {
         this.enumDictResolver = enumDictResolver;
     }
 
-    public TypedPropertyFilter addCaptionEnumProperties(Class<?> beanClass, String... captionEnumProperties) {
-        if (captionEnumProperties.length > 0) {
-            this.enumProperties.put(beanClass, captionEnumProperties);
+    public TypedPropertyFilter addPureEnumProperties(Class<?> beanClass, String... pureEnumProperties) {
+        if (pureEnumProperties.length > 0) {
+            this.pureEnumProperties.put(beanClass, pureEnumProperties);
         }
         return this;
     }
 
     @Override
     public Class<?>[] getTypes() {
-        Set<Class<?>> types = new HashSet<>(this.enumProperties.keySet());
+        Set<Class<?>> types = new HashSet<>(this.pureEnumProperties.keySet());
         Collections.addAll(types, super.getTypes());
         return types.toArray(new Class<?>[types.size()]);
-    }
-
-    @Override
-    public boolean isNotEmpty() {
-        return super.isNotEmpty() && this.enumProperties.size() > 0;
     }
 
     @Override
     public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
             throws Exception {
         super.serializeAsField(pojo, jgen, provider, writer);
-        if (this.enumDictResolver != null && include(writer)) {
-            Class<?> beanClass = writer.getMember().getDeclaringClass();
-            String[] enumPropertyNames = this.enumProperties.get(beanClass);
-            if (ArrayUtils.isNotEmpty(enumPropertyNames)) {
-                String propertyName = writer.getName();
-                if (ArrayUtils.contains(enumPropertyNames, propertyName)) {
-                    PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(beanClass, propertyName);
-                    if (pd != null && pd.getPropertyType().isEnum()) {
-                        Method readMethod = pd.getReadMethod();
-                        if (readMethod != null) {
-                            Enum<?> value = (Enum<?>) readMethod.invoke(pojo);
-                            if (value != null) {
-                                String caption = this.enumDictResolver.getText(value, provider.getLocale());
-                                if (caption != null) {
-                                    jgen.writeStringField(getCaptionPropertyName(propertyName), caption);
-                                }
-                            }
+        if (this.enumDictResolver != null && writer.getType().isEnumType()) { // 附加处理枚举类型
+            AnnotatedMember member = writer.getMember();
+            Enum<?> value = (Enum<?>) member.getValue(pojo);
+            if (value != null) {
+                Class<?> beanClass = member.getDeclaringClass();
+                String[] pureEnumPropertyNames = this.pureEnumProperties.get(beanClass);
+                if (ArrayUtils.isNotEmpty(pureEnumPropertyNames)) {
+                    String propertyName = writer.getName();
+                    if (!ArrayUtils.contains(pureEnumPropertyNames, propertyName)) {
+                        String caption = this.enumDictResolver.getText(value, provider.getLocale());
+                        if (caption != null) {
+                            jgen.writeStringField(getCaptionPropertyName(propertyName), caption);
                         }
                     }
                 }

@@ -49,10 +49,6 @@ public class TypedPropertyFilter extends SimpleBeanPropertyFilter {
         return types.toArray(new Class<?>[types.size()]);
     }
 
-    public boolean isNotEmpty() {
-        return this.properties.size() > 0;
-    }
-
     @Override
     protected boolean include(BeanPropertyWriter writer) {
         Class<?> beanClass = writer.getMember().getDeclaringClass();

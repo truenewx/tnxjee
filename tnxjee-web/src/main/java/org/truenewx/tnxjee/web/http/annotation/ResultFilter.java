@@ -26,7 +26,9 @@ public @interface ResultFilter {
     String[] excluded() default {};
 
     /**
-     * @return 附带caption字段的枚举字段名称集
+     * 默认情况下，枚举属性序列化会添加一个附加属性存放caption，而纯粹的枚举属性不会添加附加属性
+     *
+     * @return 纯粹的枚举属性名称集
      */
-    String[] captionEnum() default {};
+    String[] pureEnum() default {};
 }
