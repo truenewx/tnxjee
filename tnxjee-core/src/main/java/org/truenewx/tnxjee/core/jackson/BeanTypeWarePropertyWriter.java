@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.core.jackson;
 
+import java.lang.annotation.Annotation;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,8 +11,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
-
-import java.lang.annotation.Annotation;
 
 /**
  * 可获取Bean类型的属性书写者
@@ -67,33 +67,37 @@ public class BeanTypeWarePropertyWriter extends PropertyWriter {
     }
 
     @Override
-    public void serializeAsField(Object value, JsonGenerator jgen, SerializerProvider provider) throws Exception {
+    public void serializeAsField(Object value, JsonGenerator jgen, SerializerProvider provider)
+            throws Exception {
         this.base.serializeAsField(value, jgen, provider);
     }
 
     @Override
-    public void serializeAsOmittedField(Object value, JsonGenerator jgen, SerializerProvider provider)
-            throws Exception {
+    public void serializeAsOmittedField(Object value, JsonGenerator jgen,
+            SerializerProvider provider) throws Exception {
         this.base.serializeAsOmittedField(value, jgen, provider);
     }
 
     @Override
-    public void serializeAsElement(Object value, JsonGenerator jgen, SerializerProvider provider) throws Exception {
+    public void serializeAsElement(Object value, JsonGenerator jgen, SerializerProvider provider)
+            throws Exception {
         this.base.serializeAsElement(value, jgen, provider);
     }
 
     @Override
-    public void serializeAsPlaceholder(Object value, JsonGenerator jgen, SerializerProvider provider) throws Exception {
+    public void serializeAsPlaceholder(Object value, JsonGenerator jgen,
+            SerializerProvider provider) throws Exception {
         this.base.serializeAsPlaceholder(value, jgen, provider);
     }
 
     @Override
-    public void depositSchemaProperty(JsonObjectFormatVisitor objectVisitor, SerializerProvider provider)
-            throws JsonMappingException {
+    public void depositSchemaProperty(JsonObjectFormatVisitor objectVisitor,
+            SerializerProvider provider) throws JsonMappingException {
         this.base.depositSchemaProperty(objectVisitor, provider);
     }
 
     @Override
+    @Deprecated
     public void depositSchemaProperty(ObjectNode propertiesNode, SerializerProvider provider)
             throws JsonMappingException {
         this.base.depositSchemaProperty(propertiesNode, provider);
