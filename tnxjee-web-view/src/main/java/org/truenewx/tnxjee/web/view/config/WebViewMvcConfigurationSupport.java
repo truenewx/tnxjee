@@ -4,7 +4,7 @@ import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.truenewx.tnxjee.web.config.WebControllerMvcConfigurationSupport;
+import org.truenewx.tnxjee.web.config.WebMvcConfigurationSupport;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
 
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 /**
  * WEB视图层MVC配置支持
  */
-public abstract class WebViewMvcConfigurationSupport extends WebControllerMvcConfigurationSupport {
+public abstract class WebViewMvcConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Bean
     public FilterRegistrationBean<ForbidAccessFilter> forbidAccessFilter() {

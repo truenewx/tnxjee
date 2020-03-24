@@ -4,7 +4,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +81,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
             @Override
             public void run() {
-                FilterSecurityInterceptor interceptor = http.getSharedObject(FilterSecurityInterceptor.class);
+                FilterSecurityInterceptor interceptor = http
+                        .getSharedObject(FilterSecurityInterceptor.class);
                 WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
-                FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor.getSecurityMetadataSource();
+                FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor
+                        .getSecurityMetadataSource();
                 if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
                     metadataSource.setOrigin(originalMetadataSource);
                 }
@@ -103,15 +108,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
                 .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
-        http.authorizeRequests()
-                .requestMatchers(anonymousMatchers).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling()
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest()
+                .authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler())
-                .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
+                .accessDeniedHandler(accessDeniedHandler()).and().logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
                 .deleteCookies("JSESSIONID").permitAll();
         // @formatter:on
     }
@@ -135,8 +136,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      */
     protected Collection<RequestMatcher> getAnonymousRequestMatchers() {
         List<RequestMatcher> matchers = new ArrayList<>();
-        matchers.add(new AntPathRequestMatcher(getLoginUrl()));
-        matchers.add(new AntPathRequestMatcher("/error/**"));
+        for (String pattern : getAnonymousAntPatterns()) {
+            if (StringUtils.isNotBlank(pattern)) {
+                matchers.add(new AntPathRequestMatcher(pattern));
+            }
+        }
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
@@ -159,6 +163,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         });
 
         return matchers;
+    }
+
+    protected Collection<String> getAnonymousAntPatterns() {
+        Set<String> patterns = new HashSet<>();
+        Collections.addAll(patterns, getLoginUrl(), "/error/**");
+        return patterns;
     }
 
     protected String getLoginUrl() {
