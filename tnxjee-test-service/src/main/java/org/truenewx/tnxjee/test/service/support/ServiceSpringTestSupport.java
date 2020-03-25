@@ -1,21 +1,26 @@
 package org.truenewx.tnxjee.test.service.support;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.test.service.data.DataProviderFactory;
 import org.truenewx.tnxjee.test.service.junit.rules.ExpectedBusinessException;
 import org.truenewx.tnxjee.test.support.SpringTestSupport;
+
+import java.util.List;
 
 /**
  * Service的JUnit4+Spring环境测试
  *
  * @author jianglei
  */
+@TestExecutionListeners(TransactionalTestExecutionListener.class)
+@Transactional
 public abstract class ServiceSpringTestSupport extends SpringTestSupport {
 
     @Rule
