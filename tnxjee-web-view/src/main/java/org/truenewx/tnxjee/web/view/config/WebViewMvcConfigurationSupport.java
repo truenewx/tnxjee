@@ -67,11 +67,11 @@ public abstract class WebViewMvcConfigurationSupport extends WebMvcConfiguration
      * @return 资源文件存放目录
      */
     protected String getStaticResourceLocation(String pattern) {
-        int index = pattern.indexOf("*");
+        int index = pattern.indexOf(Strings.ASTERISK);
         if (index >= 0) {
             pattern = pattern.substring(0, index);
         }
-        index = pattern.lastIndexOf("/");
+        index = pattern.lastIndexOf(Strings.SLASH);
         if (index >= 0) {
             pattern = pattern.substring(0, index + 1);
         }
