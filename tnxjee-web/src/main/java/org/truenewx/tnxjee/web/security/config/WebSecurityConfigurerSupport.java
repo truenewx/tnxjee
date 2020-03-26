@@ -1,14 +1,5 @@
 package org.truenewx.tnxjee.web.security.config;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +24,10 @@ import org.truenewx.tnxjee.web.security.web.access.BusinessExceptionAccessDenied
 import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * WEB安全配置器支持
@@ -78,21 +73,18 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Override
     public void init(WebSecurity web) throws Exception {
         HttpSecurity http = getHttp();
-        web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
-            @Override
-            public void run() {
-                FilterSecurityInterceptor interceptor = http
-                        .getSharedObject(FilterSecurityInterceptor.class);
-                WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
-                FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor
-                        .getSecurityMetadataSource();
-                if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
-                    metadataSource.setOrigin(originalMetadataSource);
-                }
-                interceptor.setSecurityMetadataSource(metadataSource);
-                interceptor.setAccessDecisionManager(accessDecisionManager());
-                web.securityInterceptor(interceptor);
+        web.addSecurityFilterChainBuilder(http).postBuildAction(() -> {
+            FilterSecurityInterceptor interceptor = http
+                    .getSharedObject(FilterSecurityInterceptor.class);
+            WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
+            FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor
+                    .getSecurityMetadataSource();
+            if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
+                metadataSource.setOrigin(originalMetadataSource);
             }
+            interceptor.setSecurityMetadataSource(metadataSource);
+            interceptor.setAccessDecisionManager(accessDecisionManager());
+            web.securityInterceptor(interceptor);
         });
     }
 
@@ -120,7 +112,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     /**
      * 加载登录配置
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected final void applyLoginConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
