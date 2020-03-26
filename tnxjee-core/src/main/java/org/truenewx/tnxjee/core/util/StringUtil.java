@@ -1,5 +1,14 @@
 package org.truenewx.tnxjee.core.util;
 
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.truenewx.tnxjee.core.Strings;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -9,41 +18,16 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Currency;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Random;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
-import org.truenewx.tnxjee.core.Strings;
-
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
-
 /**
  * 字符串工具类
  *
  * @author jianglei
- * 
  */
 public class StringUtil {
     /**
@@ -562,6 +546,17 @@ public class StringUtil {
             return result;
         }
         return (T[]) Array.newInstance(elementClass, 0);
+    }
+
+    public static String[] splitAndTrim(String s, String regex) {
+        if (s == null) {
+            return null;
+        }
+        String[] array = s.split(regex);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = array[i].trim();
+        }
+        return array;
     }
 
     public static Set<String> splitToSet(String s, String regex, boolean trim) {

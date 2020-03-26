@@ -9,11 +9,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.security.config.WebSecurityConfigurerSupport;
 import org.truenewx.tnxjee.web.security.web.access.BusinessExceptionAccessDeniedHandler;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -25,7 +27,7 @@ public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfig
     @Autowired
     private ViewBusinessExceptionResolver viewBusinessExceptionResolver;
     @Autowired
-    private WebMvcProperties webMvcProperties;
+    private WebMvcProperties mvcProperties;
 
     @Bean
     @Override
@@ -51,12 +53,10 @@ public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfig
     protected Collection<String> getIgnoringAntPatterns() {
         Collection<String> patterns = new HashSet<>();
         // 静态资源全部忽略
-        String staticPathPattern = this.webMvcProperties.getStaticPathPattern();
+        String staticPathPattern = this.mvcProperties.getStaticPathPattern();
         if (StringUtils.isNotBlank(staticPathPattern)) {
-            String[] staticPathPatterns = staticPathPattern.split(Strings.COMMA);
-            for (String pattern : staticPathPatterns) {
-                patterns.add(pattern.trim());
-            }
+            String[] staticPathPatterns = StringUtil.splitAndTrim(staticPathPattern, Strings.COMMA);
+            Collections.addAll(patterns, staticPathPatterns);
         }
         return patterns;
     }
