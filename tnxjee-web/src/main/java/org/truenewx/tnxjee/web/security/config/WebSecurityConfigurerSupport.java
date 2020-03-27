@@ -106,13 +106,27 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
                 .accessDeniedHandler(accessDeniedHandler()).and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
                 .deleteCookies("JSESSIONID").permitAll();
+        if (isCsrfDisabled()) {
+            http.csrf().disable();
+        }
         // @formatter:on
+    }
+
+    /**
+     * 判断是否关闭csrf限定，csrf：跨站点请求伪造<br>
+     * true-允许其它站点向当前站点发送请求，false-禁止其它站点向当前站点发送请求<br>
+     * 默认为true
+     *
+     * @return 是否关闭csrf限定
+     */
+    protected boolean isCsrfDisabled() {
+        return true;
     }
 
     /**
      * 加载登录配置
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected final void applyLoginConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
