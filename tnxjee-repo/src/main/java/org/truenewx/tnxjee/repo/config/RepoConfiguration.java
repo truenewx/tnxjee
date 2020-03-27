@@ -1,15 +1,18 @@
 package org.truenewx.tnxjee.repo.config;
 
-import javax.validation.ValidatorFactory;
-
-import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.internal.engine.ValidatorImpl;
+import org.hibernate.validator.internal.metadata.BeanMetaDataManager;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Role;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.message.PropertiesMessageSource;
+import org.truenewx.tnxjee.core.util.BeanUtil;
+import org.truenewx.tnxjee.repo.validation.metadata.DelegateBeanMetaDataManager;
 
 /**
  * 存储层配置
@@ -33,11 +36,18 @@ public class RepoConfiguration {
     }
 
     @Bean("validator")
-    public ValidatorFactory validatorFactory(MessageSource messageSource) {
-        LocalValidatorFactoryBean factory = new LocalValidatorFactoryBean();
-        factory.setProviderClass(HibernateValidator.class);
-        factory.setValidationMessageSource(messageSource);
-        return factory;
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public LocalValidatorFactoryBean validator(MessageSource messageSource) {
+        LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
+        factoryBean.setValidationMessageSource(messageSource);
+        return factoryBean;
+    }
+
+    @Bean
+    public BeanMetaDataManager beanMetaDataManager(LocalValidatorFactoryBean validator) {
+        ValidatorImpl targetValidator = BeanUtil.getFieldValue(validator, "targetValidator");
+        BeanMetaDataManager beanMetaDataManager = BeanUtil.getFieldValue(targetValidator, "beanMetaDataManager");
+        return new DelegateBeanMetaDataManager(beanMetaDataManager);
     }
 
 }
