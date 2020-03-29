@@ -1,5 +1,21 @@
 package org.truenewx.tnxjee.repo.jpa.validation.config;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.time.temporal.Temporal;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.Constraint;
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
@@ -28,21 +44,13 @@ import org.truenewx.tnxjee.repo.validation.rule.MarkRule;
 import org.truenewx.tnxjee.repo.validation.rule.ValidationRule;
 import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
 
-import javax.validation.Constraint;
-import javax.validation.constraints.NotBlank;
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.time.temporal.Temporal;
-import java.util.*;
-
 /**
  * JPA校验配置工厂
  *
  * @author jianglei
  */
-public class JpaValidationConfigurationFactory implements ValidationConfigurationFactory, ContextInitializedBean {
+public class JpaValidationConfigurationFactory
+        implements ValidationConfigurationFactory, ContextInitializedBean {
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();
     private Map<Class<Annotation>, ValidationRuleBuilder<?>> ruleBuilders = new HashMap<>();
     private ValidationEntityNameStrategy entityNameStrategy = ValidationEntityNameStrategy.DEFAULT;
@@ -57,7 +65,8 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     public void setValidationRuleBuilders(Collection<ValidationRuleBuilder<?>> builders) {
         for (ValidationRuleBuilder<?> builder : builders) {
             for (Class<?> constraintType : builder.getConstraintTypes()) {
-                Assert.isTrue(isConstraintAnnotation(constraintType), "constraintType must be constraint annotation");
+                Assert.isTrue(isConstraintAnnotation(constraintType),
+                        "constraintType must be constraint annotation");
                 // setter方法设置的构建器优先，会覆盖掉已有的构建器
                 this.ruleBuilders.put((Class<Annotation>) constraintType, builder);
             }
@@ -65,12 +74,14 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void afterInitialized(ApplicationContext context) throws Exception {
-        Map<String, ValidationRuleBuilder> beans = context.getBeansOfType(ValidationRuleBuilder.class);
+        Map<String, ValidationRuleBuilder> beans = context
+                .getBeansOfType(ValidationRuleBuilder.class);
         for (ValidationRuleBuilder<?> builder : beans.values()) {
             for (Class<?> constraintType : builder.getConstraintTypes()) {
-                Assert.isTrue(isConstraintAnnotation(constraintType), "constraintType must be constraint annotation");
+                Assert.isTrue(isConstraintAnnotation(constraintType),
+                        "constraintType must be constraint annotation");
                 // 不覆盖通过setter方法设置的构建器
                 if (!this.ruleBuilders.containsKey(constraintType)) {
                     this.ruleBuilders.put((Class<Annotation>) constraintType, builder);
@@ -88,9 +99,7 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
         ValidationConfiguration configuration = this.configurations.get(modelClass);
         if (configuration == null) {
             configuration = buildConfiguration(modelClass);
-            if (configuration != null) {
-                this.configurations.put(modelClass, configuration);
-            }
+            this.configurations.put(modelClass, configuration);
         }
         return configuration;
     }
@@ -99,9 +108,11 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     private ValidationConfiguration buildConfiguration(Class<? extends Model> modelClass) {
         ValidationConfiguration configuration = new ValidationConfiguration(modelClass);
         if (CommandModel.class.isAssignableFrom(modelClass)) {
-            addEntityClassRulesFromTransportClass(configuration, (Class<? extends CommandModel<?>>) modelClass);
+            addEntityClassRulesFromCommandModelClass(configuration,
+                    (Class<? extends CommandModel<?>>) modelClass);
         } else if (Entity.class.isAssignableFrom(modelClass)) {
-            addEntityClassRulesFromPersistentConfig(configuration, (Class<? extends Entity>) modelClass);
+            addEntityClassRulesFromPersistentConfig(configuration,
+                    (Class<? extends Entity>) modelClass);
         }
         addRulesByAnnotation(configuration, modelClass);
 
@@ -114,9 +125,10 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
      * @param configuration     校验配置
      * @param commandModelClass 命令模型类
      */
-    private void addEntityClassRulesFromTransportClass(ValidationConfiguration configuration,
+    private void addEntityClassRulesFromCommandModelClass(ValidationConfiguration configuration,
             Class<? extends CommandModel<?>> commandModelClass) {
-        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(commandModelClass, CommandModel.class, 0);
+        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(commandModelClass,
+                CommandModel.class, 0);
         List<Field> fields = ClassUtil.getSimplePropertyField(commandModelClass);
         for (Field field : fields) {
             // 加入对应实体的校验规则
@@ -151,15 +163,16 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
      * @param configuration 校验配置
      * @param entityClass   实体类
      */
+    @SuppressWarnings("unchecked")
     private void addEntityClassRulesFromPersistentConfig(ValidationConfiguration configuration,
             Class<? extends Entity> entityClass) {
-        DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory.getDataAccessTemplate(entityClass);
+        DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory
+                .getDataAccessTemplate(entityClass);
         if (accessTemplate instanceof JpaAccessTemplate) {
             JpaAccessTemplate jat = (JpaAccessTemplate) accessTemplate;
             String entityName = this.entityNameStrategy.getEntityName(entityClass);
             PersistentClass persistentClass = jat.getPersistentClass(entityName);
             if (persistentClass != null) {
-                @SuppressWarnings("unchecked")
                 Iterator<Property> properties = persistentClass.getPropertyIterator();
                 while (properties.hasNext()) {
                     addRuleByProperty(configuration, entityClass, properties.next(), null);
@@ -176,15 +189,17 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
      * @param property           属性
      * @param propertyNamePrefix 属性名前缀
      */
-    private void addRuleByProperty(ValidationConfiguration configuration, Class<?> clazz, Property property,
-            String propertyNamePrefix) {
+    private void addRuleByProperty(ValidationConfiguration configuration, Class<?> clazz,
+            Property property, String propertyNamePrefix) {
         String propertyName = property.getName();
-        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(clazz, propertyName);
+        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(clazz,
+                propertyName);
         if (propertyDescriptor != null) {
             addRuleByProperty(configuration, property, propertyDescriptor, propertyNamePrefix);
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void addRuleByProperty(ValidationConfiguration configuration, Property property,
             PropertyDescriptor propertyDescriptor, String propertyNamePrefix) {
         if (StringUtils.isBlank(propertyNamePrefix)) { // 前缀默认为空
@@ -193,10 +208,11 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
         String propertyName = propertyDescriptor.getName();
         Class<?> propertyClass = propertyDescriptor.getPropertyType();
         // 只处理字符串型、数值、日期型
-        if (CharSequence.class.isAssignableFrom(propertyClass) || Number.class.isAssignableFrom(propertyClass)
+        if (CharSequence.class.isAssignableFrom(propertyClass)
+                || Number.class.isAssignableFrom(propertyClass)
                 || (propertyClass.isPrimitive() && propertyClass != boolean.class)
-                || Date.class.isAssignableFrom(propertyClass) || Temporal.class.isAssignableFrom(propertyClass)) {
-            @SuppressWarnings("unchecked")
+                || Date.class.isAssignableFrom(propertyClass)
+                || Temporal.class.isAssignableFrom(propertyClass)) {
             Iterator<Column> columns = property.getColumnIterator();
             // 只支持对应且仅对应一个物理字段的
             if (!columns.hasNext()) {
@@ -214,7 +230,8 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
                     rule.setMax(maxLength);
                     configuration.addRule(propertyName, rule);
                 }
-            } else if (Date.class.isAssignableFrom(propertyClass) || Temporal.class.isAssignableFrom(propertyClass)) { // 日期型
+            } else if (Date.class.isAssignableFrom(propertyClass)
+                    || Temporal.class.isAssignableFrom(propertyClass)) { // 日期型
                 if (!column.isNullable()) { // 不允许为null的日期型，添加不允许为空白的约束
                     configuration.addRule(propertyName, new MarkRule(NotBlank.class));
                 }
@@ -260,7 +277,8 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
                 // 必须同时有读方法和写方法才视为有效属性
                 if (pd.getReadMethod() != null && pd.getWriteMethod() != null) {
                     String propertyPath = propertyNamePrefix + pd.getName();
-                    Property referencedProperty = persistentClass.getReferencedProperty(propertyPath);
+                    Property referencedProperty = persistentClass
+                            .getReferencedProperty(propertyPath);
                     addRuleByProperty(configuration, referencedProperty, pd, propertyNamePrefix);
                 }
             }
@@ -287,7 +305,8 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
             addRuleByPropertyAnnotation(configuration, propertyName, annotation);
         }
         // 再尝试在属性的setter方法上找约束注解生成规则，这意味着setter方法上的约束注解优先级更高
-        Method method = ClassUtil.findPropertyMethod(field.getDeclaringClass(), propertyName, false);
+        Method method = ClassUtil.findPropertyMethod(field.getDeclaringClass(), propertyName,
+                false);
         if (method != null) {
             for (Annotation annotation : method.getAnnotations()) {
                 addRuleByPropertyAnnotation(configuration, propertyName, annotation);
@@ -296,15 +315,15 @@ public class JpaValidationConfigurationFactory implements ValidationConfiguratio
     }
 
     @SuppressWarnings("unchecked")
-    private void addRuleByPropertyAnnotation(ValidationConfiguration configuration, String propertyName,
-            Annotation annotation) {
+    private void addRuleByPropertyAnnotation(ValidationConfiguration configuration,
+            String propertyName, Annotation annotation) {
         Class<? extends Annotation> annoClass = annotation.annotationType();
         if (isConstraintAnnotation(annoClass)) {
             ValidationRuleBuilder<ValidationRule> builder = (ValidationRuleBuilder<ValidationRule>) this.ruleBuilders
                     .get(annoClass);
             if (builder != null) {
-                Class<? extends ValidationRule> ruleClass = ClassUtil.getActualGenericType(builder.getClass(),
-                        ValidationRuleBuilder.class, 0);
+                Class<? extends ValidationRule> ruleClass = ClassUtil
+                        .getActualGenericType(builder.getClass(), ValidationRuleBuilder.class, 0);
                 ValidationRule rule = configuration.getRule(propertyName, ruleClass);
                 if (rule == null) {
                     rule = builder.create(annotation);
