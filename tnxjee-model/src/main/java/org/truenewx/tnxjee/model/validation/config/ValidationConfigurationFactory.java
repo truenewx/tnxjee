@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.validation.config;
+package org.truenewx.tnxjee.model.validation.config;
 
 import org.truenewx.tnxjee.model.Model;
 

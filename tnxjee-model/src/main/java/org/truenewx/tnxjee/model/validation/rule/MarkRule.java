@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.validation.rule;
+package org.truenewx.tnxjee.model.validation.rule;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

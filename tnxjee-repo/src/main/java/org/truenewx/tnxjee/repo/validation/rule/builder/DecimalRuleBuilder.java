@@ -11,7 +11,7 @@ import javax.validation.constraints.Min;
 
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.repo.validation.rule.DecimalRule;
+import org.truenewx.tnxjee.model.validation.rule.DecimalRule;
 
 /**
  * 数值规则的构建器

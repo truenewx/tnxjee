@@ -2,7 +2,7 @@ package org.truenewx.tnxjee.repo.validation.rule.builder;
 
 import java.lang.annotation.Annotation;
 
-import org.truenewx.tnxjee.repo.validation.rule.ValidationRule;
+import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 
 /**
  * 校验规则构建器

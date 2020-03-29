@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.model.validation.constraint.NotContainsAngleBracket;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsHtmlChars;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsSpecialChars;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsSqlChars;
-import org.truenewx.tnxjee.repo.validation.rule.NotContainsRule;
+import org.truenewx.tnxjee.model.validation.rule.NotContainsRule;
 
 /**
  * 不能包含字符串规则构建器

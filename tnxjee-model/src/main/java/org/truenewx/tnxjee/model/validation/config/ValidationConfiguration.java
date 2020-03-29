@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.validation.config;
+package org.truenewx.tnxjee.model.validation.config;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.truenewx.tnxjee.model.Model;
-import org.truenewx.tnxjee.repo.validation.rule.ValidationRule;
+import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 
 /**
  * 校验设置

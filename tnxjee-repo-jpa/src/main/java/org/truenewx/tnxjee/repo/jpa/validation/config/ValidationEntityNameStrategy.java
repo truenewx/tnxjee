@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.validation.config;
+package org.truenewx.tnxjee.repo.jpa.validation.config;
 
 /**
  * 校验实体名称策略<br/>

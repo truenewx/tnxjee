@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsAngleBracket;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsHtmlChars;
-import org.truenewx.tnxjee.repo.validation.rule.MarkRule;
+import org.truenewx.tnxjee.model.validation.rule.MarkRule;
 
 /**
  * 标识规则的构建器

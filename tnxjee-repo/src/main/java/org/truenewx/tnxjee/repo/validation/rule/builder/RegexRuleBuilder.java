@@ -6,7 +6,7 @@ import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.repo.validation.rule.RegexRule;
+import org.truenewx.tnxjee.model.validation.rule.RegexRule;
 
 /**
  * 正则表达式规则构建器

@@ -5,7 +5,7 @@ import java.lang.annotation.Annotation;
 import javax.validation.constraints.Size;
 
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.repo.validation.rule.SizeRule;
+import org.truenewx.tnxjee.model.validation.rule.SizeRule;
 
 /**
  * 字符串长度和集合大小规则的构建器

@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.model.validation.constraint.TagLimit;
-import org.truenewx.tnxjee.repo.validation.rule.TagLimitRule;
+import org.truenewx.tnxjee.model.validation.rule.TagLimitRule;
 
 /**
  * 标签限定规则构建器
