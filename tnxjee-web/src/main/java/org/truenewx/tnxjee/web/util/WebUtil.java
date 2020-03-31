@@ -11,6 +11,10 @@ import org.springframework.web.util.WebUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.model.spec.Terminal;
+import org.truenewx.tnxjee.model.spec.enums.Device;
+import org.truenewx.tnxjee.model.spec.enums.OS;
+import org.truenewx.tnxjee.model.spec.enums.Program;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -46,7 +50,8 @@ public class WebUtil {
      * @param excludedParameterNames 排除的参数名
      * @return 指定request请求中的所有参数的map集合
      */
-    public static Map<String, Object> getRequestParameterMap(ServletRequest request, String... excludedParameterNames) {
+    public static Map<String, Object> getRequestParameterMap(ServletRequest request,
+            String... excludedParameterNames) {
         Map<String, Object> map = new LinkedHashMap<>();
         Map<String, String[]> params = request.getParameterMap();
         params.forEach((name, values) -> {
@@ -94,7 +99,8 @@ public class WebUtil {
      * @param ignoredParameterNames 不包含在参数串中的参数名清单
      * @return 相对于web项目的请求URL
      */
-    public static String getRelativeRequestUrlWithQueryString(HttpServletRequest request, boolean encode,
+    public static String getRelativeRequestUrlWithQueryString(HttpServletRequest request,
+            boolean encode,
             String... ignoredParameterNames) {
         String encoding = request.getCharacterEncoding();
         if (encoding == null) {
@@ -193,7 +199,8 @@ public class WebUtil {
      * @param servletContext the ServletContext
      * @return 替换后的新字符串
      */
-    public static String replacePlaceholderFromServletContext(String s, ServletContext servletContext) {
+    public static String replacePlaceholderFromServletContext(String s,
+            ServletContext servletContext) {
         if (StringUtils.isEmpty(s)) {
             return s;
         }
@@ -436,7 +443,8 @@ public class WebUtil {
      * @param path     路径
      * @return Cookie对象
      */
-    public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly, String path) {
+    public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly,
+            String path) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(maxAge);
         cookie.setHttpOnly(httpOnly);
@@ -473,7 +481,8 @@ public class WebUtil {
      * @param maxAge      有效时间，单位：秒
      * @author jianglei
      */
-    public static void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+    public static void addCookie(HttpServletRequest request, HttpServletResponse response,
+            String cookieName,
             String cookieValue, int maxAge) {
         Cookie cookie = createCookie(cookieName, cookieValue, maxAge, false, request);
         response.addCookie(cookie);
@@ -488,7 +497,8 @@ public class WebUtil {
      * @param cookieValue cookie值
      * @author jianglei
      */
-    public static void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+    public static void addCookie(HttpServletRequest request, HttpServletResponse response,
+            String cookieName,
             String cookieValue) {
         addCookie(request, response, cookieName, cookieValue, Integer.MAX_VALUE);
     }
@@ -587,7 +597,8 @@ public class WebUtil {
         }
     }
 
-    public static void setDownloadFilename(HttpServletRequest request, HttpServletResponse response, String filename) {
+    public static void setDownloadFilename(HttpServletRequest request, HttpServletResponse response,
+            String filename) {
         response.setContentType(Mimetypes.getInstance().getMimetype(filename));
         String userAgent = request.getHeader("User-Agent").toUpperCase();
         if (userAgent.contains("MSIE") || userAgent.contains("TRIDENT")) {
@@ -596,6 +607,43 @@ public class WebUtil {
             filename = new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         }
         response.setHeader("content-disposition", "attachment;filename=" + filename);
+    }
+
+    /**
+     * 获取请求终端信息
+     *
+     * @param request HTTP请求
+     * @return 请求终端
+     */
+    public static Terminal getRequestTerminal(HttpServletRequest request) {
+        String terminal = request.getHeader("Terminal");
+        if (terminal != null) {
+            return Terminal.of(terminal);
+        }
+        // 默认视为PC版网页，不限操作系统
+        Device device = Device.PC;
+        Program program = Program.WEB;
+        OS os = null;
+        String userAgent = request.getHeader("User-Agent");
+        if (StringUtils.isNotBlank(userAgent)) {
+            userAgent = userAgent.toLowerCase();
+            if (!userAgent.contains("webkit") && !userAgent.contains("firefox")
+                    && !userAgent.contains("opera") && !userAgent.contains("msie")) {
+                program = Program.NATIVE;
+            }
+            if (userAgent.contains("ipad")) {
+                device = Device.PAD;
+                os = OS.MAC;
+            } else if (userAgent.contains("iphone")) {
+                device = Device.PHONE;
+                os = OS.MAC;
+            } else if (userAgent.contains("android")) {
+                os = OS.ANDROID;
+            } else if (userAgent.contains("windows")) {
+                os = OS.WINDOWS;
+            }
+        }
+        return new Terminal(device, program, os);
     }
 
 }

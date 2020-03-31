@@ -7,7 +7,6 @@ import org.truenewx.tnxjee.model.annotation.EnumValue;
  * 程序类型
  *
  * @author jianglei
- * 
  */
 public enum Program {
 
@@ -15,8 +14,12 @@ public enum Program {
     @EnumValue("W")
     WEB,
 
-    @Caption("应用")
-    @EnumValue("A")
-    APP;
+    @Caption("原生")
+    @EnumValue("N")
+    NATIVE,
+
+    @Caption("小程序")
+    @EnumValue("M")
+    MP;
 
 }

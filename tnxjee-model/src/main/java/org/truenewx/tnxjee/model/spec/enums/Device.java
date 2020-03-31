@@ -7,7 +7,6 @@ import org.truenewx.tnxjee.model.annotation.EnumValue;
  * 设备类型
  *
  * @author jianglei
- * 
  */
 public enum Device {
 
@@ -17,7 +16,7 @@ public enum Device {
 
     @Caption("手机")
     @EnumValue("M")
-    MOBILE,
+    PHONE,
 
     @Caption("平板")
     @EnumValue("P")

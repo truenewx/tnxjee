@@ -1,26 +1,15 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.truenewx.tnxjee.core.Strings;
+
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.time.temporal.Temporal;
+import java.util.*;
+import java.util.function.BiPredicate;
 
 /**
  * 类的工具类<br/>
@@ -183,7 +172,8 @@ public class ClassUtil {
      * @param index          要取的泛型位置索引
      * @return 实际泛型类型
      */
-    public static <T> Class<T> getActualGenericType(Class<?> clazz, Class<?> interfaceClass, int index) {
+    public static <T> Class<T> getActualGenericType(Class<?> clazz, Class<?> interfaceClass,
+            int index) {
         Collection<ParameterizedType> types = findParameterizedGenericInterfaces(clazz);
         ParameterizedType superInterface = getMatchedGenericType(types, interfaceClass);
         return getActualGenericType(superInterface, index);
@@ -195,7 +185,8 @@ public class ClassUtil {
      * @param clazz 类型
      * @return 带泛型的接口类型清单
      */
-    private static Collection<ParameterizedType> findParameterizedGenericInterfaces(Class<?> clazz) {
+    private static Collection<ParameterizedType> findParameterizedGenericInterfaces(
+            Class<?> clazz) {
         List<ParameterizedType> types = new ArrayList<>();
         Type[] interfaces = clazz.getGenericInterfaces();
         for (Type type : interfaces) {
@@ -222,7 +213,8 @@ public class ClassUtil {
      * @return 注解的value()值
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getClassAnnotationValue(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    public static <T> T getClassAnnotationValue(Class<?> clazz,
+            Class<? extends Annotation> annotationClass) {
         Annotation annotation = AnnotationUtils.findAnnotation(clazz, annotationClass);
         return annotation == null ? null : (T) AnnotationUtils.getValue(annotation);
     }
@@ -380,7 +372,8 @@ public class ClassUtil {
      * @param includePredicate 属性包含判定
      * @return 属性元数据集
      */
-    public static Collection<PropertyMeta> findPropertyMetas(Class<?> clazz, boolean gettable, boolean settable,
+    public static Collection<PropertyMeta> findPropertyMetas(Class<?> clazz, boolean gettable,
+            boolean settable,
             boolean parent, BiPredicate<Class<?>, String> includePredicate) {
         Map<String, PropertyMeta> result = new LinkedHashMap<>();
         if (gettable || settable) {
@@ -444,7 +437,8 @@ public class ClassUtil {
         return result.values();
     }
 
-    private static void addPropertyMeta(Map<String, PropertyMeta> result, String propertyName, Class<?> propertyType,
+    private static void addPropertyMeta(Map<String, PropertyMeta> result, String propertyName,
+            Class<?> propertyType,
             Annotation[] annotations) {
         PropertyMeta propertyMeta = result.get(propertyName);
         if (propertyMeta == null) {
@@ -546,7 +540,8 @@ public class ClassUtil {
      * @param propertyType 期望的属性类型，为空时忽略属性类型限制
      * @return 符合Bean规范的属性描述集合
      */
-    public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz, Class<?> propertyType) {
+    public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz,
+            Class<?> propertyType) {
         List<PropertyDescriptor> list = new ArrayList<>();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor pd : pds) {
@@ -600,7 +595,8 @@ public class ClassUtil {
      * @param argCount   参数个数，小于0时忽略个数，返回所有同名方法
      * @return 指定类型中指定方法名称和参数个数的公开方法清单
      */
-    public static Collection<Method> findPublicMethods(Class<?> type, String methodName, int argCount) {
+    public static Collection<Method> findPublicMethods(Class<?> type, String methodName,
+            int argCount) {
         Collection<Method> methods = new ArrayList<>();
         for (Method method : type.getMethods()) {
             if (method.getName().equals(methodName)
@@ -656,6 +652,26 @@ public class ClassUtil {
             argTypes[i] = args[i].getClass();
         }
         return newInstance(clazz, argTypes, args);
+    }
+
+    /**
+     * 遍历指定对象类型中具有指定注解的字段
+     *
+     * @param clazz           遍历对象
+     * @param annotationClass 注解类型
+     * @param predicate       遍历断言，返回false则终止遍历
+     * @param <A>             注解类型
+     */
+    public static <A extends Annotation> void loopFields(Class<?> clazz,
+            Class<A> annotationClass, BiPredicate<Field, A> predicate) {
+        for (Field field : clazz.getFields()) {
+            A annotation = field.getAnnotation(annotationClass);
+            if (annotation != null) {
+                if (!predicate.test(field, annotation)) {
+                    break;
+                }
+            }
+        }
     }
 
 }

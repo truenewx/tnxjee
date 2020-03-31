@@ -12,7 +12,6 @@ import org.truenewx.tnxjee.model.spec.enums.Program;
  * 终端类型
  *
  * @author liuzhiyi
- * 
  */
 public class Terminal {
 
@@ -22,29 +21,33 @@ public class Terminal {
     private Device device;
 
     /**
-     * 操作系统
-     */
-    private OS os;
-
-    /**
      * 程序类型
      */
     private Program program;
 
-    public Terminal(Device device, OS os, Program program) {
+    /**
+     * 操作系统
+     */
+    private OS os;
+
+    public Terminal(Device device, Program program, OS os) {
         this.device = device;
-        this.os = os;
         this.program = program;
+        this.os = os;
     }
 
-    public Terminal(String s) {
+    public static Terminal of(String s) {
+        Device device = null;
+        Program program = null;
+        OS os = null;
         // 允许空的终端表示
         if (StringUtils.isNotBlank(s)) {
             String[] array = s.split(Strings.MINUS);
-            this.device = EnumUtils.getEnum(Device.class, ArrayUtil.get(array, 0));
-            this.os = EnumUtils.getEnum(OS.class, ArrayUtil.get(array, 1));
-            this.program = EnumUtils.getEnum(Program.class, ArrayUtil.get(array, 2));
+            device = EnumUtils.getEnum(Device.class, ArrayUtil.get(array, 0));
+            program = EnumUtils.getEnum(Program.class, ArrayUtil.get(array, 1));
+            os = EnumUtils.getEnum(OS.class, ArrayUtil.get(array, 2));
         }
+        return new Terminal(device, program, os);
     }
 
     /**
@@ -55,17 +58,17 @@ public class Terminal {
     }
 
     /**
-     * @return 操作系统
-     */
-    public OS getOs() {
-        return this.os;
-    }
-
-    /**
      * @return 程序类型
      */
     public Program getProgram() {
         return this.program;
+    }
+
+    /**
+     * @return 操作系统
+     */
+    public OS getOs() {
+        return this.os;
     }
 
     public boolean supports(Terminal terminal) {
@@ -73,12 +76,12 @@ public class Terminal {
         if (this.device != null && this.device != terminal.device) {
             return false;
         }
-        // 操作系统属性为null，视为支持所有操作系统
-        if (this.os != null && this.os != terminal.os) {
-            return false;
-        }
         // 程序类型属性为null，视为支持所有程序类型
         if (this.program != null && this.program != terminal.program) {
+            return false;
+        }
+        // 操作系统属性为null，视为支持所有操作系统
+        if (this.os != null && this.os != terminal.os) {
             return false;
         }
         return true;
@@ -90,13 +93,13 @@ public class Terminal {
         if (this.device != null) {
             sb.append(this.device.name());
         }
-        sb.append(Strings.DOT);
-        if (this.os != null) {
-            sb.append(this.os.name());
-        }
-        sb.append(Strings.DOT);
+        sb.append(Strings.MINUS);
         if (this.program != null) {
             sb.append(this.program.name());
+        }
+        sb.append(Strings.MINUS);
+        if (this.os != null) {
+            sb.append(this.os.name());
         }
         return sb.toString();
     }
