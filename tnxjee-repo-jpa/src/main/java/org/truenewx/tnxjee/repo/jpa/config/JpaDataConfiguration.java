@@ -55,9 +55,9 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
             ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
         super(dataSource, properties, jtaTransactionManager, transactionManagerCustomizers);
         this.context = context;
-        // 本配置会在数据源对象构建完之后，在数据源初始化之前加载，spring-data-jpa框架会检查数据库表结构，
-        // 此时如果数据库表结构未初始化，则会报错退出，导致后续的数据库初始化脚本配置无法正常执行，
-        // SpringBoot的数据源初始化器Configuration的可见性是默认，无法通过@AutoConfigureAfter指定加载顺序，
+        // 当前配置会在数据源对象构建完之后，在数据源初始化之前加载，接下来spring-data-jpa框架会检查数据库表结构，
+        // 此时如果数据库表结构未初始化，则会报错退出，导致后续的DataSourceInitializerInvoker无法执行，
+        // 悲剧的是，通过@AutoConfigureAfter指定加载顺序，仍然无法在DataSourceInitializerInvoker之后执行，
         // 所以需要在此时提前执行数据库初始化脚本，以确保数据库表结构检查通过
         initDataSource(dataSourceProperties);
     }
