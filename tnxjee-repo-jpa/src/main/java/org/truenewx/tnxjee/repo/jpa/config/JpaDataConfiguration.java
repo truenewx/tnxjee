@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 数据层JPA配置
+ * JPA数据层配置
  *
  * @author jianglei
  */
 @Configuration
 @EnableConfigurationProperties(HibernateProperties.class)
-public class RepoJpaConfiguration extends JpaBaseConfiguration {
+public class JpaDataConfiguration extends JpaBaseConfiguration {
 
     @Autowired
     private HibernateProperties hibernateProperties;
@@ -47,7 +47,7 @@ public class RepoJpaConfiguration extends JpaBaseConfiguration {
     /**
      * 在多数据源场景下，可创建子类，构造函数中指定DataSourceProperties和DataSource的beanName
      */
-    public RepoJpaConfiguration(ApplicationContext context,
+    public JpaDataConfiguration(ApplicationContext context,
             DataSourceProperties dataSourceProperties,
             DataSource dataSource,
             JpaProperties properties,
