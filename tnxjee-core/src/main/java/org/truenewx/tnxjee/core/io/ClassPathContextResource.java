@@ -9,9 +9,8 @@ import org.springframework.util.StringUtils;
  * 基于classpath的上下文资源
  *
  * @author jianglei
- * 
  */
-class ClassPathContextResource extends ClassPathResource implements ContextResource {
+public class ClassPathContextResource extends ClassPathResource implements ContextResource {
 
     public ClassPathContextResource(String path, ClassLoader classLoader) {
         super(path, classLoader);
