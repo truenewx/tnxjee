@@ -1,14 +1,9 @@
 package org.truenewx.tnxjee.model.validation.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.model.entity.Entity;
+
+import java.lang.annotation.*;
 
 /**
  * 继承约束
@@ -16,7 +11,7 @@ import org.truenewx.tnxjee.model.entity.Entity;
  * @author jianglei
  */
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface InheritConstraint {
