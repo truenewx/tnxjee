@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -28,6 +29,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -101,39 +103,28 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
                 getProperties().getProperties(), new HibernateSettings());
     }
 
-    @Override
-    protected String[] getPackagesToScan() {
-        return new String[0];
-    }
-
     protected void addMappingResources(List<String> mappingResources) {
-        try {
-            String location = getMappingLocation();
-            // 确保目录以/开头和结尾
-            if (!location.startsWith(Strings.SLASH)) {
-                location = Strings.SLASH + location;
+        List<String> adding = new ArrayList<>();
+        Iterator<String> iterator = mappingResources.iterator();
+        while (iterator.hasNext()) {
+            String location = iterator.next();
+            int wildcardIndex = location.indexOf(Strings.ASTERISK);
+            if (wildcardIndex > 0) { // 不支持处理以*开头的路径
+                try {
+                    String pattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + location;
+                    Resource[] resources = this.context.getResources(pattern);
+                    for (Resource resource : resources) {
+                        String path = resource.getURI().toString();
+                        String dir = location.substring(0, wildcardIndex);
+                        adding.add(path.substring(path.lastIndexOf(dir)));
+                    }
+                } catch (IOException e) {
+                    LogUtil.error(getClass(), e);
+                }
+                iterator.remove();
             }
-            if (!location.endsWith(Strings.SLASH)) {
-                location += Strings.SLASH;
-            }
-            Resource[] resources = this.context.getResources("classpath*:" + location + "*.xml");
-            for (Resource resource : resources) {
-                String path = resource.getURI().toString();
-                int index = path.lastIndexOf(location);
-                mappingResources.add(path.substring(index + 1));
-            }
-        } catch (IOException e) {
-            LogUtil.error(getClass(), e);
         }
-    }
-
-    /**
-     * 获取实体映射配置文件所在目录，相对于classpath
-     *
-     * @return 实体映射配置文件所在目录
-     */
-    protected String getMappingLocation() {
-        return "/META-INF/jpa/";
+        mappingResources.addAll(adding);
     }
 
     @Override
