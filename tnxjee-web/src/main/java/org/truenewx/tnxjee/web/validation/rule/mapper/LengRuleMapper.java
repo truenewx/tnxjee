@@ -1,11 +1,11 @@
-package org.truenewx.tnxjee.web.view.validation.rule.mapper;
+package org.truenewx.tnxjee.web.validation.rule.mapper;
+
+import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.model.validation.rule.LengthRule;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.model.validation.rule.LengthRule;
 
 /**
  * 字符串长度范围的校验映射集生成器

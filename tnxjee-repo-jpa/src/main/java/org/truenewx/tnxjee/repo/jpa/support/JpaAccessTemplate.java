@@ -1,25 +1,20 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.hibernate.boot.Metadata;
+import org.hibernate.mapping.PersistentClass;
+import org.springframework.util.Assert;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
+import org.truenewx.tnxjee.model.entity.Entity;
+import org.truenewx.tnxjee.repo.jpa.hibernate.MetadataProvider;
+import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
+import org.truenewx.tnxjee.repo.util.RepoUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.mapping.PersistentClass;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.util.CollectionUtil;
-import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
-import org.truenewx.tnxjee.repo.util.RepoUtil;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * JPA的数据访问模板
@@ -30,17 +25,22 @@ public class JpaAccessTemplate implements DataAccessTemplate {
 
     private String schema = RepoUtil.DEFAULT_SCHEMA_NAME;
     private EntityManagerFactory entityManagerFactory;
+    private MetadataProvider metadataProvider;
     private boolean nativeMode;
 
-    public JpaAccessTemplate(EntityManagerFactory entityManagerFactory) {
+    public JpaAccessTemplate(EntityManagerFactory entityManagerFactory,
+            MetadataProvider metadataProvider) {
+        Assert.notNull(entityManagerFactory, "entityManagerFactory must not be null");
+        Assert.notNull(metadataProvider, "metadataProvider must not be null");
         this.entityManagerFactory = entityManagerFactory;
+        this.metadataProvider = metadataProvider;
     }
 
-    public JpaAccessTemplate(String schema, EntityManagerFactory entityManagerFactory) {
+    public JpaAccessTemplate(String schema, EntityManagerFactory entityManagerFactory,
+            MetadataProvider metadataProvider) {
+        this(entityManagerFactory, metadataProvider);
         Assert.notNull(schema, "schema must not be null");
-        Assert.notNull(entityManagerFactory, "entityManager must not be null");
         this.schema = schema;
-        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
@@ -62,16 +62,12 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     public EntityManager getCurrentEntityManager() {
-        if (this.entityManagerFactory instanceof SessionFactory) {
-            SessionFactory sessionFactory = (SessionFactory) this.entityManagerFactory;
-            return sessionFactory.getCurrentSession();
-        }
         return this.entityManagerFactory.createEntityManager();
     }
 
     public PersistentClass getPersistentClass(String entityName) {
-        return ((MetamodelImplementor) this.entityManagerFactory.getMetamodel()).getTypeConfiguration()
-                .getMetadataBuildingContext().getMetadataCollector().getEntityBinding(entityName);
+        Metadata metadata = this.metadataProvider.getMetadata();
+        return metadata == null ? null : metadata.getEntityBinding(entityName);
     }
 
     /**
@@ -80,7 +76,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
      * @return 原生SQL方式的访问模板
      */
     public DataAccessTemplate createNative() {
-        JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory);
+        JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory, this.metadataProvider);
         template.nativeMode = true;
         return template;
     }
@@ -168,7 +164,8 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
+    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize,
+            int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, false);
@@ -199,7 +196,8 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue,
+            int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, true);
@@ -207,7 +205,8 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize, int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize,
+            int pageNo) {
         Query query = createQuery(ql);
         applyParamsToQuery(query, params);
         applyPagingToQuery(query, pageSize, pageNo, true);

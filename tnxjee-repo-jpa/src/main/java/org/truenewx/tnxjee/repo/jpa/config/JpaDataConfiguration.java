@@ -23,6 +23,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.repo.jpa.hibernate.HibernateJpaPersistenceProvider;
+import org.truenewx.tnxjee.repo.jpa.hibernate.MetadataProvider;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 
 import javax.persistence.EntityManagerFactory;
@@ -127,21 +129,29 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
         mappingResources.addAll(adding);
     }
 
+    @Bean
+    public HibernateJpaPersistenceProvider persistenceProvider() {
+        return new HibernateJpaPersistenceProvider();
+    }
+
     @Override
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder factoryBuilder) {
         addMappingResources(getProperties().getMappingResources());
-        return super.entityManagerFactory(factoryBuilder);
+        LocalContainerEntityManagerFactoryBean factoryBean = super.entityManagerFactory(factoryBuilder);
+        factoryBean.setPersistenceProvider(persistenceProvider());
+        return factoryBean;
     }
 
     @Bean
-    public JpaAccessTemplate jpaAccessTemplate(EntityManagerFactory entityManagerFactory) {
+    public JpaAccessTemplate jpaAccessTemplate(EntityManagerFactory factory,
+            MetadataProvider metadataProvider) {
         String schema = getSchema();
         if (schema == null) {
-            return new JpaAccessTemplate(entityManagerFactory);
+            return new JpaAccessTemplate(factory, metadataProvider);
         } else {
-            return new JpaAccessTemplate(schema, entityManagerFactory);
+            return new JpaAccessTemplate(schema, factory, metadataProvider);
         }
     }
 

@@ -1,8 +1,4 @@
-package org.truenewx.tnxjee.web.view.validation.rule.mapper;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+package org.truenewx.tnxjee.web.validation.rule.mapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -11,6 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.model.validation.rule.RegexRule;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * 正则表达式规则的校验映射集生成器
@@ -39,7 +39,7 @@ public class RegexRuleMapper implements ValidationRuleMapper<RegexRule>, Message
             message = HtmlUtils.htmlEscape(message);
         }
         Map<String, Object> result = new HashMap<>();
-        result.put("regex", new String[] { rule.getExpression(), message });
+        result.put("regex", new String[]{ rule.getExpression(), message });
         return result;
     }
 

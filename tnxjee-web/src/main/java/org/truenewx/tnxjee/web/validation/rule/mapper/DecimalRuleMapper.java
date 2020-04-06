@@ -1,12 +1,12 @@
-package org.truenewx.tnxjee.web.view.validation.rule.mapper;
+package org.truenewx.tnxjee.web.validation.rule.mapper;
+
+import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.model.validation.rule.DecimalRule;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.model.validation.rule.DecimalRule;
 
 /**
  * 数值范围的校验映射集生成器

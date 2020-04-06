@@ -1,14 +1,14 @@
-package org.truenewx.tnxjee.web.view.validation.rule.mapper;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+package org.truenewx.tnxjee.web.validation.rule.mapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.model.validation.rule.TagLimitRule;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 标签限定规则映射生成器

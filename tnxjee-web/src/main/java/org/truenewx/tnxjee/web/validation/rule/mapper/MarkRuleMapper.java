@@ -1,16 +1,15 @@
-package org.truenewx.tnxjee.web.view.validation.rule.mapper;
+package org.truenewx.tnxjee.web.validation.rule.mapper;
 
+import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.model.validation.rule.MarkRule;
+
+import javax.validation.constraints.NotEmpty;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.validation.constraints.NotEmpty;
-
-import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.model.validation.rule.MarkRule;
 
 /**
  * 标识规则的校验映射集生成器
