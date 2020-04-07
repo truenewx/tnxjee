@@ -73,6 +73,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Override
     public void init(WebSecurity web) throws Exception {
         HttpSecurity http = getHttp();
+
         web.addSecurityFilterChainBuilder(http).postBuildAction(() -> {
             FilterSecurityInterceptor interceptor = http
                     .getSharedObject(FilterSecurityInterceptor.class);
@@ -86,6 +87,20 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             interceptor.setAccessDecisionManager(accessDecisionManager());
             web.securityInterceptor(interceptor);
         });
+
+        Collection<String> ignoringAntPatterns = getIgnoringAntPatterns();
+        web.ignoring().antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
+    }
+
+    /**
+     * 获取安全框架忽略的URL ANT样式集合
+     *
+     * @return 安全框架忽略的URL ANT样式集合
+     */
+    protected Collection<String> getIgnoringAntPatterns() {
+        Collection<String> patterns = new HashSet<>();
+        patterns.add("/api/meta");
+        return patterns;
     }
 
     @Override

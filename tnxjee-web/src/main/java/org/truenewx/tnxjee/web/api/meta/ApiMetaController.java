@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
-import org.truenewx.tnxjee.web.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,16 +16,15 @@ import java.util.Map;
  * API元数据控制器
  */
 @RestController
-@RequestMapping("/api-meta")
+@RequestMapping("/api/meta")
 public class ApiMetaController {
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
     private ApiModelMetaResolver metaResolver;
 
-    @GetMapping("/post-body")
+    @GetMapping
     @SuppressWarnings("unchecked")
-    @ConfigAnonymous
     public Map<String, ApiModelPropertyMeta> get(@RequestParam("url") String url,
             HttpServletRequest request) {
         HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(url,
