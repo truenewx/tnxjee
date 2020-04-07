@@ -1,13 +1,7 @@
 package org.truenewx.tnxjee.web.api.meta;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
@@ -20,6 +14,8 @@ import org.truenewx.tnxjee.model.validation.config.ValidationConfigurationFactor
 import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
 import org.truenewx.tnxjee.web.validation.rule.mapper.ValidationRuleMapper;
+
+import java.util.*;
 
 /**
  * 属性校验规则生成器实现
@@ -34,7 +30,6 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     @Autowired
     private EnumDictResolver enumDictResolver;
     private Map<Class<?>, ValidationRuleMapper<ValidationRule>> ruleMappers = new HashMap<>();
-    private Map<Class<?>, Map<String, ApiModelPropertyMeta>> cache = new HashMap<>();
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -49,14 +44,10 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     }
 
     @Override
+    @Cacheable("ApiModelMeta")
     public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass,
             Locale locale) {
-        Map<String, ApiModelPropertyMeta> meta = this.cache.get(modelClass);
-        if (meta == null) {
-            meta = Collections.unmodifiableMap(generateMeta(modelClass, locale));
-            this.cache.put(modelClass, meta);
-        }
-        return meta.isEmpty() ? null : meta;
+        return Collections.unmodifiableMap(generateMeta(modelClass, locale));
     }
 
     private Map<String, ApiModelPropertyMeta> generateMeta(Class<? extends Model> modelClass,
@@ -71,7 +62,9 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                     Map<String, Object> validation = generateValidation(configuration, propertyName,
                             locale);
                     if (validation.size() > 0) {
-                        metas.put(propertyName, new ApiModelPropertyMeta(propertyName));
+                        ApiModelPropertyMeta meta = new ApiModelPropertyMeta(propertyName);
+                        meta.getValidation().putAll(validation);
+                        metas.put(propertyName, meta);
                     }
                 }
             }

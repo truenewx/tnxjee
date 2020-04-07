@@ -37,7 +37,8 @@ public class ApiMetaController {
                     Class<?> parameterType = methodParameter.getParameterType();
                     if (Model.class.isAssignableFrom(parameterType)) {
                         Class<? extends Model> modelClass = (Class<? extends Model>) parameterType;
-                        return this.metaResolver.resolve(modelClass, request.getLocale());
+                        Map<String, ApiModelPropertyMeta> metas = this.metaResolver.resolve(modelClass, request.getLocale());
+                        return metas.isEmpty() ? null : metas;
                     }
                 }
             }
