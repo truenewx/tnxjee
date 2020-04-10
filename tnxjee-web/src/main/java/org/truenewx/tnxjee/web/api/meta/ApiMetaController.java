@@ -5,8 +5,9 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
+import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.model.Model;
-import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
+import org.truenewx.tnxjee.web.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,8 @@ public class ApiMetaController {
 
     @GetMapping
     @SuppressWarnings("unchecked")
-    public Map<String, ApiModelPropertyMeta> get(@RequestParam("url") String url,
+    @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
+    public Map<String, Object> get(@RequestParam("url") String url,
             HttpServletRequest request) {
         HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(url,
                 HttpMethod.POST);
@@ -35,8 +37,8 @@ public class ApiMetaController {
                     Class<?> parameterType = methodParameter.getParameterType();
                     if (Model.class.isAssignableFrom(parameterType)) {
                         Class<? extends Model> modelClass = (Class<? extends Model>) parameterType;
-                        Map<String, ApiModelPropertyMeta> metas = this.metaResolver.resolve(modelClass, request.getLocale());
-                        return metas.isEmpty() ? null : metas;
+                        ApiModelMeta meta = this.metaResolver.resolve(modelClass, request.getLocale());
+                        return meta.asMap();
                     }
                 }
             }

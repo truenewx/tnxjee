@@ -12,7 +12,6 @@ import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfigurationFactory;
 import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
-import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
 import org.truenewx.tnxjee.web.validation.rule.mapper.ValidationRuleMapper;
 
 import java.util.*;
@@ -45,14 +44,9 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
 
     @Override
     @Cacheable("ApiModelMeta")
-    public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass,
+    public ApiModelMeta resolve(Class<? extends Model> modelClass,
             Locale locale) {
-        return Collections.unmodifiableMap(generateMeta(modelClass, locale));
-    }
-
-    private Map<String, ApiModelPropertyMeta> generateMeta(Class<? extends Model> modelClass,
-            Locale locale) {
-        Map<String, ApiModelPropertyMeta> metas = new HashMap<>();
+        ApiModelMeta meta = new ApiModelMeta();
         if (this.validationConfigurationFactory != null) {
             ValidationConfiguration configuration = this.validationConfigurationFactory
                     .getConfiguration(modelClass);
@@ -62,9 +56,7 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                     Map<String, Object> validation = generateValidation(configuration, propertyName,
                             locale);
                     if (validation.size() > 0) {
-                        ApiModelPropertyMeta meta = new ApiModelPropertyMeta(propertyName);
-                        meta.getValidation().putAll(validation);
-                        metas.put(propertyName, meta);
+                        meta.setValidation(propertyName, validation);
                     }
                 }
             }
@@ -73,17 +65,11 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
             EnumType enumType = this.enumDictResolver.getEnumType(field.getType().getName(),
                     locale);
             if (enumType != null) {
-                String propertyName = field.getName();
-                ApiModelPropertyMeta meta = metas.get(propertyName);
-                if (meta == null) {
-                    meta = new ApiModelPropertyMeta(propertyName);
-                    metas.put(propertyName, meta);
-                }
-                meta.setEnumType(enumType);
+                meta.setEnumType(field.getName(), enumType);
             }
             return true;
         });
-        return metas;
+        return meta;
     }
 
     private Map<String, Object> generateValidation(ValidationConfiguration configuration,
