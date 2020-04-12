@@ -27,7 +27,7 @@ public class ApiMetaController {
     @GetMapping
     @SuppressWarnings("unchecked")
     @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
-    public Map<String, Object> get(@RequestParam("url") String url,
+    public Map<String, ApiModelPropertyMeta> get(@RequestParam("url") String url,
             HttpServletRequest request) {
         HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(url,
                 HttpMethod.POST);
@@ -37,8 +37,7 @@ public class ApiMetaController {
                     Class<?> parameterType = methodParameter.getParameterType();
                     if (Model.class.isAssignableFrom(parameterType)) {
                         Class<? extends Model> modelClass = (Class<? extends Model>) parameterType;
-                        ApiModelMeta meta = this.metaResolver.resolve(modelClass, request.getLocale());
-                        return meta.asMap();
+                        return this.metaResolver.resolve(modelClass, request.getLocale());
                     }
                 }
             }

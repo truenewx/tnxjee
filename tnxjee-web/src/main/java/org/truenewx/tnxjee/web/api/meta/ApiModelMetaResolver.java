@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.web.api.meta;
 import org.truenewx.tnxjee.model.Model;
 
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * API模型元数据解决器
@@ -11,6 +12,6 @@ import java.util.Locale;
  */
 public interface ApiModelMetaResolver {
 
-    ApiModelMeta resolve(Class<? extends Model> modelClass, Locale locale);
+    Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass, Locale locale);
 
 }

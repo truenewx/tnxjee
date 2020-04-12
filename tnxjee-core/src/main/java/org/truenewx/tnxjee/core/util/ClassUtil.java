@@ -1,27 +1,16 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.truenewx.tnxjee.core.Strings;
+
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.time.temporal.Temporal;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * 类的工具类<br/>
@@ -680,7 +669,7 @@ public class ClassUtil {
     public static <A extends Annotation> void loopFields(Class<?> clazz, Class<A> annotationClass,
             BiPredicate<Field, A> predicate) {
         if (clazz != Object.class) {
-            for (Field field : clazz.getFields()) {
+            for (Field field : clazz.getDeclaredFields()) {
                 A annotation = field.getAnnotation(annotationClass);
                 if (annotation != null) {
                     if (!predicate.test(field, annotation)) {
@@ -702,8 +691,8 @@ public class ClassUtil {
      */
     public static void loopFields(Class<?> clazz, Class<?> fieldType, Predicate<Field> predicate) {
         if (clazz != Object.class) {
-            for (Field field : clazz.getFields()) {
-                if (fieldType.isAssignableFrom(field.getType())) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (fieldType == null || fieldType.isAssignableFrom(field.getType())) {
                     if (!predicate.test(field)) {
                         return;
                     }

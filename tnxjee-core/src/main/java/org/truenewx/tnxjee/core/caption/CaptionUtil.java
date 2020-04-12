@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.core.caption;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -7,13 +9,10 @@ import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 显示名称工具类
  *
  * @author jianglei
- * 
  */
 public class CaptionUtil {
 
@@ -54,23 +53,23 @@ public class CaptionUtil {
     }
 
     public static String getCaption(Class<?> clazz, Locale locale) {
-        Caption[] captionAnnonations = clazz.getAnnotationsByType(Caption.class);
-        return getCaptionValue(captionAnnonations, locale);
+        Caption[] captionAnnotations = clazz.getAnnotationsByType(Caption.class);
+        return getCaptionValue(captionAnnotations, locale);
     }
 
     public static String getCaption(Method method, Locale locale) {
-        Caption[] captionAnnonations = method.getAnnotationsByType(Caption.class);
-        return getCaptionValue(captionAnnonations, locale);
+        Caption[] captionAnnotations = method.getAnnotationsByType(Caption.class);
+        return getCaptionValue(captionAnnotations, locale);
     }
 
     public static String getCaption(Parameter parameter, Locale locale) {
-        Caption[] captionAnnonations = parameter.getAnnotationsByType(Caption.class);
-        return getCaptionValue(captionAnnonations, locale);
+        Caption[] captionAnnotations = parameter.getAnnotationsByType(Caption.class);
+        return getCaptionValue(captionAnnotations, locale);
     }
 
     public static String getCaption(Field field, Locale locale) {
-        Caption[] captionAnnonations = field.getAnnotationsByType(Caption.class);
-        return getCaptionValue(captionAnnonations, locale);
+        Caption[] captionAnnotations = field.getAnnotationsByType(Caption.class);
+        return getCaptionValue(captionAnnotations, locale);
     }
 
 }
