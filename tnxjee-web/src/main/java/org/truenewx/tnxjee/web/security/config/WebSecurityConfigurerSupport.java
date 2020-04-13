@@ -20,7 +20,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.web.security.config.annotation.ConfigAnonymous;
-import org.truenewx.tnxjee.web.security.web.access.BusinessExceptionAccessDeniedHandler;
+import org.truenewx.tnxjee.web.security.web.access.AccessDeniedBusinessExceptionHandler;
 import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
@@ -67,7 +67,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      */
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return new BusinessExceptionAccessDeniedHandler();
+        return new AccessDeniedBusinessExceptionHandler();
     }
 
     @Override

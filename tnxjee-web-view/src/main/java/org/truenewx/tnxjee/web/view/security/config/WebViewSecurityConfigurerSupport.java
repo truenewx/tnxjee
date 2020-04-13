@@ -7,10 +7,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.security.config.WebSecurityConfigurerSupport;
-import org.truenewx.tnxjee.web.security.web.access.BusinessExceptionAccessDeniedHandler;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
 
 import java.util.Collection;
@@ -30,7 +30,7 @@ public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfig
     @Bean
     @Override
     public AccessDeniedHandler accessDeniedHandler() {
-        BusinessExceptionAccessDeniedHandler accessDeniedHandler = (BusinessExceptionAccessDeniedHandler) super.accessDeniedHandler();
+        AccessDeniedHandlerImpl accessDeniedHandler = (AccessDeniedHandlerImpl) super.accessDeniedHandler();
         accessDeniedHandler.setErrorPage(this.viewBusinessExceptionResolver.getErrorPath());
         return accessDeniedHandler;
     }
