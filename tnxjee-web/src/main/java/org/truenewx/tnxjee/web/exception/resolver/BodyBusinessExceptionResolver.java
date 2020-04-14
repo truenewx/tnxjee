@@ -1,12 +1,14 @@
 package org.truenewx.tnxjee.web.exception.resolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
+import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 业务异常处理至响应体中的解决器
@@ -27,8 +29,12 @@ public class BodyBusinessExceptionResolver extends BusinessExceptionResolver {
 
     @Override
     protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
-            HandlerMethod handlerMethod) {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 拒绝请求
+            HandlerMethod handlerMethod, ResolvableException re) {
+        if (re instanceof NoAccessAuthority) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            response.setHeader("error", Boolean.TRUE.toString());
+        }
         return new ModelAndView();
     }
 

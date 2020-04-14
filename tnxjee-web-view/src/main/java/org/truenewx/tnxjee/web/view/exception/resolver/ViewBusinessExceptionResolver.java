@@ -1,19 +1,20 @@
 package org.truenewx.tnxjee.web.view.exception.resolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.resolver.BusinessExceptionResolver;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.web.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 业务异常处理至视图页面的解决器
@@ -50,7 +51,7 @@ public class ViewBusinessExceptionResolver extends BusinessExceptionResolver
 
     @Override
     protected ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
-            HandlerMethod handlerMethod) {
+            HandlerMethod handlerMethod, ResolvableException re) {
         ModelAndView mav = new ModelAndView(this.errorPath);
         mav.addObject("ajaxRequest", WebViewUtil.isAjaxRequest(request));
         ResolvableExceptionResult her = handlerMethod
