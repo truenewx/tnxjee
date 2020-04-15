@@ -6,20 +6,18 @@ import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 /**
  * 用户特性细节的认证令牌
  */
-public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticationToken { // 继承以获得RememberMe能力
+public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = 5719790668377346866L;
 
-    private UserSpecificDetails<?> user;
-
-    public UserSpecificDetailsAuthenticationToken(UserSpecificDetails<?> user) {
-        super(user.getAuthorities());
-        this.user = user.cloneForSession();
+    public UserSpecificDetailsAuthenticationToken(UserSpecificDetails<?> details) {
+        super(details.getAuthorities());
+        setDetails(details.cloneForSession());
     }
 
     @Override
     public Object getPrincipal() {
-        return this.user;
+        return ((UserSpecificDetails<?>) getDetails()).getUsername();
     }
 
     @Override

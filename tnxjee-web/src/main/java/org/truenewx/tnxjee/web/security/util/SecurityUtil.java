@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.web.security.util;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 安全工具类
@@ -45,9 +45,9 @@ public class SecurityUtil {
         if (context != null) {
             Authentication authentication = context.getAuthentication();
             if (authentication != null) {
-                Object principal = authentication.getPrincipal();
-                if (principal instanceof UserSpecificDetails) {
-                    return (U) principal;
+                Object details = authentication.getDetails();
+                if (details instanceof UserSpecificDetails) {
+                    return (U) details;
                 }
             }
         }
