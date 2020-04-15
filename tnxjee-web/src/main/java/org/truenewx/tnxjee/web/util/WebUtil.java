@@ -646,4 +646,13 @@ public class WebUtil {
         return new Terminal(device, program, os);
     }
 
+    /**
+     * 判断指定请求是否AJAX请求
+     *
+     * @param request HTTP请求
+     * @return 是否AJAX请求
+     */
+    public static boolean isAjaxRequest(HttpServletRequest request) {
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    }
 }

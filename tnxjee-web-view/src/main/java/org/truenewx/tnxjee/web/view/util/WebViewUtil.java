@@ -35,7 +35,8 @@ public class WebViewUtil {
      * @param url URL
      * @throws IOException 如果重定向时出现IO错误
      */
-    public static void redirect(HttpServletRequest request, HttpServletResponse response, String url)
+    public static void redirect(HttpServletRequest request, HttpServletResponse response,
+            String url)
             throws IOException {
         String location = url;
         if (!location.toLowerCase().startsWith("http://") && !location.toLowerCase().startsWith("https://")) {
@@ -74,7 +75,8 @@ public class WebViewUtil {
      * @param containsQueryString 是否需要包含请求参数
      * @return 前一个请求的URL
      */
-    public static String getRelativePreviousUrl(HttpServletRequest request, boolean containsQueryString) {
+    public static String getRelativePreviousUrl(HttpServletRequest request,
+            boolean containsQueryString) {
         String referrer = request.getHeader("Referer");
         if (StringUtils.isNotBlank(referrer)) {
             String root = WebUtil.getProtocolAndHost(request);
@@ -94,16 +96,6 @@ public class WebViewUtil {
             }
         }
         return null;
-    }
-
-    /**
-     * 判断指定请求是否AJAX请求
-     *
-     * @param request HTTP请求
-     * @return 是否AJAX请求
-     */
-    public static boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 
 }
