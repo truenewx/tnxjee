@@ -1,9 +1,9 @@
 package org.truenewx.tnxjee.web.exception.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.service.exception.BusinessException;
@@ -32,14 +32,14 @@ public class BusinessExceptionMessageSaverImpl implements BusinessExceptionMessa
     private BusinessExceptionMessageResolver resolver;
 
     @Override
-    public void saveMessage(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
-            ResolvableException re) {
+    public void saveMessage(HttpServletRequest request, HttpServletResponse response,
+            HandlerMethod handlerMethod, ResolvableException re) {
         List<ResolvedBusinessError> errors = buildErrors(re, request.getLocale());
         if (errors.size() > 0) {
             if (SpringWebUtil.isResponseBody(handlerMethod)) {
                 try {
                     Map<String, Object> map = Map.of("errors", errors);
-                    response.setContentType("application/json;charset=" + Strings.ENCODING_UTF8);
+                    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
                     String json = JsonUtil.toJson(map);
                     response.getWriter().print(json);
                 } catch (IOException e) {
