@@ -89,7 +89,8 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         });
 
         Collection<String> ignoringAntPatterns = getIgnoringAntPatterns();
-        web.ignoring().antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
+        web.ignoring()
+                .antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
     }
 
     /**
@@ -115,12 +116,14 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
                 .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
-        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest()
-                .authenticated().and().exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler()).and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
-                .deleteCookies("JSESSIONID").permitAll();
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+            .accessDeniedHandler(accessDeniedHandler())
+            .and()
+            .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
+            .deleteCookies("JSESSIONID").permitAll();
         if (isCsrfDisabled()) {
             http.csrf().disable();
         }

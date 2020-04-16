@@ -15,7 +15,8 @@ import java.io.IOException;
 /**
  * 基于业务异常的认证失败处理器
  */
-public class BusinessExceptionAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler implements
+public class BusinessExceptionAuthenticationFailureHandler
+        extends SimpleUrlAuthenticationFailureHandler implements
         ApplicationContextAware {
 
     private BusinessCauseMessageSaver businessCauseMessageSaver;

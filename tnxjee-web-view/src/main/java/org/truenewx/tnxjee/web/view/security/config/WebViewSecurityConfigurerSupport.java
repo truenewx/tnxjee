@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.web.view.security.config;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
@@ -12,9 +15,6 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.security.config.WebSecurityConfigurerSupport;
 import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * WEB视图层安全配置支持
