@@ -12,7 +12,8 @@ public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticati
 
     public UserSpecificDetailsAuthenticationToken(UserSpecificDetails<?> details) {
         super(details.getAuthorities());
-        setDetails(details.cloneForSession());
+        super.setAuthenticated(true);
+        setDetails(details);
     }
 
     @Override
@@ -26,12 +27,8 @@ public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticati
     }
 
     @Override
-    public boolean isAuthenticated() {
-        return true;
-    }
-
-    @Override
     public void setAuthenticated(boolean authenticated) {
         throw new UnsupportedOperationException();
     }
+
 }

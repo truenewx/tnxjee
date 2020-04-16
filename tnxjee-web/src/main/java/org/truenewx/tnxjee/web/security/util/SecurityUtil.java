@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.truenewx.tnxjee.model.spec.user.UserIdentity;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 
 import java.util.Collection;
@@ -34,20 +35,20 @@ public class SecurityUtil {
     }
 
     /**
-     * 获取已授权的当前用户，匿名用户将返回null
+     * 获取已授权的当前用户细节，匿名用户将返回null
      *
-     * @param <U> 用户类型
-     * @return 已授权的当前用户
+     * @param <I> 用户标识类型
+     * @return 已授权的当前用户细节
      */
     @SuppressWarnings("unchecked")
-    public static <U extends UserSpecificDetails<?>> U getAuthorizedUser() {
+    public static <I extends UserIdentity> UserSpecificDetails<I> getAuthorizedUserDetails() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Authentication authentication = context.getAuthentication();
             if (authentication != null) {
                 Object details = authentication.getDetails();
                 if (details instanceof UserSpecificDetails) {
-                    return (U) details;
+                    return (UserSpecificDetails<I>) details;
                 }
             }
         }
