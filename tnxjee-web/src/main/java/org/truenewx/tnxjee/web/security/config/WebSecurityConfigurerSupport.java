@@ -1,11 +1,8 @@
 package org.truenewx.tnxjee.web.security.config;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -31,14 +28,21 @@ import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocation
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
 /**
  * WEB安全配置器支持
  */
 @EnableWebSecurity
+@EnableConfigurationProperties(WebSecurityProperties.class)
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
+    @Autowired(required = false)
+    private WebSecurityProperties securityProperties;
 
     /**
      * 获取访问资源需要具备的权限
@@ -104,6 +108,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         Collection<String> patterns = new HashSet<>();
         RequestMapping mapping = ApiMetaController.class.getAnnotation(RequestMapping.class);
         patterns.add(mapping.value()[0] + "/**");
+        if (this.securityProperties != null) {
+            List<String> ignoringPatterns = this.securityProperties.getIgnoringPatterns();
+            if (ignoringPatterns != null) {
+                patterns.addAll(ignoringPatterns);
+            }
+        }
         return patterns;
     }
 

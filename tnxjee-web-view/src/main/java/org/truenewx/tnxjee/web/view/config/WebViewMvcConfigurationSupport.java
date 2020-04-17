@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -20,7 +19,6 @@ import javax.servlet.DispatcherType;
 /**
  * WEB视图层MVC配置支持
  */
-@EnableConfigurationProperties(WebMvcProperties.class)
 public abstract class WebViewMvcConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Autowired
@@ -49,6 +47,8 @@ public abstract class WebViewMvcConfigurationSupport extends WebMvcConfiguration
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        super.addResourceHandlers(registry);
+
         String staticPathPattern = this.mvcProperties.getStaticPathPattern();
         if (StringUtils.isNotBlank(staticPathPattern)) {
             String[] staticPathPatterns = StringUtil.splitAndTrim(staticPathPattern, Strings.COMMA);
