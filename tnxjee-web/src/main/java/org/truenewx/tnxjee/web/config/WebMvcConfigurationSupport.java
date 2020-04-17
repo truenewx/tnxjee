@@ -1,6 +1,5 @@
 package org.truenewx.tnxjee.web.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
@@ -42,10 +41,8 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         if (this.corsRegistryProperties != null) {
-            String pathPattern = this.corsRegistryProperties.getPathPattern();
-            if (StringUtils.isNotBlank(pathPattern)) {
-                CorsRegistration registration = registry.addMapping(pathPattern);
-                registration
+            if (this.corsRegistryProperties.isEnabled()) {
+                CorsRegistration registration = registry.addMapping(this.corsRegistryProperties.getPathPattern())
                         .allowedOrigins(this.corsRegistryProperties.getAllowedOrigins())
                         .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
                         .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())

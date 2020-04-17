@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.web.cors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "tnxjee.web.cors")
@@ -18,6 +19,10 @@ public class CorsRegistryProperties {
     private Boolean allowCredentials;
 
     private Long maxAge;
+
+    public boolean isEnabled() {
+        return StringUtils.isNotBlank(this.pathPattern);
+    }
 
     public String getPathPattern() {
         return this.pathPattern;

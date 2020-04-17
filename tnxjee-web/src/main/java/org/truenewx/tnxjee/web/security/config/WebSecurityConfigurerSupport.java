@@ -21,6 +21,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.api.meta.ApiMetaController;
+import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.web.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.security.web.access.AccessDeniedBusinessExceptionHandler;
@@ -43,6 +44,8 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired(required = false)
     private WebSecurityProperties securityProperties;
+    @Autowired(required = false)
+    private CorsRegistryProperties corsRegistryProperties;
 
     /**
      * 获取访问资源需要具备的权限
@@ -135,20 +138,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             .accessDeniedHandler(accessDeniedHandler())
             .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
             .deleteCookies("JSESSIONID", "SESSION").permitAll();
-        if (allowedCrossDomainRequest()) {
-            // 允许跨域访问需关闭csrf限制且开启cors
-            http.csrf().disable().cors();
-        }
         // @formatter:on
-    }
-
-    /**
-     * 判断是否允许跨域请求访问，默认为true
-     *
-     * @return 是否允许跨域请求访问
-     */
-    protected boolean allowedCrossDomainRequest() {
-        return true;
+        if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
+            http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
+        } else if (this.securityProperties != null && this.securityProperties.isCsrfDisabled()) {
+            http.csrf().disable();
+        }
     }
 
     /**
