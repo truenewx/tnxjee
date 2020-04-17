@@ -1,16 +1,16 @@
 package org.truenewx.tnxjee.web.http.session;
 
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
 /**
- * 从Cookie取不到则从Header取的sessionId序列化器
+ * 可从Header取的sessionId序列化器
  */
 public class HeaderCookieSerializer extends DefaultCookieSerializer {
 
@@ -31,16 +31,17 @@ public class HeaderCookieSerializer extends DefaultCookieSerializer {
 
     @Override
     public List<String> readCookieValues(HttpServletRequest request) {
-        String headerName = getHeaderName(); // 优先确保配置正确，从第2次调用开始性能损耗可以忽略不计
-        List<String> values = this.delegate.readCookieValues(request);
-        if (values.isEmpty()) {
-            Enumeration<String> headers = request.getHeaders(headerName);
-            while (headers.hasMoreElements()) {
-                String value = headers.nextElement();
-                if (StringUtils.isNotBlank(value)) {
-                    values.add(value);
-                }
+        List<String> values = new ArrayList<>();
+        Enumeration<String> headers = request.getHeaders(getHeaderName());
+        while (headers.hasMoreElements()) {
+            String value = headers.nextElement();
+            if (StringUtils.isNotBlank(value)) {
+                values.add(value);
             }
+        }
+        // 优先从Header中获取，没有才从Cookie中取，因为Cookie中可能有其它sessionId
+        if (values.isEmpty()) {
+            return this.delegate.readCookieValues(request);
         }
         return values;
     }

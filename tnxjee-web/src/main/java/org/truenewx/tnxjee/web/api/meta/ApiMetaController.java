@@ -1,9 +1,5 @@
 package org.truenewx.tnxjee.web.api.meta;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.MethodParameter;
@@ -18,6 +14,9 @@ import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
 import org.truenewx.tnxjee.web.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.web.http.session.HeaderCookieSerializer;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * API元数据控制器
@@ -43,7 +42,8 @@ public class ApiMetaController {
             context.setContext(this.properties.getContext());
         }
         if (this.headerCookieSerializer != null) {
-            context.getHeaders().put(this.headerCookieSerializer.getHeaderName(), request.getSession().getId());
+            String sessionId = request.getSession().getId();
+            context.getHeaders().put(this.headerCookieSerializer.getHeaderName(), sessionId);
         }
         return context;
     }
