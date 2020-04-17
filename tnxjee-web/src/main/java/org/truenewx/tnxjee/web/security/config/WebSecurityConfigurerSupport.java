@@ -121,26 +121,23 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         // @formatter:off
         http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll()
             .anyRequest().authenticated()
-            .and()
-            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+            .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
             .accessDeniedHandler(accessDeniedHandler())
-            .and()
-            .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
-            .deleteCookies("JSESSIONID").permitAll();
-        if (isCsrfDisabled()) {
-            http.csrf().disable();
+            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
+            .deleteCookies("JSESSIONID", "SESSION").permitAll();
+        if (allowedCrossDomainRequest()) {
+            // 允许跨域访问需关闭csrf限制且开启cors
+            http.csrf().disable().cors();
         }
         // @formatter:on
     }
 
     /**
-     * 判断是否关闭csrf限定，csrf：跨站点请求伪造<br>
-     * true-允许其它站点向当前站点发送请求，false-禁止其它站点向当前站点发送请求<br>
-     * 默认为true
+     * 判断是否允许跨域请求访问，默认为true
      *
-     * @return 是否关闭csrf限定
+     * @return 是否允许跨域请求访问
      */
-    protected boolean isCsrfDisabled() {
+    protected boolean allowedCrossDomainRequest() {
         return true;
     }
 
