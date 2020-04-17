@@ -1,5 +1,12 @@
 package org.truenewx.tnxjee.web.api.meta;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+
+import javax.validation.constraints.Email;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +21,9 @@ import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfigurationFactory;
 import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
+import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
+import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyType;
 import org.truenewx.tnxjee.web.validation.rule.mapper.ValidationRuleMapper;
-
-import javax.validation.constraints.Email;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.*;
 
 /**
  * 属性校验规则生成器实现

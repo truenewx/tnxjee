@@ -103,7 +103,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     protected Collection<String> getIgnoringAntPatterns() {
         Collection<String> patterns = new HashSet<>();
         RequestMapping mapping = ApiMetaController.class.getAnnotation(RequestMapping.class);
-        patterns.add(mapping.value()[0]);
+        patterns.add(mapping.value()[0] + "/**");
         return patterns;
     }
 

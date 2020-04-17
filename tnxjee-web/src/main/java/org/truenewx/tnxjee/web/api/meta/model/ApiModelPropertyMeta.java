@@ -1,9 +1,9 @@
-package org.truenewx.tnxjee.web.api.meta;
-
-import org.truenewx.tnxjee.core.enums.EnumItem;
+package org.truenewx.tnxjee.web.api.meta.model;
 
 import java.util.Collection;
 import java.util.Map;
+
+import org.truenewx.tnxjee.core.enums.EnumItem;
 
 /**
  * API模型属性元数据

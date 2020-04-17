@@ -1,9 +1,10 @@
 package org.truenewx.tnxjee.web.api.meta;
 
-import org.truenewx.tnxjee.model.Model;
-
 import java.util.Locale;
 import java.util.Map;
+
+import org.truenewx.tnxjee.model.Model;
+import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
 
 /**
  * API模型元数据解决器
