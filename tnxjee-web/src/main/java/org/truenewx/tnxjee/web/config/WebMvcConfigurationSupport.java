@@ -2,13 +2,17 @@ package org.truenewx.tnxjee.web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.resource.ResourceMappingProperties;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +28,14 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Autowired(required = false)
     private CorsRegistryProperties corsRegistryProperties;
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        CollectionUtil.remove(converters, converter -> {
+            // 移除多余的MappingJackson2HttpMessageConverter，已被JacksonHttpMessageConverter取代
+            return converter.getClass() == MappingJackson2HttpMessageConverter.class;
+        });
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -8,6 +8,7 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.util.BeanUtil;
@@ -27,6 +28,7 @@ import java.util.Map;
 /**
  * 基于Jackson实现的HTTP消息JSON转换器
  */
+@Component
 public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConverter {
 
     @Autowired

@@ -1,14 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -16,7 +8,6 @@ import java.util.function.Predicate;
  * 集合工具类
  *
  * @author jianglei
- * 
  */
 public class CollectionUtil {
 
@@ -121,7 +112,7 @@ public class CollectionUtil {
             return ((Map<?, ?>) iterable).size();
         } else {
             int size = 0;
-            for (Iterator<?> iterator = iterable.iterator(); iterator.hasNext();) {
+            for (Iterator<?> iterator = iterable.iterator(); iterator.hasNext(); ) {
                 size++;
             }
             return size;
@@ -337,6 +328,20 @@ public class CollectionUtil {
      * @param iterator  迭代器
      * @param predicate 移除断言
      */
+    public static <T> void remove(Iterator<T> iterator, Predicate<T> predicate) {
+        while (iterator.hasNext()) {
+            if (predicate.test(iterator.next())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 从迭代器中移除符合指定断言的元素
+     *
+     * @param iterator  迭代器
+     * @param predicate 移除断言
+     */
     public static <T> void remove(Iterator<T> iterator, BiPredicate<T, Integer> predicate) {
         int i = 0;
         while (iterator.hasNext()) {
@@ -344,6 +349,17 @@ public class CollectionUtil {
                 iterator.remove();
             }
         }
+    }
+
+    /**
+     * 从迭代集合中移除符合指定断言的元素
+     *
+     * @param iterable  迭代集合
+     * @param predicate 移除断言
+     */
+    public static <T> void remove(Iterable<T> iterable, Predicate<T> predicate) {
+        Iterator<T> iterator = iterable.iterator();
+        remove(iterator, predicate);
     }
 
     /**
