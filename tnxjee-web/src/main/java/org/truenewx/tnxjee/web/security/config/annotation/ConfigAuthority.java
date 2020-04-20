@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.web.security.config.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import org.truenewx.tnxjee.core.Strings;
 
@@ -15,7 +10,7 @@ import org.truenewx.tnxjee.core.Strings;
  * @author jianglei
  */
 @Documented
-@Target({ ElementType.METHOD })
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(ConfigAuthorities.class)
 public @interface ConfigAuthority {

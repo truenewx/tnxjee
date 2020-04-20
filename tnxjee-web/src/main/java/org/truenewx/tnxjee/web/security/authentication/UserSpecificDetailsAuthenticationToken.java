@@ -18,7 +18,7 @@ public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticati
 
     @Override
     public Object getPrincipal() {
-        return ((UserSpecificDetails<?>) getDetails()).getUsername();
+        return ((UserSpecificDetails<?>) getDetails()).getIdentity();
     }
 
     @Override

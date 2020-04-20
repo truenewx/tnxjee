@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.web.config;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -11,9 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.resource.ResourceMappingProperties;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * WEB MVC配置支持，可选的控制层配置均在此配置支持体系中

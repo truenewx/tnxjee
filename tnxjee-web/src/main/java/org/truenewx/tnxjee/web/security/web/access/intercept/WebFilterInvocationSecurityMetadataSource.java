@@ -1,6 +1,10 @@
 package org.truenewx.tnxjee.web.security.web.access.intercept;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
@@ -16,15 +20,12 @@ import org.truenewx.tnxjee.web.security.config.annotation.ConfigAuthority;
 import org.truenewx.tnxjee.web.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
-import java.lang.reflect.Method;
-import java.util.*;
-
 /**
  * WEB过滤器调用安全元数据源<br>
  * 用于获取访问资源需要具备的权限
  */
-public class WebFilterInvocationSecurityMetadataSource
-        implements FilterInvocationSecurityMetadataSource, ContextInitializedBean, ConfigAuthorityResolver {
+public class WebFilterInvocationSecurityMetadataSource implements
+        FilterInvocationSecurityMetadataSource, ContextInitializedBean, ConfigAuthorityResolver {
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
@@ -47,19 +48,28 @@ public class WebFilterInvocationSecurityMetadataSource
     }
 
     private Collection<UserConfigAuthority> getConfigAttributes(Method method) {
-        if (method.getAnnotation(ConfigAnonymous.class) != null) { // 允许匿名访问，则忽略权限限定
+        // 允许匿名访问，则忽略权限限定
+        if (method.getAnnotation(ConfigAnonymous.class) != null) {
             return null;
         }
+        Class<?> clazz = method.getDeclaringClass();
+        if (clazz.getAnnotation(ConfigAnonymous.class) != null) {
+            return null;
+        }
+
         Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
-        ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
-        if (configAuthorities.length == 0) { // 没有配置权限限定，则拒绝所有访问
+        // 分别从类和方法上获取ConfigAuthority注解，组合在一起作为权限限定
+        ConfigAuthority[] configAuthorities = ArrayUtils.addAll(
+                clazz.getAnnotationsByType(ConfigAuthority.class),
+                method.getAnnotationsByType(ConfigAuthority.class));
+        for (ConfigAuthority configAuthority : configAuthorities) {
+            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(
+                    configAuthority.role(), configAuthority.permission(),
+                    configAuthority.intranet());
+            userConfigAuthorities.add(userConfigAuthority);
+        }
+        if (userConfigAuthorities.isEmpty()) { // 没有配置权限限定，则拒绝所有访问
             userConfigAuthorities.add(UserConfigAuthority.ofDenyAll());
-        } else {
-            for (ConfigAuthority configAuthority : configAuthorities) {
-                UserConfigAuthority userConfigAuthority = new UserConfigAuthority(configAuthority.role(),
-                        configAuthority.permission(), configAuthority.intranet());
-                userConfigAuthorities.add(userConfigAuthority);
-            }
         }
         return userConfigAuthorities;
     }
@@ -79,7 +89,8 @@ public class WebFilterInvocationSecurityMetadataSource
     }
 
     @Override
-    public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
+    public Collection<ConfigAttribute> getAttributes(Object object)
+            throws IllegalArgumentException {
         Collection<ConfigAttribute> attributes = null;
         if (this.origin != null) {
             attributes = this.origin.getAttributes(object);
@@ -88,10 +99,12 @@ public class WebFilterInvocationSecurityMetadataSource
             attributes = new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
             try {
-                HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(fi.getRequest());
+                HandlerMethod handlerMethod = this.handlerMethodMapping
+                        .getHandlerMethod(fi.getRequest());
                 if (handlerMethod != null) {
                     String methodKey = handlerMethod.getMethod().toString();
-                    Collection<UserConfigAuthority> userConfigAuthorities = this.configAttributesMap.get(methodKey);
+                    Collection<UserConfigAuthority> userConfigAuthorities = this.configAttributesMap
+                            .get(methodKey);
                     if (userConfigAuthorities == null) { // 加入一个没有权限限制的必备权限，以标记进行过处理
                         attributes.add(new UserConfigAuthority());
                     } else {
@@ -112,7 +125,8 @@ public class WebFilterInvocationSecurityMetadataSource
         }
         for (ConfigAttribute attribute : originalAttributes) {
             // 原始配置属性包含不限制访问，说明也不是登录才能访问，不支持
-            if ("permitAll".equals(attribute.getAttribute()) || "permitAll".equals(attribute.toString())) {
+            if ("permitAll".equals(attribute.getAttribute())
+                    || "permitAll".equals(attribute.toString())) {
                 return false;
             }
         }
