@@ -1,14 +1,14 @@
 package org.truenewx.tnxjee.web.security.util;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * 安全工具类
@@ -53,6 +53,17 @@ public class SecurityUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取已授权的当前用户标识，匿名用户将返回null
+     *
+     * @param <I> 用户标识类型
+     * @return 已授权的当前用户标识
+     */
+    public static <I extends UserIdentity> I getAuthorizedUserIdentity() {
+        UserSpecificDetails<I> details = getAuthorizedUserDetails();
+        return details == null ? null : details.getIdentity();
     }
 
 }
