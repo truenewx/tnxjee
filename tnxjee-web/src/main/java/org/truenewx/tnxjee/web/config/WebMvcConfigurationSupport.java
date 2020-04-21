@@ -1,10 +1,10 @@
 package org.truenewx.tnxjee.web.config;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
@@ -13,21 +13,24 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
-import org.truenewx.tnxjee.web.resource.ResourceMappingProperties;
+import org.truenewx.tnxjee.web.util.SwaggerUtil;
 
 /**
  * WEB MVC配置支持，可选的控制层配置均在此配置支持体系中
  *
  * @author jianglei
  */
-@EnableConfigurationProperties({ ResourceMappingProperties.class, CorsRegistryProperties.class })
+@EnableConfigurationProperties({ CorsRegistryProperties.class })
 public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Autowired(required = false)
-    private ResourceMappingProperties resourceMappingProperties;
-
-    @Autowired(required = false)
     private CorsRegistryProperties corsRegistryProperties;
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    protected final ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -39,14 +42,11 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (this.resourceMappingProperties != null) {
-            Map<String, String[]> mapping = this.resourceMappingProperties.getMapping();
-            if (mapping != null) {
-                mapping.forEach((pattern, locations) -> {
-                    registry.addResourceHandler(pattern)
-                            .addResourceLocations(locations);
-                });
-            }
+        if (SwaggerUtil.isEnabled(getApplicationContext())) {
+            registry.addResourceHandler("/swagger-ui.html")
+                    .addResourceLocations("classpath:/META-INF/resources/");
+            registry.addResourceHandler("/webjars/**")
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/");
         }
     }
 

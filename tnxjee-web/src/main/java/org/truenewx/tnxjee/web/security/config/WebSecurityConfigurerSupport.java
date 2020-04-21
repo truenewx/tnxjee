@@ -1,5 +1,9 @@
 package org.truenewx.tnxjee.web.security.config;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,10 +32,7 @@ import org.truenewx.tnxjee.web.security.web.access.AccessDeniedBusinessException
 import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import org.truenewx.tnxjee.web.util.SwaggerUtil;
 
 /**
  * WEB安全配置器支持
@@ -111,6 +112,14 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         Collection<String> patterns = new HashSet<>();
         RequestMapping mapping = ApiMetaController.class.getAnnotation(RequestMapping.class);
         patterns.add(mapping.value()[0] + "/**");
+
+        if (SwaggerUtil.isEnabled(getApplicationContext())) {
+            patterns.add("/swagger-ui.html");
+            patterns.add("/webjars/**");
+            patterns.add("/v2/api-docs");
+            patterns.add("/swagger-resources/**");
+        }
+
         if (this.securityProperties != null) {
             List<String> ignoringPatterns = this.securityProperties.getIgnoringPatterns();
             if (ignoringPatterns != null) {
