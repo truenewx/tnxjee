@@ -1,8 +1,8 @@
 package org.truenewx.tnxjee.web.security.config.annotation;
 
-import org.truenewx.tnxjee.core.Strings;
-
 import java.lang.annotation.*;
+
+import org.truenewx.tnxjee.core.Strings;
 
 /**
  * 配置允许匿名访问，一旦配置，同方法上的@{@link ConfigAuthority}将失效（如果有）
@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  * @author jianglei
  */
 @Documented
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigAnonymous {
 
