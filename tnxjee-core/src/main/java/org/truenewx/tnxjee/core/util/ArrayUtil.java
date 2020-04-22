@@ -1,16 +1,12 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
  * 数组工具类
  *
  * @author jianglei
- * 
  */
 public class ArrayUtil {
 
@@ -178,9 +174,7 @@ public class ArrayUtil {
             return null;
         }
         Set<T> set = new HashSet<>();
-        for (T obj : array) {
-            set.add(obj);
-        }
+        Collections.addAll(set, array);
         return set;
     }
 
@@ -211,9 +205,7 @@ public class ArrayUtil {
             return null;
         }
         List<T> list = new ArrayList<>();
-        for (T obj : array) {
-            list.add(obj);
-        }
+        Collections.addAll(list, array);
         return list;
     }
 
@@ -245,6 +237,19 @@ public class ArrayUtil {
                 }
             }
         }
+    }
+
+    public static boolean containsIgnoreCase(String[] array, String value) {
+        for (String e : array) {
+            if (e == null) {
+                if (value == null) {
+                    return true;
+                }
+            } else if (e.equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
