@@ -1,4 +1,7 @@
-package org.truenewx.tnxjee.repo.util;
+package org.truenewx.tnxjee.model.support;
+
+import java.lang.reflect.Field;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +13,6 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
-
-import java.lang.reflect.Field;
-import java.util.Locale;
 
 /**
  * 模型属性显示名称解决器

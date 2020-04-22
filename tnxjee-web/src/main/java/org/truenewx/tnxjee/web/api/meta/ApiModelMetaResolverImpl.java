@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
@@ -36,7 +37,7 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class, byte.class, Long.class, Integer.class, Short.class, Byte.class, BigInteger.class };
     private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class, Float.class, BigDecimal.class };
 
-    @Autowired
+    @Autowired(required = false) // 如果工程未依赖tnxjee-repo-jpa，则可能没有该bean
     private ValidationConfigurationFactory validationConfigurationFactory;
     @Autowired
     private EnumDictResolver enumDictResolver;
@@ -57,34 +58,36 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     }
 
     @Override
-//    @Cacheable("ApiModelMeta")
+    @Cacheable("ApiModelMeta")
     public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass,
             Locale locale) {
         Map<String, ApiModelPropertyMeta> metas = new HashMap<>();
-        ValidationConfiguration configuration = this.validationConfigurationFactory
-                .getConfiguration(modelClass);
-        ClassUtil.loopFields(modelClass, null, field -> {
-            String propertyName = field.getName();
-            String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
-            if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
-                caption = null;
-            }
-            ApiModelPropertyType type = getType(field);
-            ApiModelPropertyMeta meta = new ApiModelPropertyMeta(caption, type);
-            Map<String, Object> validation = getValidation(configuration, propertyName, locale);
-            if (validation.size() > 0) {
-                meta.setValidation(validation);
-            }
-            Class<?> fieldType = field.getType();
-            if (fieldType.isEnum()) {
-                EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), locale);
-                if (enumType != null) {
-                    meta.setEnums(enumType.getItems());
+        if (this.validationConfigurationFactory != null) {
+            ValidationConfiguration configuration = this.validationConfigurationFactory
+                    .getConfiguration(modelClass);
+            ClassUtil.loopFields(modelClass, null, field -> {
+                String propertyName = field.getName();
+                String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
+                if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+                    caption = null;
                 }
-            }
-            metas.put(propertyName, meta);
-            return true;
-        });
+                ApiModelPropertyType type = getType(field);
+                ApiModelPropertyMeta meta = new ApiModelPropertyMeta(caption, type);
+                Map<String, Object> validation = getValidation(configuration, propertyName, locale);
+                if (validation.size() > 0) {
+                    meta.setValidation(validation);
+                }
+                Class<?> fieldType = field.getType();
+                if (fieldType.isEnum()) {
+                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), locale);
+                    if (enumType != null) {
+                        meta.setEnums(enumType.getItems());
+                    }
+                }
+                metas.put(propertyName, meta);
+                return true;
+            });
+        }
         return metas;
     }
 
