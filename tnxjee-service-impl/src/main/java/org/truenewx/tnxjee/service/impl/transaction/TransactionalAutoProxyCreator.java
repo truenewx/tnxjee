@@ -17,14 +17,13 @@ import org.springframework.transaction.interceptor.CompositeTransactionAttribute
 import org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionProxyFactoryBean;
-import org.truenewx.tnxjee.core.beans.factory.TransactionalBeanFactory;
+import org.truenewx.tnxjee.core.beans.factory.SourceBeanFactory;
 import org.truenewx.tnxjee.service.transaction.annotation.Transactionable;
 
 /**
  * 事务性自动代理创建器
  *
  * @author jianglei
- * 
  */
 public class TransactionalAutoProxyCreator
         implements SmartInstantiationAwareBeanPostProcessor, BeanClassLoaderAware, Ordered {
@@ -39,7 +38,7 @@ public class TransactionalAutoProxyCreator
     public static String WRITE_TRANSACTION_ATTRIBUTE_ABBR = "write";
 
     protected ClassLoader beanClassLoader;
-    private TransactionalBeanFactory beanFactory;
+    private SourceBeanFactory beanFactory;
     private PlatformTransactionManager transactionManager;
 
     private String readTransactionAttribute = "PROPAGATION_REQUIRED, readOnly";
@@ -54,7 +53,7 @@ public class TransactionalAutoProxyCreator
     }
 
     @Autowired
-    public void setBeanFactory(TransactionalBeanFactory beanFactory) {
+    public void setBeanFactory(SourceBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
@@ -96,7 +95,8 @@ public class TransactionalAutoProxyCreator
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
         return wrapIfNecessary(bean, beanName);
     }
 
@@ -146,7 +146,7 @@ public class TransactionalAutoProxyCreator
             NameMatchTransactionAttributeSource nmtas = new NameMatchTransactionAttributeSource();
             nmtas.setProperties(attributes);
             return new CompositeTransactionAttributeSource(
-                    new TransactionAttributeSource[] { new AnnotationTransactionAttributeSource(), nmtas }); // 方法级别优先
+                    new TransactionAttributeSource[]{ new AnnotationTransactionAttributeSource(), nmtas }); // 方法级别优先
         }
     }
 

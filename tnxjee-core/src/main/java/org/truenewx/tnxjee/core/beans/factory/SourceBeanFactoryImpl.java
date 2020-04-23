@@ -11,117 +11,104 @@ import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
 /**
- * 事务性Bean提交处理器
+ * 源Bean工厂实现
  *
  * @author jianglei
- * 
  */
 @Component
-public class TransactionalBeanFactoryDelegate
-        implements TransactionalBeanFactory, BeanFactoryAware {
+public class SourceBeanFactoryImpl implements SourceBeanFactory, BeanFactoryAware {
 
-    private BeanFactory beanFactory;
+    private BeanFactory delegate;
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+        this.delegate = beanFactory;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getBean(String name, boolean transactional) {
+    public <T> T getSourceBean(String name) {
         try {
-            T bean = (T) this.beanFactory.getBean(name);
-            return getTarget(bean, transactional);
+            T bean = (T) this.delegate.getBean(name);
+            return getTargetSource(bean);
         } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getTarget(T bean, boolean transactional) throws Exception {
-        if (AopUtils.isAopProxy(bean)) {
-            if (transactional) { // 取到的Bean为代理且需要的就是事务性Bean，则返回该Bean
-                return bean;
-            } else if (bean instanceof Advised) { // 取到的Bean为代理但需要非事务性Bean，则返回该代理的代理目标
-                Advised proxy = (Advised) bean;
-                return (T) proxy.getTargetSource().getTarget();
-            }
-        } else if (!transactional) { // 取到的Bean非代理且需要的就是非事务性Bean，则返回该Bean
-            return bean;
+    private <T> T getTargetSource(T bean) throws Exception {
+        if (AopUtils.isAopProxy(bean) && bean instanceof Advised) {
+            Advised proxy = (Advised) bean;
+            return (T) proxy.getTargetSource().getTarget();
         }
-        return null;
+        return bean;
     }
 
     @Override
-    public <T> T getBean(String name, Class<T> requiredType, boolean transactional) {
+    public <T> T getSourceBean(String name, Class<T> requiredType) {
         try {
-            T bean = this.beanFactory.getBean(name, requiredType);
-            return getTarget(bean, transactional);
+            T bean = this.delegate.getBean(name, requiredType);
+            return getTargetSource(bean);
         } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     @Override
-    public <T> T getBean(Class<T> requiredType, boolean transactional) {
+    public <T> T getSourceBean(Class<T> requiredType) {
         try {
-            T bean = this.beanFactory.getBean(requiredType);
-            return getTarget(bean, transactional);
+            T bean = this.delegate.getBean(requiredType);
+            return getTargetSource(bean);
         } catch (Exception e) {
+            return null;
         }
-        return null;
-    }
-
-    @Override
-    public boolean containsBean(String name, boolean transactional) {
-        return getBean(name, transactional) != null;
     }
 
     @Override
     public Object getBean(String name) throws BeansException {
-        return this.beanFactory.getBean(name);
+        return this.delegate.getBean(name);
     }
 
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-        return this.beanFactory.getBean(name, requiredType);
+        return this.delegate.getBean(name, requiredType);
     }
 
     @Override
     public <T> T getBean(Class<T> requiredType) throws BeansException {
-        return this.beanFactory.getBean(requiredType);
+        return this.delegate.getBean(requiredType);
     }
 
     @Override
     public Object getBean(String name, Object... args) throws BeansException {
-        return this.beanFactory.getBean(name, args);
+        return this.delegate.getBean(name, args);
     }
 
     @Override
     public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
-        return this.beanFactory.getBean(requiredType, args);
+        return this.delegate.getBean(requiredType, args);
     }
 
     @Override
     public boolean containsBean(String name) {
-        return this.beanFactory.containsBean(name);
+        return this.delegate.containsBean(name);
     }
 
     @Override
     public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
-        return this.beanFactory.isSingleton(name);
+        return this.delegate.isSingleton(name);
     }
 
     @Override
     public boolean isPrototype(String name) throws NoSuchBeanDefinitionException {
-        return this.beanFactory.isPrototype(name);
+        return this.delegate.isPrototype(name);
     }
 
     @Override
     public boolean isTypeMatch(String name, Class<?> targetType)
             throws NoSuchBeanDefinitionException {
-        return this.beanFactory.isTypeMatch(name, targetType);
+        return this.delegate.isTypeMatch(name, targetType);
     }
 
     @Override
@@ -132,22 +119,22 @@ public class TransactionalBeanFactoryDelegate
 
     @Override
     public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
-        return this.beanFactory.getType(name);
+        return this.delegate.getType(name);
     }
 
     @Override
     public String[] getAliases(String name) {
-        return this.beanFactory.getAliases(name);
+        return this.delegate.getAliases(name);
     }
 
     @Override
     public <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType) {
-        return this.beanFactory.getBeanProvider(requiredType);
+        return this.delegate.getBeanProvider(requiredType);
     }
 
     @Override
     public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType) {
-        return this.beanFactory.getBeanProvider(requiredType);
+        return this.delegate.getBeanProvider(requiredType);
     }
 
 }

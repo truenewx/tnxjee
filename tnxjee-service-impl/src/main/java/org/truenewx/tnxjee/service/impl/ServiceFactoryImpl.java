@@ -3,8 +3,9 @@ package org.truenewx.tnxjee.service.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.truenewx.tnxjee.core.beans.factory.TransactionalBeanFactory;
+import org.truenewx.tnxjee.core.beans.factory.SourceBeanFactory;
 import org.truenewx.tnxjee.service.Service;
 import org.truenewx.tnxjee.service.ServiceFactory;
 
@@ -12,20 +13,15 @@ import org.truenewx.tnxjee.service.ServiceFactory;
  * 服务工厂实现
  *
  * @author jianglei
- * 
  */
 @org.springframework.stereotype.Service
 public class ServiceFactoryImpl implements ServiceFactory, ServiceRegistrar {
 
-    private TransactionalBeanFactory beanFactory;
+    @Autowired
+    private SourceBeanFactory beanFactory;
 
     private Map<Class<?>, Service> transactionalServices = new ConcurrentHashMap<>();
     private Map<Class<?>, Service> untransactionalServices = new ConcurrentHashMap<>();
-
-    @Autowired
-    public void setBeanFactory(TransactionalBeanFactory transactionalBeanFactory) {
-        this.beanFactory = transactionalBeanFactory;
-    }
 
     @Override
     public void register(Class<? extends Service> serviceInterface, Service transactionalService,
@@ -49,16 +45,18 @@ public class ServiceFactoryImpl implements ServiceFactory, ServiceRegistrar {
         if (transactional) {
             S service = (S) this.transactionalServices.get(serviceClass);
             if (service == null) { // 如果没有缓存，则尝试从bean工厂中获取并缓存
-                service = this.beanFactory.getBean(serviceClass, true);
-                if (service != null) {
+                try {
+                    service = this.beanFactory.getBean(serviceClass);
                     this.transactionalServices.put(serviceClass, service);
+                } catch (NoSuchBeanDefinitionException e) {
+                    service = null;
                 }
             }
             return service;
         } else {
             S service = (S) this.untransactionalServices.get(serviceClass);
             if (service == null) { // 如果没有缓存，则尝试从bean工厂中获取并缓存
-                service = this.beanFactory.getBean(serviceClass, false);
+                service = this.beanFactory.getSourceBean(serviceClass);
                 if (service != null) {
                     this.untransactionalServices.put(serviceClass, service);
                 }
