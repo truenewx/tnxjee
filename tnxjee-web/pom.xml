@@ -47,7 +47,7 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-core</artifactId>
         </dependency>
-        <dependency>
+        <dependency><!-- 尽管依赖包中已有依赖，但此处仍然需要引入，否则启动会找不到相关类 -->
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
