@@ -2,13 +2,11 @@ package org.truenewx.tnxjee.core.util.tuple;
 
 import java.util.Objects;
 
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
-
 /**
  * 二元体
  *
  * @author jianglei
- * 
+ *
  * @param <L> 左元类型
  * @param <R> 右元类型
  * @see Binate
@@ -42,8 +40,7 @@ public class Binary<L, R> implements Binate<L, R>, Cloneable {
 
     @Override
     public int hashCode() {
-        Object[] array = { this.left, this.right };
-        return FuncHashCode.INSTANCE.apply(array);
+        return Objects.hash(this.left, this.right);
     }
 
     @Override

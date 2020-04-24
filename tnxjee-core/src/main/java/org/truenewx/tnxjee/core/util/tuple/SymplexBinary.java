@@ -1,13 +1,14 @@
 package org.truenewx.tnxjee.core.util.tuple;
 
+import java.util.Objects;
+
 import org.truenewx.tnxjee.core.util.BeanUtil;
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
 
 /**
  * 对称二元体，其左右元顺序不敏感，(a,b)等同于(b,a)
  *
  * @author jianglei
- * 
+ *
  * @param <T> 元素类型
  */
 public class SymplexBinary<T> extends Binary<T, T> {
@@ -33,7 +34,7 @@ public class SymplexBinary<T> extends Binary<T, T> {
 
     @Override
     public int hashCode() {
-        return FuncHashCode.INSTANCE.apply(getLeft()) * FuncHashCode.INSTANCE.apply(getRight());
+        return Objects.hash(getLeft()) * Objects.hash(getRight());
     }
 
     @Override

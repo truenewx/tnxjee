@@ -1,8 +1,9 @@
 package org.truenewx.tnxjee.service.exception;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.BeanUtil;
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -65,8 +66,7 @@ public class BusinessException extends SingleException {
 
     @Override
     public int hashCode() {
-        Object[] array = { this.code, this.args };
-        return FuncHashCode.INSTANCE.apply(array);
+        return Objects.hash(this.code, this.args);
     }
 
     @Override

@@ -3,8 +3,6 @@ package org.truenewx.tnxjee.model.query;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
-
 /**
  * 字段排序
  *
@@ -43,8 +41,7 @@ public class FieldOrder implements Serializable, Cloneable {
 
     @Override
     public int hashCode() {
-        Object[] array = { this.name, this.desc };
-        return FuncHashCode.INSTANCE.apply(array);
+        return Objects.hash(this.name, this.desc);
     }
 
     @Override

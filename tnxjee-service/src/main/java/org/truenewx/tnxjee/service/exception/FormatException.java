@@ -1,15 +1,16 @@
 package org.truenewx.tnxjee.service.exception;
 
+import java.util.Objects;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
 
 /**
  * 格式异常，必须绑定属性
  *
  * @author jianglei
- * 
+ *
  */
 public class FormatException extends SingleException {
 
@@ -47,8 +48,7 @@ public class FormatException extends SingleException {
 
     @Override
     public int hashCode() {
-        Object[] array = { this.beanClass, this.property, getMessage() };
-        return FuncHashCode.INSTANCE.apply(array);
+        return Objects.hash(this.beanClass, this.property, getMessage());
     }
 
     @Override

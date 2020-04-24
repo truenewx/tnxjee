@@ -1,16 +1,16 @@
 package org.truenewx.tnxjee.core.spec;
 
 import java.net.InetAddress;
+import java.util.Objects;
 
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
 
 /**
  * IP地址段
  *
  * @author jianglei
- * 
+ *
  */
 public class InetAddressRange<T extends InetAddress> {
     private T begin;
@@ -165,8 +165,7 @@ public class InetAddressRange<T extends InetAddress> {
 
     @Override
     public int hashCode() {
-        Object[] array = new Object[] { this.begin, this.end };
-        return FuncHashCode.INSTANCE.apply(array);
+        return Objects.hash(this.begin, this.end);
     }
 
     @Override

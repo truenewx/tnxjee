@@ -1,13 +1,13 @@
 package org.truenewx.tnxjee.model;
 
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
-import org.truenewx.tnxjee.core.util.function.PredEqual;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
  * 内含映射集的值模型
@@ -50,7 +50,7 @@ public class MapModel implements ValueModel {
      * @param key         项键
      * @param targetClass 目标数据类型
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void convert(final String key, final Class<?> targetClass) {
         Object value = this.values.get(key);
         if (value != null) {
@@ -80,7 +80,7 @@ public class MapModel implements ValueModel {
 
     @Override
     public int hashCode() {
-        return FuncHashCode.INSTANCE.apply(this.values);
+        return Objects.hash(this.values);
     }
 
     @Override

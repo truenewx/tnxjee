@@ -1,8 +1,8 @@
 package org.truenewx.tnxjee.model.entity.relation;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.truenewx.tnxjee.core.util.function.FuncHashCode;
 import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
@@ -12,7 +12,8 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
  * @param <L> 左标识类型
  * @param <R> 右标识类型
  */
-public abstract class AbstractRelation<L extends Serializable, R extends Serializable> implements Relation<L, R> {
+public abstract class AbstractRelation<L extends Serializable, R extends Serializable>
+        implements Relation<L, R> {
 
     public abstract <K extends RelationKey<L, R>> K getId();
 
@@ -30,7 +31,7 @@ public abstract class AbstractRelation<L extends Serializable, R extends Seriali
 
     @Override
     public int hashCode() {
-        return FuncHashCode.INSTANCE.apply(new Object[] { getLeftId(), getRightId() });
+        return Objects.hash(getLeftId(), getRightId());
     }
 
     @Override
