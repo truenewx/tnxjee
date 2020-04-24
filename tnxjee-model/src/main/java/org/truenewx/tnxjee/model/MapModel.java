@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
  * 内含映射集的值模型
@@ -92,7 +91,7 @@ public class MapModel implements ValueModel {
             return false;
         }
         final MapModel other = (MapModel) obj;
-        return PredEqual.INSTANCE.test(this.values, other.values);
+        return Objects.deepEquals(this.values, other.values);
     }
 
     @Override

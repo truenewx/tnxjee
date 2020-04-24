@@ -3,7 +3,6 @@ package org.truenewx.tnxjee.service.exception;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.util.BeanUtil;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -78,7 +77,8 @@ public class BusinessException extends SingleException {
             return false;
         }
         BusinessException other = (BusinessException) obj;
-        return BeanUtil.equals(this.code, other.code) && BeanUtil.equals(this.args, other.args);
+        return Objects.deepEquals(this.code, other.code)
+                && Objects.deepEquals(this.args, other.args);
     }
 
 }

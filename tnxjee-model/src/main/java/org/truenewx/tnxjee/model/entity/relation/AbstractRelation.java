@@ -3,8 +3,6 @@ package org.truenewx.tnxjee.model.entity.relation;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.truenewx.tnxjee.core.util.function.PredEqual;
-
 /**
  * 抽象的关系
  *
@@ -44,8 +42,8 @@ public abstract class AbstractRelation<L extends Serializable, R extends Seriali
         }
         @SuppressWarnings("unchecked")
         Relation<L, R> other = (Relation<L, R>) obj;
-        return PredEqual.INSTANCE.test(getLeftId(), other.getLeftId())
-                && PredEqual.INSTANCE.test(getRightId(), other.getRightId());
+        return Objects.deepEquals(getLeftId(), other.getLeftId())
+                && Objects.deepEquals(getRightId(), other.getRightId());
     }
 
 }

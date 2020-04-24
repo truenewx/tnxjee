@@ -2,8 +2,6 @@ package org.truenewx.tnxjee.core.util.tuple;
 
 import java.util.Objects;
 
-import org.truenewx.tnxjee.core.util.BeanUtil;
-
 /**
  * 对称二元体，其左右元顺序不敏感，(a,b)等同于(b,a)
  *
@@ -47,10 +45,10 @@ public class SymplexBinary<T> extends Binary<T, T> {
             return false;
         }
         SymplexBinary<T> other = (SymplexBinary<T>) obj;
-        return (BeanUtil.equals(getLeft(), other.getLeft())
-                && BeanUtil.equals(getRight(), other.getRight()))
-                || (BeanUtil.equals(getLeft(), other.getRight())
-                        && BeanUtil.equals(getRight(), other.getLeft()));
+        return (Objects.deepEquals(getLeft(), other.getLeft())
+                && Objects.deepEquals(getRight(), other.getRight()))
+                || (Objects.deepEquals(getLeft(), other.getRight())
+                        && Objects.deepEquals(getRight(), other.getLeft()));
     }
 
     @Override

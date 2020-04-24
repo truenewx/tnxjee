@@ -3,7 +3,6 @@ package org.truenewx.tnxjee.service.exception;
 import java.util.Objects;
 
 import org.springframework.util.Assert;
-import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 
 /**
@@ -60,8 +59,8 @@ public class FormatException extends SingleException {
             return false;
         }
         FormatException other = (FormatException) obj;
-        return BeanUtil.equals(this.beanClass, other.beanClass)
-                && BeanUtil.equals(this.property, other.property)
-                && BeanUtil.equals(getMessage(), other.getMessage());
+        return Objects.equals(this.beanClass, other.beanClass)
+                && Objects.equals(this.property, other.property)
+                && Objects.equals(getMessage(), other.getMessage());
     }
 }

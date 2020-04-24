@@ -14,7 +14,6 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.Nullable;
-import org.truenewx.tnxjee.core.util.function.PredEqual;
 
 /**
  * Bean工具类
@@ -22,10 +21,6 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
  * @author jianglei
  */
 public class BeanUtil {
-
-    public static boolean equals(Object bean, Object otherBean) {
-        return PredEqual.INSTANCE.test(bean, otherBean);
-    }
 
     /**
      * 检查指定的2个bean是否相等，只根据id属性进行判断，没有id属性或id属性值都为null，则直接用bean的原始equals方法进行比较
@@ -102,7 +97,8 @@ public class BeanUtil {
             String[] names = propertyName.split("\\.");
             if (names.length > 1) {
                 try {
-                    bean = getRefPropertyValue(bean, ArrayUtils.subarray(names, 0, names.length - 1));
+                    bean = getRefPropertyValue(bean,
+                            ArrayUtils.subarray(names, 0, names.length - 1));
                     propertyName = names[names.length - 1];
                 } catch (Exception e) {
                     return false; // 忽略属性设置错误，不能设置则不设置
@@ -115,7 +111,8 @@ public class BeanUtil {
                     try {
                         writeMethod.invoke(bean, value);
                         return true;
-                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    } catch (IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException e) {
                         return false; // 忽略属性设置错误，不能设置则不设置
                     }
                 }
@@ -374,14 +371,16 @@ public class BeanUtil {
      * @param target 目标对象
      */
     public static void copySimpleProperties(Object source, Object target) {
-        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(source.getClass());
+        PropertyDescriptor[] propertyDescriptors = BeanUtils
+                .getPropertyDescriptors(source.getClass());
         Class<?> targetClass = target.getClass();
         for (PropertyDescriptor pd : propertyDescriptors) {
             try {
                 if (ClassUtil.isSimpleValueType(pd.getPropertyType())) {
                     String name = pd.getDisplayName();
                     if (!"class".equals(name)) {
-                        PropertyDescriptor writePd = BeanUtils.getPropertyDescriptor(targetClass, name);
+                        PropertyDescriptor writePd = BeanUtils.getPropertyDescriptor(targetClass,
+                                name);
                         if (writePd != null) {
                             Method writeMethod = writePd.getWriteMethod();
                             if (writeMethod != null) {
