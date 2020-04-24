@@ -1,14 +1,16 @@
 package org.truenewx.tnxjee.web.security.web.access;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
-import org.truenewx.tnxjee.web.exception.message.BusinessCauseMessageSaver;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.truenewx.tnxjee.service.exception.ResolvableException;
+import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 
 /**
  * 访问拒绝后的业务异常处理器
@@ -16,13 +18,16 @@ import java.io.IOException;
 public class AccessDeniedBusinessExceptionHandler extends AccessDeniedHandlerImpl {
 
     @Autowired
-    private BusinessCauseMessageSaver businessCauseMessageSaver;
+    private ResolvableExceptionMessageSaver resolvableExceptionMessageSaver;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
         try {
-            this.businessCauseMessageSaver.saveMessage(request, response, accessDeniedException);
+            Throwable cause = accessDeniedException.getCause();
+            if (cause instanceof ResolvableException) {
+                this.resolvableExceptionMessageSaver.saveMessage(request, response, (ResolvableException) cause);
+            }
         } catch (Exception e) {
             throw new ServletException(e);
         }

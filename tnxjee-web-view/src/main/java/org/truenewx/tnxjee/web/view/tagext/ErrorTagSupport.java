@@ -1,12 +1,13 @@
 package org.truenewx.tnxjee.web.view.tagext;
 
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.web.exception.message.BusinessExceptionMessageSaver;
-import org.truenewx.tnxjee.web.exception.resolver.ResolvedBusinessError;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.List;
+
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
+import org.truenewx.tnxjee.web.exception.resolver.ResolvedBusinessError;
 
 /**
  * 错误标签支持
@@ -29,7 +30,7 @@ public abstract class ErrorTagSupport extends TagSupport {
     protected List<ResolvedBusinessError> getErrors() {
         ServletRequest request = this.pageContext.getRequest();
         return (List<ResolvedBusinessError>) request
-                .getAttribute(BusinessExceptionMessageSaver.ATTRIBUTE);
+                .getAttribute(ResolvableExceptionMessageSaver.ATTRIBUTE);
     }
 
     protected final boolean matches(boolean inverse) {

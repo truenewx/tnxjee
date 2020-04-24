@@ -13,7 +13,7 @@ import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.MultiException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.service.exception.SingleException;
-import org.truenewx.tnxjee.web.exception.message.BusinessExceptionMessageSaver;
+import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 
 /**
  * 业务异常解决器
@@ -21,10 +21,11 @@ import org.truenewx.tnxjee.web.exception.message.BusinessExceptionMessageSaver;
 public abstract class BusinessExceptionResolver extends AbstractHandlerExceptionResolver {
 
     @Autowired
-    private BusinessExceptionMessageSaver messageSaver;
+    private ResolvableExceptionMessageSaver messageSaver;
 
     @Override
-    protected final ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
+    protected final ModelAndView doResolveException(HttpServletRequest request,
+            HttpServletResponse response,
             Object handler, Exception ex) {
         if (handler instanceof HandlerMethod && ex instanceof ResolvableException) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -39,7 +40,8 @@ public abstract class BusinessExceptionResolver extends AbstractHandlerException
 
     protected abstract boolean supports(HandlerMethod handlerMethod);
 
-    protected abstract ModelAndView getResult(HttpServletRequest request, HttpServletResponse response,
+    protected abstract ModelAndView getResult(HttpServletRequest request,
+            HttpServletResponse response,
             HandlerMethod handlerMethod);
 
     @Override
