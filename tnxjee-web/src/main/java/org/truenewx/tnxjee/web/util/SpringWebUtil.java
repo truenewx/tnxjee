@@ -11,6 +11,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.bind.annotation.ResponseStream;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 
 /**
@@ -64,7 +65,8 @@ public class SpringWebUtil {
 
     public static boolean isResponseBody(HandlerMethod handlerMethod) {
         return handlerMethod.getMethodAnnotation(ResponseBody.class) != null
-                || handlerMethod.getBeanType().getAnnotation(RestController.class) != null;
+                || handlerMethod.getBeanType().getAnnotation(RestController.class) != null
+                || handlerMethod.getMethodAnnotation(ResponseStream.class) != null;
     }
 
 }

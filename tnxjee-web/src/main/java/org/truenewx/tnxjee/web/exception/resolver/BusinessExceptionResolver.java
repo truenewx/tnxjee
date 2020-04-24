@@ -25,8 +25,7 @@ public abstract class BusinessExceptionResolver extends AbstractHandlerException
 
     @Override
     protected final ModelAndView doResolveException(HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler, Exception ex) {
+            HttpServletResponse response, Object handler, Exception ex) {
         if (handler instanceof HandlerMethod && ex instanceof ResolvableException) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             ResolvableException re = (ResolvableException) ex;
@@ -41,8 +40,7 @@ public abstract class BusinessExceptionResolver extends AbstractHandlerException
     protected abstract boolean supports(HandlerMethod handlerMethod);
 
     protected abstract ModelAndView getResult(HttpServletRequest request,
-            HttpServletResponse response,
-            HandlerMethod handlerMethod);
+            HttpServletResponse response, HandlerMethod handlerMethod);
 
     @Override
     protected String buildLogMessage(Exception ex, HttpServletRequest request) {
