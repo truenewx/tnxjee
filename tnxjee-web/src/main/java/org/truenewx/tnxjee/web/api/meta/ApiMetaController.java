@@ -32,7 +32,7 @@ public class ApiMetaController {
     private ApiModelMetaResolver metaResolver;
     @Autowired(required = false)
     private ApiMetaProperties properties;
-    @Autowired
+    @Autowired(required = false)
     private HeaderSessionIdReader headerSessionIdReader;
 
     @GetMapping("/context")
@@ -42,8 +42,10 @@ public class ApiMetaController {
             context.setBaseUrl(this.properties.getBaseUrl());
             context.setContext(this.properties.getContext());
         }
-        String sessionId = request.getSession().getId();
-        context.getHeaders().put(this.headerSessionIdReader.getHeaderName(), sessionId);
+        if (this.headerSessionIdReader != null) {
+            String sessionId = request.getSession().getId();
+            context.getHeaders().put(this.headerSessionIdReader.getHeaderName(), sessionId);
+        }
         return context;
     }
 

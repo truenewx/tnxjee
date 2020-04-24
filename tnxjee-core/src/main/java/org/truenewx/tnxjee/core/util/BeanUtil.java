@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.Nullable;
 import org.truenewx.tnxjee.core.util.function.PredEqual;
@@ -18,7 +20,6 @@ import org.truenewx.tnxjee.core.util.function.PredEqual;
  * Bean工具类
  *
  * @author jianglei
- * 
  */
 public class BeanUtil {
 
@@ -95,7 +96,8 @@ public class BeanUtil {
      * @param value        属性值
      * @return 是否设置成功，当指定属性不存在或无法设置值时返回false，否则返回true
      */
-    public static boolean setPropertyValue(@Nullable Object bean, String propertyName, @Nullable Object value) {
+    public static boolean setPropertyValue(@Nullable Object bean, String propertyName,
+            @Nullable Object value) {
         if (bean != null) {
             String[] names = propertyName.split("\\.");
             if (names.length > 1) {
@@ -244,7 +246,8 @@ public class BeanUtil {
      * @param bean               bean
      * @param excludedProperties 排除的属性集
      */
-    public static void fromBean(Map<String, Object> map, Object bean, String... excludedProperties) {
+    public static void fromBean(Map<String, Object> map, Object bean,
+            String... excludedProperties) {
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(bean.getClass());
         for (PropertyDescriptor pd : pds) {
             try {
@@ -352,7 +355,8 @@ public class BeanUtil {
      * @param propertyClass 属性类型
      * @return true if 指定的bean对象具有指定属性的写方法, otherwise false
      */
-    public static boolean hasWritableProperty(Object bean, String propertyName, Class<?> propertyClass) {
+    public static boolean hasWritableProperty(Object bean, String propertyName,
+            Class<?> propertyClass) {
         try {
             String methodName = "set" + StringUtil.firstToUpperCase(propertyName);
             bean.getClass().getMethod(methodName, propertyClass);
@@ -391,5 +395,14 @@ public class BeanUtil {
                 LogUtil.error(BeanUtil.class, e);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getTargetSource(T bean) throws Exception {
+        if (AopUtils.isAopProxy(bean) && bean instanceof Advised) {
+            Advised proxy = (Advised) bean;
+            return (T) proxy.getTargetSource().getTarget();
+        }
+        return bean;
     }
 }

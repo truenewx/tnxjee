@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.core.beans.factory;
 
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -9,6 +7,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 
 /**
  * 源Bean工厂实现
@@ -30,26 +29,17 @@ public class SourceBeanFactoryImpl implements SourceBeanFactory, BeanFactoryAwar
     public <T> T getSourceBean(String name) {
         try {
             T bean = (T) this.delegate.getBean(name);
-            return getTargetSource(bean);
+            return BeanUtil.getTargetSource(bean);
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getTargetSource(T bean) throws Exception {
-        if (AopUtils.isAopProxy(bean) && bean instanceof Advised) {
-            Advised proxy = (Advised) bean;
-            return (T) proxy.getTargetSource().getTarget();
-        }
-        return bean;
     }
 
     @Override
     public <T> T getSourceBean(String name, Class<T> requiredType) {
         try {
             T bean = this.delegate.getBean(name, requiredType);
-            return getTargetSource(bean);
+            return BeanUtil.getTargetSource(bean);
         } catch (Exception e) {
             return null;
         }
@@ -59,7 +49,7 @@ public class SourceBeanFactoryImpl implements SourceBeanFactory, BeanFactoryAwar
     public <T> T getSourceBean(Class<T> requiredType) {
         try {
             T bean = this.delegate.getBean(requiredType);
-            return getTargetSource(bean);
+            return BeanUtil.getTargetSource(bean);
         } catch (Exception e) {
             return null;
         }

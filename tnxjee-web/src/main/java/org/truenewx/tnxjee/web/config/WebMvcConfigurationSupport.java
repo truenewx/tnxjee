@@ -4,15 +4,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
+import org.truenewx.tnxjee.web.http.session.HeaderSessionIdFilter;
+import org.truenewx.tnxjee.web.http.session.HeaderSessionIdReader;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 
 /**
@@ -65,6 +70,22 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
                 }
             }
         }
+    }
+
+    @Bean // 在更复杂的会话管理机制引入后可能需要调整生成策略
+    public HeaderSessionIdReader headerSessionIdReader() {
+        return new HeaderSessionIdReader();
+    }
+
+    @Bean
+    public FilterRegistrationBean<HeaderSessionIdFilter> headerSessionIdFilter(
+            HeaderSessionIdReader headerSessionIdReader,
+            SessionRepositoryFilter<?> sessionRepositoryFilter) {
+        FilterRegistrationBean<HeaderSessionIdFilter> frb = new FilterRegistrationBean<>();
+        frb.setFilter(new HeaderSessionIdFilter(headerSessionIdReader, sessionRepositoryFilter));
+        frb.addUrlPatterns("/*");
+        frb.setOrder(HeaderSessionIdFilter.DEFAULT_ORDER);
+        return frb;
     }
 
 }
