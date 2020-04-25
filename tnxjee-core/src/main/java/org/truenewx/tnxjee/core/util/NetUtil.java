@@ -1,27 +1,8 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +14,6 @@ import org.truenewx.tnxjee.core.Strings;
  * 网络工具类
  *
  * @author jianglei
- * 
  */
 public class NetUtil {
 
@@ -293,7 +273,7 @@ public class NetUtil {
             in = urlObj.openStream();
             IOUtil.createFile(localFile);
             out = new BufferedOutputStream(new FileOutputStream(localFile));
-            IOUtil.writeAll(in, out);
+            IOUtils.copy(in, out);
             in.close();
             out.flush();
             out.close();

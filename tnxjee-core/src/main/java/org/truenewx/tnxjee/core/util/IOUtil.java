@@ -1,16 +1,7 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +19,6 @@ import org.truenewx.tnxjee.core.Strings;
  * IO工具类
  *
  * @author jianglei
- * 
  */
 public class IOUtil {
 
@@ -39,21 +29,6 @@ public class IOUtil {
             .getProperty("file.separator");
 
     private IOUtil() {
-    }
-
-    /**
-     * 将指定输入流中的数据全部写入指定输出流中。除读写操作，本方法不对输入流和输出流做任何其它操作。
-     *
-     * @param in  输入流
-     * @param out 输出流
-     * @throws IOException 如果读写过程中出现错误
-     */
-    public static void writeAll(InputStream in, OutputStream out) throws IOException {
-        byte[] b = new byte[1024];
-        int len;
-        while ((len = in.read(b)) >= 0) {
-            out.write(b, 0, len);
-        }
     }
 
     public static void coverToFile(File file, String data, String encoding) throws IOException {
@@ -115,15 +90,14 @@ public class IOUtil {
     /**
      * 执行指定命令行指令，如果等待毫秒数大于0，则当前线程等待指定毫秒数之后返回，
      *
-     * @param command      命令行指令
-     * @param waitInterval 等待毫秒数
+     * @param command 命令行指令
      */
     public static String executeCommand(String command) {
         String result = "";
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-            result = IOUtils.toString(process.getInputStream(), Strings.ENCODING_UTF8);
+            result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
         } catch (IOException | InterruptedException e) {
             LogUtil.error(IOUtil.class, e);
         }
@@ -166,8 +140,8 @@ public class IOUtil {
      */
     public static void replaceFileContent(String filePath, String regex, String replacement) {
         BufferedReader br = null;
-        String line = "";
-        StringBuffer sb = new StringBuffer();
+        String line;
+        StringBuilder sb = new StringBuilder();
         try {
             br = new BufferedReader(new FileReader(filePath));
             while ((line = br.readLine()) != null) {
@@ -216,7 +190,7 @@ public class IOUtil {
         Assert.hasText(basename, "Basename must not be empty");
         basename = basename.replace('\\', '/');
         // 把basename中classpath:替换为classpath*:后进行查找
-        StringBuffer searchBasename = new StringBuffer(
+        StringBuilder searchBasename = new StringBuilder(
                 basename.replace(ResourceUtils.CLASSPATH_URL_PREFIX,
                         ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX)).append(Strings.ASTERISK);
         if (!extension.startsWith(Strings.DOT)) {
@@ -259,7 +233,7 @@ public class IOUtil {
      */
     public static File findI18nFileByDir(String baseDir, String basename, String extension,
             Locale locale) {
-        StringBuffer searchFileName = new StringBuffer(basename).append(Strings.ASTERISK);
+        StringBuilder searchFileName = new StringBuilder(basename).append(Strings.ASTERISK);
         if (!extension.startsWith(Strings.DOT)) {
             searchFileName.append(Strings.DOT);
         }
@@ -296,22 +270,21 @@ public class IOUtil {
      * @param fileList       查找到的文件集合
      */
     public static void findFiles(String baseDirName, String targetFileName, List<File> fileList) {
-
         File baseDir = new File(baseDirName); // 创建一个File对象
         if (baseDir.exists() && baseDir.isDirectory()) { // 判断目录是否存在
-            String tempName = null;
             // 判断目录是否存在
             File tempFile;
             File[] files = baseDir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                tempFile = files[i];
-                if (tempFile.isDirectory()) {
-                    findFiles(tempFile.getAbsolutePath(), targetFileName, fileList);
-                } else if (tempFile.isFile()) {
-                    tempName = tempFile.getName();
-                    if (wildcardMatch(targetFileName, tempName)) {
-                        // 匹配成功，将文件名添加到结果集
-                        fileList.add(tempFile);
+            if (files != null) {
+                for (File file : files) {
+                    tempFile = file;
+                    if (tempFile.isDirectory()) {
+                        findFiles(tempFile.getAbsolutePath(), targetFileName, fileList);
+                    } else if (tempFile.isFile()) {
+                        if (wildcardMatch(targetFileName, tempFile.getName())) {
+                            // 匹配成功，将文件名添加到结果集
+                            fileList.add(tempFile);
+                        }
                     }
                 }
             }
