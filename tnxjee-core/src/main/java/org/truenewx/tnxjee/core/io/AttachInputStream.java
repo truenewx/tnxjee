@@ -2,39 +2,37 @@ package org.truenewx.tnxjee.core.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.MathUtil;
 
 /**
  * 带有附加信息的输入流，配合读取 {@link AttachOutputStream} 写入的附加信息
  *
  * @author jianglei
- * 
  */
 public class AttachInputStream extends InputStream {
 
     private InputStream in;
-    private Boolean readAttachement = Boolean.FALSE;
+    private boolean readAttachment;
+    private Byte salt;
 
-    public AttachInputStream(InputStream in) {
+    public AttachInputStream(InputStream in, Byte salt) {
         this.in = in;
+        this.salt = salt;
     }
 
-    public String readAttachement() throws IOException {
-        byte[] bytes;
-        synchronized (this.readAttachement) {
-            if (this.readAttachement) { // 已经读取附加信息，则不能再次读取
-                return null;
-            }
-            // 先读取附加信息长度
-            int length = readAttachmentLength();
-            // 再读取附加信息
-            bytes = new byte[length];
-            this.in.read(bytes);
-            this.readAttachement = Boolean.TRUE;
+    public synchronized String readAttachment() throws IOException {
+        if (this.readAttachment) { // 已经读取附加信息，则不能再次读取
+            return null;
         }
-        return new String(bytes, Strings.ENCODING_UTF8);
+        // 先读取附加信息长度
+        int length = readAttachmentLength();
+        // 再读取附加信息
+        byte[] bytes = new byte[length];
+        this.in.read(bytes);
+        this.readAttachment = true;
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     private int readAttachmentLength() throws IOException {
@@ -46,15 +44,17 @@ public class AttachInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         skipAttachment();
-        return this.in.read();
+        int content = this.in.read();
+        if (this.salt != null) {
+            content ^= this.salt;
+        }
+        return content;
     }
 
-    private void skipAttachment() throws IOException {
-        synchronized (this.readAttachement) {
-            if (!this.readAttachement) { // 如果此时还没读取头部附加信息，则跳过附加信息
-                this.in.skip(readAttachmentLength());
-                this.readAttachement = true;
-            }
+    private synchronized void skipAttachment() throws IOException {
+        if (!this.readAttachment) { // 如果此时还没读取头部附加信息，则跳过附加信息
+            this.in.skip(readAttachmentLength());
+            this.readAttachment = true;
         }
     }
 
