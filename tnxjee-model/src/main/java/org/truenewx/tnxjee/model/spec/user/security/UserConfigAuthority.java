@@ -15,7 +15,8 @@ public class UserConfigAuthority implements ConfigAttribute {
 
     public static final String ATTRIBUTE_DENY_ALL = "denyAll";
 
-    private String role;
+    private String type;
+    private String rank;
     private String permission;
     /**
      * 是否仅限内网访问
@@ -26,38 +27,47 @@ public class UserConfigAuthority implements ConfigAttribute {
      */
     private boolean denyAll;
 
-    public UserConfigAuthority(String role, String permission, boolean intranet) {
-        if (role == null) {
-            role = Strings.EMPTY;
+    public UserConfigAuthority(String type, String rank, String permission,
+            boolean intranet) {
+        if (type == null) {
+            type = Strings.EMPTY;
         }
-        Assert.isTrue(!role.contains(SEPARATOR), () -> "The role can not contain '" + SEPARATOR + "'");
+        Assert.isTrue(!type.contains(SEPARATOR), () -> "The type can not contain '" + SEPARATOR + "'");
+        if (rank == null) {
+            rank = Strings.EMPTY;
+        }
+        Assert.isTrue(!rank.contains(SEPARATOR), () -> "The rank can not contain '" + SEPARATOR + "'");
         if (permission == null) {
             permission = Strings.EMPTY;
         }
         Assert.isTrue(!permission.contains(SEPARATOR), () -> "The permission can not contain '" + SEPARATOR + "'");
-        this.role = role;
+        this.type = type;
+        this.rank = rank;
         this.permission = permission;
         this.intranet = intranet;
-    }
-
-    /**
-     * 构建拒绝所有访问的必备权限
-     */
-    public static UserConfigAuthority ofDenyAll() {
-        UserConfigAuthority authority = new UserConfigAuthority(null, null, false);
-        authority.denyAll = true;
-        return authority;
     }
 
     /**
      * 构建没有权限限制、登录即可访问的必备权限
      */
     public UserConfigAuthority() {
-        this(null, null, false);
     }
 
-    public String getRole() {
-        return this.role;
+    /**
+     * 构建拒绝所有访问的必备权限
+     */
+    public static UserConfigAuthority ofDenyAll() {
+        UserConfigAuthority authority = new UserConfigAuthority();
+        authority.denyAll = true;
+        return authority;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getRank() {
+        return this.rank;
     }
 
     public String getPermission() {
@@ -74,7 +84,7 @@ public class UserConfigAuthority implements ConfigAttribute {
 
     @Override
     public String getAttribute() {
-        return this.denyAll ? ATTRIBUTE_DENY_ALL : (this.role + SEPARATOR + this.permission);
+        return this.denyAll ? ATTRIBUTE_DENY_ALL : (this.type + SEPARATOR + this.rank + SEPARATOR + this.permission);
     }
 
     @Override

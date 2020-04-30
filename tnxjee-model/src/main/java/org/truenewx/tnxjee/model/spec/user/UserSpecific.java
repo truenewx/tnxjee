@@ -6,7 +6,7 @@ package org.truenewx.tnxjee.model.spec.user;
  * @param <I> 用户标识类型
  * @author jianglei
  */
-public interface UserSpecific<I extends UserIdentity> {
+public interface UserSpecific<I extends UserIdentity<?>> {
 
     /**
      * 用户标识必须是整个系统全局唯一的，仅用于数据传递的，应该是可公开、不具备业务含义、人工无法识别的

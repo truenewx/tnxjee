@@ -9,5 +9,6 @@ import org.truenewx.tnxjee.model.spec.user.UserSpecific;
  *
  * @param <I> 用户标识类型
  */
-public interface UserSpecificDetails<I extends UserIdentity> extends UserSpecific<I>, UserDetails {
+public interface UserSpecificDetails<I extends UserIdentity<?>>
+        extends UserSpecific<I>, UserDetails {
 }

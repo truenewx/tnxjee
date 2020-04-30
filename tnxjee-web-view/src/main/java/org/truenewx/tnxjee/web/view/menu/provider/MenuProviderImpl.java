@@ -1,5 +1,9 @@
 package org.truenewx.tnxjee.web.view.menu.provider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +16,6 @@ import org.truenewx.tnxjee.web.view.menu.model.Menu;
 import org.truenewx.tnxjee.web.view.menu.model.MenuItem;
 import org.truenewx.tnxjee.web.view.menu.model.MenuLink;
 import org.truenewx.tnxjee.web.view.menu.model.MenuOperation;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 菜单提供者实现
@@ -47,7 +47,8 @@ public class MenuProviderImpl implements MenuProvider {
         return menu;
     }
 
-    private void cloneGrantedItemTo(Collection<? extends GrantedAuthority> grantedAuthorities, MenuItem item,
+    private void cloneGrantedItemTo(Collection<? extends GrantedAuthority> grantedAuthorities,
+            MenuItem item,
             List<MenuItem> items) {
         if (item instanceof MenuLink) {
             MenuLink link = (MenuLink) item;
@@ -76,7 +77,9 @@ public class MenuProviderImpl implements MenuProvider {
             items.add(grantedLink);
         } else if (item instanceof MenuOperation) { // 操作只需判断自身权限
             MenuOperation operation = (MenuOperation) item;
-            if (this.authorityDecider.isGranted(grantedAuthorities, operation.getRole(), operation.getPermission())) {
+            if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getName(),
+                    operation.getRole(), operation.getPermission())) {
+                // TODO operation.role更名为operation.rank
                 items.add(operation.clone());
             }
         }
@@ -90,7 +93,7 @@ public class MenuProviderImpl implements MenuProvider {
         }
         for (UserConfigAuthority configAuthority : configAuthorities) {
             // 只要有一个必备权限未获得，则视为未获权
-            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getRole(), configAuthority.getPermission())) {
+            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(), configAuthority.getPermission())) {
                 return false;
             }
         }

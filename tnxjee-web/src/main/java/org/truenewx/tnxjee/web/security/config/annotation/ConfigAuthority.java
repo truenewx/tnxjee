@@ -16,9 +16,16 @@ import org.truenewx.tnxjee.core.Strings;
 public @interface ConfigAuthority {
 
     /**
-     * @return 所需角色
+     * @return 所需用户类型
      */
-    String role() default Strings.EMPTY;
+    String type() default Strings.EMPTY;
+
+    /**
+     * 仅当所需用户类型不为空时才有效
+     *
+     * @return 所需用户级别
+     */
+    String rank() default Strings.EMPTY;
 
     /**
      * @return 所需许可
@@ -29,4 +36,5 @@ public @interface ConfigAuthority {
      * @return 是否只有内网可访问
      */
     boolean intranet() default false;
+
 }

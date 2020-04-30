@@ -37,7 +37,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     }
 
     @Override
-    public void afterInitialized(ApplicationContext context) throws Exception {
+    public void afterInitialized(ApplicationContext context) {
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
             Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
@@ -64,8 +64,8 @@ public class WebFilterInvocationSecurityMetadataSource implements
                 method.getAnnotationsByType(ConfigAuthority.class));
         for (ConfigAuthority configAuthority : configAuthorities) {
             UserConfigAuthority userConfigAuthority = new UserConfigAuthority(
-                    configAuthority.role(), configAuthority.permission(),
-                    configAuthority.intranet());
+                    configAuthority.type(), configAuthority.rank(),
+                    configAuthority.permission(), configAuthority.intranet());
             userConfigAuthorities.add(userConfigAuthority);
         }
         if (userConfigAuthorities.isEmpty()) { // 没有配置权限限定，则拒绝所有访问
@@ -82,9 +82,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
         Collection<ConfigAttribute> result = new HashSet<>();
-        this.configAttributesMap.values().forEach(attributes -> {
-            result.addAll(attributes);
-        });
+        this.configAttributesMap.values().forEach(result::addAll);
         return result;
     }
 
@@ -96,7 +94,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
             attributes = this.origin.getAttributes(object);
         }
         if (supports(attributes)) {
-            attributes = new HashSet<>(attributes);
+            attributes = attributes == null ? new HashSet<>() : new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
             try {
                 HandlerMethod handlerMethod = this.handlerMethodMapping

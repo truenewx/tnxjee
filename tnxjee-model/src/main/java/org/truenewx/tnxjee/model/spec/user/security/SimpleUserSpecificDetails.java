@@ -1,16 +1,16 @@
 package org.truenewx.tnxjee.model.spec.user.security;
 
+import java.util.Collection;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
-
-import java.util.Collection;
 
 /**
  * 简单的用户特性细节
  *
  * @param <I> 用户标识类型
  */
-public class SimpleUserSpecificDetails<I extends UserIdentity>
+public class SimpleUserSpecificDetails<I extends UserIdentity<?>>
         implements UserSpecificDetails<I> {
 
     private static final long serialVersionUID = 2807428946816203247L;

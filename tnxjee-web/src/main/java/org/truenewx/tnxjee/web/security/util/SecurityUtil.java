@@ -41,7 +41,7 @@ public class SecurityUtil {
      * @return 已授权的当前用户细节
      */
     @SuppressWarnings("unchecked")
-    public static <I extends UserIdentity> UserSpecificDetails<I> getAuthorizedUserDetails() {
+    public static <I extends UserIdentity<?>> UserSpecificDetails<I> getAuthorizedUserDetails() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Authentication authentication = context.getAuthentication();
@@ -61,7 +61,7 @@ public class SecurityUtil {
      * @param <I> 用户标识类型
      * @return 已授权的当前用户标识
      */
-    public static <I extends UserIdentity> I getAuthorizedUserIdentity() {
+    public static <I extends UserIdentity<?>> I getAuthorizedUserIdentity() {
         UserSpecificDetails<I> details = getAuthorizedUserDetails();
         return details == null ? null : details.getIdentity();
     }

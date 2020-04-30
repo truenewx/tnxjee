@@ -1,5 +1,8 @@
 package org.truenewx.tnxjee.web.security.access;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -11,26 +14,25 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.model.spec.user.security.GrantedPermissionAuthority;
-import org.truenewx.tnxjee.model.spec.user.security.GrantedRoleAuthority;
+import org.truenewx.tnxjee.model.spec.user.security.GrantedScopeAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider {
+public class UserAuthorityAccessDecisionManager extends UnanimousBased
+        implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
         super(Arrays.asList(new WebExpressionVoter()));
     }
 
     @Override
-    public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes)
+    public void decide(Authentication authentication, Object object,
+            Collection<ConfigAttribute> configAttributes)
             throws AccessDeniedException, InsufficientAuthenticationException {
         super.decide(authentication, object, configAttributes);
 
@@ -42,7 +44,8 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
         }
     }
 
-    private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
+    private boolean contains(FilterInvocation fi,
+            Collection<? extends GrantedAuthority> authorities,
             Collection<ConfigAttribute> configAttributes) {
         for (ConfigAttribute attribute : configAttributes) {
             if (!contains(fi, authorities, attribute)) { // 只要有一个要求的权限未包含，则不匹配
@@ -53,7 +56,8 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
         return true;
     }
 
-    private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
+    private boolean contains(FilterInvocation fi,
+            Collection<? extends GrantedAuthority> authorities,
             ConfigAttribute attribute) {
         if (supports(attribute)) {
             UserConfigAuthority configAuthority = (UserConfigAuthority) attribute;
@@ -66,27 +70,29 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
                     return false; // 拒绝非内网访问
                 }
             }
-            return isGranted(authorities, configAuthority.getRole(), configAuthority.getPermission());
+            return isGranted(authorities, configAuthority.getType(), configAuthority.getRank(),
+                    configAuthority.getPermission());
         }
         return true; // 不支持的配置权限视为匹配
     }
 
     @Override
-    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String role, String permission) {
-        return isGrantedRole(authorities, role) && isGrantedPermission(authorities, permission);
+    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type,
+            String rank, String permission) {
+        return isGrantedScope(authorities, type, rank) && isGrantedPermission(authorities, permission);
     }
 
-    private boolean isGrantedRole(Collection<? extends GrantedAuthority> authorities, String role) {
-        if (StringUtils.isBlank(role)) { // 配置权限不限制角色，则视为匹配包含
+    private boolean isGrantedScope(Collection<? extends GrantedAuthority> authorities, String type,
+            String rank) {
+        // 配置权限不限制用户类型，则视为匹配包含
+        if (StringUtils.isBlank(type)) {
             return true;
         }
         for (GrantedAuthority authority : authorities) {
-            if (role.equals(authority.getAuthority()) || role.equals(authority.toString())) {
-                return true;
-            }
-            if (authority instanceof GrantedRoleAuthority) {
-                GrantedRoleAuthority roleAuthority = (GrantedRoleAuthority) authority;
-                if (role.equals(roleAuthority.getRole())) {
+            if (authority instanceof GrantedScopeAuthority) {
+                GrantedScopeAuthority scopeAuthority = (GrantedScopeAuthority) authority;
+                // TODO 加入rank判断
+                if (type.equals(scopeAuthority.getType())) {
                     return true;
                 }
             }
@@ -94,7 +100,8 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
         return false;
     }
 
-    private boolean isGrantedPermission(Collection<? extends GrantedAuthority> authorities, String permission) {
+    private boolean isGrantedPermission(Collection<? extends GrantedAuthority> authorities,
+            String permission) {
         if (StringUtils.isBlank(permission)) { // 配置权限不限制许可，则视为匹配包含
             return true;
         }
