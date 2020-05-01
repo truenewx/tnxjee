@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.web.view.menu.parser;
 
+import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -15,8 +17,6 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.algorithm.AlgoParseString;
 import org.truenewx.tnxjee.web.view.menu.model.*;
-
-import java.util.*;
 
 /**
  * XML配置文件的菜单解析器
@@ -44,7 +44,7 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             SAXReader reader = new SAXReader();
             Document doc = reader.read(resource.getInputStream());
             Element element = doc.getRootElement();
-            Menu menu = new Menu(element.attributeValue("name"));
+            Menu menu = new Menu(element.attributeValue("user-type"));
             menu.getItems().addAll(getItems(element, null));
             parseElementCommon(menu, element);
             return menu;
@@ -53,7 +53,8 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         }
     }
 
-    private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions) throws Exception {
+    private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions)
+            throws Exception {
         List<MenuItem> items = new ArrayList<>();
         for (Element subElement : element.elements()) {
             MenuItem item = getItem(subElement, parentOptions);
@@ -90,8 +91,9 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         return link;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private MenuOperation getOperation(Element element, Map<String, Object> parentOptions) throws Exception {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private MenuOperation getOperation(Element element, Map<String, Object> parentOptions)
+            throws Exception {
         String permission = element.attributeValue("permission");
         String className = element.attributeValue("permission-class");
         if (StringUtils.isNotBlank(className)) {
@@ -105,9 +107,8 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             }
         }
         MenuOperation operation = new MenuOperation();
+        operation.setRank(element.attributeValue("rank"));
         operation.setPermission(permission);
-        String role = element.attributeValue("role");
-        operation.setRole(role);
         operation.getOptions().putAll(getOptions(element, parentOptions));
         return operation;
     }
@@ -155,7 +156,8 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         return profiles == null ? Collections.emptySet() : profiles;
     }
 
-    private Map<String, Object> getOptions(Element element, Map<String, Object> parentOptions) throws Exception {
+    private Map<String, Object> getOptions(Element element, Map<String, Object> parentOptions)
+            throws Exception {
         Map<String, Object> options = new HashMap<>();
         Element optionsElement = element.element("options");
         // 需要继承父级选项集时，先继承父级选项集

@@ -91,8 +91,9 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         for (GrantedAuthority authority : authorities) {
             if (authority instanceof GrantedScopeAuthority) {
                 GrantedScopeAuthority scopeAuthority = (GrantedScopeAuthority) authority;
-                // TODO 加入rank判断
-                if (type.equals(scopeAuthority.getType())) {
+                // 用户类型相等，用户级别没限定或限定相等，则视为匹配
+                if (type.equals(scopeAuthority.getType()) && (StringUtils.isBlank(rank)
+                        || rank.equals(scopeAuthority.getRank()))) {
                     return true;
                 }
             }

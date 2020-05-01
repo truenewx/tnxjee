@@ -22,11 +22,11 @@ public class MenuFactoryImpl implements MenuFactory, InitializingBean {
     private Map<String, Menu> menus = new HashMap<>();
 
     @Override
-    public Menu getMenu(String name) {
-        if (name == null) {
-            name = Menu.DEFAULT_NAME;
+    public Menu getMenu(String userType) {
+        if (userType == null) {
+            userType = Menu.DEFAULT_NAME;
         }
-        return this.menus.get(name);
+        return this.menus.get(userType);
     }
 
     @Autowired
@@ -41,11 +41,11 @@ public class MenuFactoryImpl implements MenuFactory, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (ArrayUtils.isEmpty(this.resources)) {
-            this.resources = new Resource[] { this.parser.getDefaultConfig() };
+            this.resources = new Resource[]{ this.parser.getDefaultConfig() };
         }
         for (Resource resource : this.resources) {
             Menu menu = this.parser.parse(resource);
-            this.menus.put(menu.getName(), menu);
+            this.menus.put(menu.getUserType(), menu);
         }
     }
 }

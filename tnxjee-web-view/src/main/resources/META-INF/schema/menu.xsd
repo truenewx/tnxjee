@@ -12,7 +12,7 @@
                     <xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:choice>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string"/>
+            <xs:attribute name="user-type" type="xs:string"/>
             <xs:attribute name="caption" type="xs:string" use="required">
                 <xs:annotation>
                     <xs:documentation>默认显示名称</xs:documentation>
@@ -82,7 +82,7 @@
                 </xs:annotation>
             </xs:attribute>
             <xs:attribute name="profile" type="xs:string"/>
-            <xs:attribute name="role" type="xs:string"/>
+            <xs:attribute name="rank" type="xs:string"/>
             <xs:attribute name="permission" type="xs:string"/>
             <xs:attribute name="permission-class" type="xs:string">
                 <xs:annotation>

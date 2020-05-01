@@ -5,15 +5,15 @@ package org.truenewx.tnxjee.web.view.menu.model;
  */
 public class MenuOperation extends MenuItem {
 
-    private String role;
+    private String rank;
     private String permission;
 
-    public String getRole() {
-        return this.role;
+    public String getRank() {
+        return this.rank;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     public String getPermission() {
@@ -27,7 +27,7 @@ public class MenuOperation extends MenuItem {
     @Override
     public MenuOperation clone() {
         MenuOperation operation = new MenuOperation();
-        operation.role = this.role;
+        operation.rank = this.rank;
         operation.permission = this.permission;
         clone(this, operation);
         return operation;

@@ -77,9 +77,8 @@ public class MenuProviderImpl implements MenuProvider {
             items.add(grantedLink);
         } else if (item instanceof MenuOperation) { // 操作只需判断自身权限
             MenuOperation operation = (MenuOperation) item;
-            if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getName(),
-                    operation.getRole(), operation.getPermission())) {
-                // TODO operation.role更名为operation.rank
+            if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getUserType(),
+                    operation.getRank(), operation.getPermission())) {
                 items.add(operation.clone());
             }
         }

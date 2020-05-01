@@ -10,12 +10,12 @@ import org.truenewx.tnxjee.web.view.menu.model.Menu;
 public interface MenuFactory {
 
     /**
-     * 获取指定名称的菜单
+     * 获取指定用户类型的菜单
      *
-     * @param name 菜单名
+     * @param userType 用户类型
      * @return 菜单
      */
-    Menu getMenu(String name);
+    Menu getMenu(String userType);
 
     /**
      * 获取默认菜单

@@ -1,30 +1,29 @@
 package org.truenewx.tnxjee.web.view.menu.model;
 
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.spec.Named;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.truenewx.tnxjee.core.Strings;
 
 /**
  * 菜单
  */
-public class Menu extends MenuElement implements Named {
+public class Menu extends MenuElement {
 
     public static final String DEFAULT_NAME = Strings.EMPTY;
 
-    private String name;
+    private String userType;
     private List<MenuItem> items = new ArrayList<>();
 
-    public Menu(String name) {
-        if (name == null) {
-            name = DEFAULT_NAME;
+    public Menu(String userType) {
+        if (userType == null) {
+            userType = DEFAULT_NAME;
         }
-        this.name = name;
+        this.userType = userType;
     }
 
-    public String getName() {
-        return this.name;
+    public String getUserType() {
+        return this.userType;
     }
 
     public List<MenuItem> getItems() {
@@ -32,7 +31,7 @@ public class Menu extends MenuElement implements Named {
     }
 
     public Menu cloneWithoutItems() {
-        Menu menu = new Menu(this.name);
+        Menu menu = new Menu(this.userType);
         clone(this, menu);
         return menu;
     }

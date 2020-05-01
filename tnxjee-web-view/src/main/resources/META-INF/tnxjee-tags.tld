@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
 
     <tlib-version>1.2</tlib-version>
     <short-name>tnxjee</short-name>
@@ -1270,55 +1271,55 @@
             <description>格式</description>
         </attribute>
     </tag>
-<!-- 
-    <tag>
-        <name>authorized</name>
-        <tag-class>org.truenewx.web.security.tag.AuthorizedTag</tag-class>
-        <body-content>JSP</body-content>
-        <description>判断当前用户是否已具有指定授权</description>
-        <attribute>
-            <name>userClass</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>用户类型</description>
-        </attribute>
-        <attribute>
-            <name>role</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>要比较的角色</description>
-        </attribute>
-        <attribute>
-            <name>permission</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>要比较的权限</description>
-        </attribute>
-    </tag>
+    <!--
+        <tag>
+            <name>authorized</name>
+            <tag-class>org.truenewx.web.security.tag.AuthorizedTag</tag-class>
+            <body-content>JSP</body-content>
+            <description>判断当前用户是否已具有指定授权</description>
+            <attribute>
+                <name>userClass</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>用户类型</description>
+            </attribute>
+            <attribute>
+                <name>role</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>要比较的角色</description>
+            </attribute>
+            <attribute>
+                <name>permission</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>要比较的权限</description>
+            </attribute>
+        </tag>
 
-    <tag>
-        <name>unauthorized</name>
-        <tag-class>org.truenewx.web.security.tag.UnauthorizedTag</tag-class>
-        <body-content>JSP</body-content>
-        <description>判断当前用户是否不具有指定授权</description>
-        <attribute>
-            <name>userClass</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>用户类型</description>
-        </attribute>
-        <attribute>
-            <name>role</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>要比较的角色</description>
-        </attribute>
-        <attribute>
-            <name>permission</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <description>要比较的权限</description>
-        </attribute>
-    </tag>
- -->
+        <tag>
+            <name>unauthorized</name>
+            <tag-class>org.truenewx.web.security.tag.UnauthorizedTag</tag-class>
+            <body-content>JSP</body-content>
+            <description>判断当前用户是否不具有指定授权</description>
+            <attribute>
+                <name>userClass</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>用户类型</description>
+            </attribute>
+            <attribute>
+                <name>role</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>要比较的角色</description>
+            </attribute>
+            <attribute>
+                <name>permission</name>
+                <required>false</required>
+                <rtexprvalue>true</rtexprvalue>
+                <description>要比较的权限</description>
+            </attribute>
+        </tag>
+     -->
 </taglib>

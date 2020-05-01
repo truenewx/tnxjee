@@ -37,18 +37,18 @@ public class SecurityUtil {
     /**
      * 获取已授权的当前用户细节，匿名用户将返回null
      *
-     * @param <I> 用户标识类型
+     * @param <D> 用户特性细节类型
      * @return 已授权的当前用户细节
      */
     @SuppressWarnings("unchecked")
-    public static <I extends UserIdentity<?>> UserSpecificDetails<I> getAuthorizedUserDetails() {
+    public static <D extends UserSpecificDetails<?>> D getAuthorizedUserDetails() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Authentication authentication = context.getAuthentication();
             if (authentication != null) {
                 Object details = authentication.getDetails();
                 if (details instanceof UserSpecificDetails) {
-                    return (UserSpecificDetails<I>) details;
+                    return (D) details;
                 }
             }
         }
