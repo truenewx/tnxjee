@@ -2,7 +2,10 @@ package org.truenewx.tnxjee.web.security.config;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +64,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      */
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
-        return new WebAuthenticationEntryPoint(getLoginUrl());
+        return new WebAuthenticationEntryPoint(getLoginFormUrl());
     }
 
     /**
@@ -145,7 +148,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             .anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
             .accessDeniedHandler(accessDeniedHandler())
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutUrl())) // 不限定POST请求
+            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
             .deleteCookies("JSESSIONID", "SESSION").permitAll();
         // @formatter:on
         if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
@@ -168,17 +171,15 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     }
 
     /**
-     * 获取可匿名访问的请求匹配器集合
+     * 获取经过安全框架控制，允许匿名访问的请求匹配器集合
      *
      * @return 可匿名访问的请求匹配器集合
      */
     protected Collection<RequestMatcher> getAnonymousRequestMatchers() {
         List<RequestMatcher> matchers = new ArrayList<>();
-        for (String pattern : getAnonymousAntPatterns()) {
-            if (StringUtils.isNotBlank(pattern)) {
-                matchers.add(new AntPathRequestMatcher(pattern));
-            }
-        }
+        // 打开登录表单页面的请求始终可匿名访问
+        // 注意：不能将登录请求URL加入忽略清单中，如果加入，则登录POST请求将无法经过安全框架过滤器处理
+        matchers.add(new AntPathRequestMatcher(getLoginFormUrl(), HttpMethod.GET.name()));
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
@@ -206,17 +207,17 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return matchers;
     }
 
-    protected Collection<String> getAnonymousAntPatterns() {
-        Set<String> patterns = new HashSet<>();
-        Collections.addAll(patterns, getLoginUrl(), "/error/**");
-        return patterns;
-    }
-
-    protected String getLoginUrl() {
+    /**
+     * @return 登录表单页面地址
+     */
+    protected String getLoginFormUrl() {
         return "/login";
     }
 
-    protected String getLogoutUrl() {
+    /**
+     * @return 登出处理地址
+     */
+    protected String getLogoutProcessUrl() {
         return "/logout";
     }
 

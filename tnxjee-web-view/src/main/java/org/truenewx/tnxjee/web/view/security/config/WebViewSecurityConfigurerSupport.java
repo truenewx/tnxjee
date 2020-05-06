@@ -56,6 +56,6 @@ public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfig
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
 
-        http.logout().logoutSuccessUrl(getLoginUrl());
+        http.logout().logoutSuccessUrl(getLoginFormUrl());
     }
 }

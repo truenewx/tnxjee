@@ -11,12 +11,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 
 /**
  * 基于业务异常的认证失败处理器
  */
+@Component
 public class BusinessExceptionAuthenticationFailureHandler
         extends SimpleUrlAuthenticationFailureHandler implements
         ApplicationContextAware {
