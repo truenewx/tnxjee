@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.web.config;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -73,11 +74,13 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
     }
 
     @Bean // 在更复杂的会话管理机制引入后可能需要调整生成策略
+    @ConditionalOnBean(SessionRepositoryFilter.class)
     public HeaderSessionIdReader headerSessionIdReader() {
         return new HeaderSessionIdReader();
     }
 
     @Bean
+    @ConditionalOnBean(SessionRepositoryFilter.class)
     public FilterRegistrationBean<HeaderSessionIdFilter> headerSessionIdFilter(
             HeaderSessionIdReader headerSessionIdReader,
             SessionRepositoryFilter<?> sessionRepositoryFilter) {
