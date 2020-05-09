@@ -11,8 +11,6 @@ public interface UserIdentity<K extends Serializable> extends Serializable {
 
     String getType();
 
-    String getRank();
-
     K getId();
 
 }
