@@ -12,17 +12,15 @@ public class UserIdentityAuthenticationToken extends AbstractAuthenticationToken
 
     private static final long serialVersionUID = -5060938946411675544L;
 
-    private UserIdentity<?> userIdentity;
-
     public UserIdentityAuthenticationToken(UserIdentity<?> userIdentity) {
         super(Collections.emptyList());
         super.setAuthenticated(true);
-        this.userIdentity = userIdentity;
+        setDetails(userIdentity);
     }
 
     @Override
     public Object getPrincipal() {
-        return this.userIdentity;
+        return getDetails();
     }
 
     @Override

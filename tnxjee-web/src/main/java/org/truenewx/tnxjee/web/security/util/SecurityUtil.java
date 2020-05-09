@@ -42,14 +42,19 @@ public class SecurityUtil {
      */
     @SuppressWarnings("unchecked")
     public static <D extends UserSpecificDetails<?>> D getAuthorizedUserDetails() {
+        Object details = getAuthenticationDetails();
+        if (details instanceof UserSpecificDetails) {
+            return (D) details;
+        }
+        return null;
+    }
+
+    private static Object getAuthenticationDetails() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             Authentication authentication = context.getAuthentication();
             if (authentication != null) {
-                Object details = authentication.getDetails();
-                if (details instanceof UserSpecificDetails) {
-                    return (D) details;
-                }
+                return authentication.getDetails();
             }
         }
         return null;
@@ -61,9 +66,15 @@ public class SecurityUtil {
      * @param <I> 用户标识类型
      * @return 已授权的当前用户标识
      */
+    @SuppressWarnings("unchecked")
     public static <I extends UserIdentity<?>> I getAuthorizedUserIdentity() {
-        UserSpecificDetails<I> details = getAuthorizedUserDetails();
-        return details == null ? null : details.getIdentity();
+        Object details = getAuthenticationDetails();
+        if (details instanceof UserSpecificDetails) {
+            return (I) ((UserSpecificDetails<?>) details).getIdentity();
+        } else if (details instanceof UserIdentity) {
+            return (I) details;
+        }
+        return null;
     }
 
 }
