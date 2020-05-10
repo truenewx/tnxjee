@@ -1,5 +1,13 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
 import org.hibernate.boot.Metadata;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.util.Assert;
@@ -8,13 +16,6 @@ import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.repo.jpa.hibernate.MetadataProvider;
 import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.util.RepoUtil;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * JPA的数据访问模板
@@ -75,7 +76,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
      *
      * @return 原生SQL方式的访问模板
      */
-    public DataAccessTemplate createNative() {
+    public JpaAccessTemplate createNative() {
         JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory, this.metadataProvider);
         template.nativeMode = true;
         return template;
