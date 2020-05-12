@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.security.util;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,11 +55,13 @@ public class SecurityUtil {
         if (context != null) {
             Authentication authentication = context.getAuthentication();
             if (authentication != null) {
-                return authentication.getDetails();
+                return DETAIL_FUNCTION.apply(authentication);
             }
         }
         return null;
     }
+
+    public static Function<Authentication, Object> DETAIL_FUNCTION = Authentication::getDetails;
 
     /**
      * 获取已授权的当前用户标识，匿名用户将返回null
