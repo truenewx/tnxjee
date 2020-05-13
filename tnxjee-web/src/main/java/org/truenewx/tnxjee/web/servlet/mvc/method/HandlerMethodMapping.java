@@ -1,12 +1,15 @@
 package org.truenewx.tnxjee.web.servlet.mvc.method;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.truenewx.tnxjee.web.http.HttpAction;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import org.truenewx.tnxjee.web.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
  * 请求处理方法映射
@@ -29,5 +32,20 @@ public interface HandlerMethodMapping {
     Map<HttpAction, HandlerMethod> getAllHandlerMethods();
 
     HandlerMethod getHandlerMethod(String uri, HttpMethod method);
+
+    default boolean isAjaxRequest(HttpServletRequest request) {
+        if (WebUtil.isAjaxRequest(request)) {
+            return true;
+        }
+        try {
+            HandlerMethod handlerMethod = getHandlerMethod(request);
+            if (handlerMethod != null) {
+                return SpringWebUtil.isResponseBody(handlerMethod);
+            }
+        } catch (Exception e) {
+            // 忽略异常
+        }
+        return false;
+    }
 
 }

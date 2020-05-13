@@ -1,10 +1,8 @@
 package org.truenewx.tnxjee.web.config;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,6 +21,7 @@ import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.http.session.HeaderSessionIdFilter;
 import org.truenewx.tnxjee.web.http.session.HeaderSessionIdReader;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
+import org.truenewx.tnxjee.web.util.WebConstants;
 
 /**
  * WEB MVC配置支持，可选的控制层配置均在此配置支持体系中
@@ -68,10 +67,7 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
                     .allowCredentials(this.corsRegistryProperties.getAllowCredentials());
             String[] exposedHeaders = this.corsRegistryProperties.getExposedHeaders();
-            Set<String> set = new HashSet<>();
-            Collections.addAll(set, exposedHeaders);
-            set.add("redirect");
-            exposedHeaders = set.toArray(new String[set.size()]);
+            exposedHeaders = ArrayUtils.addAll(exposedHeaders, WebConstants.HEADER_REDIRECT);
             registration.exposedHeaders(exposedHeaders);
             if (this.corsRegistryProperties.getMaxAge() != null) {
                 registration.maxAge(this.corsRegistryProperties.getMaxAge());

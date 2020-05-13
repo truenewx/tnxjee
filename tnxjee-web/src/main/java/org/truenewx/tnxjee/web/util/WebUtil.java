@@ -42,6 +42,7 @@ import com.aliyun.oss.internal.Mimetypes;
  */
 public class WebUtil {
 
+
     private WebUtil() {
     }
 
@@ -655,7 +656,7 @@ public class WebUtil {
      * @return 是否AJAX请求
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+        return "XMLHttpRequest".equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST));
     }
 
     /**
