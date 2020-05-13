@@ -1,6 +1,23 @@
 package org.truenewx.tnxjee.web.util;
 
-import com.aliyun.oss.internal.Mimetypes;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,22 +33,7 @@ import org.truenewx.tnxjee.model.spec.enums.Device;
 import org.truenewx.tnxjee.model.spec.enums.OS;
 import org.truenewx.tnxjee.model.spec.enums.Program;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.aliyun.oss.internal.Mimetypes;
 
 /**
  * Web工具类
@@ -655,4 +657,27 @@ public class WebUtil {
     public static boolean isAjaxRequest(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
+
+    /**
+     * 获取所有请求头信息
+     *
+     * @param request 请求
+     * @return 所有请求头信息
+     */
+    public static Map<String, String> getHeaders(HttpServletRequest request) {
+        Map<String, String> headers = new HashMap<>();
+        Enumeration<String> names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            Enumeration<String> values = request.getHeaders(name);
+            StringBuilder value = new StringBuilder();
+            while (values.hasMoreElements()) {
+                value.append(", ").append(values.nextElement());
+            }
+            value.delete(0, 2);
+            headers.put(name, value.toString());
+        }
+        return headers;
+    }
+
 }

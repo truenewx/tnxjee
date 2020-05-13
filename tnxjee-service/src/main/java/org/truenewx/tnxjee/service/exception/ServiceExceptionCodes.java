@@ -1,10 +1,9 @@
-package org.truenewx.tnxjee.service.impl;
+package org.truenewx.tnxjee.service.exception;
 
 /**
  * 服务异常错误码集
  *
  * @author jianglei
- * 
  */
 public class ServiceExceptionCodes {
 

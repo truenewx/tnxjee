@@ -10,6 +10,7 @@ import org.truenewx.tnxjee.repo.Repo;
 import org.truenewx.tnxjee.repo.support.RepositoryFactory;
 import org.truenewx.tnxjee.service.Service;
 import org.truenewx.tnxjee.service.exception.BusinessException;
+import org.truenewx.tnxjee.service.exception.ServiceExceptionCodes;
 
 /**
  * 抽象服务

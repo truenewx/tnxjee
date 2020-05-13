@@ -1,6 +1,9 @@
 package org.truenewx.tnxjee.web.config;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -58,17 +61,20 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if (this.corsRegistryProperties != null) {
-            if (this.corsRegistryProperties.isEnabled()) {
-                CorsRegistration registration = registry.addMapping(this.corsRegistryProperties.getPathPattern())
-                        .allowedOrigins(this.corsRegistryProperties.getAllowedOrigins())
-                        .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
-                        .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
-                        .allowCredentials(this.corsRegistryProperties.getAllowCredentials())
-                        .exposedHeaders(this.corsRegistryProperties.getExposedHeaders());
-                if (this.corsRegistryProperties.getMaxAge() != null) {
-                    registration.maxAge(this.corsRegistryProperties.getMaxAge());
-                }
+        if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
+            CorsRegistration registration = registry.addMapping(this.corsRegistryProperties.getPathPattern())
+                    .allowedOrigins(this.corsRegistryProperties.getAllowedOrigins())
+                    .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
+                    .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
+                    .allowCredentials(this.corsRegistryProperties.getAllowCredentials());
+            String[] exposedHeaders = this.corsRegistryProperties.getExposedHeaders();
+            Set<String> set = new HashSet<>();
+            Collections.addAll(set, exposedHeaders);
+            set.add("redirect");
+            exposedHeaders = set.toArray(new String[set.size()]);
+            registration.exposedHeaders(exposedHeaders);
+            if (this.corsRegistryProperties.getMaxAge() != null) {
+                registration.maxAge(this.corsRegistryProperties.getMaxAge());
             }
         }
     }
