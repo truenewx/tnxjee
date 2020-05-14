@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.service.exception;
+package org.truenewx.tnxjee.web.security.core;
 
 import org.springframework.security.core.AuthenticationException;
 

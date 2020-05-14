@@ -12,10 +12,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.service.exception.AuthenticationFailureException;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
+import org.truenewx.tnxjee.web.security.core.AuthenticationFailureException;
 
 /**
  * 基于可解决异常的认证失败处理器
