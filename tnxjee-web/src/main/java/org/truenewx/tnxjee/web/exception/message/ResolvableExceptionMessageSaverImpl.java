@@ -25,7 +25,7 @@ import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 
 /**
- * 业务异常消息保存到响应体中的保存器
+ * 可解决异常消息保存器实现
  */
 @Component
 public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionMessageSaver {
