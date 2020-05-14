@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.security.web.AjaxRedirectStrategy;
 
 /**
  * WEB未登录访问限制的进入点
@@ -17,7 +17,7 @@ import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
     @Autowired
-    private HandlerMethodMapping handlerMethodMapping;
+    private AjaxRedirectStrategy redirectStrategy;
     private String loginAjaxUrl;
 
     public WebAuthenticationEntryPoint(String loginFormUrl, String loginAjaxUrl) {
@@ -28,7 +28,7 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     @Override
     protected String determineUrlToUseForThisRequest(HttpServletRequest request,
             HttpServletResponse response, AuthenticationException exception) {
-        if (this.loginAjaxUrl != null && this.handlerMethodMapping.isAjaxRequest(request)) {
+        if (this.loginAjaxUrl != null && this.redirectStrategy.isAjaxRequest(request)) {
             return this.loginAjaxUrl;
         }
         return getLoginFormUrl();
@@ -37,9 +37,13 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        if (this.loginAjaxUrl == null && this.handlerMethodMapping.isAjaxRequest(request)) {
-            // AJAX请求没有跳转目标则返回未授权错误
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (this.redirectStrategy.isAjaxRequest(request)) {
+            if (this.loginAjaxUrl == null) { // AJAX请求没有跳转目标则返回未授权错误
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            } else { // AJAX请求有跳转目标则执行特殊的AJAX跳转
+                String targetUrl = buildRedirectUrlToLoginPage(request, response, authException);
+                this.redirectStrategy.sendRedirect(request, response, targetUrl);
+            }
         } else {
             super.commence(request, response, authException);
         }

@@ -10,7 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("tnxjee.web.api")
 public class ApiMetaProperties {
 
-    protected String baseUrl;
+    private String baseUrl;
+    private String loginSuccessRedirectParameter = "_next";
     private Map<String, String> context;
 
     public String getBaseUrl() {
@@ -19,6 +20,14 @@ public class ApiMetaProperties {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String getLoginSuccessRedirectParameter() {
+        return this.loginSuccessRedirectParameter;
+    }
+
+    public void setLoginSuccessRedirectParameter(String loginSuccessRedirectParameter) {
+        this.loginSuccessRedirectParameter = loginSuccessRedirectParameter;
     }
 
     public Map<String, String> getContext() {

@@ -40,6 +40,7 @@ public class ApiMetaController {
         ApiContext context = new ApiContext();
         if (this.properties != null) {
             context.setBaseUrl(this.properties.getBaseUrl());
+            context.setLoginSuccessRedirectParameter(this.properties.getLoginSuccessRedirectParameter());
             context.setContext(this.properties.getContext());
         }
         if (this.headerSessionIdReader != null) {
