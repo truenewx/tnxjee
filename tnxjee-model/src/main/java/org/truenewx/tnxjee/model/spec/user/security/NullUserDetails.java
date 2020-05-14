@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 空的用户详情
- * 
+ *
  * @author jianglei
  */
 public class NullUserDetails implements UserDetails {
@@ -42,12 +42,12 @@ public class NullUserDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
 }
