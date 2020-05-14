@@ -4,22 +4,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
-import org.truenewx.tnxjee.web.http.session.HeaderSessionIdFilter;
-import org.truenewx.tnxjee.web.http.session.HeaderSessionIdReader;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
 
@@ -42,7 +35,7 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        CollectionUtil.remove(converters, converter -> {
+        converters.removeIf(converter -> {
             // 移除多余的MappingJackson2HttpMessageConverter，已被JacksonHttpMessageConverter取代
             return converter.getClass() == MappingJackson2HttpMessageConverter.class;
         });
@@ -61,7 +54,8 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
-            CorsRegistration registration = registry.addMapping(this.corsRegistryProperties.getPathPattern())
+            CorsRegistration registration = registry
+                    .addMapping(this.corsRegistryProperties.getPathPattern())
                     .allowedOrigins(this.corsRegistryProperties.getAllowedOrigins())
                     .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
@@ -73,24 +67,6 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
                 registration.maxAge(this.corsRegistryProperties.getMaxAge());
             }
         }
-    }
-
-    @Bean // 在更复杂的会话管理机制引入后可能需要调整生成策略
-    @ConditionalOnBean(SessionRepositoryFilter.class)
-    public HeaderSessionIdReader headerSessionIdReader() {
-        return new HeaderSessionIdReader();
-    }
-
-    @Bean
-    @ConditionalOnBean(SessionRepositoryFilter.class)
-    public FilterRegistrationBean<HeaderSessionIdFilter> headerSessionIdFilter(
-            HeaderSessionIdReader headerSessionIdReader,
-            SessionRepositoryFilter<?> sessionRepositoryFilter) {
-        FilterRegistrationBean<HeaderSessionIdFilter> frb = new FilterRegistrationBean<>();
-        frb.setFilter(new HeaderSessionIdFilter(headerSessionIdReader, sessionRepositoryFilter));
-        frb.addUrlPatterns("/*");
-        frb.setOrder(HeaderSessionIdFilter.DEFAULT_ORDER);
-        return frb;
     }
 
 }

@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.model.Model;
@@ -16,7 +20,6 @@ import org.truenewx.tnxjee.web.api.meta.model.ApiContext;
 import org.truenewx.tnxjee.web.api.meta.model.ApiMetaProperties;
 import org.truenewx.tnxjee.web.api.meta.model.ApiModelPropertyMeta;
 import org.truenewx.tnxjee.web.http.annotation.ResultFilter;
-import org.truenewx.tnxjee.web.http.session.HeaderSessionIdReader;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
 /**
@@ -32,20 +35,15 @@ public class ApiMetaController {
     private ApiModelMetaResolver metaResolver;
     @Autowired(required = false)
     private ApiMetaProperties properties;
-    @Autowired(required = false)
-    private HeaderSessionIdReader headerSessionIdReader;
 
     @GetMapping("/context")
     public ApiContext context(HttpServletRequest request) {
         ApiContext context = new ApiContext();
         if (this.properties != null) {
             context.setBaseUrl(this.properties.getBaseUrl());
-            context.setLoginSuccessRedirectParameter(this.properties.getLoginSuccessRedirectParameter());
+            context.setLoginSuccessRedirectParameter(
+                    this.properties.getLoginSuccessRedirectParameter());
             context.setContext(this.properties.getContext());
-        }
-        if (this.headerSessionIdReader != null) {
-            String sessionId = request.getSession().getId();
-            context.getHeaders().put(this.headerSessionIdReader.getHeaderName(), sessionId);
         }
         return context;
     }
