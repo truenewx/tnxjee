@@ -3,6 +3,8 @@ package org.truenewx.tnxjee.model.spec.user.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.core.Strings;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 已取得的范围权限
  */
@@ -27,6 +29,7 @@ public class GrantedScopeAuthority implements GrantedAuthority {
     }
 
     @Override
+    @JsonIgnore
     public String getAuthority() {
         return "SCOPE_" + this.type + Strings.DOT + this.rank;
     }

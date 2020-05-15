@@ -2,6 +2,8 @@ package org.truenewx.tnxjee.model.spec.user.security;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 已取得的许可权限
  *
@@ -22,6 +24,7 @@ public class GrantedPermissionAuthority implements GrantedAuthority {
     }
 
     @Override
+    @JsonIgnore
     public String getAuthority() {
         return "PERMISSION_" + this.permission;
     }

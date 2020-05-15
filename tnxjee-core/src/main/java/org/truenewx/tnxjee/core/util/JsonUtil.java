@@ -1,5 +1,17 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
+import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
+
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,16 +24,6 @@ import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * JSON工具类
@@ -38,6 +40,7 @@ public class JsonUtil {
         DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
         DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳字符串
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
+        DEFAULT_MAPPER.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
     }
 
     public static ObjectMapper copyDefaultMapper() {
