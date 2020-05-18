@@ -4,7 +4,6 @@ package org.truenewx.tnxjee.core;
  * 字符串常量集
  *
  * @author jianglei
- * 
  */
 public class Strings {
 
@@ -52,13 +51,29 @@ public class Strings {
      */
     public static final String ENTER = "\n";
     /**
-     * 左括弧
+     * 左括号
      */
     public static final String LEFT_BRACKET = "(";
     /**
-     * 右括弧
+     * 右括号
      */
     public static final String RIGHT_BRACKET = ")";
+    /**
+     * 左方括号
+     */
+    public static final String LEFT_SQUARE_BRACKET = "[";
+    /**
+     * 右方括号
+     */
+    public static final String RIGHT_SQUARE_BRACKET = "]";
+    /**
+     * 左大括号
+     */
+    public static final String LEFT_BRACE = "{";
+    /**
+     * 右大括号
+     */
+    public static final String RIGHT_BRACE = "}";
     /**
      * 冒号
      */

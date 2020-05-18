@@ -51,6 +51,8 @@ public class MemoryJavaFileManager implements JavaFileManager {
 
     private ClassFileCreationListener classListener = null;
 
+    private ClassLoader classLoader;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     Iterable<? extends Path> getLocationAsPaths(Location loc) {
@@ -146,10 +148,6 @@ public class MemoryJavaFileManager implements JavaFileManager {
         this.stdFileManager = standardManager;
     }
 
-    public Map<String, OutputMemoryJavaFileObject> getClassObjects() {
-        return this.classObjects;
-    }
-
     private Collection<OutputMemoryJavaFileObject> generatedClasses() {
         return this.classObjects.values();
     }
@@ -184,7 +182,14 @@ public class MemoryJavaFileManager implements JavaFileManager {
     @Override
     public ClassLoader getClassLoader(Location location) {
         this.logger.debug("getClassLoader: {}\n", location);
-        return this.stdFileManager.getClassLoader(location);
+        if (this.classLoader == null) {
+            this.classLoader = new MemoryClassLoader(this.stdFileManager.getClassLoader(location), this.classObjects);
+        }
+        return this.classLoader;
+    }
+
+    public ClassLoader getClassLoader() {
+        return this.classLoader;
     }
 
     /**
