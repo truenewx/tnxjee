@@ -4,6 +4,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
 
+/**
+ * 基于内存的类加载器
+ */
 public class MemoryClassLoader extends URLClassLoader {
 
     private Map<String, MemoryJavaFileManager.OutputMemoryJavaFileObject> fileObjects;

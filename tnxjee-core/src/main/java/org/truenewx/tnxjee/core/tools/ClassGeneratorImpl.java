@@ -13,8 +13,10 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.algorithm.AlgoDefaultValue;
 
@@ -52,9 +54,14 @@ public class ClassGeneratorImpl implements ClassGenerator {
     }
 
     @Override
+    @Cacheable("GeneratedSimpleClass")
     public <T> Class<? extends T> generateSimple(Class<T> clazz) {
         if (isGeneratable(clazz)) {
             Map<String, String> codes = generateCode(clazz);
+            codes.forEach((className, code) -> {
+                System.out.println(className);
+                System.out.println(code);
+            });
             Class<?> simpleClass = generateClass(codes);
             return (Class<? extends T>) simpleClass;
         }
@@ -62,8 +69,7 @@ public class ClassGeneratorImpl implements ClassGenerator {
     }
 
     private boolean isGeneratable(Class<?> clazz) {
-        // 接口或抽象类且不是Map和Iterable才能生成
-        return (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()))
+        return clazz != void.class && !clazz.isPrimitive() && (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()))
                 && !Map.class.isAssignableFrom(clazz) && !Iterable.class.isAssignableFrom(clazz);
     }
 
@@ -89,30 +95,37 @@ public class ClassGeneratorImpl implements ClassGenerator {
                 Class<?>[] argTypes = method.getParameterTypes();
                 Class<?> returnType = method.getReturnType();
                 if (argTypes.length == 0) {
+                    String propertyName = null;
                     if (methodName.startsWith("get")) {
-                        String propertyName = methodName.substring(3);
-                        if (Character.isUpperCase(propertyName.charAt(0))) {
-                            propertyName = StringUtil.firstToLowerCase(propertyName);
-                            if (isGeneratable(returnType)) { // 属性类型需要生成，则一同生成
-                                codes.putAll(generateCode(returnType));
+                        propertyName = methodName.substring(3);
+                    } else if (methodName.startsWith("is") && returnType == boolean.class) {
+                        propertyName = methodName.substring(2);
+                    }
+                    if (propertyName != null && Character.isUpperCase(propertyName.charAt(0))) {
+                        propertyName = StringUtil.firstToLowerCase(propertyName);
+                        String propertyClassName = getUsedClassName(returnType);
+                        if (isGeneratable(returnType)) { // 属性类型需要生成，则一同生成
+                            Map<String, String> propertyClassCodes = generateCode(returnType);
+                            if (propertyClassCodes.size() > 0) {
+                                codes.putAll(propertyClassCodes);
+                                propertyClassName = CollectionUtil.getLast(propertyClassCodes.entrySet(), null).getKey();
                             }
-                            String propertyClassName = getUsedClassName(returnType);
-                            // 属性
-                            code.append("    private ").append(propertyClassName).append(Strings.SPACE)
-                                    .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER);
-                            // getter方法
-                            code.append("    public ").append(propertyClassName).append(Strings.SPACE).append(methodName).append("(){\n")
-                                    .append("        return this.").append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
-                                    .append("    }").append(Strings.ENTER);
-                            // setter方法
-                            code.append("    public void set").append(StringUtil.firstToUpperCase(propertyName))
-                                    .append(Strings.LEFT_BRACKET).append(propertyClassName)
-                                    .append(Strings.SPACE).append(propertyName).append("){\n")
-                                    .append("        this.").append(propertyName).append(Strings.EQUAL)
-                                    .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
-                                    .append("    }").append(Strings.ENTER);
-                            continue;
                         }
+                        // 属性
+                        code.append("    private ").append(propertyClassName).append(Strings.SPACE)
+                                .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER);
+                        // getter方法
+                        code.append("    public ").append(propertyClassName).append(Strings.SPACE).append(methodName).append("(){\n")
+                                .append("        return this.").append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
+                                .append("    }").append(Strings.ENTER);
+                        // setter方法
+                        code.append("    public void set").append(StringUtil.firstToUpperCase(propertyName))
+                                .append(Strings.LEFT_BRACKET).append(propertyClassName)
+                                .append(Strings.SPACE).append(propertyName).append("){\n")
+                                .append("        this.").append(propertyName).append(Strings.EQUAL)
+                                .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
+                                .append("    }").append(Strings.ENTER);
+                        continue;
                     }
                 }
                 // 不是属性getter方法，则生成方法的默认实现
@@ -159,7 +172,7 @@ public class ClassGeneratorImpl implements ClassGenerator {
     }
 
     private String generatePackageName(Class<?> clazz) {
-        return getClass().getPackageName();
+        return getClass().getPackageName() + ".temp." + clazz.getPackageName();
     }
 
     private String generateClassSimpleName(Class<?> clazz) {

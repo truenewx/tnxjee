@@ -181,7 +181,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
      */
     @Override
     public ClassLoader getClassLoader(Location location) {
-        this.logger.debug("getClassLoader: {}\n", location);
+        this.logger.debug("getClassLoader: {}", location);
         if (this.classLoader == null) {
             this.classLoader = new MemoryClassLoader(this.stdFileManager.getClassLoader(location), this.classObjects);
         }
@@ -273,7 +273,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
     public String inferBinaryName(Location location, JavaFileObject file) {
         if (file instanceof OutputMemoryJavaFileObject) {
             OutputMemoryJavaFileObject ofo = (OutputMemoryJavaFileObject) file;
-            this.logger.debug("inferBinaryName {} => {}\n", file, ofo.getName());
+            this.logger.debug("inferBinaryName {} => {}", file, ofo.getName());
             return ofo.getName();
         } else {
             return this.stdFileManager.inferBinaryName(location, file);
@@ -307,7 +307,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
      */
     @Override
     public int isSupportedOption(String option) {
-        this.logger.debug("isSupportedOption: {}\n", option);
+        this.logger.debug("isSupportedOption: {}", option);
         return this.stdFileManager.isSupportedOption(option);
     }
 
@@ -327,7 +327,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
      */
     @Override
     public boolean handleOption(String current, Iterator<String> remaining) {
-        this.logger.debug("handleOption: current: {}\n", current +
+        this.logger.debug("handleOption: current: {}", current +
                 ", remaining: " + remaining);
         return this.stdFileManager.handleOption(current, remaining);
     }
@@ -340,7 +340,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
      */
     @Override
     public boolean hasLocation(Location location) {
-        this.logger.debug("hasLocation: location: {}\n", location);
+        this.logger.debug("hasLocation: location: {}", location);
         return this.stdFileManager.hasLocation(location);
     }
 
@@ -421,7 +421,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
         OutputMemoryJavaFileObject fo;
         fo = new OutputMemoryJavaFileObject(className, kind);
         this.classObjects.put(className, fo);
-        this.logger.debug("Set out file: {} = {}\n", className, fo);
+        this.logger.debug("Set out file: {} = {}", className, fo);
         if (this.classListener != null) {
             this.classListener.newClassFile(fo, location, className, kind, sibling);
         }
@@ -472,7 +472,7 @@ public class MemoryJavaFileManager implements JavaFileManager {
             String packageName,
             String relativeName)
             throws IOException {
-        this.logger.debug("getFileForInput location={} packageName={}\n", location, packageName);
+        this.logger.debug("getFileForInput location={} packageName={}", location, packageName);
         return this.stdFileManager.getFileForInput(location, packageName, relativeName);
     }
 
