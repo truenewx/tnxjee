@@ -1,16 +1,24 @@
 package org.truenewx.tnxjee.core.util;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.truenewx.tnxjee.core.Strings;
-
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.nio.charset.StandardCharsets;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.tools.MemoryClassLoader;
+import org.truenewx.tnxjee.core.tools.MemoryJavaFileManager;
 
 /**
  * 类的工具类<br/>
@@ -701,6 +709,23 @@ public class ClassUtil {
             // 再遍历父类
             loopFields(clazz.getSuperclass(), fieldType, predicate);
         }
+    }
+
+    public static Class<?> generateClass(String className, String javaCode) {
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager stdManager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8);
+        MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager);
+        JavaFileObject javaFileObject = manager.createSourceFileObject(className, javaCode);
+        JavaCompiler.CompilationTask task = compiler.getTask(null, manager, null, null, null, Arrays.asList(javaFileObject));
+        if (task.call()) {
+            MemoryClassLoader classLoader = new MemoryClassLoader(manager.getClassObjects());
+            try {
+                return classLoader.loadClass(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 }
