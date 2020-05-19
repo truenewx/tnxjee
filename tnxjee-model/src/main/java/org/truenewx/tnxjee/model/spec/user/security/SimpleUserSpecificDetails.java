@@ -61,8 +61,7 @@ public class SimpleUserSpecificDetails<I extends UserIdentity<?>>
         return null;
     }
 
-    public void setAuthorities(
-            Collection<? extends GrantedAuthority> authorities) {
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
 

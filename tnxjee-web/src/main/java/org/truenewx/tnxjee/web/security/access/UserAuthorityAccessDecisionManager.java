@@ -1,7 +1,7 @@
 package org.truenewx.tnxjee.web.security.access;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,8 +13,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.model.spec.user.security.GrantedPermissionAuthority;
-import org.truenewx.tnxjee.model.spec.user.security.GrantedScopeAuthority;
+import org.truenewx.tnxjee.model.spec.user.security.GrantedAuthorityKind;
+import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
@@ -27,7 +27,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
-        super(Arrays.asList(new WebExpressionVoter()));
+        super(Collections.singletonList(new WebExpressionVoter()));
     }
 
     @Override
@@ -57,8 +57,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
     }
 
     private boolean contains(FilterInvocation fi,
-            Collection<? extends GrantedAuthority> authorities,
-            ConfigAttribute attribute) {
+            Collection<? extends GrantedAuthority> authorities, ConfigAttribute attribute) {
         if (supports(attribute)) {
             UserConfigAuthority configAuthority = (UserConfigAuthority) attribute;
             if (configAuthority.isDenyAll()) {
@@ -79,46 +78,30 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
     @Override
     public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type,
             String rank, String permission) {
-        return isGrantedScope(authorities, type, rank) && isGrantedPermission(authorities, permission);
+        return isKindGranted(authorities, GrantedAuthorityKind.TYPE, type)
+                // 类型不为空才检查级别
+                && (StringUtils.isBlank(type) || isKindGranted(authorities, GrantedAuthorityKind.RANK, rank))
+                && isKindGranted(authorities, GrantedAuthorityKind.PERMISSION, permission);
     }
 
-    private boolean isGrantedScope(Collection<? extends GrantedAuthority> authorities, String type,
-            String rank) {
-        // 配置权限不限制用户类型，则视为匹配包含
-        if (StringUtils.isBlank(type)) {
+    private boolean isKindGranted(Collection<? extends GrantedAuthority> authorities,
+            GrantedAuthorityKind kind, String name) {
+        if (StringUtils.isBlank(name)) { // 配置权限不限制，则视为匹配包含
             return true;
         }
         for (GrantedAuthority authority : authorities) {
-            if (authority instanceof GrantedScopeAuthority) {
-                GrantedScopeAuthority scopeAuthority = (GrantedScopeAuthority) authority;
-                // 用户类型相等，用户级别没限定或限定相等，则视为匹配
-                if (type.equals(scopeAuthority.getType()) && (StringUtils.isBlank(rank)
-                        || rank.equals(scopeAuthority.getRank()))) {
+            if (authority instanceof KindGrantedAuthority) {
+                KindGrantedAuthority kindAuthority = (KindGrantedAuthority) authority;
+                if (kindAuthority.getKind() == kind && name.equals(kindAuthority.getName())) {
                     return true;
                 }
-            }
-        }
-        return false;
-    }
-
-    private boolean isGrantedPermission(Collection<? extends GrantedAuthority> authorities,
-            String permission) {
-        if (StringUtils.isBlank(permission)) { // 配置权限不限制许可，则视为匹配包含
-            return true;
-        }
-        for (GrantedAuthority authority : authorities) {
-            if (permission.equals(authority.getAuthority()) || permission.equals(authority.toString())) {
+            } else if (name.equals(authority.getAuthority()) || name.equals(authority.toString())) {
                 return true;
             }
-            if (authority instanceof GrantedPermissionAuthority) {
-                GrantedPermissionAuthority permissionAuthority = (GrantedPermissionAuthority) authority;
-                if (permission.equals(permissionAuthority.getPermission())) {
-                    return true;
-                }
-            }
         }
         return false;
     }
+
 
     @Override
     public boolean supports(ConfigAttribute attribute) {

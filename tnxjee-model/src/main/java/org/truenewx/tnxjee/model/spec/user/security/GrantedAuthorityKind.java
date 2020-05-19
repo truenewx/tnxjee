@@ -7,11 +7,11 @@ import org.truenewx.tnxjee.core.caption.Caption;
  */
 public enum GrantedAuthorityKind {
 
-    @Caption("用户类型")
-    USER_TYPE,
+    @Caption("类型")
+    TYPE,
 
-    @Caption("用户级别")
-    USER_RANK,
+    @Caption("级别")
+    RANK,
 
     @Caption("许可")
     PERMISSION;

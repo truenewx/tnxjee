@@ -11,4 +11,5 @@ import org.truenewx.tnxjee.model.spec.user.UserSpecific;
  */
 public interface UserSpecificDetails<I extends UserIdentity<?>>
         extends UserSpecific<I>, UserDetails {
+
 }

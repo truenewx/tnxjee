@@ -92,7 +92,8 @@ public class MenuProviderImpl implements MenuProvider {
         }
         for (UserConfigAuthority configAuthority : configAuthorities) {
             // 只要有一个必备权限未获得，则视为未获权
-            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(), configAuthority.getPermission())) {
+            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(),
+                    configAuthority.getRank(), configAuthority.getPermission())) {
                 return false;
             }
         }
