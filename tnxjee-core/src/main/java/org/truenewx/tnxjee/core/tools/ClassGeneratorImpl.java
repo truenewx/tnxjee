@@ -13,6 +13,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
@@ -28,10 +30,12 @@ public class ClassGeneratorImpl implements ClassGenerator {
 
     private JavaCompiler compiler;
     private MemoryJavaFileManager fileManager;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public ClassGeneratorImpl() {
         this.compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager stdManager = this.compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8);
+        StandardJavaFileManager stdManager = this.compiler.getStandardFileManager(null, null,
+                StandardCharsets.UTF_8);
         this.fileManager = new MemoryJavaFileManager(stdManager);
     }
 
@@ -39,10 +43,12 @@ public class ClassGeneratorImpl implements ClassGenerator {
         List<JavaFileObject> fileObjects = new ArrayList<>();
         String className = null;
         for (Map.Entry<String, String> entry : codes.entrySet()) {
-            fileObjects.add(this.fileManager.createSourceFileObject(entry.getKey(), entry.getValue()));
+            fileObjects
+                    .add(this.fileManager.createSourceFileObject(entry.getKey(), entry.getValue()));
             className = entry.getKey();
         }
-        JavaCompiler.CompilationTask task = this.compiler.getTask(null, this.fileManager, null, null, null, fileObjects);
+        JavaCompiler.CompilationTask task = this.compiler.getTask(null, this.fileManager, null,
+                null, null, fileObjects);
         if (task.call()) {
             try {
                 return this.fileManager.getClassLoader().loadClass(className);
@@ -54,22 +60,25 @@ public class ClassGeneratorImpl implements ClassGenerator {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     @Cacheable("GeneratedSimpleClass")
     public <T> Class<? extends T> generateSimple(Class<T> clazz) {
         if (isGeneratable(clazz)) {
             Map<String, String> codes = generateCode(clazz);
-            codes.forEach((className, code) -> {
-                System.out.println(className);
-                System.out.println(code);
-            });
-            Class<?> simpleClass = generateClass(codes);
-            return (Class<? extends T>) simpleClass;
+            if (this.logger.isDebugEnabled()) {
+                codes.forEach((className, code) -> {
+                    this.logger.debug(className);
+                    this.logger.debug(code);
+                });
+            }
+            return (Class<? extends T>) generateClass(codes);
         }
         return clazz;
     }
 
     private boolean isGeneratable(Class<?> clazz) {
-        return clazz != void.class && !clazz.isPrimitive() && (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()))
+        return clazz != void.class && !clazz.isPrimitive()
+                && (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers()))
                 && !Map.class.isAssignableFrom(clazz) && !Iterable.class.isAssignableFrom(clazz);
     }
 
@@ -108,32 +117,37 @@ public class ClassGeneratorImpl implements ClassGenerator {
                             Map<String, String> propertyClassCodes = generateCode(returnType);
                             if (propertyClassCodes.size() > 0) {
                                 codes.putAll(propertyClassCodes);
-                                propertyClassName = CollectionUtil.getLast(propertyClassCodes.entrySet(), null).getKey();
+                                propertyClassName = CollectionUtil
+                                        .getLast(propertyClassCodes.entrySet(), null).getKey();
                             }
                         }
                         // 属性
                         code.append("    private ").append(propertyClassName).append(Strings.SPACE)
-                                .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER);
+                                .append(propertyName).append(Strings.SEMICOLON)
+                                .append(Strings.ENTER);
                         // getter方法
-                        code.append("    public ").append(propertyClassName).append(Strings.SPACE).append(methodName).append("(){\n")
-                                .append("        return this.").append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
-                                .append("    }").append(Strings.ENTER);
+                        code.append("    public ").append(propertyClassName).append(Strings.SPACE)
+                                .append(methodName).append("(){\n").append("        return this.")
+                                .append(propertyName).append(Strings.SEMICOLON)
+                                .append(Strings.ENTER).append("    }").append(Strings.ENTER);
                         // setter方法
-                        code.append("    public void set").append(StringUtil.firstToUpperCase(propertyName))
+                        code.append("    public void set")
+                                .append(StringUtil.firstToUpperCase(propertyName))
                                 .append(Strings.LEFT_BRACKET).append(propertyClassName)
                                 .append(Strings.SPACE).append(propertyName).append("){\n")
                                 .append("        this.").append(propertyName).append(Strings.EQUAL)
-                                .append(propertyName).append(Strings.SEMICOLON).append(Strings.ENTER)
-                                .append("    }").append(Strings.ENTER);
+                                .append(propertyName).append(Strings.SEMICOLON)
+                                .append(Strings.ENTER).append("    }").append(Strings.ENTER);
                         continue;
                     }
                 }
                 // 不是属性getter方法，则生成方法的默认实现
-                code.append("    public ").append(getUsedClassName(returnType)).append(Strings.SPACE)
-                        .append(methodName).append(Strings.LEFT_BRACKET);
+                code.append("    public ").append(getUsedClassName(returnType))
+                        .append(Strings.SPACE).append(methodName).append(Strings.LEFT_BRACKET);
                 if (argTypes.length > 0) {
                     for (int i = 0; i < argTypes.length; i++) {
-                        code.append(getUsedClassName(argTypes[i])).append(" arg").append(i).append(Strings.COMMA);
+                        code.append(getUsedClassName(argTypes[i])).append(" arg").append(i)
+                                .append(Strings.COMMA);
                     }
                     code.deleteCharAt(code.length() - 1);
                 }
@@ -156,7 +170,8 @@ public class ClassGeneratorImpl implements ClassGenerator {
             String methodName = method.getName();
             Class<?>[] argTypes = method.getParameterTypes();
             Class<?> returnType = method.getReturnType();
-            if ("toString".equals(methodName) && returnType == String.class && argTypes.length == 0) {
+            if ("toString".equals(methodName) && returnType == String.class
+                    && argTypes.length == 0) {
                 return false;
             }
             if ("hashCode".equals(methodName) && returnType == int.class && argTypes.length == 0) {
@@ -184,7 +199,8 @@ public class ClassGeneratorImpl implements ClassGenerator {
     }
 
     private String getUsedClassName(Class<?> usedClass) {
-        if (usedClass == void.class || usedClass.isPrimitive() || usedClass.getPackageName().equals("java.lang")) {
+        if (usedClass == void.class || usedClass.isPrimitive()
+                || usedClass.getPackageName().equals("java.lang")) {
             return usedClass.getSimpleName();
         }
         return usedClass.getName();

@@ -649,12 +649,6 @@ public class WebUtil {
         return new Terminal(device, program, os);
     }
 
-    public static boolean isBrowserRequest(HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent");
-        // 浏览器请求一定有UserAgent
-        return userAgent != null && !userAgent.toLowerCase().startsWith("java");
-    }
-
     /**
      * 判断指定请求是否AJAX请求
      *

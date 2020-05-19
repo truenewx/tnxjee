@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolverBuilder {
 
-    private static final long serialVersionUID = -6850144227414223439L;
+    private static final long serialVersionUID = -1000737704428050672L;
 
     private Predicate<Class<?>> predicate = clazz -> true;
 
@@ -20,11 +20,13 @@ public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolv
         super(t);
     }
 
-    public static PredicateTypeResolverBuilder NON_CONCRETE_AND_COLLECTION = createDefault(clazz -> {
-        return !Iterable.class.isAssignableFrom(clazz) && !Map.class.isAssignableFrom(clazz);
-    });
+    public static final Predicate<Class<?>> PREDICATE_NON_COLLECTION = clazz -> {
+        return !clazz.isArray() && !Iterable.class.isAssignableFrom(clazz) && !Map.class.isAssignableFrom(clazz);
+    };
 
-    public static PredicateTypeResolverBuilder createDefault(Predicate<Class<?>> predicate) {
+    public static PredicateTypeResolverBuilder NON_CONCRETE_AND_COLLECTION = createNonConcrete(PREDICATE_NON_COLLECTION);
+
+    public static PredicateTypeResolverBuilder createNonConcrete(Predicate<Class<?>> predicate) {
         PredicateTypeResolverBuilder builder = new PredicateTypeResolverBuilder(
                 ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
         builder.init(JsonTypeInfo.Id.CLASS, null)

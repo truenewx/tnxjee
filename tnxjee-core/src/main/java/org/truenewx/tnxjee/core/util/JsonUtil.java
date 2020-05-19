@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -38,9 +37,8 @@ public class JsonUtil {
         DEFAULT_MAPPER.findAndRegisterModules();
         DEFAULT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL); // 序列化时不输出null
         DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
-        DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳字符串
+        DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
-        DEFAULT_MAPPER.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
     }
 
     public static ObjectMapper copyDefaultMapper() {

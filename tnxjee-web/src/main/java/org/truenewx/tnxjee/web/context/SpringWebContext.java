@@ -17,13 +17,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 
 /**
- * Spring Web上下文工具类<br/>
- * 要求web.xml中具有如下配置：<br/>
- * &lt;listener&gt;<br/>
- * &lt;listener-class&gt;<br/>
- * org.springframework.web.context.request.RequestContextListener<br/>
- * &lt;/listener-class&gt;<br/>
- * &lt;/listener&gt;
+ * Spring Web上下文工具类
  *
  * @author jianglei
  */
@@ -33,9 +27,11 @@ public class SpringWebContext {
     }
 
     public static HttpServletRequest getRequest() {
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder
-                .currentRequestAttributes();
-        return sra.getRequest();
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            return ((ServletRequestAttributes) requestAttributes).getRequest();
+        }
+        return null;
     }
 
     public static HttpServletResponse getResponse() {
