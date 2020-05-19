@@ -24,6 +24,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.web.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.util.WebConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -100,8 +101,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     private boolean isInternalRpc(HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent");
-        return userAgent == null || userAgent.toLowerCase().startsWith("java");
+        return Boolean.parseBoolean(request.getHeader(WebConstants.HEADER_INTERNAL_RPC));
     }
 
     protected EnumTypePropertyFilter createPropertyFilter() {
