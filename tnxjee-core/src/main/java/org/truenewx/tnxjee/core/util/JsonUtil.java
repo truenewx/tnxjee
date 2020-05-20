@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -43,6 +44,10 @@ public class JsonUtil {
 
     public static ObjectMapper copyDefaultMapper() {
         return DEFAULT_MAPPER.copy();
+    }
+
+    public static ObjectMapper copyNonConcreteAndCollectionMapper() {
+        return copyDefaultMapper().setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
     }
 
     @JsonFilter("DynamicFilter")

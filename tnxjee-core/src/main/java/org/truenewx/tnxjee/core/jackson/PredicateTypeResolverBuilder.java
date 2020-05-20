@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.core.jackson;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -21,7 +22,7 @@ public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolv
     }
 
     public static final Predicate<Class<?>> PREDICATE_NON_COLLECTION = clazz -> {
-        return !clazz.isArray() && !Iterable.class.isAssignableFrom(clazz) && !Map.class.isAssignableFrom(clazz);
+        return !clazz.isArray() && !Collection.class.isAssignableFrom(clazz) && !Map.class.isAssignableFrom(clazz);
     };
 
     public static PredicateTypeResolverBuilder NON_CONCRETE_AND_COLLECTION = createNonConcrete(PREDICATE_NON_COLLECTION);
