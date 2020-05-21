@@ -3,10 +3,12 @@ package org.truenewx.tnxjee.web.api.meta.model;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * API元数据配置属性
  */
+@Configuration
 @ConfigurationProperties("tnxjee.web.api")
 public class ApiMetaProperties {
 

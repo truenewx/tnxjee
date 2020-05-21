@@ -1,10 +1,12 @@
 package org.truenewx.tnxjee.core.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 环境配置属性集
  */
+@Configuration
 @ConfigurationProperties("tnxjee.profile")
 public class ProfileProperties {
 

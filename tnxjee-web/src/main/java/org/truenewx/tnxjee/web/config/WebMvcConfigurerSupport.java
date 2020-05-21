@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -17,14 +16,13 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
 
 /**
- * WEB MVC配置支持，可选的控制层配置均在此配置支持体系中
+ * WEB MVC配置器支持，可选的控制层配置均在此配置支持体系中
  *
  * @author jianglei
  */
-@EnableConfigurationProperties({ CorsRegistryProperties.class })
-public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
+public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
 
-    @Autowired(required = false)
+    @Autowired
     private CorsRegistryProperties corsRegistryProperties;
     @Autowired
     private ApplicationContext applicationContext;
@@ -53,7 +51,7 @@ public abstract class WebMvcConfigurationSupport implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
+        if (this.corsRegistryProperties.isEnabled()) {
             CorsRegistration registration = registry
                     .addMapping(this.corsRegistryProperties.getPathPattern())
                     .allowedOrigins(this.corsRegistryProperties.getAllowedOrigins())

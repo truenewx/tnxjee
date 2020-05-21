@@ -6,7 +6,6 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -19,7 +18,6 @@ import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionReso
 /**
  * WEB视图层安全配置支持
  */
-@EnableConfigurationProperties(WebMvcProperties.class)
 public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfigurerSupport {
 
     @Autowired

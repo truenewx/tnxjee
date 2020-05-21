@@ -5,14 +5,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.model.Model;
@@ -27,24 +22,21 @@ import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
  */
 @RestController
 @RequestMapping("/api/meta")
-@EnableConfigurationProperties(ApiMetaProperties.class)
 public class ApiMetaController {
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
     private ApiModelMetaResolver metaResolver;
-    @Autowired(required = false)
+    @Autowired
     private ApiMetaProperties properties;
 
     @GetMapping("/context")
     public ApiContext context(HttpServletRequest request) {
         ApiContext context = new ApiContext();
-        if (this.properties != null) {
-            context.setBaseUrl(this.properties.getBaseUrl());
-            context.setLoginSuccessRedirectParameter(
-                    this.properties.getLoginSuccessRedirectParameter());
-            context.setContext(this.properties.getContext());
-        }
+        context.setBaseUrl(this.properties.getBaseUrl());
+        context.setLoginSuccessRedirectParameter(
+                this.properties.getLoginSuccessRedirectParameter());
+        context.setContext(this.properties.getContext());
         return context;
     }
 

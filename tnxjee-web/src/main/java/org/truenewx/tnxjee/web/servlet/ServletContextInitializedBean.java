@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
@@ -18,13 +17,12 @@ import org.truenewx.tnxjee.core.version.VersionReader;
  * ServletContext初始化Bean
  */
 @Component
-@EnableConfigurationProperties(ServletContextProperties.class)
 public class ServletContextInitializedBean implements ServletContextAware, ContextInitializedBean {
     @Autowired
     private VersionReader versionReader;
     @Autowired
     private ProfileSupplier profileSupplier;
-    @Autowired(required = false)
+    @Autowired
     private ServletContextProperties properties;
     private ServletContext servletContext;
 
@@ -36,13 +34,11 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
     @Override
     // 在取得ServletContext时可能Spring容器中的Bean尚未完成初始化，所以等容器全部初始化完成后再进行下列动作
     public void afterInitialized(ApplicationContext context) throws Exception {
-        if (this.properties != null) {
-            Map<String, String> attributes = this.properties.getAttributes();
-            if (attributes != null) {
-                attributes.forEach((key, value) -> {
-                    this.servletContext.setAttribute(key, value);
-                });
-            }
+        Map<String, String> attributes = this.properties.getAttributes();
+        if (attributes != null) {
+            attributes.forEach((key, value) -> {
+                this.servletContext.setAttribute(key, value);
+            });
         }
 
         this.servletContext.setAttribute("version", this.versionReader.getVersion());

@@ -1,12 +1,14 @@
 package org.truenewx.tnxjee.web.servlet;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import java.util.Map;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Servlet上下文配置属性集
  */
+@Configuration
 @ConfigurationProperties("tnxjee.web.servlet.context")
 public class ServletContextProperties {
 

@@ -2,8 +2,10 @@ package org.truenewx.tnxjee.web.cors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "tnxjee.web.cors")
+@Configuration
+@ConfigurationProperties("tnxjee.web.cors")
 public class CorsRegistryProperties {
 
     private String pathPattern;

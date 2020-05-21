@@ -1,8 +1,6 @@
 package org.truenewx.tnxjee.web.qrcode;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +34,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
  * @author liuzhiyi
  */
 @Component
-@ConfigurationProperties(prefix = "tnxjee.web.controller.qrcode")
+@ConfigurationProperties("tnxjee.web.qrcode")
 public class QrCodeGenerator {
     /**
      * 二维码图片扩展名
@@ -114,7 +112,6 @@ public class QrCodeGenerator {
      *
      * @param matrix 二维码资源
      * @return
-     *
      * @author liuzhiyi
      */
     private BufferedImage toBufferedImage(BitMatrix matrix) {

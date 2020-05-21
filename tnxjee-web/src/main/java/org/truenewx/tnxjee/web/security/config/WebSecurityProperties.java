@@ -1,9 +1,11 @@
 package org.truenewx.tnxjee.web.security.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import java.util.List;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 @ConfigurationProperties("tnxjee.web.security")
 public class WebSecurityProperties {
 

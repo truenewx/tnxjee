@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -41,14 +40,13 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
  * WEB安全配置器支持
  */
 @EnableWebSecurity
-@EnableConfigurationProperties(WebSecurityProperties.class)
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
-    @Autowired(required = false)
+    @Autowired
     private WebSecurityProperties securityProperties;
-    @Autowired(required = false)
+    @Autowired
     private CorsRegistryProperties corsRegistryProperties;
 
     /**
@@ -151,9 +149,9 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
             .deleteCookies("JSESSIONID", "SESSION").permitAll();
         // @formatter:on
-        if (this.corsRegistryProperties != null && this.corsRegistryProperties.isEnabled()) {
+        if (this.corsRegistryProperties.isEnabled()) {
             http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
-        } else if (this.securityProperties != null && this.securityProperties.isCsrfDisabled()) {
+        } else if (this.securityProperties.isCsrfDisabled()) {
             http.csrf().disable();
         }
     }
