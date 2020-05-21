@@ -1,14 +1,5 @@
 package org.truenewx.tnxjee.core.util;
 
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
-import org.truenewx.tnxjee.core.Strings;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -23,6 +14,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.truenewx.tnxjee.core.Strings;
+
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 
 /**
  * 字符串工具类
@@ -342,9 +343,11 @@ public class StringUtil {
      * @return true if 指定字符串匹配指定ANT模式通配符表达式, otherwise false
      */
     public static boolean antPathMatchOneOf(String s, Collection<String> patterns) {
-        for (String pattern : patterns) {
-            if (antPathMatch(s, pattern)) {
-                return true;
+        if (patterns != null) {
+            for (String pattern : patterns) {
+                if (antPathMatch(s, pattern)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -893,7 +896,7 @@ public class StringUtil {
         return result.toString();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T parse(String s, Class<T> type) {
         if (type == String.class) {
             return (T) s;

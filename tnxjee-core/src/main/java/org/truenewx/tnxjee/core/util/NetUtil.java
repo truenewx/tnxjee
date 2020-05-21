@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.core.util;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +79,7 @@ public class NetUtil {
         String content = null;
         try {
             URL url = new URL("http://ip.chinaz.com");
-            content = IOUtils.toString(url, Strings.ENCODING_UTF8);
+            content = IOUtils.toString(url, StandardCharsets.UTF_8);
             Pattern pattern = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
             Matcher matcher = pattern.matcher(content);
             if (matcher.find()) {
@@ -107,6 +108,17 @@ public class NetUtil {
         return null;
     }
 
+    public static String getTopDomain(String host) {
+        if (StringUtil.isIp(host)) {
+            return null;
+        }
+        String[] array = host.split("\\.");
+        if (array.length >= 2) {
+            return array[array.length - 2] + Strings.DOT + array[array.length - 1];
+        }
+        return null;
+    }
+
     /**
      * 判断指定字符串是否内网IP地址
      *
@@ -115,27 +127,34 @@ public class NetUtil {
      */
     public static boolean isIntranetIp(String s) {
         if (StringUtil.isIp(s)) {
-            if (s.startsWith("192.168.") || s.startsWith("10.") || s.equals("127.0.0.1")
-                    || s.equals("0:0:0:0:0:0:0:1")) {
+            if (isLocalHost(s) || s.startsWith("192.168.") || s.startsWith("10.")) {
                 return true;
             } else if (s.startsWith("172.")) { // 172.16-172.31网段
                 String seg = s.substring(4, s.indexOf('.', 4)); // 取第二节
                 int value = MathUtil.parseInt(seg);
-                if (16 <= value && value <= 31) {
-                    return true;
-                }
+                return 16 <= value && value <= 31;
             }
         }
         return false;
     }
 
     /**
-     * 判断指定网络地址是否局域网地址
+     * 判断指定主机地址是否本机地址
+     *
+     * @param host 主机地址
+     * @return 指定主机地址是否本机地址
+     */
+    public static boolean isLocalHost(String host) {
+        return "localhost".equals(host) || "127.0.0.1".equals(host) || "0:0:0:0:0:0:0:1".equals(host);
+    }
+
+    /**
+     * 判断指定网络地址是否内网地址
      *
      * @param address 网络地址
-     * @return 指定网络地址是否局域网地址
+     * @return 指定网络地址是否内网地址
      */
-    public static boolean isLanAddress(InetAddress address) {
+    public static boolean isIntranetAddress(InetAddress address) {
         byte[] b = address.getAddress();
         // 暂只考虑IPv4
         return b.length == 4 && ((b[0] == 192 && b[1] == 168) || b[0] == 10 || (b[0] == 172 && b[1] >= 16 && b[1] <= 31)

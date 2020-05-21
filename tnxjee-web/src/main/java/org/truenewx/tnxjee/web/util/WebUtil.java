@@ -221,22 +221,37 @@ public class WebUtil {
         return s;
     }
 
-    private static String getHostByFullUrl(String url) {
+    /**
+     * 从指定URL地址中获取主机地址（域名/IP[:端口]）
+     *
+     * @param url          URL地址
+     * @param portPossible 是否带上可能的端口号
+     * @return 主机地址
+     */
+    public static String getHost(String url, boolean portPossible) {
         int index = url.indexOf("://");
-        url = url.substring(index + 3);
+        if (index >= 0) {
+            url = url.substring(index + 3);
+        } else if (url.startsWith("//")) { // 以//开头是不包含协议但包含主机地址的链接
+            url = url.substring(2);
+        } else { // 其它情况下URL中不包含主机地址
+            return null;
+        }
         index = url.indexOf(Strings.SLASH);
         if (index >= 0) {
             url = url.substring(0, index);
         }
+        if (!portPossible) {
+            index = url.indexOf(Strings.COLON);
+            if (index >= 0) {
+                url = url.substring(0, index);
+            }
+        }
         return url;
     }
 
-    private static String getSubDomainByFullUrl(String url, int topDomainLevel) {
-        url = getHostByFullUrl(url);
-        int index = url.indexOf(":");
-        if (index >= 0) {
-            url = url.substring(0, index);
-        }
+    private static String getSubDomain(String url, int topDomainLevel) {
+        url = getHost(url, false);
         if (StringUtil.isIp(url)) {
             return null;
         }
@@ -256,11 +271,7 @@ public class WebUtil {
 
     public static String getFootSubDomain(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        url = getHostByFullUrl(url);
-        int index = url.indexOf(":");
-        if (index >= 0) {
-            url = url.substring(0, index);
-        }
+        url = getHost(url, false);
         if (StringUtil.isIp(url) || "localhost".equals(url)) {
             return null;
         }
@@ -272,14 +283,15 @@ public class WebUtil {
     }
 
     /**
-     * 从指定HTTP请求中获取访问的主机地址（域名[:端口]）
+     * 从指定HTTP请求中获取访问的主机地址（域名/IP[:端口]）
      *
-     * @param request 指定HTTP请求
+     * @param request      HTTP请求
+     * @param portPossible 是否带上可能的端口号
      * @return 访问的主机地址
      */
-    public static String getHost(HttpServletRequest request) {
+    public static String getHost(HttpServletRequest request, boolean portPossible) {
         String url = request.getRequestURL().toString();
-        return getHostByFullUrl(url);
+        return getHost(url, portPossible);
     }
 
     /**
@@ -294,7 +306,7 @@ public class WebUtil {
         if (url.startsWith("https:")) {
             protocol = "https://";
         }
-        return protocol + getHostByFullUrl(url);
+        return protocol + getHost(url, true);
     }
 
     /**
@@ -306,7 +318,7 @@ public class WebUtil {
      */
     public static String getSubDomain(HttpServletRequest request, int topDomainLevel) {
         String url = request.getRequestURL().toString();
-        return getSubDomainByFullUrl(url, topDomainLevel);
+        return getSubDomain(url, topDomainLevel);
     }
 
     /**
@@ -679,6 +691,10 @@ public class WebUtil {
             headers.put(name, value.toString());
         }
         return headers;
+    }
+
+    public static boolean isRelativeUrl(String url) {
+        return url.startsWith(Strings.SLASH) && !url.startsWith("//");
     }
 
 }
