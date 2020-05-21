@@ -39,6 +39,7 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
 /**
  * WEB安全配置器支持
  */
+// 安全配置器与MVC配置器如果合并在同一个类中，web-view工程启动时无法即时注入配置属性实例，导致启动失败
 @EnableWebSecurity
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
