@@ -14,6 +14,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.config.WebMvcConfigurerSupport;
 import org.truenewx.tnxjee.web.view.servlet.filter.ForbidAccessFilter;
+import org.truenewx.tnxjee.web.view.servlet.filter.PrepareContextFilter;
 import org.truenewx.tnxjee.web.view.sitemesh.config.BuildableSiteMeshFilter;
 
 /**
@@ -30,6 +31,15 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
         frb.setFilter(new ForbidAccessFilter());
         frb.addUrlPatterns("*.jsp");
         frb.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return frb;
+    }
+
+    @Bean
+    public FilterRegistrationBean<PrepareContextFilter> prepareContextFilter() {
+        FilterRegistrationBean<PrepareContextFilter> frb = new FilterRegistrationBean<>();
+        frb.setFilter(new PrepareContextFilter());
+        frb.addUrlPatterns("/*");
+        frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return frb;
     }
 
