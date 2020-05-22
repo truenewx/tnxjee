@@ -60,11 +60,11 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
     protected boolean isValidRedirectUrl(HttpServletRequest request, HttpServletResponse response,
             String redirectUrl) throws IOException {
         // 相对路径地址可以重定向
-        if (WebUtil.isRelativeUrl(redirectUrl)) {
+        if (NetUtil.isRelativeUrl(redirectUrl)) {
             return true;
         }
         String requestHost = WebUtil.getHost(request, false);
-        String redirectHost = WebUtil.getHost(redirectUrl, false);
+        String redirectHost = NetUtil.getHost(redirectUrl, false);
         // 同一个主机地址可以重定向，即使端口可能不同
         if (Objects.equals(requestHost, redirectHost)) {
             return true;

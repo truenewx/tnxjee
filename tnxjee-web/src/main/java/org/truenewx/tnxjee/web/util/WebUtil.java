@@ -27,6 +27,7 @@ import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.util.WebUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.model.spec.Terminal;
 import org.truenewx.tnxjee.model.spec.enums.Device;
@@ -41,7 +42,6 @@ import com.aliyun.oss.internal.Mimetypes;
  * @author jianglei
  */
 public class WebUtil {
-
 
     private WebUtil() {
     }
@@ -103,8 +103,7 @@ public class WebUtil {
      * @return 相对于web项目的请求URL
      */
     public static String getRelativeRequestUrlWithQueryString(HttpServletRequest request,
-            boolean encode,
-            String... ignoredParameterNames) {
+            boolean encode, String... ignoredParameterNames) {
         String encoding = request.getCharacterEncoding();
         if (encoding == null) {
             encoding = System.getProperty("file.encoding", Strings.ENCODING_UTF8);
@@ -174,25 +173,7 @@ public class WebUtil {
      */
     public static String getRelativeRequestAction(HttpServletRequest request) {
         String url = getRelativeRequestUrl(request);
-        return getAction(url);
-    }
-
-    /**
-     * 从指定URL中截取请求action部分，即请求url中去掉参数和请求后缀之后的部分
-     *
-     * @param url 请求url
-     * @return 请求action
-     */
-    public static String getAction(String url) {
-        int index = url.indexOf("?");
-        if (index >= 0) {
-            url = url.substring(0, index);
-        }
-        index = url.lastIndexOf(".");
-        if (index >= 0) {
-            url = url.substring(0, index);
-        }
-        return url;
+        return NetUtil.getAction(url);
     }
 
     /**
@@ -221,57 +202,9 @@ public class WebUtil {
         return s;
     }
 
-    /**
-     * 从指定URL地址中获取主机地址（域名/IP[:端口]）
-     *
-     * @param url          URL地址
-     * @param portPossible 是否带上可能的端口号
-     * @return 主机地址
-     */
-    public static String getHost(String url, boolean portPossible) {
-        int index = url.indexOf("://");
-        if (index >= 0) {
-            url = url.substring(index + 3);
-        } else if (url.startsWith("//")) { // 以//开头是不包含协议但包含主机地址的链接
-            url = url.substring(2);
-        } else { // 其它情况下URL中不包含主机地址
-            return null;
-        }
-        index = url.indexOf(Strings.SLASH);
-        if (index >= 0) {
-            url = url.substring(0, index);
-        }
-        if (!portPossible) {
-            index = url.indexOf(Strings.COLON);
-            if (index >= 0) {
-                url = url.substring(0, index);
-            }
-        }
-        return url;
-    }
-
-    private static String getSubDomain(String url, int topDomainLevel) {
-        url = getHost(url, false);
-        if (StringUtil.isIp(url)) {
-            return null;
-        }
-        String[] domains = url.split("\\.");
-        if (topDomainLevel < 2) {
-            topDomainLevel = 2;
-        }
-        if (domains.length > topDomainLevel) {
-            String domain = domains[0];
-            for (int i = 1; i < domains.length - topDomainLevel; i++) {
-                domain += "." + domains[i];
-            }
-            return domain;
-        }
-        return null;
-    }
-
     public static String getFootSubDomain(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        url = getHost(url, false);
+        url = NetUtil.getHost(url, false);
         if (StringUtil.isIp(url) || "localhost".equals(url)) {
             return null;
         }
@@ -291,7 +224,7 @@ public class WebUtil {
      */
     public static String getHost(HttpServletRequest request, boolean portPossible) {
         String url = request.getRequestURL().toString();
-        return getHost(url, portPossible);
+        return NetUtil.getHost(url, portPossible);
     }
 
     /**
@@ -306,7 +239,7 @@ public class WebUtil {
         if (url.startsWith("https:")) {
             protocol = "https://";
         }
-        return protocol + getHost(url, true);
+        return protocol + NetUtil.getHost(url, true);
     }
 
     /**
@@ -318,7 +251,7 @@ public class WebUtil {
      */
     public static String getSubDomain(HttpServletRequest request, int topDomainLevel) {
         String url = request.getRequestURL().toString();
-        return getSubDomain(url, topDomainLevel);
+        return NetUtil.getSubDomain(url, topDomainLevel);
     }
 
     /**
@@ -341,27 +274,6 @@ public class WebUtil {
     }
 
     /**
-     * 标准化相对URL地址。所谓标准URL即：所有斜杠均为/，以/开头，不以/结尾<br/>
-     * 注意：本方法只能正确处理相对URL地址，绝对路径URL无法正确处理
-     *
-     * @param url URL
-     * @return 标准化后的URL
-     */
-    public static String standardizeRelativeUrl(String url) {
-        url = url.replace('\\', '/');
-        if (!url.startsWith(Strings.SLASH)) {
-            url = Strings.SLASH + url;
-        }
-        if (Strings.SLASH.equals(url)) {
-            return url;
-        }
-        if (url.endsWith(Strings.SLASH)) {
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-
-    /**
      * 读取指定相对于WEB上下文的文件的二进制内容
      *
      * @param context      web上下文
@@ -370,7 +282,8 @@ public class WebUtil {
      */
     public static byte[] readWebContextFile(ServletContext context, String relativePath) {
         try {
-            Resource resource = new ServletContextResource(context, standardizeRelativeUrl(relativePath));
+            Resource resource = new ServletContextResource(context,
+                    NetUtil.standardizeUrl(relativePath));
             return FileUtils.readFileToByteArray(resource.getFile());
         } catch (IOException e) {
             LogUtil.error(WebUtil.class, e);
@@ -497,8 +410,7 @@ public class WebUtil {
      * @author jianglei
      */
     public static void addCookie(HttpServletRequest request, HttpServletResponse response,
-            String cookieName,
-            String cookieValue, int maxAge) {
+            String cookieName, String cookieValue, int maxAge) {
         Cookie cookie = createCookie(cookieName, cookieValue, maxAge, false, request);
         response.addCookie(cookie);
     }
@@ -513,8 +425,7 @@ public class WebUtil {
      * @author jianglei
      */
     public static void addCookie(HttpServletRequest request, HttpServletResponse response,
-            String cookieName,
-            String cookieValue) {
+            String cookieName, String cookieValue) {
         addCookie(request, response, cookieName, cookieValue, Integer.MAX_VALUE);
     }
 
@@ -568,38 +479,6 @@ public class WebUtil {
     }
 
     /**
-     * 标准化指定URL中的协议，确保返回的URL包含协议，如果指定URL未包含协议，则返回包含有指定默认协议的URL
-     *
-     * @param url             URL
-     * @param defaultProtocol 默认协议，如："http"
-     * @return 包含有协议的URL，如果输入的URL为相对路径，则原样返回
-     */
-    public static String standardizeUrlProtocol(String url, String defaultProtocol) {
-        if (!url.contains("://")) {
-            if (url.startsWith("//")) {
-                url = defaultProtocol + Strings.COLON + url;
-            } else if (!url.startsWith(Strings.SLASH)) {
-                url = defaultProtocol + "://" + url;
-            }
-            // 斜杠开头的为相对URL，不作处理
-        }
-        if (url.endsWith(Strings.SLASH)) { // 确保不以斜杠结尾
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-
-    /**
-     * 标准化指定URL，当该URL不包含协议时，返回包含HTTP协议的URL
-     *
-     * @param url URL
-     * @return 包含有协议（默认为HTTP协议）的URL
-     */
-    public static String standardizeHttpUrl(String url) {
-        return standardizeUrlProtocol(url, "http");
-    }
-
-    /**
      * 将request中的所有参数都复制到属性集中
      *
      * @param request 请求
@@ -619,7 +498,8 @@ public class WebUtil {
         if (userAgent.contains("MSIE") || userAgent.contains("TRIDENT")) {
             filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
         } else {
-            filename = new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+            filename = new String(filename.getBytes(StandardCharsets.UTF_8),
+                    StandardCharsets.ISO_8859_1);
         }
         response.setHeader("content-disposition", "attachment;filename=" + filename);
     }
@@ -668,7 +548,8 @@ public class WebUtil {
      * @return 是否AJAX请求
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST));
+        return "XMLHttpRequest"
+                .equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST));
     }
 
     /**
@@ -691,10 +572,6 @@ public class WebUtil {
             headers.put(name, value.toString());
         }
         return headers;
-    }
-
-    public static boolean isRelativeUrl(String url) {
-        return url.startsWith(Strings.SLASH) && !url.startsWith("//");
     }
 
 }

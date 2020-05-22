@@ -381,4 +381,128 @@ public class NetUtil {
         }
         return response;
     }
+
+    public static boolean isRelativeUrl(String url) {
+        return url.startsWith(Strings.SLASH) && !url.startsWith("//");
+    }
+
+    /**
+     * 标准化URL地址。所谓标准URL即：所有斜杠均为/，以/开头，不以/结尾
+     *
+     * @param url URL
+     * @return 标准化后的URL
+     */
+    public static String standardizeUrl(String url) {
+        if (isRelativeUrl(url)) {
+            url = url.replace('\\', '/');
+            if (!url.startsWith(Strings.SLASH)) {
+                url = Strings.SLASH + url;
+            }
+            if (Strings.SLASH.equals(url)) {
+                return url;
+            }
+        }
+        if (url.endsWith(Strings.SLASH)) {
+            url = url.substring(0, url.length() - 1);
+        }
+        return url;
+    }
+
+    /**
+     * 标准化指定URL中的协议，确保返回的URL包含协议，如果指定URL未包含协议，则返回包含有指定默认协议的URL
+     *
+     * @param url             URL
+     * @param defaultProtocol 默认协议，如："http"
+     * @return 包含有协议的URL，如果输入的URL为相对路径，则原样返回
+     */
+    public static String standardizeUrlWithProtocol(String url, String defaultProtocol) {
+        if (!url.contains("://")) {
+            if (url.startsWith("//")) {
+                url = defaultProtocol + Strings.COLON + url;
+            } else if (!url.startsWith(Strings.SLASH)) {
+                url = defaultProtocol + "://" + url;
+            }
+            // 斜杠开头的为相对URL，不作处理
+        }
+        if (url.endsWith(Strings.SLASH)) { // 确保不以斜杠结尾
+            url = url.substring(0, url.length() - 1);
+        }
+        return url;
+    }
+
+    /**
+     * 标准化指定URL，当该URL不包含协议时，返回包含HTTP协议的URL
+     *
+     * @param url URL
+     * @return 包含有协议（默认为HTTP协议）的URL
+     */
+    public static String standardizeHttpUrl(String url) {
+        return standardizeUrlWithProtocol(url, "http");
+    }
+
+    /**
+     * 从指定URL中截取请求action部分，即请求url中去掉参数和请求后缀之后的部分
+     *
+     * @param url 请求url
+     * @return 请求action
+     */
+    public static String getAction(String url) {
+        int index = url.indexOf("?");
+        if (index >= 0) {
+            url = url.substring(0, index);
+        }
+        index = url.lastIndexOf(".");
+        if (index >= 0) {
+            url = url.substring(0, index);
+        }
+        return url;
+    }
+
+    /**
+     * 从指定URL地址中获取主机地址（域名/IP[:端口]）
+     *
+     * @param url          URL地址
+     * @param portPossible 是否带上可能的端口号
+     * @return 主机地址
+     */
+    public static String getHost(String url, boolean portPossible) {
+        int index = url.indexOf("://");
+        if (index >= 0) {
+            url = url.substring(index + 3);
+        } else if (url.startsWith("//")) { // 以//开头是不包含协议但包含主机地址的链接
+            url = url.substring(2);
+        } else { // 其它情况下URL中不包含主机地址
+            return null;
+        }
+        index = url.indexOf(Strings.SLASH);
+        if (index >= 0) {
+            url = url.substring(0, index);
+        }
+        if (!portPossible) {
+            index = url.indexOf(Strings.COLON);
+            if (index >= 0) {
+                url = url.substring(0, index);
+            }
+        }
+        return url;
+    }
+
+    public static String getSubDomain(String url, int topDomainLevel) {
+        url = getHost(url, false);
+        if (StringUtil.isIp(url)) {
+            return null;
+        }
+        String[] domains = url.split("\\.");
+        if (topDomainLevel < 2) {
+            topDomainLevel = 2;
+        }
+        if (domains.length > topDomainLevel) {
+            String domain = domains[0];
+            for (int i = 1; i < domains.length - topDomainLevel; i++) {
+                domain += "." + domains[i];
+            }
+            return domain;
+        }
+        return null;
+    }
 }
