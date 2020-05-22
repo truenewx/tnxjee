@@ -37,10 +37,9 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
                     while (requestHeaders.hasMoreElements()) {
                         headerValues.add(requestHeaders.nextElement());
                     }
-                    feignHeaders.put(headerName, headerValues);
+                    template.header(headerName, headerValues);
                 }
             }
-            template.headers(feignHeaders);
         }
     }
 }
