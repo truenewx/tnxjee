@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.web.view.menu.model.Menu;
  */
 public class MenuFactoryBean implements FactoryBean<Menu> {
 
-    private String menuName;
+    private String userType;
     private MenuFactory menuFactory;
 
     /**
@@ -18,8 +18,8 @@ public class MenuFactoryBean implements FactoryBean<Menu> {
     public MenuFactoryBean() {
     }
 
-    public MenuFactoryBean(String menuName) {
-        this.menuName = menuName;
+    public MenuFactoryBean(String userType) {
+        this.userType = userType;
     }
 
     @Autowired
@@ -34,6 +34,6 @@ public class MenuFactoryBean implements FactoryBean<Menu> {
 
     @Override
     public Menu getObject() throws Exception {
-        return this.menuFactory.getMenu(this.menuName);
+        return this.menuFactory.getMenu(this.userType);
     }
 }

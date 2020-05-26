@@ -67,66 +67,66 @@
         </plugins>
     </build>
     <dependencyManagement>
-        <dependencies>
+        <dependencies><!-- ${project.version}是实际子工程的版本号，此处不能采用 -->
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-alone</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-core</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-model</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo-jpa</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo-mongo</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-service</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-service-impl</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-test</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-test-service</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-web</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-web-view</artifactId>
-                <version>${project.version}</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
