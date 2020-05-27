@@ -246,6 +246,18 @@ public class NetUtil {
         return map;
     }
 
+    public static String mergeParam(String url, String paramName, Object paramValue) {
+        if (paramName != null && paramValue != null) {
+            if (url.contains(Strings.QUESTION)) {
+                url += Strings.AND;
+            } else {
+                url += Strings.QUESTION;
+            }
+            url += paramName + Strings.EQUAL + paramValue;
+        }
+        return url;
+    }
+
     /**
      * 将指定参数集合中的参数与指定URL中的参数合并，返回新的URL
      *

@@ -21,6 +21,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -80,6 +82,11 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new AccessDeniedBusinessExceptionHandler();
+    }
+
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return new HttpStatusReturningLogoutSuccessHandler();
     }
 
     @Override
@@ -145,9 +152,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         // @formatter:off
         http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll()
             .anyRequest().authenticated()
-            .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+            .and()
+            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
             .accessDeniedHandler(accessDeniedHandler())
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
+            .and()
+            .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
+            .logoutSuccessHandler(logoutSuccessHandler())
             .deleteCookies("JSESSIONID", "SESSION").permitAll();
         // @formatter:on
         if (this.corsRegistryProperties.isEnabled()) {
