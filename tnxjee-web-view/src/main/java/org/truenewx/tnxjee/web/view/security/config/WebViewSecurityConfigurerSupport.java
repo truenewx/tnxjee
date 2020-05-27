@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.security.config.WebSecurityConfigurerSupport;
@@ -54,6 +56,9 @@ public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfig
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
 
-        http.logout().logoutSuccessUrl(getLoginFormUrl());
+        LogoutConfigurer<HttpSecurity> logoutConfigurer = http.logout().logoutSuccessUrl(getLoginFormUrl());
+        getApplicationContext().getBeansOfType(LogoutHandler.class).forEach((name, logoutHandler) -> {
+            logoutConfigurer.addLogoutHandler(logoutHandler);
+        });
     }
 }
