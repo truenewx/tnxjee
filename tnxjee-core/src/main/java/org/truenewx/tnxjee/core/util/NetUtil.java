@@ -181,7 +181,7 @@ public class NetUtil {
      */
     @SuppressWarnings("unchecked")
     public static String map2ParamString(Map<String, Object> params, String encoding) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -253,19 +253,14 @@ public class NetUtil {
      * @param params   参数集合
      * @param encoding 字符编码
      * @return 合并之后的新URL
-     * @throws UnsupportedEncodingException 字符编码错误
      */
     public static String mergeParams(String url, Map<String, Object> params, String encoding) {
-        String[] pair = url.split("\\?");
-        url = pair[0];
-        String paramString = "";
-        if (pair.length == 2) {
-            paramString = pair[1];
+        if (url.contains(Strings.QUESTION)) {
+            url += Strings.AND;
+        } else {
+            url += Strings.QUESTION;
         }
-        Map<String, Object> paramMap = paramString2Map(paramString);
-        paramMap.putAll(params);
-        paramString = map2ParamString(paramMap, encoding);
-        return url + "?" + paramString;
+        return url + map2ParamString(params, encoding);
     }
 
     private static String getQueryString(Map<String, Object> params) {
