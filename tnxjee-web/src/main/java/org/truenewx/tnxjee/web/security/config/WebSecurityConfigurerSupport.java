@@ -158,7 +158,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             .and()
             .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
             .logoutSuccessHandler(logoutSuccessHandler())
-            .deleteCookies("JSESSIONID", "SESSION").permitAll();
+            .deleteCookies(getLogoutClearCookies()).permitAll();
         // @formatter:on
         if (this.corsRegistryProperties.isEnabled()) {
             http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
@@ -233,6 +233,10 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      */
     protected String getLoginAjaxUrl() {
         return null;
+    }
+
+    protected String[] getLogoutClearCookies() {
+        return new String[]{ "JSESSIONID", "SESSION" };
     }
 
     /**
