@@ -1,8 +1,8 @@
-package org.truenewx.tnxjee.web.exception.message;
+package org.truenewx.tnxjee.web.exception.model;
 
 import java.util.Collection;
 
-import org.truenewx.tnxjee.service.exception.message.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.BusinessError;
 
 /**
  * 业务错误消息体

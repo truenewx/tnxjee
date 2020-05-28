@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.service.exception.message;
+package org.truenewx.tnxjee.service.exception.model;
 
 /**
  * 业务错误消息

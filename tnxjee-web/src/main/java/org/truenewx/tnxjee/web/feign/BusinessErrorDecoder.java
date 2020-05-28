@@ -7,8 +7,8 @@ import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.MultiException;
-import org.truenewx.tnxjee.service.exception.message.BusinessError;
-import org.truenewx.tnxjee.web.exception.message.BusinessErrorBody;
+import org.truenewx.tnxjee.service.exception.model.BusinessError;
+import org.truenewx.tnxjee.web.exception.model.BusinessErrorBody;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

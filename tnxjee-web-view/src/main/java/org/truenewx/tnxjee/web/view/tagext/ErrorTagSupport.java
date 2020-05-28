@@ -6,7 +6,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.message.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.BusinessError;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 
 /**

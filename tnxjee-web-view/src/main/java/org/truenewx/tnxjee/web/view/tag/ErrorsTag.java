@@ -8,7 +8,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.message.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.BusinessError;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
 
 /**

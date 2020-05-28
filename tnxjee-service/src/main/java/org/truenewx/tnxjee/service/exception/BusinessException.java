@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.service.exception;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.service.exception.message.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.BusinessError;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -43,7 +43,7 @@ public class BusinessException extends SingleException {
      * @return 异常错误消息是否已经过本地化处理
      */
     public boolean isMessageLocalized() {
-        return !this.code.equals(getMessage());
+        return !this.code.equals(getLocalizedMessage());
     }
 
     /**
