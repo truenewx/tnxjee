@@ -8,7 +8,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.web.exception.resolver.ResolvedBusinessError;
+import org.truenewx.tnxjee.service.exception.message.BusinessError;
 import org.truenewx.tnxjee.web.view.tagext.ErrorTagSupport;
 
 /**
@@ -29,7 +29,7 @@ public class ErrorsTag extends ErrorTagSupport {
     @Override
     public int doEndTag() throws JspException {
         StringBuffer message = new StringBuffer();
-        List<ResolvedBusinessError> errors = getErrors();
+        List<BusinessError> errors = getErrors();
         if (errors != null) {
             errors.forEach(error -> {
                 if (Strings.ASTERISK.equals(this.field) || this.field.equals(error.getField())) {

@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.service.exception;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.service.exception.message.BusinessError;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -16,14 +17,16 @@ public class BusinessException extends SingleException {
     private String code;
     private Object[] args;
 
-    public BusinessException(String message, String code, Object[] args) {
-        super(message);
+    public BusinessException(String code, Object... args) {
+        super(code);
         this.code = code;
         this.args = args;
     }
 
-    public BusinessException(String code, Object... args) {
-        this(code, code, args);
+    public BusinessException(BusinessError error) {
+        super(error.getMessage());
+        this.code = error.getCode();
+        this.property = error.getField();
     }
 
     public String getCode() {

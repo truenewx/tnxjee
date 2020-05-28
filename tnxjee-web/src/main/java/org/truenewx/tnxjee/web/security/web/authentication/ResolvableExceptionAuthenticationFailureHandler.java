@@ -1,63 +1,82 @@
 package org.truenewx.tnxjee.web.security.web.authentication;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 import org.truenewx.tnxjee.web.security.core.AuthenticationFailureException;
+import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 
 /**
- * 基于可解决异常的认证失败处理器
+ * 基于可解决异常的登录认证失败处理器
  */
 @Component
 public class ResolvableExceptionAuthenticationFailureHandler
-        extends SimpleUrlAuthenticationFailureHandler implements
-        ApplicationContextAware {
+        implements AuthenticationFailureHandler {
 
+    private boolean useForward = true;
+    private Function<HttpServletRequest, String> targetUrlFunction = request -> null;
+    @Autowired
     private ResolvableExceptionMessageSaver resolvableExceptionMessageSaver;
+    @Autowired
+    private HandlerMethodMapping handlerMethodMapping;
 
-    public ResolvableExceptionAuthenticationFailureHandler() {
-        setDefaultFailureUrl("/error/business");
-        setUseForward(true);
+    public void setUseForward(boolean useForward) {
+        this.useForward = useForward;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.resolvableExceptionMessageSaver = context.getBean(ResolvableExceptionMessageSaver.class);
+    public void setTargetUrlFunction(Function<HttpServletRequest, String> targetUrlFunction) {
+        this.targetUrlFunction = targetUrlFunction;
     }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        try {
-            ResolvableException re = null;
-            if (exception instanceof AuthenticationFailureException) {
-                re = new BusinessException(exception.getMessage());
-            } else {
-                Throwable cause = exception.getCause();
-                if (cause instanceof ResolvableException) {
-                    re = (ResolvableException) cause;
-                }
-            }
-            if (re != null) {
-                this.resolvableExceptionMessageSaver.saveMessage(request, response, re);
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
+        saveException(request, response, exception);
+
+        // AJAX请求登录认证失败直接报401错误
+        if (this.handlerMethodMapping.isAjaxRequest(request)) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
-        // 保存业务异常后，执行默认的处理机制
-        super.onAuthenticationFailure(request, response, exception);
+        // 登录认证失败后的跳转地址未设置，也报401错误
+        String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
+        if (StringUtils.isBlank(targetUrl)) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        }
+        // 跳转到目标地址
+        if (this.useForward) {
+            request.getRequestDispatcher(targetUrl).forward(request, response);
+        } else {
+            response.sendRedirect(targetUrl);
+        }
+    }
+
+    protected void saveException(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception) {
+        ResolvableException re = null;
+        if (exception instanceof AuthenticationFailureException) {
+            re = new BusinessException(exception.getMessage());
+        } else {
+            Throwable cause = exception.getCause();
+            if (cause instanceof ResolvableException) {
+                re = (ResolvableException) cause;
+            }
+        }
+        if (re != null) {
+            this.resolvableExceptionMessageSaver.saveMessage(request, response, null, re);
+        }
     }
 
 }

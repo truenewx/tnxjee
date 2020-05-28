@@ -1,18 +1,19 @@
 package org.truenewx.tnxjee.web.view.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.web.servlet.mvc.Loginer;
-import org.truenewx.tnxjee.web.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.util.WebUtil;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.servlet.mvc.Loginer;
+import org.truenewx.tnxjee.web.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
  * Web视图层工具类
@@ -60,7 +61,7 @@ public class WebViewUtil {
             } else {
                 Loginer loginer = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request),
                         Loginer.class);
-                if (loginer != null && prevUrl != null && loginer.isLoginUrl(prevUrl)) {
+                if (loginer != null && loginer.isLoginUrl(prevUrl)) {
                     prevUrl = null;
                 }
             }

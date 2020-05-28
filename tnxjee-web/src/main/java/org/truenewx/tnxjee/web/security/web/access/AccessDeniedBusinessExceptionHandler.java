@@ -23,13 +23,9 @@ public class AccessDeniedBusinessExceptionHandler extends AccessDeniedHandlerImp
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        try {
-            Throwable cause = accessDeniedException.getCause();
-            if (cause instanceof ResolvableException) {
-                this.resolvableExceptionMessageSaver.saveMessage(request, response, (ResolvableException) cause);
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
+        Throwable cause = accessDeniedException.getCause();
+        if (cause instanceof ResolvableException) {
+            this.resolvableExceptionMessageSaver.saveMessage(request, response, null, (ResolvableException) cause);
         }
         // 保存业务异常后，执行默认的处理机制
         super.handle(request, response, accessDeniedException);
