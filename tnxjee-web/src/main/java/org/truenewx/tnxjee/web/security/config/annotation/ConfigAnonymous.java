@@ -10,7 +10,7 @@ import org.truenewx.tnxjee.core.Strings;
  * @author jianglei
  */
 @Documented
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target(ElementType.METHOD) // 为尽量避免错误的权限配置，只能在方法上使用而不能在类上使用，即使这样略显繁琐
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigAnonymous {
 

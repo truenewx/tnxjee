@@ -11,7 +11,7 @@ public class MenuLink extends MenuItem {
     private String icon;
     private String href;
     private String target;
-    private boolean assignable;
+    private boolean dynamic;
     private List<MenuItem> subs = new ArrayList<>();
 
     public String getIcon() {
@@ -38,12 +38,12 @@ public class MenuLink extends MenuItem {
         this.target = target;
     }
 
-    public boolean isAssignable() {
-        return this.assignable;
+    public boolean isDynamic() {
+        return this.dynamic;
     }
 
-    public void setAssignable(boolean assignable) {
-        this.assignable = assignable;
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public List<MenuItem> getSubs() {
@@ -55,7 +55,7 @@ public class MenuLink extends MenuItem {
         link.icon = this.icon;
         link.href = this.href;
         link.target = this.target;
-        link.assignable = this.assignable;
+        link.dynamic = this.dynamic;
         clone(this, link);
         return link;
     }

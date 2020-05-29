@@ -199,9 +199,6 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             Method method = handlerMethod.getMethod();
             if (Modifier.isPublic(method.getModifiers())) {
                 ConfigAnonymous configAnonymous = method.getAnnotation(ConfigAnonymous.class);
-                if (configAnonymous == null) {
-                    configAnonymous = method.getDeclaringClass().getAnnotation(ConfigAnonymous.class);
-                }
                 if (configAnonymous != null) {
                     HttpMethod httpMethod = action.getMethod();
                     String methodValue = httpMethod == null ? null : httpMethod.name();

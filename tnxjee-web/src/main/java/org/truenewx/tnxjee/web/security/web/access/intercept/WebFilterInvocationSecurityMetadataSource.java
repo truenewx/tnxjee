@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
@@ -52,16 +51,9 @@ public class WebFilterInvocationSecurityMetadataSource implements
         if (method.getAnnotation(ConfigAnonymous.class) != null) {
             return null;
         }
-        Class<?> clazz = method.getDeclaringClass();
-        if (clazz.getAnnotation(ConfigAnonymous.class) != null) {
-            return null;
-        }
 
         Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
-        // 分别从类和方法上获取ConfigAuthority注解，组合在一起作为权限限定
-        ConfigAuthority[] configAuthorities = ArrayUtils.addAll(
-                clazz.getAnnotationsByType(ConfigAuthority.class),
-                method.getAnnotationsByType(ConfigAuthority.class));
+        ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
         for (ConfigAuthority configAuthority : configAuthorities) {
             UserConfigAuthority userConfigAuthority = new UserConfigAuthority(
                     configAuthority.type(), configAuthority.rank(),

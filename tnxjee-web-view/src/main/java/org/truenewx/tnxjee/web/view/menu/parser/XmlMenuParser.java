@@ -84,8 +84,6 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         link.setIcon(element.attributeValue("icon"));
         link.setHref(element.attributeValue("href"));
         link.setTarget(element.attributeValue("target"));
-        String assignable = element.attributeValue("assignable", "true");
-        link.setAssignable(Boolean.parseBoolean(assignable));
         link.getOptions().putAll(getOptions(element, parentOptions));
         link.getSubs().addAll(getItems(element, link.getOptions()));
         return link;
@@ -122,13 +120,6 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             menuElement.setCaption(caption);
         }
         menuElement.getCaptions().putAll(getCaptions(domElement));
-
-        String desc = domElement.attributeValue("desc");
-        if (desc != null) {
-            menuElement.setDesc(desc);
-        }
-        menuElement.getDescs().putAll(getDescs(domElement));
-
         menuElement.getProfiles().addAll(getProfiles(domElement));
     }
 
@@ -139,15 +130,6 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             captions.put(locale, captionElement.getTextTrim());
         }
         return captions;
-    }
-
-    private Map<Locale, String> getDescs(Element element) {
-        Map<Locale, String> descs = new HashMap<>();
-        for (Element descElement : element.elements("desc")) {
-            Locale locale = new Locale(descElement.attributeValue("locale"));
-            descs.put(locale, descElement.getTextTrim());
-        }
-        return descs;
     }
 
     private Set<String> getProfiles(Element element) {
