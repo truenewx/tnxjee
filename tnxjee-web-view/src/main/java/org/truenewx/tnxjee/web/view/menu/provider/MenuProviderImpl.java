@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -54,9 +53,9 @@ public class MenuProviderImpl implements MenuProvider {
             MenuLink link = (MenuLink) item;
             String href = link.getHref();
             if (StringUtils.isNotBlank(href)) {
-                Collection<UserConfigAuthority> configAuthorities = this.authorityResolver.resolveConfigAuthorities(href, HttpMethod.GET);
+                UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(href, HttpMethod.GET);
                 // 配有href却没有相应的权限，则下级菜单项一定没有权限，忽略当前菜单项
-                if (!isGranted(grantedAuthorities, configAuthorities)) {
+                if (!isGranted(grantedAuthorities, configAuthority)) {
                     return;
                 }
             }
@@ -85,19 +84,13 @@ public class MenuProviderImpl implements MenuProvider {
     }
 
     private boolean isGranted(Collection<? extends GrantedAuthority> grantedAuthorities,
-            Collection<UserConfigAuthority> configAuthorities) {
-        if (CollectionUtils.isEmpty(configAuthorities)) {
+            UserConfigAuthority configAuthority) {
+        if (configAuthority == null) {
             // 即使允许匿名访问也必须配置匿名限定，没有权限限定是不允许出现的情况，视为获权失败
             return false;
         }
-        for (UserConfigAuthority configAuthority : configAuthorities) {
-            // 只要有一个必备权限未获得，则视为未获权
-            if (!this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(),
-                    configAuthority.getRank(), configAuthority.getPermission())) {
-                return false;
-            }
-        }
-        return true;
+        return this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(),
+                configAuthority.getRank(), configAuthority.getPermission());
     }
 
 }

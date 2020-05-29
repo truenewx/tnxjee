@@ -1,7 +1,10 @@
 package org.truenewx.tnxjee.web.security.web.access.intercept;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
-    private Map<String, Collection<UserConfigAuthority>> configAttributesMap = new HashMap<>();
+    private final Map<String, ConfigAttribute> configAttributeMap = new HashMap<>();
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -39,31 +42,25 @@ public class WebFilterInvocationSecurityMetadataSource implements
     public void afterInitialized(ApplicationContext context) {
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
-            Collection<UserConfigAuthority> userConfigAuthorities = getConfigAttributes(method);
-            if (userConfigAuthorities != null && userConfigAuthorities.size() > 0) {
-                this.configAttributesMap.put(method.toString(), userConfigAuthorities);
+            UserConfigAuthority userConfigAuthority = getUserConfigAuthority(method);
+            if (userConfigAuthority != null) {
+                this.configAttributeMap.put(method.toString(), userConfigAuthority);
             }
         });
     }
 
-    private Collection<UserConfigAuthority> getConfigAttributes(Method method) {
+    private UserConfigAuthority getUserConfigAuthority(Method method) {
         // 允许匿名访问，则忽略权限限定
         if (method.getAnnotation(ConfigAnonymous.class) != null) {
             return null;
         }
 
-        Collection<UserConfigAuthority> userConfigAuthorities = new ArrayList<>();
-        ConfigAuthority[] configAuthorities = method.getAnnotationsByType(ConfigAuthority.class);
-        for (ConfigAuthority configAuthority : configAuthorities) {
-            UserConfigAuthority userConfigAuthority = new UserConfigAuthority(
-                    configAuthority.type(), configAuthority.rank(),
-                    configAuthority.permission(), configAuthority.intranet());
-            userConfigAuthorities.add(userConfigAuthority);
+        ConfigAuthority configAuthority = method.getAnnotation(ConfigAuthority.class);
+        if (configAuthority == null) { // 没有配置权限限定，则拒绝所有访问
+            return UserConfigAuthority.ofDenyAll();
         }
-        if (userConfigAuthorities.isEmpty()) { // 没有配置权限限定，则拒绝所有访问
-            userConfigAuthorities.add(UserConfigAuthority.ofDenyAll());
-        }
-        return userConfigAuthorities;
+        return new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
+                configAuthority.permission(), configAuthority.intranet());
     }
 
     @Override
@@ -73,9 +70,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
 
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
-        Collection<ConfigAttribute> result = new HashSet<>();
-        this.configAttributesMap.values().forEach(result::addAll);
-        return result;
+        return this.configAttributeMap.values();
     }
 
     @Override
@@ -93,12 +88,11 @@ public class WebFilterInvocationSecurityMetadataSource implements
                         .getHandlerMethod(fi.getRequest());
                 if (handlerMethod != null) {
                     String methodKey = handlerMethod.getMethod().toString();
-                    Collection<UserConfigAuthority> userConfigAuthorities = this.configAttributesMap
-                            .get(methodKey);
-                    if (userConfigAuthorities == null) { // 加入一个没有权限限制的必备权限，以标记进行过处理
+                    ConfigAttribute userConfigAuthority = this.configAttributeMap.get(methodKey);
+                    if (userConfigAuthority == null) { // 加入一个没有权限限制的必备权限，以标记进行过处理
                         attributes.add(new UserConfigAuthority());
                     } else {
-                        attributes.addAll(userConfigAuthorities);
+                        attributes.add(userConfigAuthority);
                     }
                 }
             } catch (Exception e) {
@@ -124,14 +118,14 @@ public class WebFilterInvocationSecurityMetadataSource implements
     }
 
     @Override
-    public Collection<UserConfigAuthority> resolveConfigAuthorities(String uri, HttpMethod method) {
+    public UserConfigAuthority resolveConfigAuthority(String uri, HttpMethod method) {
         HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(uri, method);
         if (handlerMethod == null) {
             LogUtil.warn(getClass(), "There is not handlerMethod for {}->{}", method.name(), uri);
             return null;
         }
         String methodKey = handlerMethod.getMethod().toString();
-        return this.configAttributesMap.get(methodKey);
+        return (UserConfigAuthority) this.configAttributeMap.get(methodKey);
     }
 
 }

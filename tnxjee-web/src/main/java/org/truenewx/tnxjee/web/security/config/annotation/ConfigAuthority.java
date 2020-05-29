@@ -10,9 +10,9 @@ import org.truenewx.tnxjee.core.Strings;
  * @author jianglei
  */
 @Documented
-@Target(ElementType.METHOD) // 为尽量避免错误的权限配置，只能在方法上使用而不能在类上使用，即使这样略显繁琐
+@Target(ElementType.METHOD) // 为了尽量避免错误的权限配置造成安全隐患，只能在方法上使用而不能在类上使用，即使这样略显繁琐
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(ConfigAuthorities.class)
+// 配置权限限定与方法之间为1:N的关系，一个方法如果同时需要限定多个权限，应该定义一个新的权限来使用
 public @interface ConfigAuthority {
 
     /**
