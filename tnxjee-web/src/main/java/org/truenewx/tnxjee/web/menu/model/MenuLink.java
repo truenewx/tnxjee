@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.menu.model;
+package org.truenewx.tnxjee.web.menu.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.List;
  * 菜单链接
  */
 public class MenuLink extends MenuItem {
+
+    private static final long serialVersionUID = 5574091037889165424L;
 
     private String icon;
     private String href;

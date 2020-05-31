@@ -1,11 +1,15 @@
-package org.truenewx.tnxjee.web.view.menu.model;
+package org.truenewx.tnxjee.web.menu.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 菜单元素
  */
-public abstract class MenuElement implements Cloneable {
+public abstract class MenuElement implements Cloneable, Serializable {
+
+    private static final long serialVersionUID = -3827849614788066392L;
+    
     /**
      * 显示名称映射集
      */

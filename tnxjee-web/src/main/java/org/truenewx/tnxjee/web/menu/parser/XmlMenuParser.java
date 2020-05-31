@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.menu.parser;
+package org.truenewx.tnxjee.web.menu.parser;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.algorithm.AlgoParseString;
-import org.truenewx.tnxjee.web.view.menu.model.*;
+import org.truenewx.tnxjee.web.menu.model.*;
 
 /**
  * XML配置文件的菜单解析器

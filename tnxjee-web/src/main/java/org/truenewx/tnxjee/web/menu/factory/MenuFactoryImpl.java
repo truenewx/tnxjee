@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.menu.factory;
+package org.truenewx.tnxjee.web.menu.factory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,8 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
-import org.truenewx.tnxjee.web.view.menu.parser.MenuParser;
+import org.truenewx.tnxjee.web.menu.model.Menu;
+import org.truenewx.tnxjee.web.menu.parser.MenuParser;
 
 /**
  * 菜单工厂实现

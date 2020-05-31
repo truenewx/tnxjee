@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.menu.model;
+package org.truenewx.tnxjee.web.menu.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,8 @@ import java.util.Map;
  * 菜单项
  */
 public abstract class MenuItem extends MenuElement {
+
+    private static final long serialVersionUID = 1338297288402064073L;
 
     /**
      * 选项映射集

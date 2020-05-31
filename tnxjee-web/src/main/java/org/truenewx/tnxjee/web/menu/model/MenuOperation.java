@@ -1,9 +1,11 @@
-package org.truenewx.tnxjee.web.view.menu.model;
+package org.truenewx.tnxjee.web.menu.model;
 
 /**
  * 菜单操作
  */
 public class MenuOperation extends MenuItem {
+
+    private static final long serialVersionUID = -4571735433090293809L;
 
     private String rank;
     private String permission;

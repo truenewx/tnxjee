@@ -1,6 +1,6 @@
-package org.truenewx.tnxjee.web.view.menu.factory;
+package org.truenewx.tnxjee.web.menu.factory;
 
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
+import org.truenewx.tnxjee.web.menu.model.Menu;
 
 /**
  * 菜单工厂

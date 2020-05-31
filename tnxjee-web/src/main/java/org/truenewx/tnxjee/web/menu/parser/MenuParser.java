@@ -1,7 +1,7 @@
-package org.truenewx.tnxjee.web.view.menu.parser;
+package org.truenewx.tnxjee.web.menu.parser;
 
 import org.springframework.core.io.Resource;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
+import org.truenewx.tnxjee.web.menu.model.Menu;
 
 /**
  * 菜单解析器

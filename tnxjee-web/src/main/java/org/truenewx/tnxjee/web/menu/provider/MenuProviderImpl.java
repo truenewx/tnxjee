@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.view.menu.provider;
+package org.truenewx.tnxjee.web.menu.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
+import org.truenewx.tnxjee.web.menu.model.Menu;
+import org.truenewx.tnxjee.web.menu.model.MenuItem;
+import org.truenewx.tnxjee.web.menu.model.MenuLink;
+import org.truenewx.tnxjee.web.menu.model.MenuOperation;
 import org.truenewx.tnxjee.web.security.access.GrantedAuthorityDecider;
 import org.truenewx.tnxjee.web.security.web.access.ConfigAuthorityResolver;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
-import org.truenewx.tnxjee.web.view.menu.model.MenuItem;
-import org.truenewx.tnxjee.web.view.menu.model.MenuLink;
-import org.truenewx.tnxjee.web.view.menu.model.MenuOperation;
 
 /**
  * 菜单提供者实现

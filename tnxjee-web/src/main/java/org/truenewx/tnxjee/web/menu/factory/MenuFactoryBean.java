@@ -1,8 +1,8 @@
-package org.truenewx.tnxjee.web.view.menu.factory;
+package org.truenewx.tnxjee.web.menu.factory;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
+import org.truenewx.tnxjee.web.menu.model.Menu;
 
 /**
  * 菜单工厂Bean

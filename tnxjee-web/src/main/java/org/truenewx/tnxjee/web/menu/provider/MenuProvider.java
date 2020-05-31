@@ -1,9 +1,9 @@
-package org.truenewx.tnxjee.web.view.menu.provider;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
+package org.truenewx.tnxjee.web.menu.provider;
 
 import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.truenewx.tnxjee.web.menu.model.Menu;
 
 /**
  * 菜单提供者
@@ -13,7 +13,7 @@ public interface MenuProvider {
     /**
      * 获取包含全部内容的完整菜单
      *
-     * @return
+     * @return 完整菜单
      */
     Menu getFullMenu();
 
