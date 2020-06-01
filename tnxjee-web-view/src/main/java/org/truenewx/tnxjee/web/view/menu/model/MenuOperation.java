@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.menu.model;
+package org.truenewx.tnxjee.web.view.menu.model;
 
 /**
  * 菜单操作

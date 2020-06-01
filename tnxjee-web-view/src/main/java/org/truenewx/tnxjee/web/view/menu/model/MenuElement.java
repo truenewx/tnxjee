@@ -1,7 +1,9 @@
-package org.truenewx.tnxjee.web.menu.model;
+package org.truenewx.tnxjee.web.view.menu.model;
 
 import java.io.Serializable;
 import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 菜单元素
@@ -9,7 +11,7 @@ import java.util.*;
 public abstract class MenuElement implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -3827849614788066392L;
-    
+
     /**
      * 显示名称映射集
      */
@@ -59,4 +61,9 @@ public abstract class MenuElement implements Cloneable, Serializable {
         target.profiles.clear();
         target.profiles.addAll(source.profiles);
     }
+
+    public boolean matchesProfile(String profile) {
+        return this.profiles.isEmpty() || StringUtils.isBlank(profile) || this.profiles.contains(profile);
+    }
+
 }

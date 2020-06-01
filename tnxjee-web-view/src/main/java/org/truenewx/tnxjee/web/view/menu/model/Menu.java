@@ -1,16 +1,12 @@
-package org.truenewx.tnxjee.web.menu.model;
+package org.truenewx.tnxjee.web.view.menu.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.truenewx.tnxjee.core.Strings;
 
 /**
  * 菜单
  */
 public class Menu extends MenuElement {
-
-    public static final String DEFAULT_NAME = Strings.EMPTY;
 
     private static final long serialVersionUID = -1355233532947830688L;
 
@@ -18,9 +14,6 @@ public class Menu extends MenuElement {
     private List<MenuItem> items = new ArrayList<>();
 
     public Menu(String userType) {
-        if (userType == null) {
-            userType = DEFAULT_NAME;
-        }
         this.userType = userType;
     }
 

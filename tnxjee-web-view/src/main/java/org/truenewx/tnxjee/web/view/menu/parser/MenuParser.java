@@ -1,7 +1,7 @@
-package org.truenewx.tnxjee.web.menu.parser;
+package org.truenewx.tnxjee.web.view.menu.parser;
 
 import org.springframework.core.io.Resource;
-import org.truenewx.tnxjee.web.menu.model.Menu;
+import org.truenewx.tnxjee.web.view.menu.model.Menu;
 
 /**
  * 菜单解析器
@@ -23,6 +23,6 @@ public interface MenuParser {
      *
      * @return 默认配置资源
      */
-    Resource getDefaultConfig();
+    Resource getDefaultLocation();
 
 }

@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.web.menu.parser;
+package org.truenewx.tnxjee.web.view.menu.parser;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.algorithm.AlgoParseString;
-import org.truenewx.tnxjee.web.menu.model.*;
+import org.truenewx.tnxjee.web.view.menu.model.*;
 
 /**
  * XML配置文件的菜单解析器
@@ -34,23 +34,26 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
     }
 
     @Override
-    public Resource getDefaultConfig() {
+    public Resource getDefaultLocation() {
         return new ClassPathResource("META-INF/menu.xml");
     }
 
     @Override
     public Menu parse(Resource resource) {
-        try {
-            SAXReader reader = new SAXReader();
-            Document doc = reader.read(resource.getInputStream());
-            Element element = doc.getRootElement();
-            Menu menu = new Menu(element.attributeValue("user-type"));
-            menu.getItems().addAll(getItems(element, null));
-            parseElementCommon(menu, element);
-            return menu;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (resource != null && resource.exists()) {
+            try {
+                SAXReader reader = new SAXReader();
+                Document doc = reader.read(resource.getInputStream());
+                Element element = doc.getRootElement();
+                Menu menu = new Menu(element.attributeValue("user-type"));
+                menu.getItems().addAll(getItems(element, null));
+                parseElementCommon(menu, element);
+                return menu;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+        return null;
     }
 
     private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions)

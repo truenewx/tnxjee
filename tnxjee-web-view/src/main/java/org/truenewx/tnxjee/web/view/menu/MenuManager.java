@@ -1,14 +1,16 @@
-package org.truenewx.tnxjee.web.menu.provider;
+package org.truenewx.tnxjee.web.view.menu;
 
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.truenewx.tnxjee.web.menu.model.Menu;
+import org.truenewx.tnxjee.web.view.menu.model.Menu;
 
 /**
- * 菜单提供者
+ * 菜单工厂
+ *
+ * @author jianglei
  */
-public interface MenuProvider {
+public interface MenuManager {
 
     /**
      * 获取包含全部内容的完整菜单
