@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.view.menu.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 菜单链接
@@ -50,6 +51,16 @@ public class MenuLink extends MenuItem {
 
     public List<MenuItem> getSubs() {
         return this.subs;
+    }
+
+    public List<MenuLink> getSubLinks() {
+        return this.subs.stream().filter(sub -> sub instanceof MenuLink).map(sub -> (MenuLink) sub)
+                .collect(Collectors.toList());
+    }
+
+    public List<MenuOperation> getSubOperations() {
+        return this.subs.stream().filter(sub -> sub instanceof MenuOperation).map(sub -> (MenuOperation) sub)
+                .collect(Collectors.toList());
     }
 
     public MenuLink cloneWithoutSubs() {

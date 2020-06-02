@@ -19,6 +19,10 @@ public abstract class MenuItem extends MenuElement {
         return this.options;
     }
 
+    public String getType() {
+        return getClass().getSimpleName();
+    }
+
     @Override
     public abstract MenuItem clone();
 
