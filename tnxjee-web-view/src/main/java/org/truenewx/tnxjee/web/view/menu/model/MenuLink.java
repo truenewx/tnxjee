@@ -2,7 +2,8 @@ package org.truenewx.tnxjee.web.view.menu.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 
 /**
  * 菜单链接
@@ -10,20 +11,11 @@ import java.util.stream.Collectors;
 public class MenuLink extends MenuItem {
 
     private static final long serialVersionUID = 5574091037889165424L;
-
-    private String icon;
     private String href;
     private String target;
-    private boolean dynamic;
-    private List<MenuItem> subs = new ArrayList<>();
-
-    public String getIcon() {
-        return this.icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
+    private String rank;
+    private String permission;
+    private List<MenuOperation> operations = new ArrayList<>();
 
     public String getHref() {
         return this.href;
@@ -41,44 +33,47 @@ public class MenuLink extends MenuItem {
         this.target = target;
     }
 
-    public boolean isDynamic() {
-        return this.dynamic;
+    public String getRank() {
+        return this.rank;
     }
 
-    public void setDynamic(boolean dynamic) {
-        this.dynamic = dynamic;
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
-    public List<MenuItem> getSubs() {
-        return this.subs;
+    public String getPermission() {
+        return this.permission;
     }
 
-    public List<MenuLink> getSubLinks() {
-        return this.subs.stream().filter(sub -> sub instanceof MenuLink).map(sub -> (MenuLink) sub)
-                .collect(Collectors.toList());
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
-    public List<MenuOperation> getSubOperations() {
-        return this.subs.stream().filter(sub -> sub instanceof MenuOperation).map(sub -> (MenuOperation) sub)
-                .collect(Collectors.toList());
+    public List<MenuOperation> getOperations() {
+        return this.operations;
     }
 
-    public MenuLink cloneWithoutSubs() {
+    public void setOperations(List<MenuOperation> operations) {
+        CollectionUtil.reset(operations, this.operations);
+    }
+
+    public MenuLink cloneWithoutOperations() {
         MenuLink link = new MenuLink();
-        link.icon = this.icon;
         link.href = this.href;
         link.target = this.target;
-        link.dynamic = this.dynamic;
+        link.rank = this.rank;
+        link.permission = this.permission;
         clone(this, link);
         return link;
     }
 
     @Override
     public MenuLink clone() {
-        MenuLink link = cloneWithoutSubs();
-        this.subs.forEach(sub -> {
-            link.subs.add(sub.clone());
+        MenuLink link = cloneWithoutOperations();
+        this.operations.forEach(operation -> {
+            link.operations.add(operation.clone());
         });
         return link;
     }
+
 }

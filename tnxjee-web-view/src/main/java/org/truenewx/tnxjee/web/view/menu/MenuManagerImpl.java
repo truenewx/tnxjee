@@ -11,15 +11,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.web.security.access.GrantedAuthorityDecider;
 import org.truenewx.tnxjee.web.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.web.view.menu.config.MenuProperties;
-import org.truenewx.tnxjee.web.view.menu.model.Menu;
-import org.truenewx.tnxjee.web.view.menu.model.MenuItem;
-import org.truenewx.tnxjee.web.view.menu.model.MenuLink;
-import org.truenewx.tnxjee.web.view.menu.model.MenuOperation;
+import org.truenewx.tnxjee.web.view.menu.model.*;
 import org.truenewx.tnxjee.web.view.menu.parser.MenuParser;
 
 /**
@@ -83,39 +81,54 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
     private void cloneGrantedItemTo(Collection<? extends GrantedAuthority> grantedAuthorities,
             MenuItem item, List<MenuItem> items) {
         if (item.matchesProfile(this.profile)) { // 首先需匹配运行环境
-            if (item instanceof MenuLink) {
-                MenuLink link = (MenuLink) item;
-                String href = link.getHref();
-                if (StringUtils.isNotBlank(href)) {
-                    UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(href, HttpMethod.GET);
-                    // 配有href却没有相应的权限，则下级菜单项一定没有权限，忽略当前菜单项
-                    if (!isGranted(grantedAuthorities, configAuthority)) {
-                        return;
-                    }
-                }
-                // 此时href为空，或具有其访问权限
-
-                // 获取子菜单项中具有权限的子菜单项集合
+            if (item instanceof MenuNode) {
+                MenuNode node = (MenuNode) item;
                 List<MenuItem> grantedSubs = new ArrayList<>();
-                link.getSubs().forEach(sub -> {
+                for (MenuItem sub : node.getSubs()) {
                     cloneGrantedItemTo(grantedAuthorities, sub, grantedSubs);
-                });
-                // href为空且没有获权的子菜单项集合，则忽略当前菜单项
-                if (StringUtils.isBlank(href) && grantedSubs.isEmpty()) {
-                    return;
                 }
-
-                MenuLink grantedLink = link.cloneWithoutSubs();
-                grantedLink.getSubs().addAll(grantedSubs);
-                items.add(grantedLink);
-            } else if (item instanceof MenuOperation) { // 操作只需判断自身权限
-                MenuOperation operation = (MenuOperation) item;
-                if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getUserType(),
-                        operation.getRank(), operation.getPermission())) {
-                    items.add(operation.clone());
+                if (grantedSubs.size() > 0) { // 菜单节点的下级包含有匹配的，则该节点视为匹配
+                    MenuNode grantedNode = node.cloneWithoutSubs();
+                    grantedNode.setSubs(grantedSubs);
+                    items.add(grantedNode);
+                }
+            } else if (item instanceof MenuLink) {
+                MenuLink link = (MenuLink) item;
+                UserConfigAuthority configAuthority = getConfigAuthority(link);
+                if (isGranted(grantedAuthorities, configAuthority)) { // 权限匹配，加入目标集合
+                    MenuLink grantedLink = link.cloneWithoutOperations();
+                    for (MenuOperation operation : link.getOperations()) {
+                        if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getUserType(), operation.getRank(), operation.getPermission())) {
+                            grantedLink.getOperations().add(operation);
+                        }
+                    }
+                    items.add(grantedLink);
                 }
             }
         }
+    }
+
+    private UserConfigAuthority getConfigAuthority(MenuLink link) {
+        String rank = link.getRank();
+        String permission = link.getPermission();
+        // 用户类型是一定在菜单中有配置的，所以不视为在菜单中配置权限的标志
+        boolean menuConfigured = StringUtils.isNotBlank(rank) || StringUtils.isNotBlank(permission);
+        UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(link.getHref(), HttpMethod.GET);
+        // 不允许菜单配置中有权限配置，同时对应的Controller方法上也有权限配置，且两者不一致
+        if (menuConfigured && configAuthority != null
+                && (!StringUtil.equalsIgnoreBlank(this.menu.getUserType(), configAuthority.getType())
+                || !StringUtil.equalsIgnoreBlank(rank, configAuthority.getRank())
+                || !StringUtil.equalsIgnoreBlank(permission, configAuthority.getPermission()))) {
+            throw new ConflictedMenuLinkConfigAuthorityException(link);
+        }
+        if (configAuthority != null) {
+            return configAuthority;
+        }
+        if (menuConfigured) {
+            return new UserConfigAuthority(this.menu.getUserType(), rank, permission, false);
+        }
+        // 两者都没有权限配置时返回null
+        return null;
     }
 
     private boolean isGranted(Collection<? extends GrantedAuthority> grantedAuthorities,

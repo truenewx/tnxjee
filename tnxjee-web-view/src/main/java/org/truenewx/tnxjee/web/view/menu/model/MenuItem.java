@@ -1,8 +1,5 @@
 package org.truenewx.tnxjee.web.view.menu.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 菜单项
  */
@@ -10,13 +7,14 @@ public abstract class MenuItem extends MenuElement {
 
     private static final long serialVersionUID = 1338297288402064073L;
 
-    /**
-     * 选项映射集
-     */
-    private Map<String, Object> options = new HashMap<>();
+    private String icon;
 
-    public Map<String, Object> getOptions() {
-        return this.options;
+    public String getIcon() {
+        return this.icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getType() {
@@ -28,8 +26,7 @@ public abstract class MenuItem extends MenuElement {
 
     protected void clone(MenuItem source, MenuItem target) {
         super.clone(source, target);
-        target.options.clear();
-        target.options.putAll(source.options);
+        target.icon = source.icon;
     }
 
 }

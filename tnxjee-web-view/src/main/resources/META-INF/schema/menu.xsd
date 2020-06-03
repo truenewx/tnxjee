@@ -5,10 +5,12 @@
     <xs:element name="menu">
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="options" minOccurs="0"/>
                 <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="desc" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                    <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="node"/>
+                    <xs:element ref="link"/>
                 </xs:choice>
             </xs:sequence>
             <xs:attribute name="user-type" type="xs:string"/>
@@ -17,20 +19,27 @@
                     <xs:documentation>默认显示名称</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute name="profile" type="xs:string"/>
+            <xs:attribute name="desc" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>默认描述</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="profile" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>可用的环境，多个之间用逗号分隔</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
-    <xs:element name="link">
-        <xs:annotation>
-            <xs:documentation>菜单项</xs:documentation>
-        </xs:annotation>
+    <xs:element name="node">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="options" minOccurs="0"/>
+                <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="desc" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                    <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element ref="node"/>
+                    <xs:element ref="link"/>
                 </xs:choice>
             </xs:sequence>
             <xs:attribute name="caption" type="xs:string" use="required">
@@ -38,10 +47,52 @@
                     <xs:documentation>默认显示名称</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute name="profile" type="xs:string"/>
+            <xs:attribute name="desc" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>默认描述</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="profile" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>可用的环境，多个之间用逗号分隔</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
             <xs:attribute name="icon" type="xs:string"/>
-            <xs:attribute name="href" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="link">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="options" minOccurs="0"/>
+                <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="desc" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="operation" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="caption" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>默认显示名称</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="desc" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>默认描述</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="profile" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>可用的环境，多个之间用逗号分隔</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="icon" type="xs:string"/>
+            <xs:attribute name="href" type="xs:string" use="required"/>
             <xs:attribute name="target" type="xs:string"/>
+            <xs:attribute name="rank" type="xs:string"/>
+            <xs:attribute name="permission" type="xs:string"/>
+            <xs:attribute name="permission-class" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>permission为枚举或静态常量时，指定所属类名</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
     <xs:element name="operation">
@@ -50,15 +101,25 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="options" minOccurs="0"/>
+                <xs:element ref="caption" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="desc" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="caption" type="xs:string" use="required">
                 <xs:annotation>
                     <xs:documentation>默认显示名称</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute name="profile" type="xs:string"/>
+            <xs:attribute name="desc" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>默认描述</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="profile" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>可用的环境，多个之间用逗号分隔</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
             <xs:attribute name="rank" type="xs:string"/>
             <xs:attribute name="permission" type="xs:string"/>
             <xs:attribute name="permission-class" type="xs:string">
@@ -71,6 +132,18 @@
     <xs:element name="caption">
         <xs:annotation>
             <xs:documentation>显示名称</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="locale" type="xs:string" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="desc">
+        <xs:annotation>
+            <xs:documentation>描述</xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:simpleContent>

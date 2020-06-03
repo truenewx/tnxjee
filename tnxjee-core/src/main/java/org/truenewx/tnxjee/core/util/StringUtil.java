@@ -321,8 +321,8 @@ public class StringUtil {
      * 校验指定字符串是否匹配指定多个ANT模式通配符表达式中的一个。<br/>
      * ANT模式通配符表达式是指含有**、*和?的字符串，其中**代表匹配任意级目录，*代表匹配任意个字符 ，?代表匹配任意一个字符
      *
-     * @param s       字符串
-     * @param pattern 通配符
+     * @param s        字符串
+     * @param patterns 通配符集合
      * @return true if 指定字符串匹配指定ANT模式通配符表达式, otherwise false
      */
     public static boolean antPathMatchOneOf(String s, String... patterns) {
@@ -338,8 +338,8 @@ public class StringUtil {
      * 校验指定字符串是否匹配指定多个ANT模式通配符表达式中的一个。<br/>
      * ANT模式通配符表达式是指含有**、*和?的字符串，其中**代表匹配任意级目录，*代表匹配任意个字符 ，?代表匹配任意一个字符
      *
-     * @param s       字符串
-     * @param pattern 通配符
+     * @param s        字符串
+     * @param patterns 通配符集合
      * @return true if 指定字符串匹配指定ANT模式通配符表达式, otherwise false
      */
     public static boolean antPathMatchOneOf(String s, Collection<String> patterns) {
@@ -979,4 +979,13 @@ public class StringUtil {
             return Strings.EMPTY;
         }
     }
+
+    public static boolean equalsIgnoreBlank(String s1, String s2) {
+        // 两者均为空，则视为相等
+        if (StringUtils.isBlank(s1) && StringUtils.isBlank(s2)) {
+            return true;
+        }
+        return s1 != null && s1.equals(s2);
+    }
+
 }

@@ -12,7 +12,7 @@ import org.truenewx.tnxjee.core.Strings;
 @Documented
 @Target(ElementType.METHOD) // 为了尽量避免错误的权限配置造成安全隐患，只能在方法上使用而不能在类上使用，即使这样略显繁琐
 @Retention(RetentionPolicy.RUNTIME)
-// 配置权限限定与方法之间为1:N的关系，一个方法如果同时需要限定多个权限，应该定义一个新的权限来使用
+// 配置权限限定与方法之间为1:N的关系，一个方法如果同时需要限定多个权限，应该定义一个新的权限，或者拆分出另外一个方法
 public @interface ConfigAuthority {
 
     /**
@@ -36,12 +36,5 @@ public @interface ConfigAuthority {
      * @return 是否只有内网可访问
      */
     boolean intranet() default false;
-
-    /**
-     * 动态分配的权限在运行期由用户配置，静态分配的权限在编码期由开发者分配给特定用户
-     *
-     * @return 是否动态分配，默认为true
-     */
-    boolean dynamic() default true;
 
 }

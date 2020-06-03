@@ -46,14 +46,38 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
                 Document doc = reader.read(resource.getInputStream());
                 Element element = doc.getRootElement();
                 Menu menu = new Menu(element.attributeValue("user-type"));
-                menu.getItems().addAll(getItems(element, null));
-                parseElementCommon(menu, element);
+                parseElementCommon(menu, element, null);
+                menu.setItems(getItems(element, menu.getOptions()));
                 return menu;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         return null;
+    }
+
+    /**
+     * 解析菜单元素的通用属性
+     */
+    private void parseElementCommon(MenuElement menuElement, Element domElement,
+            Map<String, Object> parentOptions) throws Exception {
+        menuElement.setOptions(getOptions(domElement, parentOptions));
+
+        String caption = domElement.attributeValue("caption");
+        if (caption != null) {
+            menuElement.setCaption(caption);
+        }
+        // 加入而不是重置
+        menuElement.getCaptions().putAll(getCaptions(domElement));
+
+        String desc = domElement.attributeValue("desc");
+        if (desc != null) {
+            menuElement.setDesc(desc);
+        }
+        // 加入而不是重置
+        menuElement.getDescs().putAll(getDescs(domElement));
+
+        menuElement.setProfiles(getProfiles(domElement));
     }
 
     private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions)
@@ -71,30 +95,38 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
     private MenuItem getItem(Element element, Map<String, Object> parentOptions) throws Exception {
         MenuItem item = null;
         String elementName = element.getName();
-        if ("link".equals(elementName)) {
+        if ("node".equals(elementName)) {
+            item = getNode(element, parentOptions);
+        } else if ("link".equals(elementName)) {
             item = getLink(element, parentOptions);
-        } else if ("operation".equals(elementName)) {
-            item = getOperation(element, parentOptions);
-        }
-        if (item != null) {
-            parseElementCommon(item, element);
         }
         return item;
     }
 
+    private MenuNode getNode(Element element, Map<String, Object> parentOptions) throws Exception {
+        MenuNode node = new MenuNode();
+        parseElementCommon(node, element, parentOptions);
+        node.setIcon(element.attributeValue("icon"));
+        node.setSubs(getItems(element, node.getOptions()));
+        return node;
+    }
+
     private MenuLink getLink(Element element, Map<String, Object> parentOptions) throws Exception {
         MenuLink link = new MenuLink();
+        parseElementCommon(link, element, parentOptions);
         link.setIcon(element.attributeValue("icon"));
         link.setHref(element.attributeValue("href"));
         link.setTarget(element.attributeValue("target"));
-        link.getOptions().putAll(getOptions(element, parentOptions));
-        link.getSubs().addAll(getItems(element, link.getOptions()));
+        link.setRank(element.attributeValue("rank"));
+        link.setPermission(getPermission(element));
+        for (Element operationElement : element.elements("operation")) {
+            link.getOperations().add(getOperation(operationElement, link.getOptions()));
+        }
         return link;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private MenuOperation getOperation(Element element, Map<String, Object> parentOptions)
-            throws Exception {
+    private String getPermission(Element element) throws ClassNotFoundException {
         String permission = element.attributeValue("permission");
         String className = element.attributeValue("permission-class");
         if (StringUtils.isNotBlank(className)) {
@@ -107,23 +139,16 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
                 permission = (String) value; // 属性值必须为字符串
             }
         }
-        MenuOperation operation = new MenuOperation();
-        operation.setRank(element.attributeValue("rank"));
-        operation.setPermission(permission);
-        operation.getOptions().putAll(getOptions(element, parentOptions));
-        return operation;
+        return permission;
     }
 
-    /**
-     * 解析菜单元素的通用属性
-     */
-    private void parseElementCommon(MenuElement menuElement, Element domElement) {
-        String caption = domElement.attributeValue("caption");
-        if (caption != null) {
-            menuElement.setCaption(caption);
-        }
-        menuElement.getCaptions().putAll(getCaptions(domElement));
-        menuElement.getProfiles().addAll(getProfiles(domElement));
+    private MenuOperation getOperation(Element element, Map<String, Object> parentOptions)
+            throws Exception {
+        MenuOperation operation = new MenuOperation();
+        parseElementCommon(operation, element, parentOptions);
+        operation.setRank(element.attributeValue("rank"));
+        operation.setPermission(getPermission(element));
+        return operation;
     }
 
     private Map<Locale, String> getCaptions(Element element) {
@@ -133,6 +158,15 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             captions.put(locale, captionElement.getTextTrim());
         }
         return captions;
+    }
+
+    private Map<Locale, String> getDescs(Element element) {
+        Map<Locale, String> descs = new HashMap<>();
+        for (Element descElement : element.elements("desc")) {
+            Locale locale = new Locale(descElement.attributeValue("locale"));
+            descs.put(locale, descElement.getTextTrim());
+        }
+        return descs;
     }
 
     private Set<String> getProfiles(Element element) {

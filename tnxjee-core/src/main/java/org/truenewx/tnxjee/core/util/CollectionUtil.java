@@ -377,4 +377,18 @@ public class CollectionUtil {
         return map != null && map.size() > 0;
     }
 
+    public static <T> void reset(Collection<T> source, Collection<T> target) {
+        target.clear();
+        if (source != null) {
+            target.addAll(source);
+        }
+    }
+
+    public static <K, V> void reset(Map<K, V> source, Map<K, V> target) {
+        target.clear();
+        if (source != null) {
+            target.putAll(source);
+        }
+    }
+
 }

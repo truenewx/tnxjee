@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 
 /**
  * 菜单元素
@@ -12,6 +13,10 @@ public abstract class MenuElement implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -3827849614788066392L;
 
+    /**
+     * 选项映射集
+     */
+    private Map<String, Object> options = new HashMap<>();
     /**
      * 显示名称映射集
      */
@@ -25,16 +30,37 @@ public abstract class MenuElement implements Cloneable, Serializable {
      */
     private Set<String> profiles = new HashSet<>();
 
+    public Map<String, Object> getOptions() {
+        return this.options;
+    }
+
+    public void setOptions(Map<String, Object> options) {
+        CollectionUtil.reset(options, this.options);
+    }
+
     public Map<Locale, String> getCaptions() {
         return this.captions;
+    }
+
+    public void setCaptions(Map<Locale, String> captions) {
+        CollectionUtil.reset(captions, this.captions);
     }
 
     public Map<Locale, String> getDescs() {
         return this.descs;
     }
 
+    public void setDescs(Map<Locale, String> descs) {
+        CollectionUtil.reset(descs, this.descs);
+    }
+
+
     public Set<String> getProfiles() {
         return this.profiles;
+    }
+
+    public void setProfiles(Set<String> profiles) {
+        CollectionUtil.reset(profiles, this.profiles);
     }
 
     public void setCaption(String caption) {
@@ -53,13 +79,12 @@ public abstract class MenuElement implements Cloneable, Serializable {
         return this.descs.get(Locale.getDefault());
     }
 
+
     protected void clone(MenuElement source, MenuElement target) {
-        target.captions.clear();
-        target.captions.putAll(source.getCaptions());
-        target.descs.clear();
-        target.descs.putAll(source.descs);
-        target.profiles.clear();
-        target.profiles.addAll(source.profiles);
+        CollectionUtil.reset(source.options, target.options);
+        CollectionUtil.reset(source.captions, target.captions);
+        CollectionUtil.reset(source.descs, target.descs);
+        CollectionUtil.reset(source.profiles, target.profiles);
     }
 
     public boolean matchesProfile(String profile) {

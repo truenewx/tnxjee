@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.web.view.menu.model;
 /**
  * 菜单操作
  */
-public class MenuOperation extends MenuItem {
+public class MenuOperation extends MenuElement {
 
     private static final long serialVersionUID = -4571735433090293809L;
 
