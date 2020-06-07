@@ -10,7 +10,7 @@ public class ConflictedMenuLinkConfigAuthorityException extends RuntimeException
     private static final long serialVersionUID = -5939771245945062923L;
 
     public ConflictedMenuLinkConfigAuthorityException(MenuLink link) {
-        super("Conflicted config authority: " + link.getHref());
+        super("Conflicted config authority: " + link.getPath());
     }
 
 }

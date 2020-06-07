@@ -11,18 +11,18 @@ import org.truenewx.tnxjee.core.util.CollectionUtil;
 public class MenuLink extends MenuItem {
 
     private static final long serialVersionUID = 5574091037889165424L;
-    private String href;
+    private String path;
     private String target;
     private String rank;
     private String permission;
     private List<MenuOperation> operations = new ArrayList<>();
 
-    public String getHref() {
-        return this.href;
+    public String getPath() {
+        return this.path;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getTarget() {
@@ -59,7 +59,7 @@ public class MenuLink extends MenuItem {
 
     public MenuLink cloneWithoutOperations() {
         MenuLink link = new MenuLink();
-        link.href = this.href;
+        link.path = this.path;
         link.target = this.target;
         link.rank = this.rank;
         link.permission = this.permission;

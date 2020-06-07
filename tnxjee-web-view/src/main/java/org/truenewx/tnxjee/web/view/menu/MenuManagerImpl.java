@@ -113,7 +113,7 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
         String permission = link.getPermission();
         // 用户类型是一定在菜单中有配置的，所以不视为在菜单中配置权限的标志
         boolean menuConfigured = StringUtils.isNotBlank(rank) || StringUtils.isNotBlank(permission);
-        UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(link.getHref(), HttpMethod.GET);
+        UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(link.getPath(), HttpMethod.GET);
         // 不允许菜单配置中有权限配置，同时对应的Controller方法上也有权限配置，且两者不一致
         if (menuConfigured && configAuthority != null
                 && (!StringUtil.equalsIgnoreBlank(this.menu.getUserType(), configAuthority.getType())
@@ -137,7 +137,8 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
             // 即使允许匿名访问也必须配置匿名限定，没有权限限定是不允许出现的情况，视为获权失败
             return false;
         }
-        return this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(),
-                configAuthority.getRank(), configAuthority.getPermission());
+        return this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(),
+                configAuthority.getPermission());
     }
+
 }

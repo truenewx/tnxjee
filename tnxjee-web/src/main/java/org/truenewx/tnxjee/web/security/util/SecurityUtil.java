@@ -1,8 +1,11 @@
 package org.truenewx.tnxjee.web.security.util;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
@@ -59,6 +62,11 @@ public class SecurityUtil {
             return (I) details;
         }
         return null;
+    }
+
+    public static Collection<? extends GrantedAuthority> getGrantedAuthorities() {
+        UserSpecificDetails<?> details = getAuthorizedUserDetails();
+        return details == null ? Collections.emptyList() : details.getAuthorities();
     }
 
 }

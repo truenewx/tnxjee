@@ -115,7 +115,7 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         MenuLink link = new MenuLink();
         parseElementCommon(link, element, parentOptions);
         link.setIcon(element.attributeValue("icon"));
-        link.setHref(element.attributeValue("href"));
+        link.setPath(element.attributeValue("path"));
         link.setTarget(element.attributeValue("target"));
         link.setRank(element.attributeValue("rank"));
         link.setPermission(getPermission(element));
