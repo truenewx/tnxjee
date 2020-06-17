@@ -5,10 +5,12 @@ import javax.servlet.DispatcherType;
 import org.apache.commons.lang3.StringUtils;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
@@ -24,6 +26,8 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
 
     @Autowired
     private WebMvcProperties mvcProperties;
+    @Autowired
+    private ResourceProperties resourceProperties;
 
     @Bean
     public FilterRegistrationBean<ForbidAccessFilter> forbidAccessFilter() {
@@ -62,9 +66,16 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
         String staticPathPattern = this.mvcProperties.getStaticPathPattern();
         if (StringUtils.isNotBlank(staticPathPattern)) {
             String[] staticPathPatterns = StringUtil.splitAndTrim(staticPathPattern, Strings.COMMA);
+            String[] staticLocations = this.resourceProperties.getStaticLocations();
             for (String pattern : staticPathPatterns) {
-                String location = getStaticResourceLocation(pattern);
-                registry.addResourceHandler(pattern).addResourceLocations(location);
+                ResourceHandlerRegistration registration = registry.addResourceHandler(pattern);
+                String dir = getStaticResourceDir(pattern);
+                for (String staticLocation : staticLocations) {
+                    if (staticLocation.endsWith(Strings.SLASH)) { // 确保不以/结尾
+                        staticLocation = staticLocation.substring(0, staticLocation.length() - 1);
+                    }
+                    registration.addResourceLocations(staticLocation + dir);
+                }
             }
             registry.setOrder(Ordered.HIGHEST_PRECEDENCE + 2000);
         }
@@ -76,7 +87,7 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
      * @param pattern 资源路径Ant样式
      * @return 资源文件存放目录
      */
-    protected String getStaticResourceLocation(String pattern) {
+    protected String getStaticResourceDir(String pattern) {
         int index = pattern.indexOf(Strings.ASTERISK);
         if (index >= 0) {
             pattern = pattern.substring(0, index);
@@ -84,6 +95,10 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
         index = pattern.lastIndexOf(Strings.SLASH);
         if (index >= 0) {
             pattern = pattern.substring(0, index + 1);
+        }
+        // 确保以/开头
+        if (!pattern.startsWith(Strings.SLASH)) {
+            pattern = Strings.SLASH + pattern;
         }
         return pattern;
     }
