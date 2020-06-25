@@ -538,7 +538,7 @@ public class WebUtil {
                 os = OS.WINDOWS;
             }
         }
-        return new Terminal(device, program, os);
+        return new Terminal(program, device, os);
     }
 
     /**
