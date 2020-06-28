@@ -59,7 +59,7 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
                     .allowCredentials(this.corsRegistryProperties.getAllowCredentials());
             String[] exposedHeaders = this.corsRegistryProperties.getExposedHeaders();
-            exposedHeaders = ArrayUtils.addAll(exposedHeaders, WebConstants.HEADER_REDIRECT);
+            exposedHeaders = ArrayUtils.addAll(exposedHeaders, WebConstants.HEADER_REDIRECT_TO);
             registration.exposedHeaders(exposedHeaders);
             if (this.corsRegistryProperties.getMaxAge() != null) {
                 registration.maxAge(this.corsRegistryProperties.getMaxAge());

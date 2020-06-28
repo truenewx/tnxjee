@@ -15,10 +15,10 @@ public class WebConstants {
     /**
      * 头信息名：重定向目标地址
      */
-    public static final String HEADER_REDIRECT = "redirect";
+    public static final String HEADER_REDIRECT_TO = "Redirect-To";
     /**
      * 头信息名：内部RPC
      */
-    public static final String HEADER_INTERNAL_RPC = "internal-rpc";
+    public static final String HEADER_INTERNAL_RPC = "Internal-Rpc";
 
 }
