@@ -1,6 +1,9 @@
 package org.truenewx.tnxjee.web.config;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +62,18 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
                     .allowCredentials(this.corsRegistryProperties.getAllowCredentials());
             String[] exposedHeaders = this.corsRegistryProperties.getExposedHeaders();
-            exposedHeaders = ArrayUtils.addAll(exposedHeaders, WebConstants.HEADER_REDIRECT_TO);
+            Set<String> exposedHeaderSet = new HashSet<>();
+            addExposedHeaders(exposedHeaderSet);
+            exposedHeaders = ArrayUtils.addAll(exposedHeaders, exposedHeaderSet.toArray(new String[0]));
             registration.exposedHeaders(exposedHeaders);
             if (this.corsRegistryProperties.getMaxAge() != null) {
                 registration.maxAge(this.corsRegistryProperties.getMaxAge());
             }
         }
+    }
+
+    protected void addExposedHeaders(Collection<String> exposedHeaders) {
+        exposedHeaders.add(WebConstants.HEADER_REDIRECT_TO);
     }
 
 }
