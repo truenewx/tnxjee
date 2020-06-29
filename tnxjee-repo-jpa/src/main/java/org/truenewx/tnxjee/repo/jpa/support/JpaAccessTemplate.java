@@ -28,6 +28,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     private EntityManagerFactory entityManagerFactory;
     private MetadataProvider metadataProvider;
     private boolean nativeMode;
+    private int maxPageSize = 200;
 
     public JpaAccessTemplate(EntityManagerFactory entityManagerFactory,
             MetadataProvider metadataProvider) {
@@ -42,6 +43,10 @@ public class JpaAccessTemplate implements DataAccessTemplate {
         this(entityManagerFactory, metadataProvider);
         Assert.notNull(schema, "schema must not be null");
         this.schema = schema;
+    }
+
+    public void setMaxPageSize(int maxPageSize) {
+        this.maxPageSize = Math.min(maxPageSize, 1000); // 最大允许每页1000条
     }
 
     @Override
@@ -294,6 +299,9 @@ public class JpaAccessTemplate implements DataAccessTemplate {
 
     public void applyPagingToQuery(Query query, int pageSize, int pageNo, boolean oneMore) {
         if (pageSize > 0) { // 用页大小判断是否分页查询
+            if (pageSize > this.maxPageSize) {
+                pageSize = this.maxPageSize;
+            }
             if (pageNo <= 0) { // 页码最小为1
                 pageNo = 1;
             }
