@@ -17,6 +17,10 @@ public class WebConstants {
      */
     public static final String HEADER_REDIRECT_TO = "Redirect-To";
     /**
+     * 头信息名：原始请求
+     */
+    public static final String HEADER_ORIGINAL_REQUEST = "Original-Request";
+    /**
      * 头信息名：内部RPC
      */
     public static final String HEADER_INTERNAL_RPC = "Internal-Rpc";

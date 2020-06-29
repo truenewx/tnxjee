@@ -51,9 +51,9 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         if (isAjaxRequest(request)) {
             // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
             // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过，
-            // 同时返回401状态码标识错误。
+            // 同时返回406状态码表示无法处理该请求。
             response.setHeader(WebConstants.HEADER_REDIRECT_TO, redirectUrl);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
         } else {
             response.sendRedirect(redirectUrl);
         }

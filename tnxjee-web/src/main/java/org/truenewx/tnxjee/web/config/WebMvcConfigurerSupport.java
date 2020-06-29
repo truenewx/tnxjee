@@ -74,6 +74,7 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
 
     protected void addExposedHeaders(Collection<String> exposedHeaders) {
         exposedHeaders.add(WebConstants.HEADER_REDIRECT_TO);
+        exposedHeaders.add(WebConstants.HEADER_ORIGINAL_REQUEST);
     }
 
 }
