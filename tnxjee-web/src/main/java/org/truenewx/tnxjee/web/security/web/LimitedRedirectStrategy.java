@@ -7,31 +7,22 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
-import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
- * AJAX请求特殊处理的重定向策略
+ * 具有限制的重定向策略
  */
 @Component
-public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
+public class LimitedRedirectStrategy extends DefaultRedirectStrategy {
 
-    @Autowired
-    private HandlerMethodMapping handlerMethodMapping;
     private List<String> redirectWhileList;
 
     public void setRedirectWhileList(List<String> redirectWhileList) {
         this.redirectWhileList = redirectWhileList;
-    }
-
-    public boolean isAjaxRequest(HttpServletRequest request) {
-        return this.handlerMethodMapping.isAjaxRequest(request);
     }
 
     @Override
@@ -48,15 +39,7 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
             this.logger.debug("Redirecting to '" + redirectUrl + "'");
         }
 
-        if (isAjaxRequest(request)) {
-            // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
-            // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过，
-            // 同时返回406状态码表示无法处理该请求。
-            response.setHeader(WebConstants.HEADER_REDIRECT_TO, redirectUrl);
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-        } else {
-            response.sendRedirect(redirectUrl);
-        }
+        response.sendRedirect(redirectUrl);
     }
 
     protected boolean isValidRedirectUrl(HttpServletRequest request, HttpServletResponse response,

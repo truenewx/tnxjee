@@ -13,9 +13,9 @@ public class WebConstants {
      */
     public static final String HEADER_AJAX_REQUEST = "X-Requested-With";
     /**
-     * 头信息名：重定向目标地址
+     * 头信息名：登录地址
      */
-    public static final String HEADER_REDIRECT_TO = "Redirect-To";
+    public static final String HEADER_LOGIN_URL = "Login-Url";
     /**
      * 头信息名：原始请求
      */
