@@ -22,7 +22,7 @@ public class IgnoreAjaxLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandle
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        // AJAX登出成功什么都不做，非AJAX登出成果才做正常处理
+        // AJAX登出成功什么都不做，非AJAX登出成功才做正常处理
         if (!this.handlerMethodMapping.isAjaxRequest(request)) {
             super.handle(request, response, authentication);
         }

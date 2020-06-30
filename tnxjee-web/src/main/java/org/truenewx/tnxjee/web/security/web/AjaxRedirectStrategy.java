@@ -7,22 +7,31 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
- * 具有限制的重定向策略
+ * AJAX特殊处理的重定向策略
  */
 @Component
-public class LimitedRedirectStrategy extends DefaultRedirectStrategy {
+public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
 
+    @Autowired
+    private HandlerMethodMapping handlerMethodMapping;
     private List<String> redirectWhileList;
 
     public void setRedirectWhileList(List<String> redirectWhileList) {
         this.redirectWhileList = redirectWhileList;
+    }
+
+    public boolean isAjaxRequest(HttpServletRequest request) {
+        return this.handlerMethodMapping.isAjaxRequest(request);
     }
 
     @Override
@@ -39,7 +48,18 @@ public class LimitedRedirectStrategy extends DefaultRedirectStrategy {
             this.logger.debug("Redirecting to '" + redirectUrl + "'");
         }
 
-        response.sendRedirect(redirectUrl);
+        if (isAjaxRequest(request)) {
+            // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
+            // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过。
+            // 成功和失败的请求都可能产生重定向动作，所以此处不设置响应状态码
+            response.setHeader(WebConstants.HEADER_REDIRECT_TO, redirectUrl);
+            String body = buildRedirectBody(redirectUrl);
+            if (body != null) {
+                response.getWriter().print(body);
+            }
+        } else {
+            response.sendRedirect(redirectUrl);
+        }
     }
 
     protected boolean isValidRedirectUrl(HttpServletRequest request, HttpServletResponse response,
@@ -70,6 +90,10 @@ public class LimitedRedirectStrategy extends DefaultRedirectStrategy {
         }
         // 匹配白名单可以重定向
         return StringUtil.antPathMatchOneOf(redirectUrl, this.redirectWhileList);
+    }
+
+    protected String buildRedirectBody(String redirectUrl) {
+        return "It should be redirected to " + redirectUrl;
     }
 
 }
