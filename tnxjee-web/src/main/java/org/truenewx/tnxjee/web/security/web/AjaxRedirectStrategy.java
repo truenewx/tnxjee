@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
@@ -64,6 +65,10 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
 
     protected boolean isValidRedirectUrl(HttpServletRequest request, HttpServletResponse response,
             String redirectUrl) throws IOException {
+        // 空地址无效
+        if (StringUtils.isBlank(redirectUrl)) {
+            return false;
+        }
         // 相对路径地址可以重定向
         if (NetUtil.isRelativeUrl(redirectUrl)) {
             return true;

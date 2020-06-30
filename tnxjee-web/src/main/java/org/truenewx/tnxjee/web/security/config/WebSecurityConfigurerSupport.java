@@ -18,11 +18,12 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -47,6 +48,8 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
+    @Autowired
+    private RedirectStrategy redirectStrategy;
     @Autowired
     private WebSecurityProperties securityProperties;
     @Autowired
@@ -86,7 +89,17 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
 
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
-        return new HttpStatusReturningLogoutSuccessHandler();
+        SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
+        successHandler.setRedirectStrategy(this.redirectStrategy);
+        String logoutSuccessUrl = getLogoutSuccessUrl();
+        if (logoutSuccessUrl != null) {
+            successHandler.setDefaultTargetUrl(logoutSuccessUrl);
+        }
+        return successHandler;
+    }
+
+    protected String getLogoutSuccessUrl() {
+        return null;
     }
 
     @Override
