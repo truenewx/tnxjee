@@ -38,12 +38,12 @@ public class BeanUtil {
         if (!class1.isAssignableFrom(class2) || !class2.isAssignableFrom(class1)) { // 比较的两个bean的类型必须相同
             return false;
         }
-        Long id1 = (Long) getPropertyValue(bean, "id");
-        Long id2 = (Long) getPropertyValue(otherBean, "id");
+        Long id1 = getPropertyValue(bean, "id");
+        Long id2 = getPropertyValue(otherBean, "id");
         if (id1 == null && id2 == null) {
             return bean.equals(otherBean);
         }
-        return id1 != null && id2 != null && id1.equals(id2);
+        return id1 != null && id1.equals(id2);
     }
 
     /**
@@ -78,7 +78,9 @@ public class BeanUtil {
         Object value = bean;
         for (String name : propertyNames) {
             PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(value.getClass(), name);
-            value = pd.getReadMethod().invoke(value);
+            if (pd != null) {
+                value = pd.getReadMethod().invoke(value);
+            }
         }
         return value;
     }
@@ -140,10 +142,11 @@ public class BeanUtil {
                     }
                     field.set(bean, value);
                     if (!accessible) {
-                        field.setAccessible(accessible);
+                        field.setAccessible(false);
                     }
                 }
             } catch (Exception e) {
+                // 忽略所有异常
             }
         }
     }
@@ -170,6 +173,7 @@ public class BeanUtil {
                 }
                 return value;
             } catch (Exception e) {
+                // 忽略所有异常
             }
         }
         return null;
@@ -225,8 +229,8 @@ public class BeanUtil {
     public static Object getById(Collection<?> collection, long id) {
         try {
             for (Object o : collection) {
-                Long oid = (Long) getPropertyValue(o, "id");
-                if (oid != null && oid.longValue() == id) {
+                Long oid = getPropertyValue(o, "id");
+                if (oid != null && oid == id) {
                     return o;
                 }
             }
@@ -309,12 +313,6 @@ public class BeanUtil {
      * @param clazz        bean类型
      * @param excludedKeys 排除的关键字
      * @return bean对象
-     * @throws InstantiationException    如果没有无参构造函数
-     * @throws IllegalAccessException    如果构造函数无法访问
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
      */
     public static <T> T toBean(Map<String, Object> map, Class<T> clazz, String... excludedKeys)
             throws ReflectiveOperationException {
@@ -340,6 +338,7 @@ public class BeanUtil {
             Field field = clazz.getField(names[2]);
             return field.get(null);
         } catch (Exception e) {
+            // 忽略所有异常
         }
         return null;
     }
@@ -358,10 +357,9 @@ public class BeanUtil {
             String methodName = "set" + StringUtil.firstToUpperCase(propertyName);
             bean.getClass().getMethod(methodName, propertyClass);
             return true;
-        } catch (SecurityException e) {
-        } catch (NoSuchMethodException e) {
+        } catch (SecurityException | NoSuchMethodException e) {
+            return false;
         }
-        return false;
     }
 
     /**
