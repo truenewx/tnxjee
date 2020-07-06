@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.web.api.meta;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.temporal.Temporal;
 import java.util.*;
 
 import javax.validation.constraints.Email;
@@ -102,11 +103,25 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
             }
             return ApiModelPropertyType.TEXT;
         } else {
+            if (fieldType == boolean.class || fieldType == Boolean.class) {
+                return ApiModelPropertyType.BOOLEAN;
+            }
             if (ArrayUtils.contains(INTEGER_CLASSES, fieldType)) {
                 return ApiModelPropertyType.INTEGER;
             }
             if (ArrayUtils.contains(DECIMAL_CLASSES, fieldType)) {
                 return ApiModelPropertyType.DECIMAL;
+            }
+            if (fieldType.isArray()) { // 字符串数组或枚举数组为多选选项型
+                Class<?> componentType = fieldType.getComponentType();
+                if (componentType == String.class || componentType.isArray()) {
+                    return ApiModelPropertyType.OPTION;
+                }
+            }
+            // 枚举或日期类型为单选选项型
+            if (fieldType.isEnum() || Temporal.class.isAssignableFrom(fieldType)
+                    || Date.class.isAssignableFrom(fieldType)) {
+                return ApiModelPropertyType.OPTION;
             }
         }
         return null;
