@@ -49,17 +49,17 @@ public class ResolvableExceptionAuthenticationFailureHandler
         // AJAX请求登录认证失败直接报401错误
         if (this.handlerMethodMapping.isAjaxRequest(request)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        }
-        // 登录认证失败后的跳转地址未设置，也报401错误
-        String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
-        if (StringUtils.isBlank(targetUrl)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        }
-        // 跳转到目标地址
-        if (this.useForward) {
-            request.getRequestDispatcher(targetUrl).forward(request, response);
         } else {
-            response.sendRedirect(targetUrl);
+            String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
+            if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            } else { // 跳转到目标地址
+                if (this.useForward) {
+                    request.getRequestDispatcher(targetUrl).forward(request, response);
+                } else {
+                    response.sendRedirect(targetUrl);
+                }
+            }
         }
     }
 
