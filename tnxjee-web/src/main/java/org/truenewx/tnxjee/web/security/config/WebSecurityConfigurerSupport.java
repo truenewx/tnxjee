@@ -210,13 +210,14 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     protected Collection<RequestMatcher> getAnonymousRequestMatchers() {
         List<RequestMatcher> matchers = new ArrayList<>();
         matchers.add(new AntPathRequestMatcher("/error/**"));
-        // 打开登录表单页面的请求始终可匿名访问
-        // 注意：不能将登录请求URL加入忽略清单中，如果加入，则登录POST请求将无法经过安全框架过滤器处理
+        // 打开登录表单页面和登出的请求始终可匿名访问
+        // 注意：不能将请求URL加入忽略清单中，如果加入，则请求将无法经过安全框架过滤器处理
         matchers.add(new AntPathRequestMatcher(getLoginFormUrl(), HttpMethod.GET.name()));
         String loginAjaxUrl = getLoginAjaxUrl();
         if (StringUtils.isNotBlank(loginAjaxUrl)) {
             matchers.add(new AntPathRequestMatcher(getLoginAjaxUrl(), HttpMethod.GET.name()));
         }
+        matchers.add(new AntPathRequestMatcher(getLogoutProcessUrl()));
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
