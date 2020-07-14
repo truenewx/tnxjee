@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -172,6 +173,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
             .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
             .logoutSuccessHandler(logoutSuccessHandler())
             .deleteCookies(getLogoutClearCookies()).permitAll();
+        configure(http.logout());
         // @formatter:on
         if (this.corsRegistryProperties.isEnabled()) {
             http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
@@ -190,6 +192,14 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         for (SecurityConfigurerAdapter configurer : configurers) {
             http.apply(configurer);
         }
+    }
+
+    /**
+     * 配置登出
+     *
+     * @param logoutConfigurer 登出配置器
+     */
+    protected void configure(LogoutConfigurer<HttpSecurity> logoutConfigurer) {
     }
 
     /**
