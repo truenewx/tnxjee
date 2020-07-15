@@ -64,6 +64,9 @@ public class SpringWebUtil {
     }
 
     public static boolean isResponseBody(HandlerMethod handlerMethod) {
+        if (handlerMethod == null) {
+            return false;
+        }
         return handlerMethod.getMethodAnnotation(ResponseBody.class) != null
                 || handlerMethod.getBeanType().getAnnotation(RestController.class) != null
                 || handlerMethod.getMethodAnnotation(ResponseStream.class) != null;

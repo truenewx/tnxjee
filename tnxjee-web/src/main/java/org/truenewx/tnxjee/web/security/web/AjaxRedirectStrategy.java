@@ -8,12 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
@@ -23,16 +21,10 @@ import org.truenewx.tnxjee.web.util.WebUtil;
 @Component
 public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
 
-    @Autowired
-    private HandlerMethodMapping handlerMethodMapping;
     private List<String> redirectWhileList;
 
     public void setRedirectWhileList(List<String> redirectWhileList) {
         this.redirectWhileList = redirectWhileList;
-    }
-
-    public boolean isAjaxRequest(HttpServletRequest request) {
-        return this.handlerMethodMapping.isAjaxRequest(request);
     }
 
     @Override
@@ -49,7 +41,7 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
             this.logger.debug("Redirecting to '" + redirectUrl + "'");
         }
 
-        if (isAjaxRequest(request)) {
+        if (WebUtil.isAjaxRequest(request)) {
             // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
             // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过。
             // 成功和失败的请求都可能产生重定向动作，所以此处不设置响应状态码

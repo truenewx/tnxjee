@@ -18,6 +18,7 @@ import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 import org.truenewx.tnxjee.web.security.core.AuthenticationFailureException;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
  * 基于可解决异常的登录认证失败处理器
@@ -47,7 +48,7 @@ public class ResolvableExceptionAuthenticationFailureHandler
         saveException(request, response, exception);
 
         // AJAX请求登录认证失败直接报401错误
-        if (this.handlerMethodMapping.isAjaxRequest(request)) {
+        if (WebUtil.isAjaxRequest(request)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
             String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);

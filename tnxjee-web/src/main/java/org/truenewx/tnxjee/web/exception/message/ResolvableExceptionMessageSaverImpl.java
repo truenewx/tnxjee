@@ -41,7 +41,7 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
             HandlerMethod handlerMethod, ResolvableException re) {
         List<BusinessError> errors = buildErrors(re, request.getLocale());
         if (errors.size() > 0) {
-            if (isAjaxRequest(request, handlerMethod)) {
+            if (WebUtil.isAjaxRequest(request) || SpringWebUtil.isResponseBody(handlerMethod)) {
                 try {
                     BusinessErrorBody body = new BusinessErrorBody(errors);
                     String json = JsonUtil.toJson(body);
@@ -54,13 +54,6 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
                 request.setAttribute(ATTRIBUTE, errors);
             }
         }
-    }
-
-    private boolean isAjaxRequest(HttpServletRequest request, HandlerMethod handlerMethod) {
-        if (handlerMethod != null) { // 优先根据处理方法进行判断，以利于性能
-            return SpringWebUtil.isResponseBody(handlerMethod) || WebUtil.isAjaxRequest(request);
-        }
-        return this.handlerMethodMapping.isAjaxRequest(request);
     }
 
     private List<BusinessError> buildErrors(ResolvableException re, Locale locale) {
