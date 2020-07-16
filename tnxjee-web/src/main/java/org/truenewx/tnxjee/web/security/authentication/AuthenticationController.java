@@ -16,7 +16,7 @@ import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntr
 @RequestMapping("/authentication")
 public class AuthenticationController {
 
-    @Autowired(required = false) // 实际上应该有，标注为非必须是为了避免错误提示
+    @Autowired
     private WebAuthenticationEntryPoint authenticationEntryPoint;
 
     /**

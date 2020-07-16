@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
@@ -68,7 +67,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      * 匿名用户试图访问登录用户才能访问的资源后的错误处理
      */
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
+    public WebAuthenticationEntryPoint authenticationEntryPoint() {
         return new WebAuthenticationEntryPoint(getLoginFormUrl(), getLoginAjaxUrl());
     }
 
