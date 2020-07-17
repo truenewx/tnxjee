@@ -5,12 +5,12 @@ import java.util.Objects;
 /**
  * 平面尺寸
  */
-public class DimensionSize {
+public class FlatSize {
 
     private int width;
     private int height;
 
-    public DimensionSize(int width, int height) {
+    public FlatSize(int width, int height) {
         this.width = width;
         this.height = height;
     }
@@ -31,7 +31,7 @@ public class DimensionSize {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DimensionSize other = (DimensionSize) o;
+        FlatSize other = (FlatSize) o;
         return this.width == other.width && this.height == other.height;
     }
 
