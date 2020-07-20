@@ -17,7 +17,6 @@ import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 import org.truenewx.tnxjee.web.security.core.AuthenticationFailureException;
-import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
@@ -31,8 +30,6 @@ public class ResolvableExceptionAuthenticationFailureHandler
     private Function<HttpServletRequest, String> targetUrlFunction = request -> null;
     @Autowired
     private ResolvableExceptionMessageSaver resolvableExceptionMessageSaver;
-    @Autowired
-    private HandlerMethodMapping handlerMethodMapping;
 
     public void setUseForward(boolean useForward) {
         this.useForward = useForward;
@@ -49,11 +46,14 @@ public class ResolvableExceptionAuthenticationFailureHandler
 
         // AJAX请求登录认证失败直接报401错误
         if (WebUtil.isAjaxRequest(request)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(),
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
-            String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
+            String targetUrl = this.targetUrlFunction == null ? null
+                    : this.targetUrlFunction.apply(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                response.sendError(HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.UNAUTHORIZED.getReasonPhrase());
             } else { // 跳转到目标地址
                 if (this.useForward) {
                     request.getRequestDispatcher(targetUrl).forward(request, response);

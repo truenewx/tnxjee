@@ -35,6 +35,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <tnxjee.version>2.1.0</tnxjee.version>
     </properties>
     <build>
         <plugins>
@@ -71,62 +72,62 @@
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-alone</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-core</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-model</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo-jpa</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-repo-mongo</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-service</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-service-impl</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-test</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-test-service</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-web</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-web-view</artifactId>
-                <version>2.1.0</version>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -178,6 +179,11 @@
                 <groupId>org.sitemesh</groupId>
                 <artifactId>sitemesh</artifactId>
                 <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.im4java</groupId>
+                <artifactId>im4java</artifactId>
+                <version>1.4.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

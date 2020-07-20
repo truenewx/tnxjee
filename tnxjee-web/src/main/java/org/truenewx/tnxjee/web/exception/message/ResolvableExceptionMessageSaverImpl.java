@@ -21,7 +21,6 @@ import org.truenewx.tnxjee.service.exception.SingleException;
 import org.truenewx.tnxjee.service.exception.message.BusinessExceptionMessageResolver;
 import org.truenewx.tnxjee.service.exception.model.BusinessError;
 import org.truenewx.tnxjee.web.exception.model.BusinessErrorBody;
-import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
@@ -33,8 +32,6 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
 
     @Autowired
     private BusinessExceptionMessageResolver resolver;
-    @Autowired
-    private HandlerMethodMapping handlerMethodMapping;
 
     @Override
     public void saveMessage(HttpServletRequest request, HttpServletResponse response,
