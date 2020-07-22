@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,7 +22,7 @@ import org.truenewx.tnxjee.core.crypto.Md5Encryptor;
  * 加密工具类
  *
  * @author jianglei
- * 
+ *
  */
 public class EncryptUtil {
 
@@ -34,7 +33,7 @@ public class EncryptUtil {
             } else if (source instanceof InputStream) {
                 return IOUtils.toByteArray((InputStream) source);
             } else if (source instanceof Reader) {
-                return IOUtils.toByteArray((Reader) source, Charset.forName(Strings.ENCODING_UTF8));
+                return IOUtils.toByteArray((Reader) source, Strings.ENCODING_UTF8);
             } else if (source instanceof byte[]) {
                 return (byte[]) source;
             } else {

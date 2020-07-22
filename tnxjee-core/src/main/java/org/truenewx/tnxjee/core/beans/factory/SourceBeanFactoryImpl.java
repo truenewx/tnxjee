@@ -113,6 +113,12 @@ public class SourceBeanFactoryImpl implements SourceBeanFactory, BeanFactoryAwar
     }
 
     @Override
+    public Class<?> getType(String name, boolean allowFactoryBeanInit)
+            throws NoSuchBeanDefinitionException {
+        return this.delegate.getType(name, allowFactoryBeanInit);
+    }
+
+    @Override
     public String[] getAliases(String name) {
         return this.delegate.getAliases(name);
     }

@@ -1,5 +1,14 @@
 package org.truenewx.tnxjee.repo.jpa.config;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -7,7 +16,6 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
-import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.ApplicationContext;
@@ -27,14 +35,6 @@ import org.truenewx.tnxjee.repo.jpa.hibernate.HibernateJpaPersistenceProvider;
 import org.truenewx.tnxjee.repo.jpa.hibernate.MetadataProvider;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 /**
  * JPA数据层配置
  *
@@ -52,12 +52,9 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
      * 在多数据源场景下，可创建子类，构造函数中指定DataSourceProperties和DataSource的beanName
      */
     public JpaDataConfiguration(ApplicationContext context,
-            DataSourceProperties dataSourceProperties,
-            DataSource dataSource,
-            JpaProperties properties,
-            ObjectProvider<JtaTransactionManager> jtaTransactionManager,
-            ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
-        super(dataSource, properties, jtaTransactionManager, transactionManagerCustomizers);
+            DataSourceProperties dataSourceProperties, DataSource dataSource,
+            JpaProperties properties, ObjectProvider<JtaTransactionManager> jtaTransactionManager) {
+        super(dataSource, properties, jtaTransactionManager);
         this.context = context;
         // 当前配置会在数据源对象构建完之后，在数据源初始化之前加载，接下来spring-data-jpa框架会检查数据库表结构，
         // 此时如果数据库表结构未初始化，则会报错退出，导致后续的DataSourceInitializerInvoker无法执行，
@@ -139,7 +136,8 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder factoryBuilder) {
         addMappingResources(getProperties().getMappingResources());
-        LocalContainerEntityManagerFactoryBean factoryBean = super.entityManagerFactory(factoryBuilder);
+        LocalContainerEntityManagerFactoryBean factoryBean = super.entityManagerFactory(
+                factoryBuilder);
         factoryBean.setPersistenceProvider(persistenceProvider());
         return factoryBean;
     }

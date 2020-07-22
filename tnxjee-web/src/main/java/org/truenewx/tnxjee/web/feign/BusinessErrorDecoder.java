@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.web.feign;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
     public Exception decode(String methodKey, Response response) {
         try {
             if (response.status() == HttpStatus.FORBIDDEN.value()) {
-                String json = IOUtils.toString(response.body().asReader());
+                String json = IOUtils.toString(response.body().asReader(StandardCharsets.UTF_8));
                 BusinessErrorBody body = JsonUtil.json2Bean(json, BusinessErrorBody.class);
                 BusinessError[] errors = body.getErrors();
                 if (errors.length == 1) {

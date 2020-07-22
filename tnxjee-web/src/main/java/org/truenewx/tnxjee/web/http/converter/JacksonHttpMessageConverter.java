@@ -80,7 +80,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                             }
                             mapper = JsonUtil.buildMapper(filter, filter.getTypes());
                             if (internal) {
-                                mapper.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
+                                mapper.setDefaultTyping(
+                                        PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
                                 this.internalMappers.put(methodKey, mapper);
                             } else {
                                 this.externalMappers.put(methodKey, mapper);
@@ -90,7 +91,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                         }
                     }
                     String json = mapper.writeValueAsString(object);
-                    IOUtils.write(json, outputMessage.getBody(), getDefaultCharset());
+                    IOUtils.write(json, outputMessage.getBody(), getDefaultCharset().name());
                     return;
                 }
             } catch (Exception e) {
