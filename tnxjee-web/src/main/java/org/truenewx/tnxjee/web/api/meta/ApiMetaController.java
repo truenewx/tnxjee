@@ -9,6 +9,8 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
+import org.truenewx.tnxjee.core.config.WebAppConfiguration;
+import org.truenewx.tnxjee.core.config.WebCommonProperties;
 import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.web.api.meta.model.ApiContext;
@@ -28,15 +30,28 @@ public class ApiMetaController {
     @Autowired
     private ApiModelMetaResolver metaResolver;
     @Autowired
-    private ApiMetaProperties properties;
+    private ApiMetaProperties apiMetaProperties;
+    @Autowired
+    private WebCommonProperties webCommonProperties;
 
     @GetMapping("/context")
     public ApiContext context(HttpServletRequest request) {
         ApiContext context = new ApiContext();
-        context.setBaseUrl(this.properties.getBaseUrl());
+        context.setBaseUrl(this.apiMetaProperties.getBaseUrl());
         context.setLoginSuccessRedirectParameter(
-                this.properties.getLoginSuccessRedirectParameter());
-        context.setContext(this.properties.getContext());
+                this.apiMetaProperties.getLoginSuccessRedirectParameter());
+        Map<String, String> rootUrls = this.webCommonProperties.getRootUrls();
+        String[] appNames = this.apiMetaProperties.getAppNames();
+        if (appNames.length == 0) {
+            context.getApps().putAll(rootUrls);
+        } else {
+            for (String appName : appNames) {
+                WebAppConfiguration app = this.webCommonProperties.getApp(appName);
+                if (app != null) {
+                    context.getApps().put(appName, app.getRootUrl());
+                }
+            }
+        }
         return context;
     }
 

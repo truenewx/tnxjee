@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.web.api.meta.model;
 
-import java.util.Map;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +12,7 @@ public class ApiMetaProperties {
 
     private String baseUrl;
     private String loginSuccessRedirectParameter = "_next";
-    private Map<String, String> context;
+    private String[] appNames;
 
     public String getBaseUrl() {
         return this.baseUrl;
@@ -32,12 +30,12 @@ public class ApiMetaProperties {
         this.loginSuccessRedirectParameter = loginSuccessRedirectParameter;
     }
 
-    public Map<String, String> getContext() {
-        return this.context;
+    public String[] getAppNames() {
+        return this.appNames;
     }
 
-    public void setContext(Map<String, String> context) {
-        this.context = context;
+    public void setAppNames(String[] appNames) {
+        this.appNames = appNames;
     }
 
 }
