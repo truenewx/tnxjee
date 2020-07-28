@@ -14,8 +14,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.truenewx.tnxjee.core.config.WebCommonProperties;
-import org.truenewx.tnxjee.core.util.CollectionUtil;
+import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
@@ -27,7 +26,7 @@ import org.truenewx.tnxjee.web.util.WebConstants;
  */
 public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     @Autowired
-    private WebCommonProperties webCommonProperties;
+    private CommonProperties commonProperties;
     @Autowired
     private CorsRegistryProperties corsRegistryProperties;
     @Autowired
@@ -58,8 +57,8 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         if (this.corsRegistryProperties.isEnabled()) {
-            String[] allowedOriginals = CollectionUtil.mergeToArray(this.webCommonProperties.getProtocolHosts().values(),
-                    this.corsRegistryProperties.getAllowedOrigins());
+            String[] commonHosts = this.commonProperties.getHostUrls().values().toArray(new String[0]);
+            String[] allowedOriginals = ArrayUtils.addAll(commonHosts, this.corsRegistryProperties.getAllowedOrigins());
             CorsRegistration registration = registry
                     .addMapping(this.corsRegistryProperties.getPathPattern())
                     .allowedOrigins(allowedOriginals)

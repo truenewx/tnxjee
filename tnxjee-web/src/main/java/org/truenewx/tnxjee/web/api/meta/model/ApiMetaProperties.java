@@ -10,16 +10,30 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("tnxjee.web.api")
 public class ApiMetaProperties {
 
-    private String baseUrl;
-    private String loginSuccessRedirectParameter = "_next";
     private String[] appNames;
+    private String baseApp;
+    private String loginSuccessRedirectParameter = "_next";
 
-    public String getBaseUrl() {
-        return this.baseUrl;
+    public String[] getAppNames() {
+        return this.appNames;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    /**
+     * @param appNames 相关应用的名称集，默认为整个系统所有应用
+     */
+    public void setAppNames(String[] appNames) {
+        this.appNames = appNames;
+    }
+
+    public String getBaseApp() {
+        return this.baseApp;
+    }
+
+    /**
+     * @param baseApp 基础应用的名称
+     */
+    public void setBaseApp(String baseApp) {
+        this.baseApp = baseApp;
     }
 
     public String getLoginSuccessRedirectParameter() {
@@ -28,14 +42,6 @@ public class ApiMetaProperties {
 
     public void setLoginSuccessRedirectParameter(String loginSuccessRedirectParameter) {
         this.loginSuccessRedirectParameter = loginSuccessRedirectParameter;
-    }
-
-    public String[] getAppNames() {
-        return this.appNames;
-    }
-
-    public void setAppNames(String[] appNames) {
-        this.appNames = appNames;
     }
 
 }

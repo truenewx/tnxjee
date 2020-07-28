@@ -391,8 +391,4 @@ public class CollectionUtil {
         }
     }
 
-    public static <T> T[] mergeToArray(Iterable<T> iterable, T[] array) {
-        // TODO
-    }
-
 }
