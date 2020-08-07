@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.web.exception.message;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
                     BusinessErrorBody body = new BusinessErrorBody(errors);
                     String json = JsonUtil.toJson(body);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding(StandardCharsets.UTF_8.name());
                     response.getWriter().print(json);
                 } catch (IOException e) {
                     LogUtil.error(getClass(), e);

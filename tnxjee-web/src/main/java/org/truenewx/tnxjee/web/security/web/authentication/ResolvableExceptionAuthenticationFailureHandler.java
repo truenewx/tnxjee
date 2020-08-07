@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -30,6 +31,8 @@ public class ResolvableExceptionAuthenticationFailureHandler
     private Function<HttpServletRequest, String> targetUrlFunction = request -> null;
     @Autowired
     private ResolvableExceptionMessageSaver resolvableExceptionMessageSaver;
+    @Autowired
+    private WebMvcProperties webMvcProperties;
 
     public void setUseForward(boolean useForward) {
         this.useForward = useForward;
@@ -49,13 +52,15 @@ public class ResolvableExceptionAuthenticationFailureHandler
             response.sendError(HttpStatus.UNAUTHORIZED.value(),
                     HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
-            String targetUrl = this.targetUrlFunction == null ? null
-                    : this.targetUrlFunction.apply(request);
+            String targetUrl =
+                    this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
                 response.sendError(HttpStatus.UNAUTHORIZED.value(),
                         HttpStatus.UNAUTHORIZED.getReasonPhrase());
             } else { // 跳转到目标地址
                 if (this.useForward) {
+                    WebMvcProperties.View view = this.webMvcProperties.getView();
+                    targetUrl = view.getPrefix() + targetUrl + view.getSuffix();
                     request.getRequestDispatcher(targetUrl).forward(request, response);
                 } else {
                     response.sendRedirect(targetUrl);
