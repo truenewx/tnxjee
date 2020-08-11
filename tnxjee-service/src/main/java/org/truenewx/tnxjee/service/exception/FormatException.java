@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.exception;
 
 import java.util.Objects;
+
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.service.exception.model.MessagedError;
 
@@ -13,11 +14,12 @@ public class FormatException extends SingleException {
 
     private static final long serialVersionUID = -7599751978935457915L;
 
-    private Class<?> beanClass;
+    private Class<?> modelClass;
 
-    public FormatException(String code, Class<?> beanClass, String property) {
+    public FormatException(String code, Class<?> modelClass, String property) {
         super(code);
-        this.beanClass = beanClass;
+        this.code = code;
+        this.modelClass = modelClass;
         this.property = property;
     }
 
@@ -25,8 +27,8 @@ public class FormatException extends SingleException {
         super(error);
     }
 
-    public Class<?> getBeanClass() {
-        return this.beanClass;
+    public Class<?> getModelClass() {
+        return this.modelClass;
     }
 
     @Override
@@ -34,17 +36,17 @@ public class FormatException extends SingleException {
         if (super.matches(property)) {
             return true;
         }
-        String simplePropertyPath = ClassUtil.getSimplePropertyPath(this.beanClass, property);
+        String simplePropertyPath = ClassUtil.getSimplePropertyPath(this.modelClass, property);
         if (simplePropertyPath.equals(property)) {
             return true;
         }
-        String fullPropertyPath = ClassUtil.getFullPropertyPath(this.beanClass, property);
+        String fullPropertyPath = ClassUtil.getFullPropertyPath(this.modelClass, property);
         return fullPropertyPath.equals(property);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode() + Objects.hash(this.beanClass);
+        return super.hashCode() + Objects.hash(this.modelClass);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class FormatException extends SingleException {
             return false;
         }
         FormatException other = (FormatException) obj;
-        return super.equals(other) && Objects.equals(this.beanClass, other.beanClass);
+        return super.equals(other) && Objects.equals(this.modelClass, other.modelClass);
     }
 
 }

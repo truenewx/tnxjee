@@ -15,8 +15,8 @@ public class MessagedError {
     }
 
     public MessagedError(String message, String code, String field) {
-        this.code = code;
         this.message = message;
+        this.code = code;
         this.field = field;
     }
 

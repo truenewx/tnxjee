@@ -1,10 +1,12 @@
 package org.truenewx.tnxjee.web.exception.resolver;
 
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
@@ -58,7 +60,7 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
 
     private FormatException buildFormatException(ConstraintViolation<?> violation,
             HttpServletRequest request) {
-        String code = violation.getMessage().replace("{", "").replace("}", "");
+        String code = violation.getMessageTemplate().replace("{", "").replace("}", "");
         String property = violation.getPropertyPath().toString();
         return new FormatException(code, violation.getRootBeanClass(), property);
     }
@@ -74,23 +76,23 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
             return buildLogMessage((SingleException) ex);
         } else if (ex instanceof MultiException) {
             MultiException me = (MultiException) ex;
-            StringBuilder messasge = new StringBuilder();
+            StringBuilder message = new StringBuilder();
             me.forEach(se -> {
-                String singleMessage = buildLogMessage((SingleException) se);
+                String singleMessage = buildLogMessage(se);
                 if (StringUtils.isNotBlank(singleMessage)) {
-                    messasge.append(singleMessage).append("/n");
+                    message.append(singleMessage).append("/n");
                 }
             });
-            return messasge.toString().trim();
+            return message.toString().trim();
         }
         return super.buildLogMessage(ex, request);
     }
 
     private String buildLogMessage(SingleException se) {
         if (se instanceof BusinessException) {
-            buildLogMessage((BusinessException) se);
+            return buildLogMessage((BusinessException) se);
         } else if (se instanceof FormatException) {
-            buildLogMessage((FormatException) se);
+            return buildLogMessage((FormatException) se);
         }
         return null;
     }
@@ -110,12 +112,10 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
     }
 
     private String buildLogMessage(FormatException fe) {
-        StringBuilder message = new StringBuilder("====== ");
-        message.append(fe.getCode()).append(Strings.LEFT_BRACKET)
-                .append(fe.getBeanClass().getName()).append(Strings.DOT).append(fe.getProperty())
-                .append(Strings.RIGHT_BRACKET);
-        message.append(" ======");
-        return message.toString();
+        return "====== " + fe.getCode() + Strings.LEFT_BRACKET +
+                fe.getModelClass().getName() + Strings.DOT + fe.getProperty() +
+                Strings.RIGHT_BRACKET +
+                " ======";
     }
 
 }

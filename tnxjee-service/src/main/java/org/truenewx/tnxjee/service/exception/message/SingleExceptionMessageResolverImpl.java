@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.exception.message;
 
 import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
         } else if (se instanceof FormatException) {
             FormatException fe = (FormatException) se;
             String propertyCaption = this.propertyCaptionResolver
-                    .resolveCaption(fe.getBeanClass(), fe.getProperty(), locale);
+                    .resolveCaption(fe.getModelClass(), fe.getProperty(), locale);
             if (propertyCaption == null) {
                 propertyCaption = fe.getProperty(); // 如果均未取到，则取属性名
             }
