@@ -5,8 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -27,8 +29,6 @@ import org.truenewx.tnxjee.web.util.WebUtil;
  */
 @Component
 public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionMessageSaver {
-
-    private static final String ERROR_CODE_FORMAT = "error.format";
 
     @Autowired
     private SingleExceptionMessageResolver resolver;

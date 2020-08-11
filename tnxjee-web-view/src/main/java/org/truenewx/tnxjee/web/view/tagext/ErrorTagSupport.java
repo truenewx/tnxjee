@@ -1,8 +1,10 @@
 package org.truenewx.tnxjee.web.view.tagext;
 
 import java.util.List;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
+
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.service.exception.model.MessagedError;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
@@ -22,6 +24,7 @@ public abstract class ErrorTagSupport extends TagSupport {
         this.field = field;
     }
 
+    @SuppressWarnings("unchecked")
     protected List<MessagedError> getErrors() {
         ServletRequest request = this.pageContext.getRequest();
         return (List<MessagedError>) request
