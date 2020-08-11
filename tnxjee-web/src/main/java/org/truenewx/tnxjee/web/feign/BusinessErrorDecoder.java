@@ -1,17 +1,21 @@
 package org.truenewx.tnxjee.web.feign;
 
 import java.nio.charset.StandardCharsets;
-import feign.Response;
-import feign.codec.ErrorDecoder;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.service.exception.BusinessException;
+import org.truenewx.tnxjee.service.exception.FormatException;
 import org.truenewx.tnxjee.service.exception.MultiException;
+import org.truenewx.tnxjee.service.exception.SingleException;
 import org.truenewx.tnxjee.service.exception.model.MessagedError;
 import org.truenewx.tnxjee.web.exception.model.MessagedErrorBody;
+
+import feign.Response;
+import feign.codec.ErrorDecoder;
 
 /**
  * 业务错误解码器
@@ -27,11 +31,11 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
                 MessagedErrorBody body = JsonUtil.json2Bean(json, MessagedErrorBody.class);
                 MessagedError[] errors = body.getErrors();
                 if (errors.length == 1) {
-                    return new BusinessException(errors[0]);
+                    return buildException(errors[0]);
                 } else if (errors.length > 1) {
-                    BusinessException[] exceptions = new BusinessException[errors.length];
+                    SingleException[] exceptions = new SingleException[errors.length];
                     for (int i = 0; i < errors.length; i++) {
-                        exceptions[i] = new BusinessException(errors[i]);
+                        exceptions[i] = buildException(errors[i]);
                     }
                     return new MultiException(exceptions);
                 }
@@ -40,6 +44,15 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
             LogUtil.error(getClass(), e);
         }
         return super.decode(methodKey, response);
+    }
+
+    private SingleException buildException(MessagedError error) {
+        if (BusinessException.class.getSimpleName().equals(error.getType())) {
+            return new BusinessException(error);
+        } else if (FormatException.class.getSimpleName().equals(error.getType())) {
+            return new FormatException(error);
+        }
+        return null;
     }
 
 }

@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.service.exception.model;
 
+import org.truenewx.tnxjee.service.exception.SingleException;
+
 /**
  * 已消息化的错误
  *
@@ -8,16 +10,18 @@ package org.truenewx.tnxjee.service.exception.model;
 public class MessagedError {
 
     private String message;
+    private String type;
     private String code;
     private String field;
 
     public MessagedError() {
     }
 
-    public MessagedError(String message, String code, String field) {
+    public MessagedError(String message, SingleException se) {
         this.message = message;
-        this.code = code;
-        this.field = field;
+        this.type = se.getClass().getSimpleName();
+        this.code = se.getCode();
+        this.field = se.getProperty();
     }
 
     public String getMessage() {
@@ -26,6 +30,14 @@ public class MessagedError {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getCode() {

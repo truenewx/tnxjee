@@ -57,18 +57,18 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
     private List<MessagedError> buildErrors(ResolvableException re, Locale locale) {
         List<MessagedError> errors = new ArrayList<>();
         if (re instanceof SingleException) {
-            addErrors((SingleException) re, locale, errors);
+            errors.add(buildError((SingleException) re, locale));
         } else if (re instanceof MultiException) {
             for (SingleException se : (MultiException) re) {
-                addErrors(se, locale, errors);
+                errors.add(buildError(se, locale));
             }
         }
         return errors;
     }
 
-    private void addErrors(SingleException se, Locale locale, List<MessagedError> errors) {
+    private MessagedError buildError(SingleException se, Locale locale) {
         String message = this.resolver.resolveMessage(se, locale);
-        errors.add(new MessagedError(message, se.getCode(), se.getProperty()));
+        return new MessagedError(message, se);
     }
 
 }
