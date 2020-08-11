@@ -1,15 +1,13 @@
 package org.truenewx.tnxjee.service.exception;
 
 import java.util.Objects;
-
-import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.service.exception.model.MessagedError;
 
 /**
  * 格式异常，必须绑定属性
  *
  * @author jianglei
- *
  */
 public class FormatException extends SingleException {
 
@@ -17,15 +15,14 @@ public class FormatException extends SingleException {
 
     private Class<?> beanClass;
 
-    public FormatException(Class<?> beanClass, String property, String message) {
-        super(message);
+    public FormatException(String code, Class<?> beanClass, String property) {
+        super(code);
         this.beanClass = beanClass;
-        Assert.notNull(property, "property must be not null");
         this.property = property;
     }
 
-    public FormatException(String property, String message) {
-        this(null, property, message);
+    public FormatException(MessagedError error) {
+        super(error);
     }
 
     public Class<?> getBeanClass() {
@@ -47,7 +44,7 @@ public class FormatException extends SingleException {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.beanClass, this.property, getMessage());
+        return super.hashCode() + Objects.hash(this.beanClass);
     }
 
     @Override
@@ -59,8 +56,7 @@ public class FormatException extends SingleException {
             return false;
         }
         FormatException other = (FormatException) obj;
-        return Objects.equals(this.beanClass, other.beanClass)
-                && Objects.equals(this.property, other.property)
-                && Objects.equals(getMessage(), other.getMessage());
+        return super.equals(other) && Objects.equals(this.beanClass, other.beanClass);
     }
+
 }

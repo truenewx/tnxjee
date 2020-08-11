@@ -2,7 +2,6 @@ package org.truenewx.tnxjee.web.view.security.config;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
@@ -12,7 +11,7 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.security.config.WebSecurityConfigurerSupport;
-import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionResolver;
+import org.truenewx.tnxjee.web.view.exception.resolver.ViewResolvableExceptionResolver;
 
 /**
  * WEB视图层安全配置支持
@@ -20,15 +19,17 @@ import org.truenewx.tnxjee.web.view.exception.resolver.ViewBusinessExceptionReso
 public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfigurerSupport {
 
     @Autowired
-    private ViewBusinessExceptionResolver viewBusinessExceptionResolver;
+    private ViewResolvableExceptionResolver viewResolvableExceptionResolver;
     @Autowired
     private WebMvcProperties mvcProperties;
 
     @Bean
     @Override
     public AccessDeniedHandler accessDeniedHandler() {
-        AccessDeniedHandlerImpl accessDeniedHandler = (AccessDeniedHandlerImpl) super.accessDeniedHandler();
-        accessDeniedHandler.setErrorPage(this.viewBusinessExceptionResolver.getErrorPath());
+        AccessDeniedHandlerImpl accessDeniedHandler =
+                (AccessDeniedHandlerImpl) super.accessDeniedHandler();
+        accessDeniedHandler
+                .setErrorPage(this.viewResolvableExceptionResolver.getBusinessErrorPath());
         return accessDeniedHandler;
     }
 

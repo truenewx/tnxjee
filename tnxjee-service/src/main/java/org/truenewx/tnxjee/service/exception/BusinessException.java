@@ -1,9 +1,8 @@
 package org.truenewx.tnxjee.service.exception;
 
 import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.service.exception.model.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.MessagedError;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -14,7 +13,6 @@ public class BusinessException extends SingleException {
 
     private static final long serialVersionUID = 3188183601455385859L;
 
-    private String code;
     private Object[] args;
 
     public BusinessException(String code, Object... args) {
@@ -23,27 +21,12 @@ public class BusinessException extends SingleException {
         this.args = args;
     }
 
-    public BusinessException(BusinessError error) {
-        super(error.getMessage());
-        this.code = error.getCode();
-        this.property = error.getField();
-    }
-
-    public String getCode() {
-        return this.code;
+    public BusinessException(MessagedError error) {
+        super(error);
     }
 
     public Object[] getArgs() {
         return this.args;
-    }
-
-    /**
-     * 判断异常错误消息是否已经过本地化处理，经过本地化处理后方可呈现给用户查看
-     *
-     * @return 异常错误消息是否已经过本地化处理
-     */
-    public boolean isMessageLocalized() {
-        return !this.code.equals(getLocalizedMessage());
     }
 
     /**
@@ -68,7 +51,7 @@ public class BusinessException extends SingleException {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.code, this.args);
+        return super.hashCode() + Objects.hash(this.args);
     }
 
     @Override
@@ -80,8 +63,7 @@ public class BusinessException extends SingleException {
             return false;
         }
         BusinessException other = (BusinessException) obj;
-        return Objects.deepEquals(this.code, other.code)
-                && Objects.deepEquals(this.args, other.args);
+        return super.equals(other) && Objects.deepEquals(this.args, other.args);
     }
 
 }

@@ -1,20 +1,20 @@
 package org.truenewx.tnxjee.service.exception.model;
 
 /**
- * 业务错误消息
+ * 已消息化的错误
  *
  * @author jianglei
  */
-public class BusinessError {
+public class MessagedError {
 
     private String message;
     private String code;
     private String field;
 
-    public BusinessError() {
+    public MessagedError() {
     }
 
-    public BusinessError(String message, String code, String field) {
+    public MessagedError(String message, String code, String field) {
         this.code = code;
         this.message = message;
         this.field = field;

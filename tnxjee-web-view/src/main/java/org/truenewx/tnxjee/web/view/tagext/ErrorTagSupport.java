@@ -1,12 +1,10 @@
 package org.truenewx.tnxjee.web.view.tagext;
 
 import java.util.List;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
-
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.model.BusinessError;
+import org.truenewx.tnxjee.service.exception.model.MessagedError;
 import org.truenewx.tnxjee.web.exception.message.ResolvableExceptionMessageSaver;
 
 /**
@@ -20,16 +18,13 @@ public abstract class ErrorTagSupport extends TagSupport {
 
     protected String field = Strings.ASTERISK;
 
-
     public void setField(String field) {
         this.field = field;
     }
 
-
-    @SuppressWarnings("unchecked")
-    protected List<BusinessError> getErrors() {
+    protected List<MessagedError> getErrors() {
         ServletRequest request = this.pageContext.getRequest();
-        return (List<BusinessError>) request
+        return (List<MessagedError>) request
                 .getAttribute(ResolvableExceptionMessageSaver.ATTRIBUTE);
     }
 
@@ -42,12 +37,12 @@ public abstract class ErrorTagSupport extends TagSupport {
     }
 
     private boolean hasError() {
-        List<BusinessError> errors = getErrors();
+        List<MessagedError> errors = getErrors();
         if (errors != null) {
             if (Strings.ASTERISK.equals(this.field)) {
                 return errors.size() > 0;
             }
-            for (BusinessError error : errors) {
+            for (MessagedError error : errors) {
                 if (this.field.equals(error.getField())) {
                     return true;
                 }
