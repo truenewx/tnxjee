@@ -10,6 +10,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.boot.Metadata;
 import org.hibernate.mapping.PersistentClass;
+import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
@@ -68,7 +70,15 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     public EntityManager getCurrentEntityManager() {
-        return this.entityManagerFactory.createEntityManager();
+        EntityManagerHolder entityManagerHolder = (EntityManagerHolder) TransactionSynchronizationManager
+                .getResource(this.entityManagerFactory);
+        if (entityManagerHolder == null) {
+            entityManagerHolder = new EntityManagerHolder(
+                    this.entityManagerFactory.createEntityManager());
+            TransactionSynchronizationManager
+                    .bindResource(this.entityManagerFactory, entityManagerHolder);
+        }
+        return entityManagerHolder.getEntityManager();
     }
 
     public PersistentClass getPersistentClass(String entityName) {
@@ -82,7 +92,8 @@ public class JpaAccessTemplate implements DataAccessTemplate {
      * @return 原生SQL方式的访问模板
      */
     public JpaAccessTemplate createNative() {
-        JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory, this.metadataProvider);
+        JpaAccessTemplate template = new JpaAccessTemplate(this.schema, this.entityManagerFactory,
+                this.metadataProvider);
         template.nativeMode = true;
         return template;
     }
