@@ -1,9 +1,6 @@
 package org.truenewx.tnxjee.model.query;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -18,11 +15,7 @@ public class QueryResult<T> implements Iterable<T> {
     private Paged paged;
 
     public QueryResult(List<T> records, Paged paged) {
-        if (records == null) {
-            this.records = Collections.emptyList();
-        } else {
-            this.records = records;
-        }
+        this.records = Objects.requireNonNullElse(records, Collections.emptyList());
         this.paged = paged;
     }
 
@@ -57,7 +50,7 @@ public class QueryResult<T> implements Iterable<T> {
         return this.records.iterator();
     }
 
-    public <R> QueryResult<R> transfer(Function<T, R> function) {
+    public <R> QueryResult<R> map(Function<T, R> function) {
         List<R> list = new ArrayList<>();
         this.records.forEach(record -> {
             list.add(function.apply(record));
