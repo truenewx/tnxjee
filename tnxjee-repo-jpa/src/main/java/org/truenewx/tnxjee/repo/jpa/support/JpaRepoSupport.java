@@ -1,5 +1,14 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,21 +24,13 @@ import org.truenewx.tnxjee.repo.jpa.util.OqlUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
 import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
 
-import javax.persistence.metamodel.Metamodel;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * JPA的数据访问仓库支持
  *
  * @author jianglei
  */
-public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> implements JpaRepo<T> {
+public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
+        implements JpaRepo<T> {
 
     @Autowired
     private ModelPropertyLimitValueManager propertyLimitValueManager;
@@ -54,7 +55,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         getAccessTemplate().refresh(entity);
     }
 
-    private QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo, QuerySort sort,
+    private QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize,
+            int pageNo, QuerySort sort,
             boolean totalable, boolean listable) {
         Long total = null;
         if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
@@ -82,9 +84,11 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         return QueryResult.of(records, pageSize, pageNo, total);
     }
 
-    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, QueryModel queryModel) {
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params,
+            QueryModel queryModel) {
         Paging paging = queryModel.getPaging();
-        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(), queryModel.isTotalable(),
+        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(),
+                queryModel.isTotalable(),
                 queryModel.isListable());
     }
 
@@ -92,13 +96,15 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort());
     }
 
-    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize,
+            int pageNo,
             QuerySort sort) {
         return query(ql, params, pageSize, pageNo, sort, true, true);
     }
 
     protected final Column getColumn(String propertyName) {
-        return (Column) getAccessTemplate().getPersistentClass(getEntityName()).getProperty(propertyName)
+        return (Column) getAccessTemplate().getPersistentClass(getEntityName())
+                .getProperty(propertyName)
                 .getColumnIterator().next();
     }
 
@@ -117,16 +123,13 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 if (min != null) {
                     minValue = min.value();
                 } else {
-                    DecimalMin decimalMin = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMin.class);
+                    DecimalMin decimalMin = ClassUtil
+                            .findAnnotation(getEntityClass(), propertyName, DecimalMin.class);
                     if (decimalMin != null) {
                         minValue = MathUtil.parseDecimal(decimalMin.value(), null);
                     }
                 }
 
-                Metamodel metamodel = getAccessTemplate().getCurrentEntityManager().getMetamodel();
-                metamodel.getManagedTypes().forEach(type -> {
-
-                });
                 @SuppressWarnings("unchecked")
                 Class<? extends Number> type = (Class<? extends Number>) propertyClass;
                 Column column = getColumn(propertyName);
@@ -134,7 +137,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 int scale = column.getScale();
                 Number minValue2 = MathUtil.minValue(type, precision, scale);
                 // 两个最小值中的较大者，才是实际允许的最小值
-                if (minValue2.doubleValue() > minValue.doubleValue()) {
+                if (minValue2 != null && minValue2.doubleValue() > minValue.doubleValue()) {
                     minValue = minValue2;
                 }
             }
@@ -158,7 +161,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 if (max != null) {
                     maxValue = max.value();
                 } else {
-                    DecimalMax decimalMax = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMax.class);
+                    DecimalMax decimalMax = ClassUtil
+                            .findAnnotation(getEntityClass(), propertyName, DecimalMax.class);
                     if (decimalMax != null) {
                         maxValue = MathUtil.parseDecimal(decimalMax.value(), null);
                     }
@@ -180,7 +184,8 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         return maxValue;
     }
 
-    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params, String propertyName,
+    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params,
+            String propertyName,
             boolean positive, Number limit) {
         if (positive) { // 增量为正时需限定最大值
             Number maxValue = limit == null ? getNumberPropertyMaxValue(propertyName) : limit;
