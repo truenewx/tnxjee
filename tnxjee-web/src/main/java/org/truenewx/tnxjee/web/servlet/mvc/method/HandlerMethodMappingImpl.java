@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.http.HttpAction;
 
 /**
@@ -42,17 +43,32 @@ public class HandlerMethodMappingImpl implements HandlerMethodMapping {
             this.handlerMethods = new HashMap<>();
             this.handlerMapping.getHandlerMethods().forEach((request, handlerMethod) -> {
                 request.getPatternsCondition().getPatterns().forEach(pattern -> {
+                    // 确保以/开头
+                    if (!pattern.startsWith(Strings.SLASH)) {
+                        pattern = Strings.SLASH + pattern;
+                    }
                     Set<RequestMethod> requestMethods = request.getMethodsCondition().getMethods();
-                    if (requestMethods.isEmpty()) {
-                        HttpAction action = new HttpAction(pattern);
-                        this.handlerMethods.put(action, handlerMethod);
-                    } else {
-                        requestMethods.forEach(requestMethod -> {
-                            HttpAction action = new HttpAction(pattern, requestMethod);
-                            this.handlerMethods.put(action, handlerMethod);
-                        });
+                    addHandlerMethod(pattern, handlerMethod, requestMethods);
+                    // 如果有路径变量，则转换为通配符路径，再次缓存一次，以支持匹配通配符路径
+                    String wildcardPattern = pattern
+                            .replaceAll("\\{[a-zA-Z0-9_]+}", Strings.ASTERISK);
+                    if (!wildcardPattern.equals(pattern)) {
+                        addHandlerMethod(wildcardPattern, handlerMethod, requestMethods);
                     }
                 });
+            });
+        }
+    }
+
+    private void addHandlerMethod(String pattern, HandlerMethod handlerMethod,
+            Set<RequestMethod> requestMethods) {
+        if (requestMethods.isEmpty()) {
+            HttpAction action = new HttpAction(pattern);
+            this.handlerMethods.put(action, handlerMethod);
+        } else {
+            requestMethods.forEach(requestMethod -> {
+                HttpAction action = new HttpAction(pattern, requestMethod);
+                this.handlerMethods.put(action, handlerMethod);
             });
         }
     }
