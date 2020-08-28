@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.8.RELEASE</version>
+        <version>2.2.9.RELEASE</version>
     </parent>
     <groupId>org.truenewx</groupId>
     <artifactId>tnxjee</artifactId>
@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR6</version><!-- 对应spring-boot-2.2 -->
+                <version>Hoxton.SR7</version><!-- 对应spring-boot-2.2 -->
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
