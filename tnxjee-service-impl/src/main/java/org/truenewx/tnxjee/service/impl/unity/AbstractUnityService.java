@@ -1,13 +1,12 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
+import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.service.impl.AbstractService;
-import org.truenewx.tnxjee.service.unity.ModelUnityService;
+import org.truenewx.tnxjee.service.unity.CommandUnityService;
 import org.truenewx.tnxjee.service.unity.SimpleUnityService;
-
-import java.io.Serializable;
 
 /**
  * 抽象的单体服务
@@ -16,8 +15,8 @@ import java.io.Serializable;
  * @param <K> 单体标识类型
  * @author jianglei
  */
-public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable> extends AbstractService<T>
-        implements SimpleUnityService<T, K>, ModelUnityService<T, K> {
+public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable>
+        extends AbstractService<T> implements SimpleUnityService<T, K>, CommandUnityService<T, K> {
 
     @Override
     public T find(K id) {

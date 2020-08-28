@@ -1,17 +1,17 @@
 package org.truenewx.tnxjee.service.unity;
 
+import java.io.Serializable;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 
-import java.io.Serializable;
-
 /**
- * 基于传输模型的单体服务
+ * 基于命令模型的单体服务
  *
  * @author jianglei
  */
-public interface ModelUnityService<T extends Unity<K>, K extends Serializable>
+public interface CommandUnityService<T extends Unity<K>, K extends Serializable>
         extends UnityService<T, K> {
+
     /**
      * 添加单体
      *

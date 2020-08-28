@@ -1,9 +1,8 @@
 package org.truenewx.tnxjee.service.unity;
 
+import java.io.Serializable;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-
-import java.io.Serializable;
 
 /**
  * 通过命令模型传递数据的从属单体业务逻辑校验器<br/>
@@ -11,7 +10,7 @@ import java.io.Serializable;
  *
  * @author jianglei
  */
-public interface ModelOwnedUnityBusinessValidator<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable> {
+public interface CommandOwnedUnityBusinessValidator<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable> {
 
     /**
      * 验证指定id的指定单体数据的业务逻辑合法性

@@ -1,17 +1,17 @@
 package org.truenewx.tnxjee.service.unity;
 
+import java.io.Serializable;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 
-import java.io.Serializable;
-
 /**
- * 基于传输模型的从属单体服务
+ * 基于命令模型的从属单体服务
  *
  * @author jianglei
  */
-public interface ModelOwnedUnityService<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
+public interface CommandOwnedUnityService<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
         extends OwnedUnityService<T, K, O> {
+
     /**
      * 添加从属单体
      *
@@ -31,4 +31,5 @@ public interface ModelOwnedUnityService<T extends OwnedUnity<K, O>, K extends Se
      * @return 修改后的单体
      */
     T update(O owner, K id, CommandModel<T> commandModel);
+
 }

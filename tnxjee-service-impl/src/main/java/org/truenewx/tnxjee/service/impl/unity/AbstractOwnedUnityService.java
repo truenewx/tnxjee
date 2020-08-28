@@ -1,13 +1,12 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
+import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 import org.truenewx.tnxjee.repo.OwnedUnityRepo;
-import org.truenewx.tnxjee.service.unity.ModelOwnedUnityService;
+import org.truenewx.tnxjee.service.unity.CommandOwnedUnityService;
 import org.truenewx.tnxjee.service.unity.SimpleOwnedUnityService;
-
-import java.io.Serializable;
 
 /**
  * 抽象的从属单体的服务
@@ -19,7 +18,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
         extends AbstractUnityService<T, K>
-        implements SimpleOwnedUnityService<T, K, O>, ModelOwnedUnityService<T, K, O> {
+        implements SimpleOwnedUnityService<T, K, O>, CommandOwnedUnityService<T, K, O> {
 
     @Override
     public T find(O owner, K id) {

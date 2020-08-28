@@ -1,9 +1,8 @@
 package org.truenewx.tnxjee.service.relation;
 
+import java.io.Serializable;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
-
-import java.io.Serializable;
 
 /**
  * 通过命令模型传递数据的关系业务逻辑校验器<br/>
@@ -11,7 +10,7 @@ import java.io.Serializable;
  *
  * @author jianglei
  */
-public interface ModelRelationBusinessValidator<T extends Relation<L, R>, L extends Serializable, R extends Serializable> {
+public interface CommandRelationBusinessValidator<T extends Relation<L, R>, L extends Serializable, R extends Serializable> {
 
     /**
      * 验证指定id的指定单体数据的业务逻辑合法性
