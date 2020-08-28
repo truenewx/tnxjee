@@ -14,16 +14,14 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.truenewx.tnxjee.core.Strings;
-
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
 
 /**
  * 字符串工具类
@@ -31,6 +29,7 @@ import com.github.stuxuhai.jpinyin.PinyinHelper;
  * @author jianglei
  */
 public class StringUtil {
+
     /**
      * 随机字符串类型：纯数字
      */
@@ -47,7 +46,8 @@ public class StringUtil {
     /**
      * 表示IPv4地址的正则表达式
      */
-    public static final String IPv4_PATTERN = "([1-9]|[1-9]\\d|1\\d{2}|2[0-1]\\d|22[0-3])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";
+    public static final String IPv4_PATTERN =
+            "([1-9]|[1-9]\\d|1\\d{2}|2[0-1]\\d|22[0-3])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";
 
     /**
      * 表示IPv6地址的正则表达式
@@ -76,9 +76,11 @@ public class StringUtil {
     /**
      * 表示标准URL的正则表达式
      */
-    public static final String URL_PATTERN = "^((https?://)|(www\\.))[\\w-]+(\\.[\\w-]+)*(:\\d+)?(/[\\w-=~]+)*(/[\\w-=~]+(\\.\\w+)?)?/?(\\?\\w+(\\.\\w+)?=[\\da-z_\\.;#@%\\-]*(&\\w+(\\.\\w+)?=[\\da-z_\\.;#@%\\-]*)*)?$";
+    public static final String URL_PATTERN =
+            "^((https?://)|(www\\.))[\\w-]+(\\.[\\w-]+)*(:\\d+)?(/[\\w-=~]+)*(/[\\w-=~]+(\\.\\w+)?)?/?(\\?\\w+(\\.\\w+)?=[\\da-z_\\.;#@%\\-]*(&\\w+(\\.\\w+)?=[\\da-z_\\.;#@%\\-]*)*)?$";
 
-    public static final String EMAIL_PATTERN = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+    public static final String EMAIL_PATTERN =
+            "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
     public static final String MOBILE_PHONE_PATTERN = "^1\\d{10}$";
 
@@ -115,35 +117,35 @@ public class StringUtil {
     public static String random(int type, int length) {
         byte[] b = new byte[length];
         switch (type) {
-            case RANDOM_TYPE_NUMBER: {
-                for (int i = 0; i < b.length; i++) {
-                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-                }
-                break;
+        case RANDOM_TYPE_NUMBER: {
+            for (int i = 0; i < b.length; i++) {
+                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
             }
-            case RANDOM_TYPE_LETTER: {
-                Random random = new Random();
-                for (int i = 0; i < b.length; i++) {
+            break;
+        }
+        case RANDOM_TYPE_LETTER: {
+            Random random = new Random();
+            for (int i = 0; i < b.length; i++) {
+                b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
+                if (random.nextBoolean()) {
+                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+                }
+            }
+            break;
+        }
+        case RANDOM_TYPE_MIXED: {
+            Random random = new Random();
+            for (int i = 0; i < b.length; i++) {
+                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
+                if (random.nextBoolean()) {
                     b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
-                    if (random.nextBoolean()) {
-                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
-                    }
                 }
-                break;
-            }
-            case RANDOM_TYPE_MIXED: {
-                Random random = new Random();
-                for (int i = 0; i < b.length; i++) {
-                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-                    if (random.nextBoolean()) {
-                        b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
-                    }
-                    if (random.nextBoolean()) {
-                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
-                    }
+                if (random.nextBoolean()) {
+                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
                 }
-                break;
             }
+            break;
+        }
         }
         return new String(b);
     }
@@ -978,6 +980,24 @@ public class StringUtil {
         } catch (PinyinException e) {
             return Strings.EMPTY;
         }
+    }
+
+    /**
+     * 获取指定字符串的拼音缩写
+     *
+     * @param s 字符串
+     * @return 拼音缩写
+     */
+    public static String toPinyinAbbr(String s) {
+        if (StringUtils.isBlank(s)) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            String pinyin = toPinyin(String.valueOf(c));
+            sb.append(pinyin.substring(0, 1));
+        }
+        return sb.toString();
     }
 
     public static boolean equalsIgnoreBlank(String s1, String s2) {
