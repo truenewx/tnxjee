@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo;
 
 import org.springframework.data.repository.Repository;
+import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
 
 /**
@@ -13,6 +14,8 @@ import org.truenewx.tnxjee.model.entity.Entity;
  */
 public interface Repo<T extends Entity> {
 
-    String getEntityName();
+    default String getEntityName() {
+        return ClassUtil.getActualGenericType(getClass(), Repo.class, 0).getName();
+    }
 
 }
