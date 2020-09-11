@@ -36,6 +36,7 @@ import org.truenewx.tnxjee.web.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.security.web.access.AccessDeniedBusinessExceptionHandler;
 import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
+import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlJudge;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 
@@ -44,7 +45,8 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
  */
 // 安全配置器与MVC配置器如果合并在同一个类中，web-view工程启动时无法即时注入配置属性实例，导致启动失败
 @EnableWebSecurity
-public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
+public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter
+        implements LoginUrlJudge {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
@@ -163,15 +165,13 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
                 .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
-        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-            .accessDeniedHandler(accessDeniedHandler())
-            .and()
-            .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
-            .logoutSuccessHandler(logoutSuccessHandler())
-            .deleteCookies(getLogoutClearCookies()).permitAll();
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest()
+                .authenticated().and().exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler()).and().logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
+                .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies())
+                .permitAll();
         configure(http.logout());
         // @formatter:on
         if (this.corsRegistryProperties.isEnabled()) {
@@ -255,8 +255,15 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return null;
     }
 
+    @Override
+    public boolean isLoginUrl(String url) {
+        String loginAjaxUrl = getLoginAjaxUrl();
+        return url.startsWith(getLoginFormUrl())
+                || (loginAjaxUrl != null && url.startsWith(loginAjaxUrl));
+    }
+
     protected String[] getLogoutClearCookies() {
-        return new String[]{ "JSESSIONID", "SESSION" };
+        return new String[] { "JSESSIONID", "SESSION" };
     }
 
     /**

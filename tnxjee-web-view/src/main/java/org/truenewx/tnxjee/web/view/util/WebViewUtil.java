@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.web.servlet.mvc.Loginer;
+import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlJudge;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
@@ -59,8 +59,8 @@ public class WebViewUtil {
             if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
-                Loginer loginer = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request),
-                        Loginer.class);
+                LoginUrlJudge loginer = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request),
+                        LoginUrlJudge.class);
                 if (loginer != null && loginer.isLoginUrl(prevUrl)) {
                     prevUrl = null;
                 }
