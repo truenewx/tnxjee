@@ -8,6 +8,7 @@ import java.io.Serializable;
  * @param <K> 标识的类型
  * @author jianglei
  */
+@Deprecated // JPA框架无法识别子类实体的id字段
 public abstract class AbstractUnity<K extends Serializable> implements Unity<K> {
     /**
      * 标识
