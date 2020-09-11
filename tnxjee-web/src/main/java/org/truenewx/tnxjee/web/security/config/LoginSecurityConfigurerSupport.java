@@ -30,6 +30,7 @@ public abstract class LoginSecurityConfigurerSupport<AP extends AuthenticationPr
 
     protected AP getAuthenticationProvider() {
         Class<AP> type = ClassUtil.getActualGenericType(getClass(), 0);
+        assert type != null;
         return this.context.getBean(type);
     }
 
