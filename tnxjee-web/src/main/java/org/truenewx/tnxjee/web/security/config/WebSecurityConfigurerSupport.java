@@ -1,12 +1,5 @@
 package org.truenewx.tnxjee.web.security.config;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,9 +29,16 @@ import org.truenewx.tnxjee.web.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.web.security.web.access.AccessDeniedBusinessExceptionHandler;
 import org.truenewx.tnxjee.web.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.web.security.web.authentication.WebAuthenticationEntryPoint;
-import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlJudge;
+import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * WEB安全配置器支持
@@ -46,7 +46,7 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
 // 安全配置器与MVC配置器如果合并在同一个类中，web-view工程启动时无法即时注入配置属性实例，导致启动失败
 @EnableWebSecurity
 public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter
-        implements LoginUrlJudge {
+        implements LoginUrlResolver {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
@@ -184,7 +184,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     /**
      * 加载登录配置
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected final void applyLoginConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
@@ -241,17 +241,14 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         return matchers;
     }
 
-    /**
-     * @return 表单登录地址
-     */
-    protected String getLoginFormUrl() {
+
+    @Override
+    public String getLoginFormUrl() {
         return "/login";
     }
 
-    /**
-     * @return AJAX登录地址
-     */
-    protected String getLoginAjaxUrl() {
+    @Override
+    public String getLoginAjaxUrl() {
         return null;
     }
 
@@ -263,7 +260,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     }
 
     protected String[] getLogoutClearCookies() {
-        return new String[] { "JSESSIONID", "SESSION" };
+        return new String[]{"JSESSIONID", "SESSION"};
     }
 
     /**

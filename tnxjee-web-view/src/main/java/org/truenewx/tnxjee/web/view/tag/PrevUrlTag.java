@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
-import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlJudge;
+import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.web.util.SpringWebUtil;
 import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.web.view.util.WebViewUtil;
@@ -46,8 +46,8 @@ public class PrevUrlTag extends TagSupport {
                 prevUrl = null;
             } else {
                 ApplicationContext context = SpringWebUtil.getApplicationContext(request);
-                LoginUrlJudge loginer = SpringUtil.getFirstBeanByClass(context, LoginUrlJudge.class);
-                if (loginer != null && prevUrl != null && loginer.isLoginUrl(prevUrl)) {
+                LoginUrlResolver loginUrlResolver = SpringUtil.getFirstBeanByClass(context, LoginUrlResolver.class);
+                if (loginUrlResolver != null && loginUrlResolver.isLoginUrl(prevUrl)) {
                     prevUrl = null;
                 }
             }

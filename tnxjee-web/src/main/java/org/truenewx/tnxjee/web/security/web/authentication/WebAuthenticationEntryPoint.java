@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
@@ -36,28 +37,28 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     }
 
     @Override
-    protected String determineUrlToUseForThisRequest(HttpServletRequest request,
-            HttpServletResponse response, AuthenticationException exception) {
-        if (supports(request)) {
+    protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception) {
+        if (WebUtil.isAjaxRequest(request) && this.loginAjaxUrl != null) {
             return this.loginAjaxUrl;
         }
         return getLoginFormUrl();
     }
 
-    private boolean supports(HttpServletRequest request) {
-        return this.loginAjaxUrl != null && WebUtil.isAjaxRequest(request);
-    }
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        if (supports(request)) {
+        if (WebUtil.isAjaxRequest(request)) {
             String redirectLoginUrl = buildRedirectUrlToLoginPage(request, response, authException);
             Integer status = this.responseStatusFunction == null ? null :
                     this.responseStatusFunction.apply(redirectLoginUrl);
             // 不是默认状态，则进行特殊的跳转
             if (status != null && status != HttpServletResponse.SC_FOUND) {
-                this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
+                if (this.loginAjaxUrl != null) { // ajax请求但未指定ajax登录地址，则指定普通跳转到登录地址
+                    this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
+                } else {
+                    response.setHeader(WebConstants.HEADER_LOGIN_URL, redirectLoginUrl);
+                }
                 response.setStatus(status);
                 return;
             }

@@ -1,10 +1,5 @@
 package org.truenewx.tnxjee.web.config;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +13,11 @@ import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * WEB MVC配置器支持，可选的控制层配置均在此配置支持体系中
@@ -78,6 +78,8 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
 
     protected void addExposedHeaders(Collection<String> exposedHeaders) {
         exposedHeaders.add(WebConstants.HEADER_REDIRECT_TO);
+        exposedHeaders.add(WebConstants.HEADER_LOGIN_URL);
+        exposedHeaders.add(WebConstants.HEADER_ORIGINAL_REQUEST);
     }
 
 }

@@ -1,19 +1,18 @@
 package org.truenewx.tnxjee.web.view.util;
 
-import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlResolver;
+import org.truenewx.tnxjee.web.util.SpringWebUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlJudge;
-import org.truenewx.tnxjee.web.util.SpringWebUtil;
-import org.truenewx.tnxjee.web.util.WebUtil;
+import java.io.IOException;
 
 /**
  * Web视图层工具类
@@ -37,7 +36,7 @@ public class WebViewUtil {
      * @throws IOException 如果重定向时出现IO错误
      */
     public static void redirect(HttpServletRequest request, HttpServletResponse response,
-            String url)
+                                String url)
             throws IOException {
         String location = url;
         if (!location.toLowerCase().startsWith("http://") && !location.toLowerCase().startsWith("https://")) {
@@ -59,9 +58,9 @@ public class WebViewUtil {
             if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
-                LoginUrlJudge loginer = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request),
-                        LoginUrlJudge.class);
-                if (loginer != null && loginer.isLoginUrl(prevUrl)) {
+                LoginUrlResolver loginUrlResolver = SpringUtil.getFirstBeanByClass(SpringWebUtil.getApplicationContext(request),
+                        LoginUrlResolver.class);
+                if (loginUrlResolver != null && loginUrlResolver.isLoginUrl(prevUrl)) {
                     prevUrl = null;
                 }
             }
@@ -77,7 +76,7 @@ public class WebViewUtil {
      * @return 前一个请求的URL
      */
     public static String getRelativePreviousUrl(HttpServletRequest request,
-            boolean containsQueryString) {
+                                                boolean containsQueryString) {
         String referrer = request.getHeader("Referer");
         if (StringUtils.isNotBlank(referrer)) {
             String root = WebUtil.getProtocolAndHost(request);
