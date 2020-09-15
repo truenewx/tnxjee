@@ -1,8 +1,8 @@
 package org.truenewx.tnxjee.repo;
 
-import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-
 import java.io.Serializable;
+
+import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 
 /**
  * 从属单体的数据访问仓库
@@ -41,5 +41,7 @@ public interface OwnedUnityRepo<T extends OwnedUnity<K, O>, K extends Serializab
      * @param limit        增减后允许的最大/最小值，设定以避免数值超限
      * @return 单体
      */
-    <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit);
+    default <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit) {
+        throw new UnsupportedOperationException();
+    }
 }
