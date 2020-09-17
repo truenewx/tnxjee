@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo.jpa.repository;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -16,5 +17,10 @@ import org.truenewx.tnxjee.repo.RelationRepo;
 @NoRepositoryBean
 public interface JpaRelationRepository<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends JpaRepository<T, RelationKey<L, R>>, RelationRepo<T, L, R> {
+
+    @Override
+    default Optional<T> findById(RelationKey<L, R> id) {
+        return findById(id.getLeft(), id.getRight());
+    }
 
 }

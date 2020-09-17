@@ -9,7 +9,9 @@ import java.io.Serializable;
  */
 public interface UserIdentity<K extends Serializable> extends Serializable {
 
-    String getType();
+    default String getType() {
+        return null;
+    }
 
     K getId();
 

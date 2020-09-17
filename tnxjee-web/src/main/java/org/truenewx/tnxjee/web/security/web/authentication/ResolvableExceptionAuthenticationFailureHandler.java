@@ -42,6 +42,10 @@ public class ResolvableExceptionAuthenticationFailureHandler
         this.targetUrlFunction = targetUrlFunction;
     }
 
+    public Function<HttpServletRequest, String> getTargetUrlFunction() {
+        return this.targetUrlFunction;
+    }
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {

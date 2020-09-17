@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo.mongo.repository;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -16,5 +17,10 @@ import org.truenewx.tnxjee.repo.RelationRepo;
 @NoRepositoryBean
 public interface MongoRelationRepository<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends MongoRepository<T, RelationKey<L, R>>, RelationRepo<T, L, R> {
+
+    @Override
+    default Optional<T> findById(RelationKey<L, R> id) {
+        return findById(id.getLeft(), id.getRight());
+    }
 
 }

@@ -57,19 +57,24 @@ public class DefaultUserIdentity implements IntegerUserIdentity {
 
     @Override
     public String toString() {
-        String type = this.type == null ? Strings.EMPTY : this.type;
-        String id = this.id == null ? Strings.EMPTY : this.id.toString();
-        // 格式：type:id
-        return type + Strings.COLON + id;
+        String s = this.id == null ? Strings.EMPTY : this.id.toString();
+        if (this.type != null) {
+            // 格式：id@type
+            s += Strings.AT + this.type;
+        }
+        return s;
     }
 
     public static DefaultUserIdentity of(String s) {
-        int index = s.indexOf(Strings.COLON);
-        if (index < 1) {
-            return null;
+        String type = null;
+        Integer id;
+        int index = s.indexOf(Strings.AT);
+        if (index < 0) { // 只有id没有type
+            id = MathUtil.parseInteger(s);
+        } else { // 有type
+            type = s.substring(0, index);
+            id = MathUtil.parseInteger(s.substring(index + 1));
         }
-        String type = s.substring(0, index);
-        Integer id = MathUtil.parseInteger(s.substring(index + 1));
         return new DefaultUserIdentity(type, id);
     }
 

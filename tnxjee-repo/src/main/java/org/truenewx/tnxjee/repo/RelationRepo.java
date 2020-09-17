@@ -16,7 +16,9 @@ import org.truenewx.tnxjee.model.entity.relation.Relation;
 public interface RelationRepo<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends Repo<T> {
 
-    Optional<T> findById(L leftId, R rightId);
+    default Optional<T> findById(L leftId, R rightId) {
+        throw new UnsupportedOperationException();
+    }
 
     default boolean exists(L leftId, R rightId) {
         throw new UnsupportedOperationException();

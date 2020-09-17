@@ -22,7 +22,7 @@ public class AppConfiguration {
     }
 
     /**
-     * @param userType 对应的用户类型，默认为空，表示不限定用户类型
+     * @param userType 对应的用户类型，默认为空，表示无用户类型区别
      */
     public void setUserType(String userType) {
         this.userType = userType;
