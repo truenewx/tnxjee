@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.view.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserMenuResolverImpl implements UserMenuResolver {
         Menu fullMenu = this.manager.getFullMenu();
         if (fullMenu != null) {
             UserSpecificDetails<IntegerUserIdentity> details = SecurityUtil.getAuthorizedUserDetails();
-            if (details != null && details.getIdentity().getType().equals(fullMenu.getUserType())) {
+            if (details != null && Objects.equals(details.getIdentity().getType(), fullMenu.getUserType())) {
                 Menu menu;
                 String sessionAttributeName = this.properties.getSessionAttributeName();
                 if (StringUtils.isNotBlank(sessionAttributeName)) {
@@ -82,7 +83,8 @@ public class UserMenuResolverImpl implements UserMenuResolver {
                 // 不匹配则尝试比较所有操作
                 for (MenuOperation operation : link.getOperations()) {
                     if (StringUtil.equalsIgnoreBlank(configAuthority.getRank(), operation.getRank())
-                            && StringUtil.equalsIgnoreBlank(configAuthority.getPermission(), operation.getPermission())) {
+                            && StringUtil
+                            .equalsIgnoreBlank(configAuthority.getPermission(), operation.getPermission())) {
                         // 菜单链接下有操作的权限与地址所需权限匹配，则视为菜单链接匹配
                         indexes.add(i);
                         return; // 找到匹配的直接返回

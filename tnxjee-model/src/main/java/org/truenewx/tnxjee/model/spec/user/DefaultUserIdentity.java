@@ -72,8 +72,8 @@ public class DefaultUserIdentity implements IntegerUserIdentity {
         if (index < 0) { // 只有id没有type
             id = MathUtil.parseInteger(s);
         } else { // 有type
-            type = s.substring(0, index);
-            id = MathUtil.parseInteger(s.substring(index + 1));
+            id = MathUtil.parseInteger(s.substring(0, index));
+            type = s.substring(index + 1);
         }
         return new DefaultUserIdentity(type, id);
     }
