@@ -21,28 +21,22 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
 
     @Autowired
     private RedirectStrategy redirectStrategy;
-    private String loginAjaxUrl;
     private Function<String, Integer> responseStatusFunction = redirectUrl -> {
         // AJAX请求无法正确执行302跳转至开启CORS的目标地址，未登录时默认报401错误
         return HttpServletResponse.SC_UNAUTHORIZED;
     };
+    private boolean ajaxToForm;
 
-    public WebAuthenticationEntryPoint(String loginFormUrl, String loginAjaxUrl) {
+    public WebAuthenticationEntryPoint(String loginFormUrl) {
         super(loginFormUrl);
-        this.loginAjaxUrl = loginAjaxUrl;
     }
 
     public void setResponseStatusFunction(Function<String, Integer> responseStatusFunction) {
         this.responseStatusFunction = responseStatusFunction;
     }
 
-    @Override
-    protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException exception) {
-        if (WebUtil.isAjaxRequest(request) && this.loginAjaxUrl != null) {
-            return this.loginAjaxUrl;
-        }
-        return getLoginFormUrl();
+    public void setAjaxToForm(boolean ajaxToForm) {
+        this.ajaxToForm = ajaxToForm;
     }
 
     @Override
@@ -54,10 +48,10 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
                     this.responseStatusFunction.apply(redirectLoginUrl);
             // 不是默认状态，则进行特殊的跳转
             if (status != null && status != HttpServletResponse.SC_FOUND) {
-                if (this.loginAjaxUrl != null) { // ajax请求但未指定ajax登录地址，则指定普通跳转到登录地址
-                    this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
-                } else {
+                if (this.ajaxToForm) {
                     response.setHeader(WebConstants.HEADER_LOGIN_URL, redirectLoginUrl);
+                } else {
+                    this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
                 }
                 response.setStatus(status);
                 return;

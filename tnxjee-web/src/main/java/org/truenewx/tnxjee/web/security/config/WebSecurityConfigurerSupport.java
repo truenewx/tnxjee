@@ -1,5 +1,12 @@
 package org.truenewx.tnxjee.web.security.config;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,13 +40,6 @@ import org.truenewx.tnxjee.web.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.web.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
 /**
  * WEB安全配置器支持
  */
@@ -70,7 +70,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
      */
     @Bean
     public WebAuthenticationEntryPoint authenticationEntryPoint() {
-        return new WebAuthenticationEntryPoint(getLoginFormUrl(), getLoginAjaxUrl());
+        return new WebAuthenticationEntryPoint(getLoginFormUrl());
     }
 
     /**
@@ -184,7 +184,7 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     /**
      * 加载登录配置
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected final void applyLoginConfigurers(HttpSecurity http) throws Exception {
         Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
                 .getBeansOfType(SecurityConfigurerAdapter.class).values();
@@ -212,10 +212,6 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         // 打开登录表单页面和登出的请求始终可匿名访问
         // 注意：不能将请求URL加入忽略清单中，如果加入，则请求将无法经过安全框架过滤器处理
         matchers.add(new AntPathRequestMatcher(getLoginFormUrl(), HttpMethod.GET.name()));
-        String loginAjaxUrl = getLoginAjaxUrl();
-        if (StringUtils.isNotBlank(loginAjaxUrl)) {
-            matchers.add(new AntPathRequestMatcher(getLoginAjaxUrl(), HttpMethod.GET.name()));
-        }
         matchers.add(new AntPathRequestMatcher(getLogoutProcessUrl()));
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
@@ -248,19 +244,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
     }
 
     @Override
-    public String getLoginAjaxUrl() {
-        return null;
-    }
-
-    @Override
     public boolean isLoginUrl(String url) {
-        String loginAjaxUrl = getLoginAjaxUrl();
-        return url.startsWith(getLoginFormUrl())
-                || (loginAjaxUrl != null && url.startsWith(loginAjaxUrl));
+        return url.startsWith(getLoginFormUrl());
     }
 
     protected String[] getLogoutClearCookies() {
-        return new String[]{"JSESSIONID", "SESSION"};
+        return new String[]{ "JSESSIONID", "SESSION" };
     }
 
     /**

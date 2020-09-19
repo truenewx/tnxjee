@@ -8,14 +8,9 @@ package org.truenewx.tnxjee.web.servlet.mvc;
 public interface LoginUrlResolver {
 
     /**
-     * @return 表单登录地址
+     * @return 登录表单地址
      */
     String getLoginFormUrl();
-
-    /**
-     * @return AJAX登录地址
-     */
-    String getLoginAjaxUrl();
 
     /**
      * 判断指定URL是否登录链接
