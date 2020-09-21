@@ -1,9 +1,9 @@
 package org.truenewx.tnxjee.web.validation.rule.mapper;
 
-import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
-
 import java.util.Locale;
 import java.util.Map;
+
+import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 
 /**
  * 校验规则映射集转换器

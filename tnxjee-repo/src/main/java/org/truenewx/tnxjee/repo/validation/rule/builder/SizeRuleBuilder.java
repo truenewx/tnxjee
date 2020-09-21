@@ -17,7 +17,7 @@ public class SizeRuleBuilder implements ValidationRuleBuilder<SizeRule> {
 
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { Size.class };
+        return new Class<?>[]{ Size.class };
     }
 
     @Override

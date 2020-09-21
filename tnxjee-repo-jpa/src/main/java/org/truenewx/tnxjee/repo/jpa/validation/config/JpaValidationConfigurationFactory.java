@@ -1,5 +1,12 @@
 package org.truenewx.tnxjee.repo.jpa.validation.config;
 
+import java.beans.PropertyDescriptor;
+import java.time.temporal.Temporal;
+import java.util.Date;
+import java.util.Iterator;
+
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
@@ -18,21 +25,15 @@ import org.truenewx.tnxjee.model.validation.rule.MarkRule;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.support.DataAccessTemplateFactory;
-import org.truenewx.tnxjee.repo.validation.config.RepoValidationConfigurationFactory;
-
-import javax.validation.constraints.NotBlank;
-import java.beans.PropertyDescriptor;
-import java.time.temporal.Temporal;
-import java.util.Date;
-import java.util.Iterator;
+import org.truenewx.tnxjee.repo.validation.config.DefaultValidationConfigurationFactory;
 
 /**
- * JPA数据层的校验配置工厂
+ * JPA的字段校验配置工厂
  *
  * @author jianglei
  */
 @Component
-public class JpaRepoValidationConfigurationFactory extends RepoValidationConfigurationFactory {
+public class JpaValidationConfigurationFactory extends DefaultValidationConfigurationFactory {
 
     private ValidationEntityNameStrategy entityNameStrategy = ValidationEntityNameStrategy.DEFAULT;
     @Autowired

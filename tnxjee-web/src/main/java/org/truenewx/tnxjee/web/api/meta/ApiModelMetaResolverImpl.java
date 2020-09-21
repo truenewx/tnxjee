@@ -4,7 +4,12 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.temporal.Temporal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 
@@ -35,8 +40,10 @@ import org.truenewx.tnxjee.web.validation.rule.mapper.ValidationRuleMapper;
 @Component
 public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextInitializedBean {
 
-    private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class, byte.class, Long.class, Integer.class, Short.class, Byte.class, BigInteger.class };
-    private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class, Float.class, BigDecimal.class };
+    private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class,
+            byte.class, Long.class, Integer.class, Short.class, Byte.class, BigInteger.class };
+    private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class,
+            Float.class, BigDecimal.class };
 
     @Autowired(required = false) // 如果工程未依赖tnxjee-repo-jpa，则可能没有该bean
     private ValidationConfigurationFactory validationConfigurationFactory;
@@ -68,8 +75,10 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                     .getConfiguration(modelClass);
             ClassUtil.loopFields(modelClass, null, field -> {
                 String propertyName = field.getName();
-                String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
-                if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+                String caption = this.propertyCaptionResolver.resolveCaption(modelClass,
+                        propertyName, locale);
+                if (propertyName.equals(caption)
+                        && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
                     caption = null;
                 }
                 ApiModelPropertyType type = getType(field);
@@ -80,7 +89,8 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                 }
                 Class<?> fieldType = field.getType();
                 if (fieldType.isEnum()) {
-                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), locale);
+                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(),
+                            locale);
                     if (enumType != null) {
                         meta.setEnums(enumType.getItems());
                     }

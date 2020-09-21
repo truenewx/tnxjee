@@ -32,7 +32,7 @@ public class RegexRuleBuilder implements ValidationRuleBuilder<RegexRule> {
 
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { Pattern.class };
+        return new Class<?>[]{ Pattern.class };
     }
 
     @Override

@@ -1,9 +1,5 @@
 package org.truenewx.tnxjee.model.validation.constraint;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -13,6 +9,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 import org.truenewx.tnxjee.model.validation.constraint.validator.NotContainsValidator;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * 不能包含字符串约束<br/>
@@ -27,7 +27,7 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.NotContainsVali
 @Constraint(validatedBy = NotContainsValidator.class)
 public @interface NotContains {
 
-    public static final String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.NotContains.message}";
+    String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.NotContains.message}";
 
     /**
      * @return 不能包含的字符串集，其中如有空格会被忽略

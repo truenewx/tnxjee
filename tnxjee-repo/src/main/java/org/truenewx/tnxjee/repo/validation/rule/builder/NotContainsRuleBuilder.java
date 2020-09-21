@@ -4,11 +4,7 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.model.validation.constraint.NotContains;
-import org.truenewx.tnxjee.model.validation.constraint.NotContainsAngleBracket;
-import org.truenewx.tnxjee.model.validation.constraint.NotContainsHtmlChars;
-import org.truenewx.tnxjee.model.validation.constraint.NotContainsSpecialChars;
-import org.truenewx.tnxjee.model.validation.constraint.NotContainsSqlChars;
+import org.truenewx.tnxjee.model.validation.constraint.*;
 import org.truenewx.tnxjee.model.validation.rule.NotContainsRule;
 
 /**
@@ -20,7 +16,7 @@ import org.truenewx.tnxjee.model.validation.rule.NotContainsRule;
 public class NotContainsRuleBuilder implements ValidationRuleBuilder<NotContainsRule> {
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { NotContains.class, NotContainsSqlChars.class,
+        return new Class<?>[]{ NotContains.class, NotContainsSqlChars.class,
                 NotContainsAngleBracket.class, NotContainsHtmlChars.class,
                 NotContainsSpecialChars.class };
     }

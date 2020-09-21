@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
  * 正则表达式规则
  *
  * @author jianglei
- * 
  */
 public class RegexRule extends ValidationRule {
     /**
@@ -21,10 +20,8 @@ public class RegexRule extends ValidationRule {
     /**
      * 用指定正则表达式构建
      *
-     * @param value
-     *            正则表达式
-     * @param message
-     *            校验不通过时显示的错误消息模板
+     * @param value   正则表达式
+     * @param message 校验不通过时显示的错误消息模板
      */
     public RegexRule(String expression, String message) {
         this.expression = expression;

@@ -4,7 +4,6 @@ package org.truenewx.tnxjee.model.validation.rule;
  * 校验规则
  *
  * @author jianglei
- * 
  */
 public abstract class ValidationRule {
 

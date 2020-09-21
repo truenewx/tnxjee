@@ -26,11 +26,11 @@ import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
 
 /**
- * 数据层的校验配置工厂
+ * 默认的字段校验配置工厂
  *
  * @author jianglei
  */
-public class RepoValidationConfigurationFactory
+public class DefaultValidationConfigurationFactory
         implements ValidationConfigurationFactory, ContextInitializedBean {
 
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();

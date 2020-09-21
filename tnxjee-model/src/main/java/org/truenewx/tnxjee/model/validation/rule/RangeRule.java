@@ -3,9 +3,8 @@ package org.truenewx.tnxjee.model.validation.rule;
 /**
  * 范围规则
  *
- * @author jianglei
- * 
  * @param <T> 值类型
+ * @author jianglei
  */
 public abstract class RangeRule<T> extends ValidationRule {
 

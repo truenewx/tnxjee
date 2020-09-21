@@ -16,7 +16,7 @@ public class TagLimitRuleBuilder implements ValidationRuleBuilder<TagLimitRule> 
 
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { TagLimit.class };
+        return new Class<?>[]{ TagLimit.class };
     }
 
     @Override

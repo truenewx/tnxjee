@@ -1,10 +1,6 @@
 package org.truenewx.tnxjee.model.validation.constraint;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -22,7 +18,7 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.TagLimitValidat
 @Constraint(validatedBy = TagLimitValidator.class)
 public @interface TagLimit {
 
-    public static final String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.TagLimit.message}";
+    String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.TagLimit.message}";
 
     /**
      * 允许的标签名称清单

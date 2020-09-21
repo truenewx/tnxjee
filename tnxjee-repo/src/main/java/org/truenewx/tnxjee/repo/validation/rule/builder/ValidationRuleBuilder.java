@@ -7,8 +7,8 @@ import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 /**
  * 校验规则构建器
  *
- * @author jianglei
  * @param <R> 校验规则类型
+ * @author jianglei
  */
 public interface ValidationRuleBuilder<R extends ValidationRule> {
 

@@ -3,11 +3,7 @@ package org.truenewx.tnxjee.repo.validation.rule.builder;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
 
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.LogUtil;
@@ -23,7 +19,7 @@ public class DecimalRuleBuilder implements ValidationRuleBuilder<DecimalRule> {
 
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[] { Digits.class, Min.class, Max.class, DecimalMin.class,
+        return new Class<?>[]{ Digits.class, Min.class, Max.class, DecimalMin.class,
                 DecimalMax.class };
     }
 

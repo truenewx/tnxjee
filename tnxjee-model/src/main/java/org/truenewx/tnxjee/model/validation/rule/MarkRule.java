@@ -9,7 +9,6 @@ import java.util.Set;
  * 标识规则
  *
  * @author jianglei
- * 
  */
 public class MarkRule extends ValidationRule {
 

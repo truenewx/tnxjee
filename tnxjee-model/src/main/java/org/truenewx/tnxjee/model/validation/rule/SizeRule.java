@@ -4,7 +4,6 @@ package org.truenewx.tnxjee.model.validation.rule;
  * 集合大小规则
  *
  * @author jianglei
- * 
  */
 public class SizeRule extends RangeRule<Integer> {
 
