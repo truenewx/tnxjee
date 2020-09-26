@@ -23,7 +23,9 @@
         <module>tnxjee-test</module>
         <module>tnxjee-test-service</module>
         <module>tnxjee-web</module>
-        <module>tnxjee-web-view</module>
+        <module>tnxjee-webflux</module>
+        <module>tnxjee-webmvc</module>
+        <module>tnxjee-webmvc-view</module>
     </modules>
     <organization>
         <name>truenewx</name>
@@ -126,15 +128,18 @@
             </dependency>
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-web-view</artifactId>
+                <artifactId>tnxjee-webflux</artifactId>
                 <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR7</version><!-- 对应spring-boot-2.2 -->
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.truenewx.tnxjee</groupId>
+                <artifactId>tnxjee-webmvc</artifactId>
+                <version>${tnxjee.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.truenewx.tnxjee</groupId>
+                <artifactId>tnxjee-webmvc-view</artifactId>
+                <version>${tnxjee.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -186,6 +191,11 @@
                 <groupId>org.im4java</groupId>
                 <artifactId>im4java</artifactId>
                 <version>1.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-core</artifactId>
+                <version>10.10.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
