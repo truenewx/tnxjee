@@ -1,18 +1,19 @@
 package org.truenewx.tnxjee.webmvc.view.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 /**
  * Web视图层工具类
@@ -36,7 +37,7 @@ public class WebViewUtil {
      * @throws IOException 如果重定向时出现IO错误
      */
     public static void redirect(HttpServletRequest request, HttpServletResponse response,
-                                String url)
+            String url)
             throws IOException {
         String location = url;
         if (!location.toLowerCase().startsWith("http://") && !location.toLowerCase().startsWith("https://")) {
@@ -54,12 +55,13 @@ public class WebViewUtil {
     public static String getPreviousUrl(HttpServletRequest request) {
         String prevUrl = getRelativePreviousUrl(request, true);
         if (prevUrl != null) {
-            String action = WebmvcUtil.getRelativeRequestAction(request);
+            String action = WebMvcUtil.getRelativeRequestAction(request);
             if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
-                LoginUrlResolver loginUrlResolver = SpringUtil.getFirstBeanByClass(SpringWebmvcUtil.getApplicationContext(request),
-                        LoginUrlResolver.class);
+                LoginUrlResolver loginUrlResolver = SpringUtil
+                        .getFirstBeanByClass(SpringWebMvcUtil.getApplicationContext(request),
+                                LoginUrlResolver.class);
                 if (loginUrlResolver != null && loginUrlResolver.isLoginUrl(prevUrl)) {
                     prevUrl = null;
                 }
@@ -76,10 +78,10 @@ public class WebViewUtil {
      * @return 前一个请求的URL
      */
     public static String getRelativePreviousUrl(HttpServletRequest request,
-                                                boolean containsQueryString) {
+            boolean containsQueryString) {
         String referrer = request.getHeader("Referer");
         if (StringUtils.isNotBlank(referrer)) {
-            String root = WebmvcUtil.getProtocolAndHost(request);
+            String root = WebMvcUtil.getProtocolAndHost(request);
             String contextPath = request.getContextPath();
             if (!contextPath.equals(Strings.SLASH)) {
                 root += contextPath;

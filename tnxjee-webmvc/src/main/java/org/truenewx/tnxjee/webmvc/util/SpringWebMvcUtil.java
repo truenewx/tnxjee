@@ -19,9 +19,9 @@ import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
  *
  * @author jianglei
  */
-public class SpringWebmvcUtil {
+public class SpringWebMvcUtil {
 
-    private SpringWebmvcUtil() {
+    private SpringWebMvcUtil() {
     }
 
     /**

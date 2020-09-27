@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * 枚举类型遍历标签
@@ -54,7 +54,7 @@ public class EnumForEachTag extends ForEachSupport implements LoopTag, Iteration
 
     private <T> T getBeanFromApplicationContext(Class<T> beanClass) {
         HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
-        ApplicationContext context = SpringWebmvcUtil.getApplicationContext(request);
+        ApplicationContext context = SpringWebMvcUtil.getApplicationContext(request);
         if (context != null) {
             return SpringUtil.getFirstBeanByClass(context, beanClass);
         }

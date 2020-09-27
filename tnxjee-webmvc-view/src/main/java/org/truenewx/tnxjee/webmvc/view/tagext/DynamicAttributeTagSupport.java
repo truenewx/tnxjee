@@ -16,7 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * 动态属性标签支持
@@ -73,7 +73,7 @@ public class DynamicAttributeTagSupport extends TagSupport implements DynamicAtt
      * @return bean对象
      */
     protected final <T> T getBeanFromApplicationContext(Class<T> beanClass) {
-        ApplicationContext context = SpringWebmvcUtil.getApplicationContext(getRequest());
+        ApplicationContext context = SpringWebMvcUtil.getApplicationContext(getRequest());
         if (context != null) {
             return SpringUtil.getFirstBeanByClass(context, beanClass);
         }

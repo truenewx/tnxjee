@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.webmvc.view.security.config;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
@@ -10,13 +11,13 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.webmvc.security.config.WebSecurityConfigurerSupport;
+import org.truenewx.tnxjee.webmvc.security.config.WebMvcSecurityConfigurerSupport;
 import org.truenewx.tnxjee.webmvc.view.exception.resolver.ViewResolvableExceptionResolver;
 
 /**
  * WEB视图层安全配置支持
  */
-public abstract class WebViewSecurityConfigurerSupport extends WebSecurityConfigurerSupport {
+public abstract class WebViewSecurityConfigurerSupport extends WebMvcSecurityConfigurerSupport {
 
     @Autowired
     private ViewResolvableExceptionResolver viewResolvableExceptionResolver;

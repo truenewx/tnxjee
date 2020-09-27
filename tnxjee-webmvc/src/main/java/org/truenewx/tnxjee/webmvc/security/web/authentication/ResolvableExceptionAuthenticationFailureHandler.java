@@ -18,7 +18,7 @@ import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.webmvc.exception.message.ResolvableExceptionMessageSaver;
 import org.truenewx.tnxjee.webmvc.security.core.AuthenticationFailureException;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 /**
  * 基于可解决异常的登录认证失败处理器
@@ -52,7 +52,7 @@ public class ResolvableExceptionAuthenticationFailureHandler
         saveException(request, response, exception);
 
         // AJAX请求登录认证失败直接报401错误
-        if (WebmvcUtil.isAjaxRequest(request)) {
+        if (WebMvcUtil.isAjaxRequest(request)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(),
                     HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {

@@ -29,8 +29,9 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
+import org.truenewx.tnxjee.web.security.WebSecurityProperties;
 import org.truenewx.tnxjee.webmvc.api.meta.ApiMetaController;
-import org.truenewx.tnxjee.webmvc.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.webmvc.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.webmvc.security.web.access.AccessDeniedBusinessExceptionHandler;
@@ -41,12 +42,11 @@ import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.SwaggerUtil;
 
 /**
- * WEB安全配置器支持
+ * WebMvc安全配置器支持
  */
-// 安全配置器与MVC配置器如果合并在同一个类中，web-view工程启动时无法即时注入配置属性实例，导致启动失败
+// 安全配置器与MVC配置器如果合并在同一个类中，webmvc-view工程启动时无法即时注入配置属性实例，导致启动失败
 @EnableWebSecurity
-public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurerAdapter
-        implements LoginUrlResolver {
+public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigurerAdapter implements LoginUrlResolver {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
@@ -165,13 +165,12 @@ public abstract class WebSecurityConfigurerSupport extends WebSecurityConfigurer
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
                 .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
-        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest()
-                .authenticated().and().exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler()).and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
-                .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies())
-                .permitAll();
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler())
+                .and()
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
+                .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies()).permitAll();
         configure(http.logout());
         // @formatter:on
         if (this.corsRegistryProperties.isEnabled()) {

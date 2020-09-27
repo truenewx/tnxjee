@@ -2,11 +2,12 @@ package org.truenewx.tnxjee.webmvc.exception.resolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.service.exception.*;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * 可解决异常处理至响应体中的解决器
@@ -22,7 +23,7 @@ public class BodyResolvableExceptionResolver extends ResolvableExceptionResolver
 
     @Override
     protected boolean supports(HandlerMethod handlerMethod) {
-        return SpringWebmvcUtil.isResponseBody(handlerMethod);
+        return SpringWebMvcUtil.isResponseBody(handlerMethod);
     }
 
     @Override

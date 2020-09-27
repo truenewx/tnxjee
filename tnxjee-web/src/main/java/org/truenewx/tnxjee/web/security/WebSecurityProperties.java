@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.security.config;
+package org.truenewx.tnxjee.web.security;
 
 import java.util.List;
 

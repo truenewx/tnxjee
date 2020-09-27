@@ -1,19 +1,20 @@
 package org.truenewx.tnxjee.webmvc.view.tag;
 
-import org.springframework.context.ApplicationContext;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.SpringUtil;
-import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
-import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
-import org.truenewx.tnxjee.webmvc.view.util.WebViewUtil;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
+
+import org.springframework.context.ApplicationContext;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
+import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
+import org.truenewx.tnxjee.webmvc.view.util.WebViewUtil;
 
 /**
  * 输出前一个请求URL的标签
@@ -39,13 +40,13 @@ public class PrevUrlTag extends TagSupport {
     public int doEndTag() throws JspException {
         // 使用pageContext中的request会得到jsp页面的访问路径，这可能导致错误
         HttpServletRequest request = SpringWebmvcContext.getRequest();
-        String currentAction = WebmvcUtil.getRelativeRequestAction(request);
+        String currentAction = WebMvcUtil.getRelativeRequestAction(request);
         String prevUrl = WebViewUtil.getRelativePreviousUrl(request, true);
         if (prevUrl != null) {
             if (prevUrl.startsWith(currentAction)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
-                ApplicationContext context = SpringWebmvcUtil.getApplicationContext(request);
+                ApplicationContext context = SpringWebMvcUtil.getApplicationContext(request);
                 LoginUrlResolver loginUrlResolver = SpringUtil.getFirstBeanByClass(context, LoginUrlResolver.class);
                 if (loginUrlResolver != null && loginUrlResolver.isLoginUrl(prevUrl)) {
                     prevUrl = null;

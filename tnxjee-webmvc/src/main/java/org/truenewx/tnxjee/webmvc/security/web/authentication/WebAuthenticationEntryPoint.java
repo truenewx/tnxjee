@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.truenewx.tnxjee.webmvc.util.WebmvcConstants;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 /**
  * WEB未登录访问限制的进入点
@@ -42,14 +42,14 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        if (WebmvcUtil.isAjaxRequest(request)) {
+        if (WebMvcUtil.isAjaxRequest(request)) {
             String redirectLoginUrl = buildRedirectUrlToLoginPage(request, response, authException);
             Integer status = this.responseStatusFunction == null ? null :
                     this.responseStatusFunction.apply(redirectLoginUrl);
             // 不是默认状态，则进行特殊的跳转
             if (status != null && status != HttpServletResponse.SC_FOUND) {
                 if (this.ajaxToForm) {
-                    response.setHeader(WebmvcConstants.HEADER_LOGIN_URL, redirectLoginUrl);
+                    response.setHeader(WebMvcConstants.HEADER_LOGIN_URL, redirectLoginUrl);
                 } else {
                     this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
                 }

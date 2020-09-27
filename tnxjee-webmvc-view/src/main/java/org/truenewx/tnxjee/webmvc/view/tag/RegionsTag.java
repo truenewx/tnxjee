@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.service.spec.region.Region;
 import org.truenewx.tnxjee.service.spec.region.RegionSource;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * 多级区划显示标签
@@ -77,7 +77,7 @@ public class RegionsTag extends TagSupport {
 
     private Locale getLocale() {
         HttpServletRequest request = getRequest();
-        return SpringWebmvcUtil.getLocale(request);
+        return SpringWebMvcUtil.getLocale(request);
     }
 
     private HttpServletRequest getRequest() {
@@ -85,7 +85,7 @@ public class RegionsTag extends TagSupport {
     }
 
     private String appendCaptions() {
-        ApplicationContext context = SpringWebmvcUtil.getApplicationContext(getRequest());
+        ApplicationContext context = SpringWebMvcUtil.getApplicationContext(getRequest());
         RegionSource regionSource = SpringUtil.getFirstBeanByClass(context, RegionSource.class);
         Region region = regionSource.getRegion(this.value, getLocale());
 

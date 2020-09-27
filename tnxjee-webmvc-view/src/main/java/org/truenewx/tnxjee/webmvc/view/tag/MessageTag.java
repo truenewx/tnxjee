@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * 国际化消息标签
@@ -36,7 +36,7 @@ public class MessageTag extends SimpleTagSupport {
         if (this.context == null) {
             HttpServletRequest request = (HttpServletRequest) ((PageContext) getJspContext())
                     .getRequest();
-            this.context = SpringWebmvcUtil.getApplicationContext(request);
+            this.context = SpringWebMvcUtil.getApplicationContext(request);
         }
         return this.context;
     }
@@ -44,7 +44,7 @@ public class MessageTag extends SimpleTagSupport {
     private Locale getLocale() {
         HttpServletRequest request = (HttpServletRequest) ((PageContext) getJspContext())
                 .getRequest();
-        return SpringWebmvcUtil.getLocale(request);
+        return SpringWebMvcUtil.getLocale(request);
     }
 
     @Override

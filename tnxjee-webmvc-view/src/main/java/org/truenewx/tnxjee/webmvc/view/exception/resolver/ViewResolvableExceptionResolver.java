@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.webmvc.view.exception.resolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,8 +10,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.service.exception.*;
 import org.truenewx.tnxjee.webmvc.exception.resolver.ResolvableExceptionResolver;
-import org.truenewx.tnxjee.webmvc.util.SpringWebmvcUtil;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 import org.truenewx.tnxjee.webmvc.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.webmvc.view.util.WebViewUtil;
 
@@ -35,7 +36,7 @@ public class ViewResolvableExceptionResolver extends ResolvableExceptionResolver
 
     @Override
     protected boolean supports(HandlerMethod handlerMethod) {
-        return !SpringWebmvcUtil.isResponseBody(handlerMethod);
+        return !SpringWebMvcUtil.isResponseBody(handlerMethod);
     }
 
     private String getErrorPath(ResolvableException re) {
@@ -57,7 +58,7 @@ public class ViewResolvableExceptionResolver extends ResolvableExceptionResolver
             HandlerMethod handlerMethod, ResolvableException re) {
         String errorPath = getErrorPath(re);
         ModelAndView mav = new ModelAndView(errorPath);
-        mav.addObject("ajaxRequest", WebmvcUtil.isAjaxRequest(request));
+        mav.addObject("ajaxRequest", WebMvcUtil.isAjaxRequest(request));
         ResolvableExceptionResult rer =
                 handlerMethod.getMethodAnnotation(ResolvableExceptionResult.class);
         if (rer != null) {
@@ -69,7 +70,7 @@ public class ViewResolvableExceptionResolver extends ResolvableExceptionResolver
                 mav.addObject("back", rer.back());
             } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
                 mav.setViewName(view);
-                WebmvcUtil.copyParameters2Attributes(request);
+                WebMvcUtil.copyParameters2Attributes(request);
             }
         }
         return mav;

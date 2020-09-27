@@ -41,9 +41,9 @@ import com.aliyun.oss.internal.Mimetypes;
  *
  * @author jianglei
  */
-public class WebmvcUtil {
+public class WebMvcUtil {
 
-    private WebmvcUtil() {
+    private WebMvcUtil() {
     }
 
     /**
@@ -129,7 +129,7 @@ public class WebmvcUtil {
                                 value = URLEncoder.encode(value, encoding);
                                 params[i] = params[i].substring(0, index + 1) + value;
                             } catch (UnsupportedEncodingException e) {
-                                LogUtil.error(WebmvcUtil.class, e);
+                                LogUtil.error(WebMvcUtil.class, e);
                             }
                         }
                     }
@@ -157,7 +157,7 @@ public class WebmvcUtil {
                 try {
                     tail = URLEncoder.encode(tail, encoding);
                 } catch (UnsupportedEncodingException e) {
-                    LogUtil.error(WebmvcUtil.class, e);
+                    LogUtil.error(WebMvcUtil.class, e);
                 }
                 url = url.substring(0, index1 + 1) + tail + url.substring(index2);
             }
@@ -268,7 +268,7 @@ public class WebmvcUtil {
         try {
             return response.getOutputStream();
         } catch (Exception e) {
-            LogUtil.error(WebmvcUtil.class, e);
+            LogUtil.error(WebMvcUtil.class, e);
         }
         return null;
     }
@@ -286,7 +286,7 @@ public class WebmvcUtil {
                     NetUtil.standardizeUrl(relativePath));
             return FileUtils.readFileToByteArray(resource.getFile());
         } catch (IOException e) {
-            LogUtil.error(WebmvcUtil.class, e);
+            LogUtil.error(WebMvcUtil.class, e);
             return new byte[0];
         }
     }
@@ -315,7 +315,7 @@ public class WebmvcUtil {
             try {
                 return URLDecoder.decode(param, encoding);
             } catch (UnsupportedEncodingException e) {
-                LogUtil.error(WebmvcUtil.class, e); // 编码已确保有效，不应该出现该异常
+                LogUtil.error(WebMvcUtil.class, e); // 编码已确保有效，不应该出现该异常
             }
         }
         return param;
@@ -549,7 +549,7 @@ public class WebmvcUtil {
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
         return "XMLHttpRequest"
-                .equalsIgnoreCase(request.getHeader(WebmvcConstants.HEADER_AJAX_REQUEST));
+                .equalsIgnoreCase(request.getHeader(WebMvcConstants.HEADER_AJAX_REQUEST));
     }
 
     /**

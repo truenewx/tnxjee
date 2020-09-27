@@ -24,7 +24,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
-import org.truenewx.tnxjee.webmvc.util.WebmvcConstants;
+import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -102,7 +102,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     private boolean isInternalRpc(HttpServletRequest request) {
-        String internalRpc = request.getHeader(WebmvcConstants.HEADER_INTERNAL_RPC);
+        String internalRpc = request.getHeader(WebMvcConstants.HEADER_INTERNAL_RPC);
         if (internalRpc != null) {
             return Boolean.parseBoolean(internalRpc);
         }

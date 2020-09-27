@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 import org.truenewx.tnxjee.webmvc.view.tagext.SimpleDynamicAttributeTagSupport;
 
 /**
@@ -46,7 +46,7 @@ public class IncludeTag extends SimpleDynamicAttributeTagSupport {
         HttpServletRequest request = getRequest();
         ServletContext servletContext = request.getServletContext();
         if (this.url.startsWith(Strings.SLASH)) {
-            String host = WebmvcUtil.getHost(request, true);
+            String host = WebMvcUtil.getHost(request, true);
             this.url = request.getScheme() + "://" + host + this.url;
         }
         try {

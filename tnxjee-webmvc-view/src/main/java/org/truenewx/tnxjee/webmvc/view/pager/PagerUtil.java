@@ -1,19 +1,21 @@
 package org.truenewx.tnxjee.webmvc.view.pager;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+import java.io.File;
+import java.io.Writer;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.query.Paged;
 import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.Writer;
-import java.util.Map;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 /**
  * 分页工具类
@@ -26,9 +28,9 @@ public class PagerUtil {
     }
 
     public static int getPageSize(HttpServletRequest request, int defaultPageSize) {
-        String url = WebmvcUtil.getRelativeRequestUrl(request);
+        String url = WebMvcUtil.getRelativeRequestUrl(request);
         String cookieName = url.replace('/', '_') + "_pageSize";
-        String value = WebmvcUtil.getCookieValue(request, cookieName);
+        String value = WebMvcUtil.getCookieValue(request, cookieName);
         return MathUtil.parseInt(value, defaultPageSize);
     }
 

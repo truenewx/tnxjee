@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
-import org.truenewx.tnxjee.webmvc.util.WebmvcConstants;
+import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -22,7 +22,7 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         // 所有Feign请求均加上内部RPC请求标志
-        template.header(WebmvcConstants.HEADER_INTERNAL_RPC, Boolean.TRUE.toString());
+        template.header(WebMvcConstants.HEADER_INTERNAL_RPC, Boolean.TRUE.toString());
 
         HttpServletRequest request = SpringWebmvcContext.getRequest();
         if (request != null) {
