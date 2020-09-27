@@ -11,7 +11,7 @@
 
     <tag>
         <name>out</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.OutTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.OutTag</tag-class>
         <body-content>empty</body-content>
         <description>输出参数或属性值</description>
         <attribute>
@@ -34,7 +34,7 @@
 
     <tag>
         <name>errors</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.ErrorsTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.ErrorsTag</tag-class>
         <body-content>empty</body-content>
         <description>输出验证字段错误信息</description>
         <attribute>
@@ -53,7 +53,7 @@
 
     <tag>
         <name>iferror</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.IfErrorTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.IfErrorTag</tag-class>
         <body-content>JSP</body-content>
         <description>判断字段是否有错误信息</description>
         <attribute>
@@ -72,7 +72,7 @@
 
     <tag>
         <name>haserror</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.HasErrorTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.HasErrorTag</tag-class>
         <body-content>empty</body-content>
         <description>输出字段是否有错误信息</description>
         <attribute>
@@ -85,7 +85,7 @@
 
     <tag>
         <name>noerror</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.NoErrorTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.NoErrorTag</tag-class>
         <body-content>empty</body-content>
         <description>输出字段是否没有错误信息</description>
         <attribute>
@@ -98,7 +98,7 @@
 
     <tag>
         <name>tojson</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.ToJsonTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.ToJsonTag</tag-class>
         <body-content>empty</body-content>
         <description>转换值为JSON字符串</description>
         <attribute>
@@ -129,7 +129,7 @@
 
     <tag>
         <name>subdomain</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.SubDomainTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.SubDomainTag</tag-class>
         <body-content>empty</body-content>
         <description>获取当前访问的子域名</description>
         <attribute>
@@ -153,7 +153,7 @@
 
     <tag>
         <name>radio</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.RadioTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.RadioTag</tag-class>
         <body-content>empty</body-content>
         <description>单选框</description>
         <attribute>
@@ -286,7 +286,7 @@
     </tag>
     <tag>
         <name>checkbox</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.CheckBoxTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.CheckBoxTag</tag-class>
         <body-content>empty</body-content>
         <description>复选框</description>
         <attribute>
@@ -404,7 +404,7 @@
     </tag>
     <tag>
         <name>select</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.SelectTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.SelectTag</tag-class>
         <body-content>empty</body-content>
         <description>下拉框</description>
         <attribute>
@@ -536,7 +536,7 @@
     </tag>
     <tag>
         <name>enumtext</name>
-        <tag-class>org.truenewx.tnxjee.web.view.enums.tag.EnumTextTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.enums.tag.EnumTextTag</tag-class>
         <body-content>empty</body-content>
         <description>枚举值转换为文本显示标签</description>
         <attribute>
@@ -560,7 +560,7 @@
     </tag>
     <tag>
         <name>enumradio</name>
-        <tag-class>org.truenewx.tnxjee.web.view.enums.tag.EnumRadioTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.enums.tag.EnumRadioTag</tag-class>
         <body-content>empty</body-content>
         <description>基于枚举的单选框</description>
         <attribute>
@@ -688,7 +688,7 @@
     </tag>
     <tag>
         <name>enumcheckbox</name>
-        <tag-class>org.truenewx.tnxjee.web.view.enums.tag.EnumCheckBoxTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.enums.tag.EnumCheckBoxTag</tag-class>
         <body-content>empty</body-content>
         <description>基于枚举的复选框</description>
         <attribute>
@@ -800,7 +800,7 @@
     </tag>
     <tag>
         <name>enumselect</name>
-        <tag-class>org.truenewx.tnxjee.web.view.enums.tag.EnumSelectTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.enums.tag.EnumSelectTag</tag-class>
         <body-content>empty</body-content>
         <description>基于枚举的下拉框</description>
         <attribute>
@@ -925,7 +925,7 @@
     </tag>
     <tag>
         <name>enumForEach</name>
-        <tag-class>org.truenewx.tnxjee.web.view.enums.tag.EnumForEachTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.enums.tag.EnumForEachTag</tag-class>
         <body-content>JSP</body-content>
         <description>枚举遍历</description>
         <attribute>
@@ -955,7 +955,7 @@
     </tag>
     <tag>
         <name>include</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.IncludeTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.IncludeTag</tag-class>
         <body-content>empty</body-content>
         <description>转调自定义组件</description>
         <attribute>
@@ -974,7 +974,7 @@
     </tag>
     <tag>
         <name>omit</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.OmitTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.OmitTag</tag-class>
         <body-content>empty</body-content>
         <description>处理超长文本组件</description>
         <attribute>
@@ -993,7 +993,7 @@
     </tag>
     <tag>
         <name>ftl</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.FtlTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.FtlTag</tag-class>
         <body-content>empty</body-content>
         <description>通过FreeMarker加载内容，动态属性作为参数传递</description>
         <attribute>
@@ -1006,7 +1006,7 @@
     </tag>
     <tag>
         <name>invoke</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.InvokeTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.InvokeTag</tag-class>
         <body-content>empty</body-content>
         <description>调用对象的带参数的方法，可通过动态参数设置多个参数，如：arg1=***, arg2=***</description>
         <attribute>
@@ -1032,7 +1032,7 @@
 
     <tag>
         <name>pager</name>
-        <tag-class>org.truenewx.tnxjee.web.view.pager.PagerTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.pager.PagerTag</tag-class>
         <body-content>empty</body-content>
         <description>输出分页控件信息</description>
         <attribute>
@@ -1098,7 +1098,7 @@
 
     <tag>
         <name>regions</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.RegionsTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.RegionsTag</tag-class>
         <body-content>empty</body-content>
         <description>显示指定行政区划代号的各级名称</description>
         <attribute>
@@ -1129,7 +1129,7 @@
 
     <tag>
         <name>qrcode</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.QrCodeTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.QrCodeTag</tag-class>
         <body-content>empty</body-content>
         <description>显示指定字符串的二维码</description>
         <attribute>
@@ -1180,7 +1180,7 @@
 
     <tag>
         <name>prevurl</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.PrevUrlTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.PrevUrlTag</tag-class>
         <body-content>empty</body-content>
         <description>输出前一个请求的URL</description>
         <attribute>
@@ -1199,7 +1199,7 @@
 
     <tag>
         <name>tohtml</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.ToHtmlTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.ToHtmlTag</tag-class>
         <body-content>empty</body-content>
         <description>输出指定内容的HTML格式内容</description>
         <attribute>
@@ -1217,7 +1217,7 @@
 
     <tag>
         <name>message</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.MessageTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.MessageTag</tag-class>
         <body-content>empty</body-content>
         <description>输出国际化消息</description>
         <attribute>
@@ -1236,7 +1236,7 @@
 
     <tag>
         <name>cover</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.CoverTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.CoverTag</tag-class>
         <body-content>empty</body-content>
         <description>掩盖部分字符串</description>
         <attribute>
@@ -1255,7 +1255,7 @@
 
     <tag>
         <name>format</name>
-        <tag-class>org.truenewx.tnxjee.web.view.tag.FormatTag</tag-class>
+        <tag-class>org.truenewx.tnxjee.webmvc.view.tag.FormatTag</tag-class>
         <body-content>empty</body-content>
         <description>格式化输出</description>
         <attribute>
