@@ -14,10 +14,6 @@
             <groupId>org.truenewx.tnxjee</groupId>
             <artifactId>tnxjee-service</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
     </dependencies>
     <description>Webmvc和Webflux的公共部分</description>
 </project>

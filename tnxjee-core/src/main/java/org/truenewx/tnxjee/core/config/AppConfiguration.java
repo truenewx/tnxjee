@@ -13,7 +13,7 @@ public class AppConfiguration {
     private String userType;
     private boolean https;
     private String host;
-    private String contextPath = Strings.SLASH;
+    private String contextPath = Strings.EMPTY;
     private String loginPath = "/login/cas";
     private String logoutPath = "/logout";
 

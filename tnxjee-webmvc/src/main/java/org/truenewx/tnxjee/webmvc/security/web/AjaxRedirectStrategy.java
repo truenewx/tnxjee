@@ -12,8 +12,8 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.webmvc.util.WebmvcConstants;
-import org.truenewx.tnxjee.webmvc.util.WebmvcUtil;
+import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
+import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 /**
  * AJAX特殊处理的重定向策略
@@ -41,11 +41,11 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
             this.logger.debug("Redirecting to '" + redirectUrl + "'");
         }
 
-        if (WebmvcUtil.isAjaxRequest(request)) {
+        if (WebMvcUtil.isAjaxRequest(request)) {
             // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
             // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过。
             // 成功和失败的请求都可能产生重定向动作，所以此处不设置响应状态码
-            response.setHeader(WebmvcConstants.HEADER_REDIRECT_TO, redirectUrl);
+            response.setHeader(WebMvcConstants.HEADER_REDIRECT_TO, redirectUrl);
             String body = buildRedirectBody(redirectUrl);
             if (body != null) {
                 response.getWriter().print(body);
@@ -65,7 +65,7 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         if (NetUtil.isRelativeUrl(redirectUrl)) {
             return true;
         }
-        String requestHost = WebmvcUtil.getHost(request, false);
+        String requestHost = WebMvcUtil.getHost(request, false);
         String redirectHost = NetUtil.getHost(redirectUrl, false);
         // 同一个主机地址可以重定向，即使端口可能不同
         if (Objects.equals(requestHost, redirectHost)) {
