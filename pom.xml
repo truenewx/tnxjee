@@ -24,7 +24,6 @@
         <module>tnxjee-test</module>
         <module>tnxjee-test-service</module>
         <module>tnxjee-web</module>
-        <module>tnxjee-webflux</module>
         <module>tnxjee-webmvc</module>
         <module>tnxjee-webmvc-view</module>
     </modules>
