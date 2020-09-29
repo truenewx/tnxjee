@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.query.Paged;
-import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
+import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
 import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 import freemarker.template.Configuration;
@@ -35,7 +35,7 @@ public class PagerUtil {
     }
 
     public static int getPageSize(int defaultPageSize) {
-        return getPageSize(SpringWebmvcContext.getRequest(), defaultPageSize);
+        return getPageSize(SpringWebMvcContext.getRequest(), defaultPageSize);
     }
 
     public static void output(HttpServletRequest request, Writer out, Map<String, Object> params) {

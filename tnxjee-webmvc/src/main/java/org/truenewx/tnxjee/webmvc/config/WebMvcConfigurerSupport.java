@@ -1,11 +1,9 @@
 package org.truenewx.tnxjee.webmvc.config;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.truenewx.tnxjee.core.config.CommonProperties;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.webmvc.util.SwaggerUtil;
 import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
@@ -57,11 +56,18 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         if (this.corsRegistryProperties.isEnabled()) {
-            String[] commonHosts = this.commonProperties.getHostUrls().values().toArray(new String[0]);
-            String[] allowedOriginals = ArrayUtils.addAll(commonHosts, this.corsRegistryProperties.getAllowedOrigins());
+            // 配置的应用URI均允许跨域访问
+            List<String> allowedOriginals = new ArrayList<>(this.commonProperties.getAppUris().values());
+            String gatewayUri = this.commonProperties.getGatewayUri();
+            if (StringUtils.isNotBlank(gatewayUri)) { // 网关URI允许跨域访问
+                allowedOriginals.add(gatewayUri);
+            }
+            // 加入额外配置的跨域访问白名单
+            CollectionUtil.addAll(allowedOriginals, this.corsRegistryProperties.getAllowedOrigins());
+
             CorsRegistration registration = registry
                     .addMapping(this.corsRegistryProperties.getPathPattern())
-                    .allowedOrigins(allowedOriginals)
+                    .allowedOrigins(allowedOriginals.toArray(new String[0]))
                     .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
                     .allowCredentials(this.corsRegistryProperties.getAllowCredentials());

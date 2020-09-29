@@ -12,7 +12,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.webmvc.bind.annotation.ResponseStream;
-import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
+import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
 
 /**
  * Spring Webmvc工具类
@@ -44,7 +44,7 @@ public class SpringWebMvcUtil {
      * @return ApplicationContext实例
      */
     public static ApplicationContext getApplicationContext() {
-        return getApplicationContext(SpringWebmvcContext.getRequest());
+        return getApplicationContext(SpringWebMvcContext.getRequest());
     }
 
     /**

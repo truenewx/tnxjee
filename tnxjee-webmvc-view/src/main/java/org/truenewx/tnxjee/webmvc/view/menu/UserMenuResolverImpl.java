@@ -13,7 +13,7 @@ import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.model.spec.user.IntegerUserIdentity;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
-import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
+import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
 import org.truenewx.tnxjee.webmvc.security.util.SecurityUtil;
 import org.truenewx.tnxjee.webmvc.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.webmvc.view.menu.config.MenuProperties;
@@ -41,11 +41,11 @@ public class UserMenuResolverImpl implements UserMenuResolver {
                 Menu menu;
                 String sessionAttributeName = this.properties.getSessionAttributeName();
                 if (StringUtils.isNotBlank(sessionAttributeName)) {
-                    menu = SpringWebmvcContext.getFromSession(sessionAttributeName);
+                    menu = SpringWebMvcContext.getFromSession(sessionAttributeName);
                     if (menu == null) {
                         menu = this.manager.getGrantedMenu(details.getAuthorities());
                         if (menu != null) {
-                            SpringWebmvcContext.setToSession(sessionAttributeName, menu);
+                            SpringWebMvcContext.setToSession(sessionAttributeName, menu);
                         }
                     }
                 } else {

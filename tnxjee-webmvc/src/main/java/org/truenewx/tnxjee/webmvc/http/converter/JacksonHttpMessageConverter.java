@@ -21,7 +21,7 @@ import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.webmvc.context.SpringWebmvcContext;
+import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
@@ -53,7 +53,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @Override
     protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        HttpServletRequest request = SpringWebmvcContext.getRequest();
+        HttpServletRequest request = SpringWebMvcContext.getRequest();
         if (request != null) {
             boolean internal = isInternalRpc(request);
             try {

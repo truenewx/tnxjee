@@ -43,25 +43,24 @@ public class ApiMetaController {
         if (StringUtils.isNotBlank(baseApp)) {
             AppConfiguration app = this.commonProperties.getApp(baseApp);
             if (app != null) {
-                context.setBaseUrl(app.getContextUrl());
+                context.setBaseUrl(app.getContextUri());
             }
         }
         context.setLoginSuccessRedirectParameter(
                 this.apiMetaProperties.getLoginSuccessRedirectParameter());
-        Map<String, String> rootUrls = this.commonProperties.getRootUrls();
         String[] appNames = this.apiMetaProperties.getAppNames();
         if (ArrayUtils.isEmpty(appNames)) {
-            context.getApps().putAll(rootUrls);
+            context.getApps().putAll(this.commonProperties.getAppContextUris());
         } else {
             for (String appName : appNames) {
                 AppConfiguration app = this.commonProperties.getApp(appName);
                 if (app != null) {
-                    context.getApps().put(appName, app.getContextUrl());
+                    context.getApps().put(appName, app.getContextUri());
                 }
             }
             AppConfiguration selfApp = this.commonProperties.getSelfApp();
             if (selfApp != null) {
-                context.getApps().put("self", selfApp.getContextUrl());
+                context.getApps().put("self", selfApp.getContextUri());
             }
         }
         return context;

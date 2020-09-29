@@ -21,9 +21,9 @@ import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
  *
  * @author jianglei
  */
-public class SpringWebmvcContext {
+public class SpringWebMvcContext {
 
-    private SpringWebmvcContext() {
+    private SpringWebMvcContext() {
     }
 
     public static HttpServletRequest getRequest() {

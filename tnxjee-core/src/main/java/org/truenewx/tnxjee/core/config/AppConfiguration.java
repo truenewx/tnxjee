@@ -11,8 +11,7 @@ import org.truenewx.tnxjee.core.Strings;
 public class AppConfiguration {
 
     private String userType;
-    private boolean https;
-    private String host;
+    private String uri;
     private String contextPath = Strings.EMPTY;
     private String loginPath = "/login/cas";
     private String logoutPath = "/logout";
@@ -28,26 +27,15 @@ public class AppConfiguration {
         this.userType = userType;
     }
 
-    public boolean isHttps() {
-        return this.https;
+    public String getUri() {
+        return this.uri;
     }
 
     /**
-     * @param https 是否通过https协议访问，默认为false
+     * @param uri 包含协议、主机地址和可能的端口号的地址，必须指定
      */
-    public void setHttps(boolean https) {
-        this.https = https;
-    }
-
-    public String getHost() {
-        return this.host;
-    }
-
-    /**
-     * @param host 主机地址，包含可能的端口号，必须指定
-     */
-    public void setHost(String host) {
-        this.host = host;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public String getContextPath() {
@@ -55,7 +43,7 @@ public class AppConfiguration {
     }
 
     /**
-     * @param contextPath 上下文根路径，默认为/
+     * @param contextPath 上下文根路径，默认为空字符串
      */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -83,34 +71,26 @@ public class AppConfiguration {
         this.logoutPath = logoutPath;
     }
 
-    public String getHostUrl() {
-        String url = "http";
-        if (this.https) {
-            url += "s";
-        }
-        url += "://" + this.host;
-        return url;
-    }
 
-    public String getContextUrl() {
-        String url = getHostUrl();
+    public String getContextUri() {
+        String uri = getUri();
         // 添加上下文根
         if (StringUtils.isNotBlank(this.contextPath) && !Strings.SLASH.equals(this.contextPath)) {
             // 确保上下文根以/开头
             if (!this.contextPath.startsWith(Strings.SLASH)) {
-                url += Strings.SLASH;
+                uri += Strings.SLASH;
             }
-            url += this.contextPath;
+            uri += this.contextPath;
         }
-        return url;
+        return uri;
     }
 
-    public String getLoginUrl() {
-        return getContextUrl() + getLoginPath();
+    public String getLoginProcessUrl() {
+        return getContextUri() + getLoginPath();
     }
 
-    public String getLogoutUrl() {
-        return getContextUrl() + getLogoutPath();
+    public String getLogoutProcessUrl() {
+        return getContextUri() + getLogoutPath();
     }
 
 }
