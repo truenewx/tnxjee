@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.truenewx.tnxjee.core.config.CommonProperties;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
+import org.truenewx.tnxjee.webmvc.cors.SingleCorsConfigurationSource;
 import org.truenewx.tnxjee.webmvc.util.SwaggerUtil;
 import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
 
@@ -32,6 +35,8 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     private CorsRegistryProperties corsRegistryProperties;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private SingleCorsConfigurationSource corsConfigurationSource;
 
     protected final ApplicationContext getApplicationContext() {
         return this.applicationContext;
@@ -77,6 +82,8 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
             if (this.corsRegistryProperties.getMaxAge() != null) {
                 registration.maxAge(this.corsRegistryProperties.getMaxAge());
             }
+            CorsConfiguration corsConfiguration = BeanUtil.getFieldValue(registration, CorsConfiguration.class);
+            this.corsConfigurationSource.setCorsConfiguration(corsConfiguration);
         }
     }
 

@@ -392,11 +392,15 @@ public class WebMvcUtil {
      */
     public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly,
             HttpServletRequest request) {
+        return createCookie(name, value, maxAge, httpOnly, getCookieDefaultPath(request));
+    }
+
+    private static String getCookieDefaultPath(HttpServletRequest request) {
         String contextPath = request.getContextPath();
         if (StringUtils.isBlank(contextPath)) {
             contextPath = Strings.SLASH;
         }
-        return createCookie(name, value, maxAge, httpOnly, contextPath);
+        return contextPath;
     }
 
     /**
@@ -440,6 +444,13 @@ public class WebMvcUtil {
     public static void removeCookie(HttpServletResponse response, String name, String path) {
         Cookie cookie = new Cookie(name, Strings.EMPTY);
         cookie.setPath(path);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
+
+    public static void removeCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, Strings.EMPTY);
+        cookie.setPath(getCookieDefaultPath(request));
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
