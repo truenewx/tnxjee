@@ -11,7 +11,8 @@ import org.truenewx.tnxjee.core.Strings;
 public class AppConfiguration {
 
     private String userType;
-    private String uri;
+    private String gatewayUri;
+    private String directUri;
     private String contextPath = Strings.EMPTY;
     private String loginPath = "/login/cas";
     private String logoutPath = "/logout";
@@ -27,15 +28,23 @@ public class AppConfiguration {
         this.userType = userType;
     }
 
-    public String getUri() {
-        return this.uri;
+    public String getGatewayUri() {
+        return this.gatewayUri;
+    }
+
+    public void setGatewayUri(String gatewayUri) {
+        this.gatewayUri = gatewayUri;
+    }
+
+    public String getDirectUri() {
+        return this.directUri;
     }
 
     /**
-     * @param uri 包含协议、主机地址和可能的端口号的地址，必须指定
+     * @param directUri 直连地址，包含协议、主机地址和可能的端口号的地址，必须指定
      */
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setDirectUri(String directUri) {
+        this.directUri = directUri;
     }
 
     public String getContextPath() {
@@ -71,9 +80,12 @@ public class AppConfiguration {
         this.logoutPath = logoutPath;
     }
 
-
-    public String getContextUri() {
-        String uri = getUri();
+    public String getContextUri(boolean direct) {
+        String uri = getGatewayUri();
+        // 默认为网关地址，指定需要直连地址或网关地址为空，则使用直连地址
+        if (direct || StringUtils.isBlank(uri)) {
+            uri = getDirectUri();
+        }
         // 添加上下文根
         if (StringUtils.isNotBlank(this.contextPath) && !Strings.SLASH.equals(this.contextPath)) {
             // 确保上下文根以/开头
@@ -86,11 +98,11 @@ public class AppConfiguration {
     }
 
     public String getLoginProcessUrl() {
-        return getContextUri() + getLoginPath();
+        return getContextUri(false) + getLoginPath();
     }
 
     public String getLogoutProcessUrl() {
-        return getContextUri() + getLogoutPath();
+        return getContextUri(false) + getLogoutPath();
     }
 
 }

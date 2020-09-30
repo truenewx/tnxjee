@@ -1,9 +1,11 @@
 package org.truenewx.tnxjee.webmvc.config;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -57,11 +59,7 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         if (this.corsRegistryProperties.isEnabled()) {
             // 配置的应用URI均允许跨域访问
-            List<String> allowedOriginals = new ArrayList<>(this.commonProperties.getAppUris().values());
-            String gatewayUri = this.commonProperties.getGatewayUri();
-            if (StringUtils.isNotBlank(gatewayUri)) { // 网关URI允许跨域访问
-                allowedOriginals.add(gatewayUri);
-            }
+            Set<String> allowedOriginals = new HashSet<>(this.commonProperties.getAllAppUris());
             // 加入额外配置的跨域访问白名单
             CollectionUtil.addAll(allowedOriginals, this.corsRegistryProperties.getAllowedOrigins());
 

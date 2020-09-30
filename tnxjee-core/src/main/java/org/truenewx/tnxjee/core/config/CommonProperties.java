@@ -1,7 +1,9 @@
 package org.truenewx.tnxjee.core.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,6 +22,7 @@ import org.springframework.core.env.Environment;
 public class CommonProperties implements InitializingBean {
 
     private Map<String, AppConfiguration> apps = new HashMap<>();
+    private boolean gatewayEnabled;
     private String gatewayUri;
     @Autowired
     private Environment environment;
@@ -32,6 +35,14 @@ public class CommonProperties implements InitializingBean {
         this.apps = apps;
     }
 
+    public boolean isGatewayEnabled() {
+        return this.gatewayEnabled;
+    }
+
+    public void setGatewayEnabled(boolean gatewayEnabled) {
+        this.gatewayEnabled = gatewayEnabled;
+    }
+
     public String getGatewayUri() {
         return this.gatewayUri;
     }
@@ -42,9 +53,18 @@ public class CommonProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isNotBlank(this.gatewayUri)) {
+        if (this.gatewayEnabled) {
+            if (StringUtils.isNotBlank(this.gatewayUri)) {
+                this.apps.values().forEach(app -> {
+                    // 应用未配置特殊的网关地址，则用通用网关地址作为应用网关地址
+                    if (StringUtils.isBlank(app.getGatewayUri())) {
+                        app.setGatewayUri(this.gatewayUri);
+                    }
+                });
+            }
+        } else { // 不开启网关访问，则将所有应用的网关地址置为空
             this.apps.values().forEach(app -> {
-                app.setUri(this.gatewayUri);
+                app.setGatewayUri(null);
             });
         }
     }
@@ -53,18 +73,26 @@ public class CommonProperties implements InitializingBean {
         return this.apps.get(name);
     }
 
-    public Map<String, String> getAppUris() {
-        Map<String, String> uris = new HashMap<>();
+    /**
+     * 获取所有应用URI，提供给cors配置，作为允许跨域访问的地址清单
+     *
+     * @return 所有应用URI
+     */
+    public Set<String> getAllAppUris() {
+        Set<String> uris = new HashSet<>();
         this.apps.forEach((name, app) -> {
-            uris.put(name, app.getUri());
+            if (StringUtils.isNotBlank(app.getGatewayUri())) {
+                uris.add(app.getGatewayUri());
+            }
+            uris.add(app.getDirectUri());
         });
         return uris;
     }
 
-    public Map<String, String> getAppContextUris() {
+    public Map<String, String> getAppContextUriMapping() {
         Map<String, String> urls = new HashMap<>();
         this.apps.forEach((name, app) -> {
-            urls.put(name, app.getContextUri());
+            urls.put(name, app.getContextUri(false));
         });
         return urls;
     }
