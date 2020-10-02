@@ -62,7 +62,7 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        if (this.corsRegistryProperties.isEnabled()) {
+        if (this.corsRegistryProperties.isAllowCredentials()) {
             // 配置的应用URI均允许跨域访问
             Set<String> allowedOriginals = new HashSet<>(this.commonProperties.getAllAppUris());
             // 加入额外配置的跨域访问白名单
@@ -73,7 +73,7 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
                     .allowedOrigins(allowedOriginals.toArray(new String[0]))
                     .allowedMethods(this.corsRegistryProperties.getAllowedMethods())
                     .allowedHeaders(this.corsRegistryProperties.getAllowedHeaders())
-                    .allowCredentials(this.corsRegistryProperties.getAllowCredentials());
+                    .allowCredentials(this.corsRegistryProperties.isAllowCredentials());
             String[] exposedHeaders = this.corsRegistryProperties.getExposedHeaders();
             Set<String> exposedHeaderSet = new HashSet<>();
             addExposedHeaders(exposedHeaderSet);

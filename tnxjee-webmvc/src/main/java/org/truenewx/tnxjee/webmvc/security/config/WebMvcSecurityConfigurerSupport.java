@@ -173,7 +173,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
                 .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies()).permitAll();
         configure(http.logout());
         // @formatter:on
-        if (this.corsRegistryProperties.isEnabled()) {
+        if (this.corsRegistryProperties.isAllowCredentials()) {
             http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
         } else if (this.securityProperties.isCsrfDisabled()) {
             http.csrf().disable();

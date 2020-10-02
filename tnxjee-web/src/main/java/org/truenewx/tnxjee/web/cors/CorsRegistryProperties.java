@@ -1,30 +1,26 @@
 package org.truenewx.tnxjee.web.cors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.truenewx.tnxjee.core.Strings;
 
 @Configuration
 @ConfigurationProperties("tnxjee.web.cors")
 public class CorsRegistryProperties {
 
-    private String pathPattern;
+    private String pathPattern = "/**";
 
     private String[] allowedOrigins = {};
 
-    private String[] allowedMethods = {};
+    private String[] allowedMethods = { Strings.ASTERISK };
 
-    private String[] allowedHeaders = {};
+    private String[] allowedHeaders = { Strings.ASTERISK };
 
     private String[] exposedHeaders = {};
 
-    private Boolean allowCredentials;
+    private boolean allowCredentials;
 
     private Long maxAge;
-
-    public boolean isEnabled() {
-        return StringUtils.isNotBlank(this.pathPattern);
-    }
 
     public String getPathPattern() {
         return this.pathPattern;
@@ -66,11 +62,11 @@ public class CorsRegistryProperties {
         this.exposedHeaders = exposedHeaders;
     }
 
-    public Boolean getAllowCredentials() {
+    public boolean isAllowCredentials() {
         return this.allowCredentials;
     }
 
-    public void setAllowCredentials(Boolean allowCredentials) {
+    public void setAllowCredentials(boolean allowCredentials) {
         this.allowCredentials = allowCredentials;
     }
 
