@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.util;
+package org.truenewx.tnxjee.web.util;
 
 import org.springframework.context.ApplicationContext;
 

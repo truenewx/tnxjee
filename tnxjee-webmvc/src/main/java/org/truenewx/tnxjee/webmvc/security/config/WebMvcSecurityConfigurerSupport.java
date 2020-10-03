@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.security.WebSecurityProperties;
+import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.webmvc.api.meta.ApiMetaController;
 import org.truenewx.tnxjee.webmvc.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
@@ -39,7 +40,6 @@ import org.truenewx.tnxjee.webmvc.security.web.access.intercept.WebFilterInvocat
 import org.truenewx.tnxjee.webmvc.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
-import org.truenewx.tnxjee.webmvc.util.SwaggerUtil;
 
 /**
  * WebMvc安全配置器支持

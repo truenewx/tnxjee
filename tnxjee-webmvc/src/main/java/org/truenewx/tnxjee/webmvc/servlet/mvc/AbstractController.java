@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.webmvc.servlet.mvc;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
+import org.truenewx.tnxjee.web.context.SpringWebContext;
 
 /**
  * 抽象的控制器，为具体控制器类提供便利
@@ -17,7 +17,7 @@ public abstract class AbstractController {
      * @return 当前HTTP请求
      */
     protected final HttpServletRequest getRequest() {
-        return SpringWebMvcContext.getRequest();
+        return SpringWebContext.getRequest();
     }
 
     /**
@@ -48,6 +48,6 @@ public abstract class AbstractController {
      * @return 直接重定向的结果名
      */
     protected final String getRedirectResult(final String result) {
-        return SpringWebMvcContext.toRedirectResult(result);
+        return SpringWebContext.toRedirectResult(result);
     }
 }

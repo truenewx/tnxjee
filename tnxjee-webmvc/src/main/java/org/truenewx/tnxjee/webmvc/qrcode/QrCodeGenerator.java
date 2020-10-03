@@ -19,7 +19,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.EncryptUtil;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.ImageUtil;
-import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
+import org.truenewx.tnxjee.web.context.SpringWebContext;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -71,7 +71,7 @@ public class QrCodeGenerator {
                 InputStream is = url.openConnection().getInputStream();
                 logoImage = ImageIO.read(is);
             } else {
-                String logoPath = SpringWebMvcContext.getServletContext().getRealPath(logoUrl);
+                String logoPath = SpringWebContext.getServletContext().getRealPath(logoUrl);
                 logoImage = ImageIO.read(new File(logoPath));
             }
             Graphics2D gs = image.createGraphics();

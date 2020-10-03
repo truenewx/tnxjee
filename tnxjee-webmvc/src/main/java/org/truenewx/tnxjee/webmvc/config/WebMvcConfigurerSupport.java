@@ -19,9 +19,9 @@ import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
+import org.truenewx.tnxjee.web.util.SwaggerUtil;
+import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.webmvc.cors.SingleCorsConfigurationSource;
-import org.truenewx.tnxjee.webmvc.util.SwaggerUtil;
-import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
 
 /**
  * WEB MVC配置器支持，可选的控制层配置均在此配置支持体系中
@@ -88,9 +88,9 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
     }
 
     protected void addExposedHeaders(Collection<String> exposedHeaders) {
-        exposedHeaders.add(WebMvcConstants.HEADER_REDIRECT_TO);
-        exposedHeaders.add(WebMvcConstants.HEADER_LOGIN_URL);
-        exposedHeaders.add(WebMvcConstants.HEADER_ORIGINAL_REQUEST);
+        exposedHeaders.add(WebConstants.HEADER_REDIRECT_TO);
+        exposedHeaders.add(WebConstants.HEADER_LOGIN_URL);
+        exposedHeaders.add(WebConstants.HEADER_ORIGINAL_REQUEST);
     }
 
 }

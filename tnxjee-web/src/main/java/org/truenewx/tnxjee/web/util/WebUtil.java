@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.util;
+package org.truenewx.tnxjee.web.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -37,13 +37,13 @@ import org.truenewx.tnxjee.model.spec.enums.Program;
 import com.aliyun.oss.internal.Mimetypes;
 
 /**
- * Webmvc工具类
+ * Web工具类
  *
  * @author jianglei
  */
-public class WebMvcUtil {
+public class WebUtil {
 
-    private WebMvcUtil() {
+    private WebUtil() {
     }
 
     /**
@@ -129,7 +129,7 @@ public class WebMvcUtil {
                                 value = URLEncoder.encode(value, encoding);
                                 params[i] = params[i].substring(0, index + 1) + value;
                             } catch (UnsupportedEncodingException e) {
-                                LogUtil.error(WebMvcUtil.class, e);
+                                LogUtil.error(WebUtil.class, e);
                             }
                         }
                     }
@@ -157,7 +157,7 @@ public class WebMvcUtil {
                 try {
                     tail = URLEncoder.encode(tail, encoding);
                 } catch (UnsupportedEncodingException e) {
-                    LogUtil.error(WebMvcUtil.class, e);
+                    LogUtil.error(WebUtil.class, e);
                 }
                 url = url.substring(0, index1 + 1) + tail + url.substring(index2);
             }
@@ -268,7 +268,7 @@ public class WebMvcUtil {
         try {
             return response.getOutputStream();
         } catch (Exception e) {
-            LogUtil.error(WebMvcUtil.class, e);
+            LogUtil.error(WebUtil.class, e);
         }
         return null;
     }
@@ -286,7 +286,7 @@ public class WebMvcUtil {
                     NetUtil.standardizeUrl(relativePath));
             return FileUtils.readFileToByteArray(resource.getFile());
         } catch (IOException e) {
-            LogUtil.error(WebMvcUtil.class, e);
+            LogUtil.error(WebUtil.class, e);
             return new byte[0];
         }
     }
@@ -315,7 +315,7 @@ public class WebMvcUtil {
             try {
                 return URLDecoder.decode(param, encoding);
             } catch (UnsupportedEncodingException e) {
-                LogUtil.error(WebMvcUtil.class, e); // 编码已确保有效，不应该出现该异常
+                LogUtil.error(WebUtil.class, e); // 编码已确保有效，不应该出现该异常
             }
         }
         return param;
@@ -560,7 +560,7 @@ public class WebMvcUtil {
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
         return "XMLHttpRequest"
-                .equalsIgnoreCase(request.getHeader(WebMvcConstants.HEADER_AJAX_REQUEST));
+                .equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST));
     }
 
     /**

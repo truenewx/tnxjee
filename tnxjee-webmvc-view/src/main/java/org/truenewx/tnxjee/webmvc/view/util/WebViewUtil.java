@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
-import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 
 /**
  * Web视图层工具类
@@ -55,7 +55,7 @@ public class WebViewUtil {
     public static String getPreviousUrl(HttpServletRequest request) {
         String prevUrl = getRelativePreviousUrl(request, true);
         if (prevUrl != null) {
-            String action = WebMvcUtil.getRelativeRequestAction(request);
+            String action = WebUtil.getRelativeRequestAction(request);
             if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
@@ -81,7 +81,7 @@ public class WebViewUtil {
             boolean containsQueryString) {
         String referrer = request.getHeader("Referer");
         if (StringUtils.isNotBlank(referrer)) {
-            String root = WebMvcUtil.getProtocolAndHost(request);
+            String root = WebUtil.getProtocolAndHost(request);
             String contextPath = request.getContextPath();
             if (!contextPath.equals(Strings.SLASH)) {
                 root += contextPath;

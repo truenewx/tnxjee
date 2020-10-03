@@ -1,11 +1,11 @@
-package org.truenewx.tnxjee.webmvc.util;
+package org.truenewx.tnxjee.web.util;
 
 /**
- * Webmvc常量类
+ * Web常量类
  */
-public class WebMvcConstants {
+public class WebConstants {
 
-    private WebMvcConstants() {
+    private WebConstants() {
     }
 
     /**

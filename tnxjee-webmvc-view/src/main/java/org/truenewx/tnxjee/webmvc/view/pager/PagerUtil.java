@@ -11,8 +11,8 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.query.Paged;
-import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
-import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
+import org.truenewx.tnxjee.web.context.SpringWebContext;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -28,14 +28,14 @@ public class PagerUtil {
     }
 
     public static int getPageSize(HttpServletRequest request, int defaultPageSize) {
-        String url = WebMvcUtil.getRelativeRequestUrl(request);
+        String url = WebUtil.getRelativeRequestUrl(request);
         String cookieName = url.replace('/', '_') + "_pageSize";
-        String value = WebMvcUtil.getCookieValue(request, cookieName);
+        String value = WebUtil.getCookieValue(request, cookieName);
         return MathUtil.parseInt(value, defaultPageSize);
     }
 
     public static int getPageSize(int defaultPageSize) {
-        return getPageSize(SpringWebMvcContext.getRequest(), defaultPageSize);
+        return getPageSize(SpringWebContext.getRequest(), defaultPageSize);
     }
 
     public static void output(HttpServletRequest request, Writer out, Map<String, Object> params) {

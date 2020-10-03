@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.webmvc.context.SpringWebMvcContext;
-import org.truenewx.tnxjee.webmvc.util.WebMvcConstants;
+import org.truenewx.tnxjee.web.context.SpringWebContext;
+import org.truenewx.tnxjee.web.util.WebConstants;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -22,9 +22,9 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         // 所有Feign请求均加上内部RPC请求标志
-        template.header(WebMvcConstants.HEADER_INTERNAL_RPC, Boolean.TRUE.toString());
+        template.header(WebConstants.HEADER_INTERNAL_RPC, Boolean.TRUE.toString());
 
-        HttpServletRequest request = SpringWebMvcContext.getRequest();
+        HttpServletRequest request = SpringWebContext.getRequest();
         if (request != null) {
             Map<String, Collection<String>> feignHeaders = template.headers();
             Enumeration<String> headerNames = request.getHeaderNames();

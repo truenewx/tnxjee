@@ -10,7 +10,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.truenewx.tnxjee.model.spec.Terminal;
 import org.truenewx.tnxjee.model.spec.enums.Program;
-import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
+import org.truenewx.tnxjee.web.util.WebUtil;
 
 /**
  * 转义处理方法结果值处理器
@@ -35,7 +35,7 @@ public class EscapeHandlerMethodReturnValueHandler implements HandlerMethodRetur
         if (MethodParameterEscapeProcessor.INSTANCE.supports(returnType)) {
             if (webRequest instanceof ServletWebRequest) {
                 HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
-                Terminal terminal = WebMvcUtil.getRequestTerminal(request);
+                Terminal terminal = WebUtil.getRequestTerminal(request);
                 if (terminal.getProgram() == Program.NATIVE) { // 原生应用才需要反转义
                     returnValue = MethodParameterEscapeProcessor.INSTANCE.escape(returnValue, true);
                 }

@@ -1,6 +1,4 @@
-package org.truenewx.tnxjee.webmvc.context;
-
-import java.util.Locale;
+package org.truenewx.tnxjee.web.context;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +12,15 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
- * Spring Webmvc上下文工具类
+ * Spring Web上下文工具类
  *
  * @author jianglei
  */
-public class SpringWebMvcContext {
+public class SpringWebContext {
 
-    private SpringWebMvcContext() {
+    private SpringWebContext() {
     }
 
     public static HttpServletRequest getRequest() {
@@ -48,13 +45,6 @@ public class SpringWebMvcContext {
 
     public static ServletContext getServletContext() {
         return getSession().getServletContext();
-    }
-
-    /**
-     * @return 区域
-     */
-    public static Locale getLocale() {
-        return SpringWebMvcUtil.getLocale(getRequest());
     }
 
     /**

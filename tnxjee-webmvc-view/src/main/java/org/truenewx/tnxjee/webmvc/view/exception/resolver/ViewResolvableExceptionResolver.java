@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.truenewx.tnxjee.service.exception.*;
+import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.webmvc.exception.resolver.ResolvableExceptionResolver;
 import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
-import org.truenewx.tnxjee.webmvc.util.WebMvcUtil;
 import org.truenewx.tnxjee.webmvc.view.exception.annotation.ResolvableExceptionResult;
 import org.truenewx.tnxjee.webmvc.view.util.WebViewUtil;
 
@@ -58,7 +58,7 @@ public class ViewResolvableExceptionResolver extends ResolvableExceptionResolver
             HandlerMethod handlerMethod, ResolvableException re) {
         String errorPath = getErrorPath(re);
         ModelAndView mav = new ModelAndView(errorPath);
-        mav.addObject("ajaxRequest", WebMvcUtil.isAjaxRequest(request));
+        mav.addObject("ajaxRequest", WebUtil.isAjaxRequest(request));
         ResolvableExceptionResult rer =
                 handlerMethod.getMethodAnnotation(ResolvableExceptionResult.class);
         if (rer != null) {
@@ -70,7 +70,7 @@ public class ViewResolvableExceptionResolver extends ResolvableExceptionResolver
                 mav.addObject("back", rer.back());
             } else { // 非跳转到全局错误页面，则复制参数到属性集中，以便于可能的回填
                 mav.setViewName(view);
-                WebMvcUtil.copyParameters2Attributes(request);
+                WebUtil.copyParameters2Attributes(request);
             }
         }
         return mav;
