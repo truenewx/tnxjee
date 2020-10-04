@@ -115,7 +115,7 @@ public class NetUtil {
         if (array.length >= 2) {
             return array[array.length - 2] + Strings.DOT + array[array.length - 1];
         }
-        return null;
+        return host;
     }
 
     /**

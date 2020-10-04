@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
@@ -30,7 +31,11 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response,
             String url) throws IOException {
-        String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
+        String contextPath = request.getContextPath();
+        if (Strings.SLASH.equals(contextPath)) {
+            contextPath = Strings.EMPTY;
+        }
+        String redirectUrl = calculateRedirectUrl(contextPath, url);
         if (!isValidRedirectUrl(request, response, redirectUrl)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "illegal redirect target url.");
             return;
@@ -42,6 +47,10 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         }
 
         if (WebUtil.isAjaxRequest(request)) {
+            // 去掉contextPath前缀
+            if (contextPath.length() > 0 && redirectUrl.startsWith(contextPath)) {
+                redirectUrl = redirectUrl.substring(contextPath.length());
+            }
             // ajax重定向时，js端自动跳转不会带上origin头信息，导致目标站点cors校验失败。
             // 不得已只能将目标地址放到头信息中传递给js端，由js执行跳转以带上origin头信息，使得目标站点cors校验通过。
             // 成功和失败的请求都可能产生重定向动作，所以此处不设置响应状态码
