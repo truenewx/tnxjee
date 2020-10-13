@@ -16,7 +16,6 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
@@ -25,7 +24,6 @@ import org.truenewx.tnxjee.core.util.algorithm.AlgoDefaultValue;
 /**
  * 类生成器实现
  */
-@Component
 public class ClassGeneratorImpl implements ClassGenerator {
 
     private JavaCompiler compiler;
