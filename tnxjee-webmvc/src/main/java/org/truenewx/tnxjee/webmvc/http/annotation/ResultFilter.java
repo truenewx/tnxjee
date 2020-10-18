@@ -23,6 +23,7 @@ public @interface ResultFilter {
     /**
      * @return 排除的属性名称集，为空则不限定
      */
+    @Deprecated
     String[] excluded() default {};
 
     /**
