@@ -28,9 +28,11 @@ tnxjee是truenewx的核心组成部分，其主体是技术框架，同时也包
 12. 各种为开发人员提供便利的工具类
 
 ## 代码规范
-1. [《JavaEE代码规约》](standard/code.md)
-2. [《数据库开发设计规约》](standard/database.md)
-3. [《WEB API 规约》](standard/web.md)
+1. [《数据库开发设计规约》](standard/database.md)
+2. [《Java开发代码规约》](standard/java.md)
+3. [《Web开发代码规约》](standard/web.md)
+4. [《产品研发流程规约》](standard/product-flow.md)
+5. [《项目研发流程规约》](standard/project-flow.md)
 
 ## 联系方式
 service@truenewx.org
