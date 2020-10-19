@@ -151,7 +151,6 @@
     - update-，表示修改，其结果必须为long，为受影响的数据行数；
     - delete-，表示删除，其结果必须为long，为受影响的数据行数；
   5. 【推荐】Service中的方法从业务角度进行命名，除find、update等惯用词要求外，命名应与实际业务吻合，能准确、无歧义地反应该方法的业务效果。
-  6. 【强制】Controller中的方法对应URL，采用一种从Restful改造的风格，其规则及与URL的对应关系见《[Web开发规约](web.md)》。
 - 属性/参数/局部变量
   1. 【强制】静态static属性（无论是否final）均使用全大写，单词之间用下划线分隔；
   非静态属性、方法参数、局部变量均采用驼峰法，lowerCamelCase风格，首字母小写，不能包含下划线。
@@ -255,3 +254,16 @@
   > boolean valid = false;
 7. 【推荐】用好// TODO注释，暂时不实现留待未来实现的逻辑应该添加TODO说明。
 
+## 三、配置文件
+1. 【强制】使用Spring Boot的配置方式，传统Spring的xml配置文件不再使用，*.yaml、*.yml、*.properties配置文件遵循Spring Boot的规范。
+2. 【推荐】其它配置文件，如果没有特殊要求，默认均位于maven工程的src/main/resources源代码目录中的META-INF目录下。
+3. 【强制】每个微服务都有自己的sql脚本文件，位于微服务级maven工程目录下的/sql/[版本号]目录中，数据结构脚本文件为schema.sql，数据初始化/调整脚本文件为data.sql。
+  > 例如：[tnxsample-admin]/sql/2.2.1/schema.sql  
+  > [tnxsample-admin]/sql/2.2.1/data.sql
+4. 【强制】所有sql文件中的sql脚本均使用小写字母，更多数据库相关规约见[《数据库开发设计规约》](./database.md)。
+5. 【强制】JPA配置均通过实体映射（entity-mappings）文件进行配置，不在实体类中使用JPA注解。
+  > 说明：我们采用贫血模型，实体类仅仅用于表示业务领域实体，不关心自身如何被持久化，持久化由repo模块负责。
+6. 【强制】JPA实体映射配置文件位于repo模块的src/main/resources源代码目录的/META-INF/jpa目录中，每个实体类一个配置文件。
+
+## 四、Web开发规约
+详见[《Web开发代码规约》](./web.md)。
