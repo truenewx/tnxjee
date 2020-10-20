@@ -30,11 +30,10 @@ import org.truenewx.tnxjee.core.util.tuple.Binate;
  * Http客户端工具类
  *
  * @author jianglei
- * 
  */
 public class HttpClientUtil {
 
-    private static final CloseableHttpClient CLIENT = HttpClientBuilder.create().build();
+    public static final CloseableHttpClient CLIENT = HttpClientBuilder.create().build();
 
     private HttpClientUtil() {
     }
@@ -68,16 +67,16 @@ public class HttpClientUtil {
             HttpRequestMethod method, String encoding, int timeout) throws Exception {
         HttpRequestBase request;
         switch (method) {
-        case GET:
-            request = new HttpGet(NetUtil.mergeParams(url, params, null));
-            break;
-        case POST:
-            HttpPost post = new HttpPost(url);
-            post.setEntity(new UrlEncodedFormEntity(toNameValuePairs(params), encoding));
-            request = post;
-            break;
-        default:
-            request = null;
+            case GET:
+                request = new HttpGet(NetUtil.mergeParams(url, params, null));
+                break;
+            case POST:
+                HttpPost post = new HttpPost(url);
+                post.setEntity(new UrlEncodedFormEntity(toNameValuePairs(params), encoding));
+                request = post;
+                break;
+            default:
+                request = null;
         }
         if (request != null) {
             if (timeout > 0) {
