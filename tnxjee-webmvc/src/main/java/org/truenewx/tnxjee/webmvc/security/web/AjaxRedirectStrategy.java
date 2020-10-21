@@ -74,18 +74,15 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         if (NetUtil.isRelativeUrl(redirectUrl)) {
             return true;
         }
-        String requestHost = WebUtil.getHost(request, false);
         String redirectHost = NetUtil.getHost(redirectUrl, false);
+        // 内网地址可以重定向，即使网段可能不同
+        if (NetUtil.isIntranetIp(redirectHost)) {
+            return true;
+        }
+        
+        String requestHost = WebUtil.getHost(request, false);
         // 同一个主机地址可以重定向，即使端口可能不同
         if (Objects.equals(requestHost, redirectHost)) {
-            return true;
-        }
-        // 同为本机地址可以重定向
-        if (NetUtil.isLocalHost(requestHost) && NetUtil.isLocalHost(redirectHost)) {
-            return true;
-        }
-        // 同为内网IP可以重定向，即使网段可能不同
-        if (NetUtil.isIntranetIp(redirectHost) && NetUtil.isIntranetIp(redirectUrl)) {
             return true;
         }
         // 同一个顶级域名可以重定向
