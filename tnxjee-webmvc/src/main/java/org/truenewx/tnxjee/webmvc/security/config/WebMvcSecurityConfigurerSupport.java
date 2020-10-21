@@ -109,11 +109,9 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         HttpSecurity http = getHttp();
 
         web.addSecurityFilterChainBuilder(http).postBuildAction(() -> {
-            FilterSecurityInterceptor interceptor = http
-                    .getSharedObject(FilterSecurityInterceptor.class);
+            FilterSecurityInterceptor interceptor = http.getSharedObject(FilterSecurityInterceptor.class);
             WebFilterInvocationSecurityMetadataSource metadataSource = securityMetadataSource();
-            FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor
-                    .getSecurityMetadataSource();
+            FilterInvocationSecurityMetadataSource originalMetadataSource = interceptor.getSecurityMetadataSource();
             if (!(originalMetadataSource instanceof WebFilterInvocationSecurityMetadataSource)) {
                 metadataSource.setOrigin(originalMetadataSource);
             }
@@ -123,8 +121,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         });
 
         Collection<String> ignoringAntPatterns = getIgnoringAntPatterns();
-        web.ignoring()
-                .antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
+        web.ignoring().antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
     }
 
     /**
@@ -159,17 +156,22 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void configure(HttpSecurity http) throws Exception {
-        applyLoginConfigurers(http);
+        // 应用登录配置器
+        Collection<SecurityConfigurerAdapter> configurers = getSecurityConfigurerAdapters();
+        for (SecurityConfigurerAdapter configurer : configurers) {
+            http.apply(configurer);
+        }
+
         Collection<RequestMatcher> anonymousMatcherCollection = getAnonymousRequestMatchers();
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
                 .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
         // @formatter:off
-        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler())
-                .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest().authenticated().and()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler()).and().logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
                 .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies()).permitAll();
         configure(http.logout());
         // @formatter:on
@@ -180,16 +182,9 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         }
     }
 
-    /**
-     * 加载登录配置
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected final void applyLoginConfigurers(HttpSecurity http) throws Exception {
-        Collection<SecurityConfigurerAdapter> configurers = getApplicationContext()
-                .getBeansOfType(SecurityConfigurerAdapter.class).values();
-        for (SecurityConfigurerAdapter configurer : configurers) {
-            http.apply(configurer);
-        }
+    @SuppressWarnings({ "rawtypes" })
+    protected Collection<SecurityConfigurerAdapter> getSecurityConfigurerAdapters() {
+        return getApplicationContext().getBeansOfType(SecurityConfigurerAdapter.class).values();
     }
 
     /**
@@ -236,7 +231,6 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         return matchers;
     }
 
-
     @Override
     public String getLoginFormUrl() {
         return "/login";
@@ -248,7 +242,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     }
 
     protected String[] getLogoutClearCookies() {
-        return new String[]{ "JSESSIONID", "SESSION" };
+        return new String[] { "JSESSIONID", "SESSION" };
     }
 
     /**

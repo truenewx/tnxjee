@@ -1,5 +1,9 @@
 package org.truenewx.tnxjee.webmvc.security.web.authentication;
 
+import java.util.function.Function;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
@@ -10,15 +14,12 @@ import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiMetaProperties;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.function.Function;
-
 /**
- * WEB站点基于用户名密码的鉴权过滤器
+ * 密码登录处理过滤器
  */
-public class WebUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class PasswordLoginProcessingFilter extends UsernamePasswordAuthenticationFilter {
 
-    public WebUsernamePasswordAuthenticationFilter(ApplicationContext context) {
+    public PasswordLoginProcessingFilter(ApplicationContext context) {
         ApiMetaProperties apiMetaProperties = SpringUtil.getFirstBeanByClass(context, ApiMetaProperties.class);
         if (apiMetaProperties != null) {
             String successTargetUrlParameter = apiMetaProperties.getLoginSuccessRedirectParameter();
@@ -26,7 +27,8 @@ public class WebUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
                 setSuccessTargetUrlParameter(successTargetUrlParameter);
             }
         }
-        ResolvableExceptionAuthenticationFailureHandler failureHandler = SpringUtil.getFirstBeanByClass(context, ResolvableExceptionAuthenticationFailureHandler.class);
+        ResolvableExceptionAuthenticationFailureHandler failureHandler = SpringUtil
+                .getFirstBeanByClass(context, ResolvableExceptionAuthenticationFailureHandler.class);
         if (failureHandler != null) {
             setAuthenticationFailureHandler(failureHandler); // 指定登录失败时的处理器
         }
