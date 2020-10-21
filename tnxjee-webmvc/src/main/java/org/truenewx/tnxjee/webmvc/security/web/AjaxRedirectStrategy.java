@@ -37,7 +37,7 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         }
         String redirectUrl = calculateRedirectUrl(contextPath, url);
         if (!isValidRedirectUrl(request, response, redirectUrl)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "illegal redirect target url.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "illegal redirect target url: " + redirectUrl);
             return;
         }
         redirectUrl = response.encodeRedirectURL(redirectUrl);
@@ -76,10 +76,10 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         }
         String redirectHost = NetUtil.getHost(redirectUrl, false);
         // 内网地址可以重定向，即使网段可能不同
-        if (NetUtil.isIntranetIp(redirectHost)) {
+        if (NetUtil.isLocalHost(redirectHost) || NetUtil.isIntranetIp(redirectHost)) {
             return true;
         }
-        
+
         String requestHost = WebUtil.getHost(request, false);
         // 同一个主机地址可以重定向，即使端口可能不同
         if (Objects.equals(requestHost, redirectHost)) {
