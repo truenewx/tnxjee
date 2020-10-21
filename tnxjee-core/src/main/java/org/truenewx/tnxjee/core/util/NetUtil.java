@@ -461,13 +461,16 @@ public class NetUtil {
      * @return 请求action
      */
     public static String getAction(String url) {
-        int index = url.indexOf("?");
-        if (index >= 0) {
-            url = url.substring(0, index);
+        int questionIndex = url.indexOf(Strings.QUESTION);
+        if (questionIndex >= 0) {
+            url = url.substring(0, questionIndex);
         }
-        index = url.lastIndexOf(".");
-        if (index >= 0) {
-            url = url.substring(0, index);
+        int dotIndex = url.lastIndexOf(Strings.DOT);
+        if (dotIndex >= 0) {
+            int slashIndex = url.lastIndexOf(Strings.SLASH);
+            if (dotIndex > slashIndex) { // .在最后一个/之后，才是扩展名
+                url = url.substring(0, dotIndex);
+            }
         }
         return url;
     }
