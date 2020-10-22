@@ -51,6 +51,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         HttpServletRequest request = SpringWebContext.getRequest();
@@ -64,8 +65,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                     ObjectMapper mapper = internal ? this.internalMappers.get(methodKey)
                             : this.externalMappers.get(methodKey);
                     if (mapper == null) {
-                        ResultFilter[] resultFilters = method
-                                .getAnnotationsByType(ResultFilter.class);
+                        ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
                         if (ArrayUtils.isNotEmpty(resultFilters)) {
                             EnumTypePropertyFilter filter = createPropertyFilter();
                             filter.setEnumDictResolver(this.enumDictResolver);
@@ -80,8 +80,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                             }
                             mapper = JsonUtil.buildMapper(filter, filter.getTypes());
                             if (internal) {
-                                mapper.setDefaultTyping(
-                                        PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
+                                mapper.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
                                 this.internalMappers.put(methodKey, mapper);
                             } else {
                                 this.externalMappers.put(methodKey, mapper);
