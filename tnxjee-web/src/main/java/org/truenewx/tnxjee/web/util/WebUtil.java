@@ -585,4 +585,19 @@ public class WebUtil {
         return headers;
     }
 
+    /**
+     * 依次尝试获取参数和属性值
+     *
+     * @param request http请求
+     * @param name    参数或属性名
+     * @return 参数或属性值
+     */
+    public static String getParameterOrAttribute(HttpServletRequest request, String name) {
+        String value = request.getParameter(name);
+        if (value == null) {
+            value = (String) request.getAttribute(name);
+        }
+        return value;
+    }
+
 }

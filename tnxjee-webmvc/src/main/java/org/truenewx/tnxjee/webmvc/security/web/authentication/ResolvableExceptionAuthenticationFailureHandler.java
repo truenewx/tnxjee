@@ -14,18 +14,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.webmvc.exception.message.ResolvableExceptionMessageSaver;
-import org.truenewx.tnxjee.webmvc.security.core.AuthenticationFailureException;
 
 /**
  * 基于可解决异常的登录认证失败处理器
  */
 @Component
-public class ResolvableExceptionAuthenticationFailureHandler
-        implements AuthenticationFailureHandler {
+public class ResolvableExceptionAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private boolean useForward = true;
     private Function<HttpServletRequest, String> targetUrlFunction = request -> null;
@@ -53,14 +50,12 @@ public class ResolvableExceptionAuthenticationFailureHandler
 
         // AJAX请求登录认证失败直接报401错误
         if (WebUtil.isAjaxRequest(request)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(),
-                    HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
             String targetUrl =
                     this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
-                response.sendError(HttpStatus.UNAUTHORIZED.value(),
-                        HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             } else { // 跳转到目标地址
                 if (this.useForward) {
                     WebMvcProperties.View view = this.webMvcProperties.getView();
@@ -75,16 +70,9 @@ public class ResolvableExceptionAuthenticationFailureHandler
 
     protected void saveException(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) {
-        ResolvableException re = null;
-        if (exception instanceof AuthenticationFailureException) {
-            re = new BusinessException(exception.getMessage());
-        } else {
-            Throwable cause = exception.getCause();
-            if (cause instanceof ResolvableException) {
-                re = (ResolvableException) cause;
-            }
-        }
-        if (re != null) {
+        Throwable cause = exception.getCause();
+        if (cause instanceof ResolvableException) {
+            ResolvableException re = (ResolvableException) cause;
             this.resolvableExceptionMessageSaver.saveMessage(request, response, null, re);
         }
     }
