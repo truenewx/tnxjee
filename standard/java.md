@@ -39,11 +39,13 @@
     Identification|标识|Id|
     Information|信息|Info|
     Maximum/Maximal|最大值/最大的|Max|
+    MicroService|微服务|Ms|Ms并不作为微软MicroSoft的简写
     Minimum/Minimal|最小值/最小的|Min|
     Number|编号（有序的）|No|单独
     Number|号码（无序的）|Num|单独
     Library|库|Lib|
     Organization|组织|Org|
+    Professional|专业的|Pro|
     Register|登记/注册|Reg|
     Statistics|统计|Stat|
     Telephone|电话|Tel|
