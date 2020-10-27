@@ -11,7 +11,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.webmvc.security.config.WebMvcSecurityConfigurerSupport;
+import org.truenewx.tnxjee.webmvc.security.config.annotation.web.configuration.WebMvcSecurityConfigurerSupport;
 import org.truenewx.tnxjee.webmvc.view.exception.resolver.ViewResolvableExceptionResolver;
 
 /**

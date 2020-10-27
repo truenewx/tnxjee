@@ -28,8 +28,8 @@ public class WebConstants {
     public static final String HEADER_ORIGINAL_REQUEST = "Original-Request";
 
     /**
-     * 头信息名：内部RPC
+     * 头信息名：内部JWT
      */
-    public static final String HEADER_INTERNAL_RPC = "Internal-Rpc";
+    public static final String HEADER_INTERNAL_JWT = "Internal-Jwt";
 
 }

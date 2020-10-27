@@ -16,6 +16,8 @@ import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
  */
 public class SecurityUtil {
 
+    public static Function<Authentication, Object> DETAIL_FUNCTION = Authentication::getDetails;
+
     private SecurityUtil() {
     }
 
@@ -35,17 +37,21 @@ public class SecurityUtil {
     }
 
     private static Object getAuthenticationDetails() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null) {
-            Authentication authentication = context.getAuthentication();
-            if (authentication != null) {
-                return DETAIL_FUNCTION.apply(authentication);
-            }
+        Authentication authentication = getAuthentication();
+        if (authentication != null) {
+            return DETAIL_FUNCTION.apply(authentication);
         }
         return null;
     }
 
-    public static Function<Authentication, Object> DETAIL_FUNCTION = Authentication::getDetails;
+    public static Authentication getAuthentication() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null) {
+            return context.getAuthentication();
+        }
+        return null;
+    }
+
 
     /**
      * 获取已授权的当前用户标识，匿名用户将返回null

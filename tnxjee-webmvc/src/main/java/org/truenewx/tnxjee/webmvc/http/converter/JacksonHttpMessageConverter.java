@@ -101,9 +101,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     private boolean isInternalRpc(HttpServletRequest request) {
-        String internalRpc = request.getHeader(WebConstants.HEADER_INTERNAL_RPC);
-        if (internalRpc != null) {
-            return Boolean.parseBoolean(internalRpc);
+        String internalJwt = request.getHeader(WebConstants.HEADER_INTERNAL_JWT);
+        if (internalJwt != null) {
+            return true;
         }
         String userAgent = request.getHeader("User-Agent");
         return userAgent == null || userAgent.toLowerCase().startsWith("java");

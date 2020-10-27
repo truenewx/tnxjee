@@ -5,19 +5,21 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * 简单的用户特性细节
  *
  * @param <I> 用户标识类型
  */
-public class SimpleUserSpecificDetails<I extends UserIdentity<?>>
-        implements UserSpecificDetails<I> {
+public class SimpleUserSpecificDetails<I extends UserIdentity<?>> implements UserSpecificDetails<I> {
 
     private static final long serialVersionUID = 2807428946816203247L;
 
     private I identity;
     private String username;
     private String caption;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private Collection<? extends GrantedAuthority> authorities;
     private boolean enabled;
     private boolean accountNonLocked;

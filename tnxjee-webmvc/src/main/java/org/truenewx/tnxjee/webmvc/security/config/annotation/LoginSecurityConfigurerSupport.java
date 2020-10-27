@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.security.config;
+package org.truenewx.tnxjee.webmvc.security.config.annotation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

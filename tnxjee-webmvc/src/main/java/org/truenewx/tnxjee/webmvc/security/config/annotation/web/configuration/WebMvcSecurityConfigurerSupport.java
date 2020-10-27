@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.security.config;
+package org.truenewx.tnxjee.webmvc.security.config.annotation.web.configuration;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -242,7 +242,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     }
 
     protected String[] getLogoutClearCookies() {
-        return new String[] { "JSESSIONID", "SESSION" };
+        return new String[]{ "JSESSIONID", "SESSION" };
     }
 
     /**
