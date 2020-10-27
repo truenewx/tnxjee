@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.config.InternalJwtConfiguration;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.web.util.WebConstants;
-import org.truenewx.tnxjee.webmvc.jwt.InternalJwtStrategy;
 import org.truenewx.tnxjee.webmvc.security.util.SecurityUtil;
 
 import com.auth0.jwt.JWT;
@@ -27,7 +27,7 @@ import feign.RequestTemplate;
 public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
 
     @Autowired(required = false)
-    private InternalJwtStrategy internalJwtStrategy;
+    private InternalJwtConfiguration internalJwtConfiguration;
 
     @Override
     public void apply(RequestTemplate template) {
@@ -63,15 +63,15 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     }
 
     private String generateJwt() {
-        if (this.internalJwtStrategy != null) {
+        if (this.internalJwtConfiguration != null) {
             UserSpecificDetails<?> userDetails = SecurityUtil.getAuthorizedUserDetails();
             if (userDetails != null) {
-                long expiredTimeMillis = System.currentTimeMillis() + this.internalJwtStrategy
+                long expiredTimeMillis = System.currentTimeMillis() + this.internalJwtConfiguration
                         .getExpiredIntervalSeconds() * 1000;
                 return JWT.create()
                         .withExpiresAt(new Date(expiredTimeMillis))
-                        .withAudience(userDetails.getClass().getName(), JsonUtil.toJson(userDetails))
-                        .sign(Algorithm.HMAC256(this.internalJwtStrategy.getSecretKey()));
+                        .withAudience(JsonUtil.toJson(userDetails))
+                        .sign(Algorithm.HMAC256(this.internalJwtConfiguration.getSecretKey()));
             }
         }
         return null;

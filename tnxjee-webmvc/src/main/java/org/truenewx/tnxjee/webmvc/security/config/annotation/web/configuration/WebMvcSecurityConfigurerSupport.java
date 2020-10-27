@@ -22,6 +22,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -37,6 +38,7 @@ import org.truenewx.tnxjee.webmvc.security.access.UserAuthorityAccessDecisionMan
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.webmvc.security.web.access.AccessDeniedBusinessExceptionHandler;
 import org.truenewx.tnxjee.webmvc.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
+import org.truenewx.tnxjee.webmvc.security.web.authentication.InternalJwtAuthenticationFilter;
 import org.truenewx.tnxjee.webmvc.security.web.authentication.WebAuthenticationEntryPoint;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
@@ -163,6 +165,8 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         for (SecurityConfigurerAdapter configurer : configurers) {
             http.apply(configurer);
         }
+        http.addFilterAfter(new InternalJwtAuthenticationFilter(getApplicationContext()),
+                UsernamePasswordAuthenticationFilter.class);
 
         Collection<RequestMatcher> anonymousMatcherCollection = getAnonymousRequestMatchers();
         RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
