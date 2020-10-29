@@ -1,19 +1,21 @@
 package org.truenewx.tnxjee.webmvc.api.meta;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.config.AppConfiguration;
 import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.enums.EnumItem;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiContext;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiMetaProperties;
@@ -35,32 +37,24 @@ public class ApiMetaController {
     private ApiMetaProperties apiMetaProperties;
     @Autowired
     private CommonProperties commonProperties;
+    @Value("${spring.application.name}")
+    private String baseApp;
 
     @GetMapping("/context")
-    public ApiContext context(HttpServletRequest request) {
+    public ApiContext context() {
         ApiContext context = new ApiContext();
-        String baseApp = this.apiMetaProperties.getBaseApp();
-        if (StringUtils.isNotBlank(baseApp)) {
-            AppConfiguration app = this.commonProperties.getApp(baseApp);
-            if (app != null) {
-                context.setBaseUrl(app.getContextUri(false));
-            }
-        }
-        context.setLoginSuccessRedirectParameter(
-                this.apiMetaProperties.getLoginSuccessRedirectParameter());
-        String[] appNames = this.apiMetaProperties.getAppNames();
-        if (ArrayUtils.isEmpty(appNames)) {
+        context.setBaseApp(this.baseApp);
+        context.setLoginSuccessRedirectParameter(this.apiMetaProperties.getLoginSuccessRedirectParameter());
+        Set<String> appNames = CollectionUtil.toSet(this.apiMetaProperties.getAppNames());
+        if (CollectionUtils.isEmpty(appNames)) {
             context.getApps().putAll(this.commonProperties.getAppContextUriMapping());
         } else {
+            appNames.add(this.baseApp); // 至少包含当前应用
             for (String appName : appNames) {
                 AppConfiguration app = this.commonProperties.getApp(appName);
                 if (app != null) {
                     context.getApps().put(appName, app.getContextUri(false));
                 }
-            }
-            AppConfiguration selfApp = this.commonProperties.getSelfApp();
-            if (selfApp != null) {
-                context.getApps().put("self", selfApp.getContextUri(false));
             }
         }
         return context;

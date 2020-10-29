@@ -7,10 +7,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * Web通用配置属性
@@ -24,8 +22,6 @@ public class CommonProperties implements InitializingBean {
     private Map<String, AppConfiguration> apps = new HashMap<>();
     private boolean gatewayEnabled;
     private String gatewayUri;
-    @Autowired
-    private Environment environment;
 
     public Map<String, AppConfiguration> getApps() {
         return this.apps;
@@ -95,14 +91,6 @@ public class CommonProperties implements InitializingBean {
             urls.put(name, app.getContextUri(false));
         });
         return urls;
-    }
-
-    public String getSelfAppName() {
-        return this.environment.getRequiredProperty("spring.application.name");
-    }
-
-    public AppConfiguration getSelfApp() {
-        return this.apps.get(getSelfAppName());
     }
 
 }

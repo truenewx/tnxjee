@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class ApiMetaProperties {
 
     private String[] appNames;
-    private String baseApp;
     private String loginSuccessRedirectParameter = "_next";
 
     public String[] getAppNames() {
@@ -23,17 +22,6 @@ public class ApiMetaProperties {
      */
     public void setAppNames(String[] appNames) {
         this.appNames = appNames;
-    }
-
-    public String getBaseApp() {
-        return this.baseApp;
-    }
-
-    /**
-     * @param baseApp 基础应用的名称
-     */
-    public void setBaseApp(String baseApp) {
-        this.baseApp = baseApp;
     }
 
     public String getLoginSuccessRedirectParameter() {

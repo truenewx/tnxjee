@@ -21,7 +21,7 @@ public abstract class SwaggerConfigSupport {
 
     @Autowired
     private VersionReader versionReader;
-    @Value("spring.application.name")
+    @Value("${spring.application.name}")
     private String appName;
 
     @Bean
