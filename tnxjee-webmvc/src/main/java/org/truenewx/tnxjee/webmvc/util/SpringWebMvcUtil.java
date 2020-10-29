@@ -4,12 +4,17 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.ArrayUtil;
+import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.bind.annotation.ResponseStream;
@@ -70,6 +75,23 @@ public class SpringWebMvcUtil {
         return handlerMethod.getMethodAnnotation(ResponseBody.class) != null
                 || handlerMethod.getBeanType().getAnnotation(RestController.class) != null
                 || handlerMethod.getMethodAnnotation(ResponseStream.class) != null;
+    }
+
+    public static String getRequestMappingUrl(HandlerMethod handlerMethod) {
+        String url = getPath(handlerMethod.getBeanType().getAnnotation(RequestMapping.class));
+        if (StringUtils.isBlank(url)) {
+            url = Strings.EMPTY;
+        }
+        String path = getPath(handlerMethod.getMethodAnnotation(RequestMapping.class));
+        if (StringUtils.isNotBlank(path)) {
+            url += path;
+        }
+        return NetUtil.standardizeUrl(url);
+    }
+
+
+    private static String getPath(RequestMapping requestMapping) {
+        return requestMapping == null ? null : ArrayUtil.get(requestMapping.value(), 0);
     }
 
 }

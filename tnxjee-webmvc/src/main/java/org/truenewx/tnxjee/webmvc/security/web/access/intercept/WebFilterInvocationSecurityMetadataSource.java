@@ -1,12 +1,12 @@
 package org.truenewx.tnxjee.webmvc.security.web.access.intercept;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
@@ -14,13 +14,18 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.web.method.HandlerMethod;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAuthority;
+import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigPermission;
 import org.truenewx.tnxjee.webmvc.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
  * WEB过滤器调用安全元数据源<br>
@@ -33,6 +38,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     private final Map<String, ConfigAttribute> configAttributeMap = new HashMap<>();
+    private String permissionPrefix = Strings.EMPTY;
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -40,27 +46,68 @@ public class WebFilterInvocationSecurityMetadataSource implements
 
     @Override
     public void afterInitialized(ApplicationContext context) {
+        // 存在多个微服务应用，则许可名称前需添加当前应用前缀
+        CommonProperties commonProperties = SpringUtil.getFirstBeanByClass(context, CommonProperties.class);
+        if (commonProperties != null && commonProperties.getApps().size() > 1) {
+            String appName = context.getEnvironment().getProperty("spring.application.name");
+            if (StringUtils.isNotBlank(appName)) {
+                this.permissionPrefix = appName + Strings.DOT;
+            }
+        }
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
-            Method method = handlerMethod.getMethod();
-            UserConfigAuthority userConfigAuthority = getUserConfigAuthority(method);
+            UserConfigAuthority userConfigAuthority = getUserConfigAuthority(handlerMethod);
             if (userConfigAuthority != null) {
-                this.configAttributeMap.put(method.toString(), userConfigAuthority);
+                String methodKey = handlerMethod.getMethod().toString();
+                this.configAttributeMap.put(methodKey, userConfigAuthority);
             }
         });
     }
 
-    private UserConfigAuthority getUserConfigAuthority(Method method) {
+    private UserConfigAuthority getUserConfigAuthority(HandlerMethod handlerMethod) {
         // 允许匿名访问，则忽略权限限定
-        if (method.getAnnotation(ConfigAnonymous.class) != null) {
+        if (handlerMethod.getMethodAnnotation(ConfigAnonymous.class) != null) {
             return null;
         }
 
-        ConfigAuthority configAuthority = method.getAnnotation(ConfigAuthority.class);
-        if (configAuthority == null) { // 没有配置权限限定，则拒绝所有访问
-            return UserConfigAuthority.ofDenyAll();
+        String url = SpringWebMvcUtil.getRequestMappingUrl(handlerMethod);
+        UserConfigAuthority authority = null;
+        ConfigAuthority configAuthority = handlerMethod.getMethodAnnotation(ConfigAuthority.class);
+        if (configAuthority != null) {
+            String permission = withPermissionPrefix(configAuthority.permission());
+            authority = new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
+                    permission, configAuthority.intranet());
+        } else { // 没有@ConfigAuthority则考虑@ConfigPermission
+            ConfigPermission configPermission = handlerMethod.getMethodAnnotation(ConfigPermission.class);
+            if (configPermission != null) {
+                String permission = withPermissionPrefix(getDefaultPermission(url));
+                authority = new UserConfigAuthority(configPermission.type(), configPermission.rank(),
+                        permission, configPermission.intranet());
+            }
         }
-        return new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
-                configAuthority.permission(), configAuthority.intranet());
+        if (authority == null) { // 没有配置权限限定，则拒绝所有访问
+            authority = UserConfigAuthority.ofDenyAll();
+        } else {
+            LogUtil.info(getClass(), "Config authority: {} => {}", url, authority);
+        }
+        return authority;
+    }
+
+    private String getDefaultPermission(String url) {
+        // 确保头尾都有/
+        url = StringUtils.wrapIfMissing(url, Strings.SLASH);
+        // 移除可能包含的路径变量
+        if (url.endsWith("/{id}/")) { // 以路径变量id结尾的，默认视为detail
+            url = url.replaceAll("/\\{id\\}/", "/detail/");
+        }
+        url = url.replaceAll("/\\{[^}]*\\}/", Strings.SLASH);
+        // 去掉头尾的/
+        url = StringUtils.strip(url, Strings.SLASH);
+        // 替换中间的/为.
+        return url.replaceAll(Strings.SLASH, Strings.DOT);
+    }
+
+    private String withPermissionPrefix(String permission) {
+        return StringUtils.isBlank(permission) ? Strings.EMPTY : (this.permissionPrefix + permission);
     }
 
     @Override
