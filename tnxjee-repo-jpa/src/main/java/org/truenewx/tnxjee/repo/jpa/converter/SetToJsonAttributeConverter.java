@@ -1,15 +1,17 @@
 package org.truenewx.tnxjee.repo.jpa.converter;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Set-JSON字符串的属性转换器
@@ -46,7 +48,7 @@ public class SetToJsonAttributeConverter implements AttributeConverter<Set<?>, S
     public Set<?> convertToEntityAttribute(String dbData) {
         if (StringUtils.isNotBlank(dbData)) {
             if ("[]".equals(dbData)) {
-                return new HashSet<>();
+                return Collections.emptySet();
             }
             try {
                 List<?> list;

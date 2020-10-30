@@ -11,7 +11,7 @@ import org.truenewx.tnxjee.model.spec.user.UserIdentity;
  *
  * @param <K> 标识类型
  */
-public abstract class UserIdentityConverter<K extends Serializable>
+public abstract class UserIdentityAttributeConverter<K extends Serializable>
         implements AttributeConverter<UserIdentity<K>, String> {
 
     @Override

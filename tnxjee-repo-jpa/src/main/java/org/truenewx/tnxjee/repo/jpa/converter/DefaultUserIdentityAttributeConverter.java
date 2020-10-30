@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.repo.jpa.converter;
 
+import javax.persistence.Converter;
+
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.model.spec.user.DefaultUserIdentity;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
@@ -7,7 +9,8 @@ import org.truenewx.tnxjee.model.spec.user.UserIdentity;
 /**
  * 默认用户标识属性转换器
  */
-public class DefaultUserIdentityConverter extends IntegerUserIdentityConverter {
+@Converter
+public class DefaultUserIdentityAttributeConverter extends IntegerUserIdentityAttributeConverter {
 
     @Override
     public UserIdentity<Integer> convertToEntityAttribute(String dbData) {
