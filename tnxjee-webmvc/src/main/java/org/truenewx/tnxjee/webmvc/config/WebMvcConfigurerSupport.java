@@ -1,9 +1,6 @@
 package org.truenewx.tnxjee.webmvc.config;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +8,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.*;
 import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
@@ -47,6 +42,14 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
         converters.removeIf(converter -> {
             // 移除多余的MappingJackson2HttpMessageConverter，已被JacksonHttpMessageConverter取代
             return converter.getClass() == MappingJackson2HttpMessageConverter.class;
+        });
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        Map<String, HandlerInterceptor> interceptors = getApplicationContext().getBeansOfType(HandlerInterceptor.class);
+        interceptors.forEach((name, interceptor) -> {
+            registry.addInterceptor(interceptor);
         });
     }
 

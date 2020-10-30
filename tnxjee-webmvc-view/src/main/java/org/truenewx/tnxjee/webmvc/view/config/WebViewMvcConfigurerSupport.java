@@ -52,8 +52,7 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
         FilterRegistrationBean<BuildableSiteMeshFilter> frb = new FilterRegistrationBean<>();
         frb.setFilter(new BuildableSiteMeshFilter(this::buildSiteMeshFilter));
         frb.addUrlPatterns("/*");
-        frb.setDispatcherTypes(DispatcherType.FORWARD, DispatcherType.REQUEST,
-                DispatcherType.ERROR);
+        frb.setDispatcherTypes(DispatcherType.FORWARD, DispatcherType.REQUEST, DispatcherType.ERROR);
         return frb;
     }
 
