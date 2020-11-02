@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.impl.relation;
 
 import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
@@ -125,16 +126,16 @@ public abstract class AbstractRelationService<T extends Relation<L, R>, L extend
     }
 
     @Override
-    public boolean delete(L leftId, R rightId) {
+    public T delete(L leftId, R rightId) {
         T relation = beforeDelete(leftId, rightId);
         if (relation == null) {
             relation = find(leftId, rightId);
         }
         if (relation != null) {
             getRepository().delete(relation);
-            return true;
+            return relation;
         }
-        return false;
+        return null;
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
 import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
@@ -111,14 +112,8 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * 删除单体
-     *
-     * @param id 要删除的单体的标识
-     * @return
-     */
     @Override
-    public boolean delete(K id) {
+    public T delete(K id) {
         if (id != null) {
             T unity = beforeDelete(id);
             if (unity == null) {
@@ -126,10 +121,10 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
             }
             if (unity != null) {
                 getRepository().delete(unity);
-                return true;
+                return unity;
             }
         }
-        return false;
+        return null;
     }
 
     /**

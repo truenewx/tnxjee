@@ -33,7 +33,7 @@ public interface UnityService<T extends Unity<K>, K extends Serializable> extend
      * 删除单体
      *
      * @param id 要删除的单体的标识
-     * @return 是否成功删除，如果要删除的单体本就不存在则返回false
+     * @return 被删除的单体，如果实际上未删除任何实体，则返回null
      */
-    boolean delete(K id);
+    T delete(K id);
 }

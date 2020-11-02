@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.impl.unity;
 
 import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
@@ -121,7 +122,7 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
     }
 
     @Override
-    public boolean delete(O owner, K id) {
+    public T delete(O owner, K id) {
         if (owner != null && id != null) {
             T unity = beforeDelete(owner, id);
             if (unity == null) {
@@ -129,10 +130,10 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
             }
             if (unity != null) {
                 getRepository().delete(unity);
-                return true;
+                return unity;
             }
         }
-        return false;
+        return null;
     }
 
     /**
