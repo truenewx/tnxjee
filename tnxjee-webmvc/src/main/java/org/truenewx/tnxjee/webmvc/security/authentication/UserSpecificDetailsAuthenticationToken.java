@@ -10,10 +10,20 @@ public class UserSpecificDetailsAuthenticationToken extends AbstractAuthenticati
 
     private static final long serialVersionUID = 5719790668377346866L;
 
+    private String ip;
+
     public UserSpecificDetailsAuthenticationToken(UserSpecificDetails<?> details) {
         super(details.getAuthorities());
         super.setAuthenticated(true);
         setDetails(details);
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     @Override
