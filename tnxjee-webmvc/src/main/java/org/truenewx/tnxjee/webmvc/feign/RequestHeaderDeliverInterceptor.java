@@ -4,14 +4,20 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.config.InternalJwtConfiguration;
 import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.model.spec.user.DefaultUserIdentity;
+import org.truenewx.tnxjee.model.spec.user.security.DefaultUserSpecificDetails;
+import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthorityImpl;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.web.util.WebConstants;
+import org.truenewx.tnxjee.webmvc.security.config.annotation.GrantAuthority;
 import org.truenewx.tnxjee.webmvc.security.util.SecurityUtil;
 
 import com.auth0.jwt.JWT;
@@ -52,27 +58,81 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
                 }
             }
             if (noJwt) { // 没有JWT则构建JWT传递
-                String token = generateJwt();
-                if (token != null) {
-                    template.header(WebConstants.HEADER_INTERNAL_JWT, token);
-                } else { // 确保存在JWT头信息，以便于判断是否内部RPC
-                    template.header(WebConstants.HEADER_INTERNAL_JWT, Strings.EMPTY);
-                }
+                String token = generateJwt(template);
+                // 确保存在JWT头信息，以便于判断是否内部RPC
+                template.header(WebConstants.HEADER_INTERNAL_JWT, Objects.requireNonNullElse(token, Strings.EMPTY));
             }
         }
     }
 
-    private String generateJwt() {
+    private String generateJwt(RequestTemplate template) {
         if (this.internalJwtConfiguration != null) {
             UserSpecificDetails<?> userDetails = SecurityUtil.getAuthorizedUserDetails();
-            if (userDetails != null) {
-                long expiredTimeMillis = System.currentTimeMillis() + this.internalJwtConfiguration
-                        .getExpiredIntervalSeconds() * 1000;
-                return JWT.create()
-                        .withExpiresAt(new Date(expiredTimeMillis))
-                        .withAudience(JsonUtil.toJson(userDetails))
-                        .sign(Algorithm.HMAC256(this.internalJwtConfiguration.getSecretKey()));
+            Class<?> targetType = template.feignTarget().type();
+            GrantAuthority grantAuthority = targetType.getAnnotation(GrantAuthority.class);
+            if (grantAuthority != null) {
+                GrantAuthority.Mode mode = grantAuthority.mode();
+                switch (mode) {
+                    case UNAUTHORIZED:
+                        if (userDetails == null) {
+                            userDetails = buildGrantUserSpecificDetails(grantAuthority);
+                        }
+                        break;
+                    case REPLACEMENT:
+                        userDetails = buildGrantUserSpecificDetails(grantAuthority);
+                        break;
+                    case ADDON:
+                        if (userDetails == null) {
+                            userDetails = buildGrantUserSpecificDetails(grantAuthority);
+                        } else {
+                            addGrantedAuthorities(userDetails, grantAuthority);
+                        }
+                        break;
+                }
             }
+            return generateJwt(userDetails);
+        }
+        return null;
+    }
+
+    private UserSpecificDetails<?> buildGrantUserSpecificDetails(GrantAuthority grantAuthority) {
+        DefaultUserSpecificDetails userDetails = new DefaultUserSpecificDetails();
+        addGrantedAuthorities(userDetails, grantAuthority);
+        DefaultUserIdentity identity = new DefaultUserIdentity(grantAuthority.type(), 0);
+        userDetails.setIdentity(identity);
+        userDetails.setUsername(identity.getId().toString());
+        userDetails.setCaption(identity.toString());
+        userDetails.setEnabled(true);
+        userDetails.setAccountNonExpired(true);
+        userDetails.setAccountNonLocked(true);
+        userDetails.setCredentialsNonExpired(true);
+        return userDetails;
+    }
+
+    private void addGrantedAuthorities(UserSpecificDetails<?> userDetails, GrantAuthority grantAuthority) {
+        Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) userDetails.getAuthorities();
+        String type = grantAuthority.type();
+        if (StringUtils.isNotBlank(type)) {
+            authorities.add(KindGrantedAuthorityImpl.ofType(type));
+        }
+        String rank = grantAuthority.rank();
+        if (StringUtils.isNotBlank(rank)) {
+            authorities.add(KindGrantedAuthorityImpl.ofRank(rank));
+        }
+        String[] permissions = grantAuthority.permission();
+        for (String permission : permissions) {
+            authorities.add(KindGrantedAuthorityImpl.ofPermission(permission));
+        }
+    }
+
+    private String generateJwt(UserSpecificDetails<?> userDetails) {
+        if (userDetails != null) {
+            long expiredTimeMillis = System.currentTimeMillis() + this.internalJwtConfiguration
+                    .getExpiredIntervalSeconds() * 1000;
+            return JWT.create()
+                    .withExpiresAt(new Date(expiredTimeMillis))
+                    .withAudience(JsonUtil.toJson(userDetails))
+                    .sign(Algorithm.HMAC256(this.internalJwtConfiguration.getSecretKey()));
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.model.spec.user.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +21,7 @@ public class SimpleUserSpecificDetails<I extends UserIdentity<?>> implements Use
     private String username;
     private String caption;
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    private Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
     private boolean enabled;
     private boolean accountNonLocked;
     private boolean accountNonExpired;
