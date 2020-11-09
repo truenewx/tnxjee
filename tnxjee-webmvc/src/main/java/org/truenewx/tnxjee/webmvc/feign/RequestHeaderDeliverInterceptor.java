@@ -109,6 +109,7 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
         return userDetails;
     }
 
+    @SuppressWarnings("unchecked")
     private void addGrantedAuthorities(UserSpecificDetails<?> userDetails, GrantAuthority grantAuthority) {
         Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) userDetails.getAuthorities();
         String type = grantAuthority.type();
