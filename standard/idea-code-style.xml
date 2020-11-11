@@ -1,4 +1,4 @@
-<code_scheme name="Default" version="173">
+<code_scheme name="Default 2" version="173">
   <option name="FORMATTER_TAGS_ENABLED" value="true" />
   <option name="SOFT_MARGINS" value="120" />
   <DB2CodeStyleSettings version="2">
@@ -74,18 +74,9 @@
   <JetCodeStyleSettings>
     <option name="PACKAGES_TO_USE_STAR_IMPORTS">
       <value>
-        <package name="java.util" alias="false" withSubpackages="false" />
-        <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
-        <package name="io.ktor" alias="false" withSubpackages="true" />
-      </value>
-    </option>
-    <option name="PACKAGES_IMPORT_LAYOUT">
-      <value>
-        <package name="" alias="false" withSubpackages="true" />
-        <package name="java" alias="false" withSubpackages="true" />
-        <package name="javax" alias="false" withSubpackages="true" />
-        <package name="kotlin" alias="false" withSubpackages="true" />
-        <package name="" alias="true" withSubpackages="true" />
+        <package name="java.util" withSubpackages="false" static="false" />
+        <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
+        <package name="io.ktor" withSubpackages="true" static="false" />
       </value>
     </option>
   </JetCodeStyleSettings>
@@ -161,9 +152,10 @@
     <option name="TABLE_TYPES_ALIGN" value="false" />
     <option name="TABLE_DEFAULTS_ALIGN" value="false" />
     <option name="TABLE_NULLABILITIES_ALIGN" value="false" />
+    <option name="TABLE_ALTER_INSTRUCTION_WRAP" value="0" />
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
-    <option name="INDEX_NAME_TEMPLATE" value="{unique?uni:index}_{table}_{columns}" />
+    <option name="INDEX_NAME_TEMPLATE" value="{unique?uk:idx}_{table}_{columns}" />
     <option name="PRIMARY_KEY_NAME_TEMPLATE" value="pk_{table}" />
     <option name="FOREIGN_KEY_NAME_TEMPLATE" value="fk_{table}_{columns}" />
   </SqlCodeStyleSettings>
@@ -270,9 +262,7 @@
     <option name="KEEP_LINE_BREAKS" value="false" />
     <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
     <indentOptions>
-      <option name="INDENT_SIZE" value="2" />
       <option name="CONTINUATION_INDENT_SIZE" value="4" />
-      <option name="TAB_SIZE" value="2" />
     </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="SQLite">
