@@ -66,7 +66,7 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     }
 
     private String generateJwt(RequestTemplate template) {
-        if (this.internalJwtConfiguration != null) {
+        if (this.internalJwtConfiguration != null && this.internalJwtConfiguration.isValid()) {
             UserSpecificDetails<?> userDetails = SecurityUtil.getAuthorizedUserDetails();
             Class<?> targetType = template.feignTarget().type();
             GrantAuthority grantAuthority = targetType.getAnnotation(GrantAuthority.class);

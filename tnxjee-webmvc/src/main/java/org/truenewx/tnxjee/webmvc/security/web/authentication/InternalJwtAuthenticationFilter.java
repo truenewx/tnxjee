@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
 import org.truenewx.tnxjee.core.config.InternalJwtConfiguration;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
@@ -39,9 +38,8 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
     public InternalJwtAuthenticationFilter(ApplicationContext context) {
         InternalJwtConfiguration configuration = SpringUtil
                 .getFirstBeanByClass(context, InternalJwtConfiguration.class);
-        if (configuration != null) {
+        if (configuration != null && configuration.isValid()) {
             String secretKey = configuration.getSecretKey();
-            Assert.notNull(secretKey, "The secretKey of InternalJwtStrategy must be not null");
             this.verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         }
     }

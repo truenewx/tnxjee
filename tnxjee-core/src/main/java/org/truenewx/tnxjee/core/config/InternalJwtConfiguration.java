@@ -1,7 +1,9 @@
 package org.truenewx.tnxjee.core.config;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
- * 内部JWT配置
+ * 内部JWT配置。当且仅当内部微服务间RPC调用使用了@GrantAuthority注解指定授予权限时，才构建当前类的实例作为Spring的Bean。
  */
 public class InternalJwtConfiguration {
 
@@ -9,8 +11,8 @@ public class InternalJwtConfiguration {
     private int expiredIntervalSeconds;
 
     public InternalJwtConfiguration(String secretKey, int expiredIntervalSeconds) {
-        this.expiredIntervalSeconds = expiredIntervalSeconds;
         this.secretKey = secretKey;
+        this.expiredIntervalSeconds = expiredIntervalSeconds;
     }
 
     public InternalJwtConfiguration(String secretKey) {
@@ -23,6 +25,10 @@ public class InternalJwtConfiguration {
 
     public int getExpiredIntervalSeconds() {
         return this.expiredIntervalSeconds;
+    }
+
+    public boolean isValid() {
+        return this.expiredIntervalSeconds > 0 && StringUtils.isNotBlank(this.secretKey);
     }
 
 }
