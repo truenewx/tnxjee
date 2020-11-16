@@ -9,7 +9,7 @@ import org.truenewx.tnxjee.model.spec.enums.OS;
 import org.truenewx.tnxjee.model.spec.enums.Program;
 
 /**
- * 终端类型
+ * 终端
  *
  * @author liuzhiyi
  */
