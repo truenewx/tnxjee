@@ -53,7 +53,7 @@ Web应用开发分为两种模式：
 5. 【推荐】应用工程特有的css样式名称以my-开头，以便于与框架样式区分。
 6. 【强制】JavaScript代码中的字符串使用单引号含括，而不使用双引号；必须使用 === 和 !== 进行相等和不等判断，而不使用 == 和 != 。
 6. 【推荐】套用JavaDoc的格式对JavaScript的类、属性、函数进行注释，其它注释规范与Java相同。
-7. 【强制】使用idea编辑html、jsp和js文件，而不用eclipse进行编辑。idea对这些代码的格式化比eclipse好很多，格式化配置从[idea-code-style.xml](../ide/idea-code-style.xml)导入。
+7. 【强制】使用idea编辑html、jsp和js文件，而不用eclipse进行编辑。idea对这些代码的格式化比eclipse好很多，格式化配置从[idea-code-style.xml](ide/idea-code-style.xml)导入。
 
 ## 三、前后端分离模式
 1. 【强制】不论前端使用什么技术框架，均应遵守该技术框架的标准规范。
