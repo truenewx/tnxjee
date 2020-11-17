@@ -190,8 +190,8 @@
   
 ### 2.2 格式
 1. 【强制】通过IDE工具的代码格式化功能对代码进行格式化，我们已经导出格式化配置文件，请将其导入你的IDE配置中。
-  - idea的格式化配置文件见[idea-code-style.xml](./idea-code-style.xml)，其中不仅包含Java的格式，也包含其它文件的格式化配置；
-  - eclipse的格式化配置文件见[eclipse-java-code-style.xml](./eclipse-java-code-style.xml)
+  - idea的格式化配置文件见[idea-code-style.xml](../ide/idea-code-style.xml)，其中不仅包含Java的格式，也包含其它文件的格式化配置；
+  - eclipse的格式化配置文件见[eclipse-java-code-style.xml](../ide/eclipse-java-code-style.xml)
 2. 【推荐】eclipse有save actions功能，idea有save actions插件，可实现在保存文件时自动进行一些处理，典型的如：格式化代码。强烈建议安装，并进行如下配置：
   - 自动格式化
   - 组织Java导入，移除未使用的import
