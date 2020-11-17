@@ -1,16 +1,16 @@
-package org.truenewx.tnxjee.webmvc.feign;
+package org.truenewx.tnxjee.web.context;
 
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 /**
- * Feign调用的多线程任务
+ * 传递Spring Web上下文的多线程任务
  */
-public abstract class FeignCallTask implements Runnable {
+public abstract class SpringWebContextTask implements Runnable {
 
     private RequestAttributes requestAttributes;
 
-    public FeignCallTask() {
+    public SpringWebContextTask() {
         this.requestAttributes = RequestContextHolder.currentRequestAttributes();
     }
 
