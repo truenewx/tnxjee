@@ -14,14 +14,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
+
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.truenewx.tnxjee.core.Strings;
+
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 
 /**
  * 字符串工具类
@@ -117,35 +119,35 @@ public class StringUtil {
     public static String random(int type, int length) {
         byte[] b = new byte[length];
         switch (type) {
-        case RANDOM_TYPE_NUMBER: {
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-            }
-            break;
-        }
-        case RANDOM_TYPE_LETTER: {
-            Random random = new Random();
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
-                if (random.nextBoolean()) {
-                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+            case RANDOM_TYPE_NUMBER: {
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
                 }
+                break;
             }
-            break;
-        }
-        case RANDOM_TYPE_MIXED: {
-            Random random = new Random();
-            for (int i = 0; i < b.length; i++) {
-                b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
-                if (random.nextBoolean()) {
+            case RANDOM_TYPE_LETTER: {
+                Random random = new Random();
+                for (int i = 0; i < b.length; i++) {
                     b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+                    }
                 }
-                if (random.nextBoolean()) {
-                    b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
-                }
+                break;
             }
-            break;
-        }
+            case RANDOM_TYPE_MIXED: {
+                Random random = new Random();
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = MathUtil.randomByte((byte) '0', (byte) '9');
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'a', (byte) 'z');
+                    }
+                    if (random.nextBoolean()) {
+                        b[i] = MathUtil.randomByte((byte) 'A', (byte) 'Z');
+                    }
+                }
+                break;
+            }
         }
         return new String(b);
     }
@@ -1006,6 +1008,18 @@ public class StringUtil {
             return true;
         }
         return s1 != null && s1.equals(s2);
+    }
+
+    /**
+     * 替换手机号码中间4位为指定字符
+     *
+     * @param mobilePhone 手机号码
+     * @param c           目标字符
+     * @return 替换后的字符串
+     */
+    public static String replaceMobilePhoneMiddle(String mobilePhone, char c) {
+        String target = "$1" + c + c + c + c + "$2";
+        return mobilePhone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
     }
 
 }
