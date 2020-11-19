@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.core.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.truenewx.tnxjee.core.util.Profiles;
 import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 
 /**
@@ -27,9 +28,10 @@ public abstract class CoreConfigurerSupport {
      */
     protected int getInternalJwtExpiredTimeSeconds(String profile) {
         switch (profile) {
-            case "local":
+            case Profiles.LOCAL:
+            case Profiles.DEV:
                 return 1000;
-            case "test":
+            case Profiles.TEST:
                 return 100;
         }
         return 10;
