@@ -17,6 +17,7 @@ import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.webmvc.config.WebMvcConfigurerSupport;
 import org.truenewx.tnxjee.webmvc.view.servlet.filter.ForbidAccessFilter;
 import org.truenewx.tnxjee.webmvc.view.servlet.filter.PrepareContextFilter;
+import org.truenewx.tnxjee.webmvc.view.servlet.resource.AntPatternResourceResolver;
 import org.truenewx.tnxjee.webmvc.view.sitemesh.config.BuildableSiteMeshFilter;
 
 /**
@@ -68,6 +69,9 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
             String[] staticPathPatterns = StringUtil.splitAndTrim(staticPathPattern, Strings.COMMA);
             String[] staticLocations = this.resourceProperties.getStaticLocations();
             for (String pattern : staticPathPatterns) {
+                if (!pattern.startsWith(Strings.SLASH)) { // 确保样式以/开头，否则判断一定不匹配
+                    pattern = Strings.SLASH + pattern;
+                }
                 ResourceHandlerRegistration registration = registry.addResourceHandler(pattern);
                 String dir = getStaticResourceDir(pattern);
                 for (String staticLocation : staticLocations) {
@@ -75,6 +79,9 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
                         staticLocation = staticLocation.substring(0, staticLocation.length() - 1);
                     }
                     registration.addResourceLocations(staticLocation + dir);
+                }
+                if (AntPatternResourceResolver.supports(pattern)) {
+                    registration.resourceChain(true).addResolver(new AntPatternResourceResolver(pattern));
                 }
             }
             registry.setOrder(Ordered.HIGHEST_PRECEDENCE + 2000);
@@ -88,17 +95,19 @@ public abstract class WebViewMvcConfigurerSupport extends WebMvcConfigurerSuppor
      * @return 资源文件存放目录
      */
     protected String getStaticResourceDir(String pattern) {
+        // 去掉开头的/**
+        if (pattern.startsWith("/**/")) {
+            return Strings.SLASH;
+        }
+        // 去掉*之后的部分
         int index = pattern.indexOf(Strings.ASTERISK);
         if (index >= 0) {
             pattern = pattern.substring(0, index);
-        }
-        index = pattern.lastIndexOf(Strings.SLASH);
-        if (index >= 0) {
-            pattern = pattern.substring(0, index + 1);
-        }
-        // 确保以/开头
-        if (!pattern.startsWith(Strings.SLASH)) {
-            pattern = Strings.SLASH + pattern;
+            // 此时再去掉最后一个/之后的部分
+            index = pattern.lastIndexOf(Strings.SLASH);
+            if (index >= 0) {
+                pattern = pattern.substring(0, index + 1);
+            }
         }
         return pattern;
     }
