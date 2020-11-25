@@ -1018,8 +1018,11 @@ public class StringUtil {
      * @return 替换后的字符串
      */
     public static String replaceMobilePhoneMiddle(String mobilePhone, char c) {
-        String target = "$1" + c + c + c + c + "$2";
-        return mobilePhone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
+        if (isMobilePhone(mobilePhone)) {
+            String target = "$1" + c + c + c + c + "$2";
+            return mobilePhone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
+        }
+        return mobilePhone;
     }
 
 }
