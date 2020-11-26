@@ -46,7 +46,7 @@ public class CoverTag extends SimpleTagSupport {
                 }
                 coverLength = this.value.length() - (++coverIndex);
                 distLength = 1;
-            } else if (StringUtil.isMobilePhone(this.value)) { // 手机号码掩盖第四至八位
+            } else if (StringUtil.isCellphone(this.value)) { // 手机号码掩盖第四至八位
                 coverIndex = 3;
                 coverLength = 4;
                 distLength = coverLength;

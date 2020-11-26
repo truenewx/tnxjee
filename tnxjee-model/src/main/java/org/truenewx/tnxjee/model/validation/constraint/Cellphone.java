@@ -6,7 +6,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
-import org.truenewx.tnxjee.model.validation.constraint.validator.MobilePhoneValidator;
+import org.truenewx.tnxjee.model.validation.constraint.validator.CellphoneValidator;
 
 /**
  * 手机号码约束
@@ -17,10 +17,10 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.MobilePhoneVali
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Pattern(regexp = "1[0-9]{10}")
-@Constraint(validatedBy = MobilePhoneValidator.class)
-public @interface MobilePhone {
+@Constraint(validatedBy = CellphoneValidator.class)
+public @interface Cellphone {
 
-    String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.MobilePhone.message}";
+    String DEFAULT_MESSAGE = "{org.truenewx.tnxjee.model.validation.constraint.Cellphone.message}";
 
     String message() default DEFAULT_MESSAGE;
 

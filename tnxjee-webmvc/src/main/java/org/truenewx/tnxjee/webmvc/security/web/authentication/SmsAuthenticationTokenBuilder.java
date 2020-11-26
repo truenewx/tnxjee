@@ -11,10 +11,10 @@ import org.truenewx.tnxjee.webmvc.security.authentication.SmsVerifyCodeAuthentic
 public class SmsAuthenticationTokenBuilder
         extends AbstractAuthenticationTokenBuilder<SmsVerifyCodeAuthenticationToken> {
 
-    public static final String DEFAULT_PARAMETER_MOBILE_PHONE = "mobilePhone";
+    public static final String DEFAULT_PARAMETER_CELLPHONE = "cellphone";
     public static final String DEFAULT_PARAMETER_VERIFY_CODE = "verifyCode";
 
-    private String mobilePhoneParameter = DEFAULT_PARAMETER_MOBILE_PHONE;
+    private String cellphoneParameter = DEFAULT_PARAMETER_CELLPHONE;
     private String verifyCodeParameter = DEFAULT_PARAMETER_VERIFY_CODE;
 
     public SmsAuthenticationTokenBuilder(String loginMode) {
@@ -23,26 +23,26 @@ public class SmsAuthenticationTokenBuilder
 
     @Override
     public SmsVerifyCodeAuthenticationToken buildAuthenticationToken(HttpServletRequest request) {
-        String mobilePhone = request.getParameter(getMobilePhoneParameter());
+        String cellphone = request.getParameter(getCellphoneParameter());
         String verifyCode = request.getParameter(getVerifyCodeParameter());
-        if (mobilePhone == null) {
-            mobilePhone = Strings.EMPTY;
+        if (cellphone == null) {
+            cellphone = Strings.EMPTY;
         }
-        mobilePhone = mobilePhone.trim();
+        cellphone = cellphone.trim();
         if (verifyCode == null) {
             verifyCode = Strings.EMPTY;
         }
         verifyCode = verifyCode.trim();
 
-        return new SmsVerifyCodeAuthenticationToken(mobilePhone, verifyCode);
+        return new SmsVerifyCodeAuthenticationToken(cellphone, verifyCode);
     }
 
-    public String getMobilePhoneParameter() {
-        return this.mobilePhoneParameter;
+    public String getCellphoneParameter() {
+        return this.cellphoneParameter;
     }
 
-    public void setMobilePhoneParameter(String mobilePhoneParameter) {
-        this.mobilePhoneParameter = mobilePhoneParameter;
+    public void setCellphoneParameter(String cellphoneParameter) {
+        this.cellphoneParameter = cellphoneParameter;
     }
 
     public String getVerifyCodeParameter() {

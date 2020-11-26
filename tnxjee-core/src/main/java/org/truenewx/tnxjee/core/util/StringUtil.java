@@ -84,7 +84,7 @@ public class StringUtil {
     public static final String EMAIL_PATTERN =
             "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
-    public static final String MOBILE_PHONE_PATTERN = "^1\\d{10}$";
+    public static final String CELLPHONE_PATTERN = "^1\\d{10}$";
 
     private static final PathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
@@ -475,8 +475,8 @@ public class StringUtil {
      * @param s 字符串
      * @return true if 指定字符串是手机号码, otherwise false
      */
-    public static boolean isMobilePhone(String s) {
-        return s != null && regexMatch(s, MOBILE_PHONE_PATTERN);
+    public static boolean isCellphone(String s) {
+        return s != null && regexMatch(s, CELLPHONE_PATTERN);
     }
 
     /**
@@ -1013,16 +1013,16 @@ public class StringUtil {
     /**
      * 替换手机号码中间4位为指定字符
      *
-     * @param mobilePhone 手机号码
-     * @param c           目标字符
+     * @param cellphone 手机号码
+     * @param c         目标字符
      * @return 替换后的字符串
      */
-    public static String replaceMobilePhoneMiddle(String mobilePhone, char c) {
-        if (isMobilePhone(mobilePhone)) {
+    public static String replaceCellphoneMiddle(String cellphone, char c) {
+        if (isCellphone(cellphone)) {
             String target = "$1" + c + c + c + c + "$2";
-            return mobilePhone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
+            return cellphone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
         }
-        return mobilePhone;
+        return cellphone;
     }
 
 }
