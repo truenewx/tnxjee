@@ -21,7 +21,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
 
     @Override
     public T find(K id) {
-        return getRepository().findById(id).orElse(null);
+        return id == null ? null : getRepository().findById(id).orElse(null);
     }
 
     @Override
