@@ -47,6 +47,7 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
+        boolean clearAuthentication = false;
         if (this.verifier != null) {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             if (securityContext != null) {
@@ -63,6 +64,7 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
                                         .json2Bean(json, UserSpecificDetails.class);
                                 Authentication authResult = new UserSpecificDetailsAuthenticationToken(details);
                                 securityContext.setAuthentication(authResult);
+                                clearAuthentication = true; // 设置的一次性授权，需要在后续处理完之后清除
                             }
                         } catch (Exception e) { // 出现任何错误均只打印日志，视为没有授权
                             LogUtil.error(getClass(), e);
@@ -73,6 +75,10 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
         }
 
         chain.doFilter(req, res);
+
+        if (clearAuthentication) {
+            SecurityContextHolder.clearContext();
+        }
     }
 
 }
