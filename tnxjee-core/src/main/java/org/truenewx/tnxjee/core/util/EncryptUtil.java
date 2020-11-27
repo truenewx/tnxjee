@@ -1,10 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.Reader;
+import java.io.*;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +18,6 @@ import org.truenewx.tnxjee.core.crypto.Md5Encryptor;
  * 加密工具类
  *
  * @author jianglei
- *
  */
 public class EncryptUtil {
 
@@ -56,13 +51,21 @@ public class EncryptUtil {
     }
 
     public static String encryptByBase64(Object source) {
-        byte[] data = toBytes(source);
-        return Base64.getEncoder().encodeToString(data).replaceAll("\n", "");
+        if (source != null) {
+            byte[] data = toBytes(source);
+            return Base64.getEncoder().encodeToString(data).replaceAll("\n", "");
+        }
+        return null;
     }
 
     public static String decryptByBase64(String encryptedText) {
-        byte[] data = Base64.getDecoder().decode(encryptedText);
-        return data == null ? null : new String(data);
+        if (encryptedText != null) {
+            byte[] data = Base64.getDecoder().decode(encryptedText);
+            if (data != null) {
+                return new String(data);
+            }
+        }
+        return null;
     }
 
     public static String encryptByRsa(Object source, InputStream publicKey) {
