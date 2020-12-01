@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.core.enums;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.truenewx.tnxjee.core.spec.BooleanEnum;
 import org.truenewx.tnxjee.core.spec.Named;
@@ -11,7 +12,6 @@ import org.truenewx.tnxjee.core.spec.Named;
  * 枚举类型
  *
  * @author jianglei
- * 
  */
 public class EnumType implements Named {
     /**
@@ -84,7 +84,7 @@ public class EnumType implements Named {
      * @return 所有直接枚举项
      */
     public Collection<EnumItem> getItems() {
-        return this.items.values();
+        return this.items.values().stream().sorted().collect(Collectors.toList());
     }
 
     /**

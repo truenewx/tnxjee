@@ -263,25 +263,48 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     }
 
     private EnumType buildEnumType(Class<Enum<?>> enumClass, String subtype, Locale locale) {
-        EnumType enumType = newEnumType(enumClass);
+        EnumType enumType = newEnumType(enumClass, subtype);
         for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
             Field field = ClassUtil.getField(enumConstant);
-            String caption = CaptionUtil.getCaption(field, locale);
-            if (caption == null) { // 默认用枚举常量名称作为显示名
-                caption = enumConstant.name();
+            Integer ordinal = getOrdinal(field, subtype);
+            if (ordinal != null) {
+                if (ordinal < 0) { // 取得的序号小于0时，使用枚举常量的定义顺序号
+                    ordinal = enumConstant.ordinal();
+                }
+                String caption = CaptionUtil.getCaption(field, locale);
+                if (caption == null) { // 默认用枚举常量名称作为显示名
+                    caption = enumConstant.name();
+                }
+                enumType.addItem(new EnumItem(ordinal, enumConstant.name(), caption));
             }
-            enumType.addItem(new EnumItem(enumConstant.ordinal(), enumConstant.name(), caption));
         }
         return enumType;
+    }
+
+    private Integer getOrdinal(Field field, String subname) {
+        if (field == null) {
+            return null;
+        }
+        if (subname == null) {
+            return EnumSub.DEFAULT_ORDINAL;
+        }
+        EnumSub[] enumSubs = field.getAnnotationsByType(EnumSub.class);
+        for (EnumSub enumSub : enumSubs) {
+            if (enumSub.value().equals(subname)) {
+                return enumSub.ordinal();
+            }
+        }
+        return null;
     }
 
     /**
      * 创建枚举类型对象，不含枚举项目
      *
      * @param enumClass 枚举类
+     * @param subname
      * @return 不含枚举项目的枚举类型对象
      */
-    private EnumType newEnumType(Class<?> enumClass) {
+    private EnumType newEnumType(Class<?> enumClass, String subname) {
         String typeCaption = null;
         Caption captionAnno = enumClass.getAnnotation(Caption.class);
         if (captionAnno != null) {
@@ -292,7 +315,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
             typeCaption = enumClass.getSimpleName();
         }
         String typeName = getEnumTypeName(enumClass);
-        return new EnumType(typeName, typeCaption);
+        return new EnumType(typeName, subname, typeCaption);
     }
 
     /**
@@ -333,7 +356,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     /**
      * 从资源信息中确定区域
      *
-     * @param resource 资源
+     * @param resourceName 资源名
      * @return 区域
      */
     private Locale getLocale(String resourceName) {

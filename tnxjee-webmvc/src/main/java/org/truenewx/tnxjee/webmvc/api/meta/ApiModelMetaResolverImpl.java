@@ -4,12 +4,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.temporal.Temporal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.constraints.Email;
 
@@ -21,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
+import org.truenewx.tnxjee.core.enums.EnumSub;
 import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.core.util.ClassUtil;
@@ -89,8 +85,9 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                 }
                 Class<?> fieldType = field.getType();
                 if (fieldType.isEnum()) {
-                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(),
-                            locale);
+                    EnumSub enumSub = field.getAnnotation(EnumSub.class);
+                    String subtype = enumSub == null ? null : enumSub.value();
+                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), subtype, locale);
                     if (enumType != null) {
                         meta.setEnums(enumType.getItems());
                     }
