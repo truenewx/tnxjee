@@ -44,8 +44,7 @@ public class MarkRuleBuilder implements ValidationRuleBuilder<MarkRule> {
             annotationTypes.remove(NotNull.class);
         } else if (annotationType == NotNull.class) {
             // 已经有不能为空白或不能为空，则忽略
-            if (annotationTypes.contains(NotBlank.class)
-                    || annotationTypes.contains(NotEmpty.class)) {
+            if (annotationTypes.contains(NotBlank.class) || annotationTypes.contains(NotEmpty.class)) {
                 return;
             }
         }

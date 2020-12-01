@@ -3,11 +3,7 @@ package org.truenewx.tnxjee.repo.validation.config;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.Constraint;
 
@@ -30,9 +26,8 @@ import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
  *
  * @author jianglei
  */
-public class DefaultValidationConfigurationFactory
-        implements ValidationConfigurationFactory, ContextInitializedBean {
-
+public class DefaultValidationConfigurationFactory implements ValidationConfigurationFactory, ContextInitializedBean {
+ 
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();
     private Map<Class<Annotation>, ValidationRuleBuilder<?>> ruleBuilders = new HashMap<>();
 
@@ -40,8 +35,7 @@ public class DefaultValidationConfigurationFactory
     public void setValidationRuleBuilders(Collection<ValidationRuleBuilder<?>> builders) {
         for (ValidationRuleBuilder<?> builder : builders) {
             for (Class<?> constraintType : builder.getConstraintTypes()) {
-                Assert.isTrue(isConstraintAnnotation(constraintType),
-                        "constraintType must be constraint annotation");
+                Assert.isTrue(isConstraintAnnotation(constraintType), "constraintType must be constraint annotation");
                 // setter方法设置的构建器优先，会覆盖掉已有的构建器
                 this.ruleBuilders.put((Class<Annotation>) constraintType, builder);
             }
@@ -51,12 +45,10 @@ public class DefaultValidationConfigurationFactory
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void afterInitialized(ApplicationContext context) throws Exception {
-        Map<String, ValidationRuleBuilder> beans = context
-                .getBeansOfType(ValidationRuleBuilder.class);
+        Map<String, ValidationRuleBuilder> beans = context.getBeansOfType(ValidationRuleBuilder.class);
         for (ValidationRuleBuilder<?> builder : beans.values()) {
             for (Class<?> constraintType : builder.getConstraintTypes()) {
-                Assert.isTrue(isConstraintAnnotation(constraintType),
-                        "constraintType must be constraint annotation");
+                Assert.isTrue(isConstraintAnnotation(constraintType), "constraintType must be constraint annotation");
                 // 不覆盖通过setter方法设置的构建器
                 if (!this.ruleBuilders.containsKey(constraintType)) {
                     this.ruleBuilders.put((Class<Annotation>) constraintType, builder);
@@ -83,8 +75,7 @@ public class DefaultValidationConfigurationFactory
     protected ValidationConfiguration buildConfiguration(Class<? extends Model> modelClass) {
         ValidationConfiguration configuration = new ValidationConfiguration(modelClass);
         if (CommandModel.class.isAssignableFrom(modelClass)) {
-            addEntityClassRulesFromCommandModelClass(configuration,
-                    (Class<? extends CommandModel<?>>) modelClass);
+            addEntityClassRulesFromCommandModelClass(configuration, (Class<? extends CommandModel<?>>) modelClass);
         }
         addRulesByAnnotation(configuration, modelClass);
         return configuration;
@@ -98,8 +89,7 @@ public class DefaultValidationConfigurationFactory
      */
     private void addEntityClassRulesFromCommandModelClass(ValidationConfiguration configuration,
             Class<? extends CommandModel<?>> commandModelClass) {
-        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(commandModelClass,
-                CommandModel.class, 0);
+        Class<? extends Entity> entityClass = ClassUtil.getActualGenericType(commandModelClass, CommandModel.class, 0);
         List<Field> fields = ClassUtil.getSimplePropertyField(commandModelClass);
         for (Field field : fields) {
             // 加入对应实体的校验规则
@@ -148,8 +138,7 @@ public class DefaultValidationConfigurationFactory
             addRuleByPropertyAnnotation(configuration, propertyName, annotation);
         }
         // 再尝试在属性的setter方法上找约束注解生成规则，这意味着setter方法上的约束注解优先级更高
-        Method method = ClassUtil.findPropertyMethod(field.getDeclaringClass(), propertyName,
-                false);
+        Method method = ClassUtil.findPropertyMethod(field.getDeclaringClass(), propertyName, false);
         if (method != null) {
             for (Annotation annotation : method.getAnnotations()) {
                 addRuleByPropertyAnnotation(configuration, propertyName, annotation);
@@ -158,15 +147,15 @@ public class DefaultValidationConfigurationFactory
     }
 
     @SuppressWarnings("unchecked")
-    private void addRuleByPropertyAnnotation(ValidationConfiguration configuration,
-            String propertyName, Annotation annotation) {
+    private void addRuleByPropertyAnnotation(ValidationConfiguration configuration, String propertyName,
+            Annotation annotation) {
         Class<? extends Annotation> annoClass = annotation.annotationType();
         if (isConstraintAnnotation(annoClass)) {
             ValidationRuleBuilder<ValidationRule> builder = (ValidationRuleBuilder<ValidationRule>) this.ruleBuilders
                     .get(annoClass);
             if (builder != null) {
-                Class<? extends ValidationRule> ruleClass = ClassUtil
-                        .getActualGenericType(builder.getClass(), ValidationRuleBuilder.class, 0);
+                Class<? extends ValidationRule> ruleClass = ClassUtil.getActualGenericType(builder.getClass(),
+                        ValidationRuleBuilder.class, 0);
                 ValidationRule rule = configuration.getRule(propertyName, ruleClass);
                 if (rule == null) {
                     rule = builder.create(annotation);

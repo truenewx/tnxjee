@@ -35,11 +35,11 @@ import org.truenewx.tnxjee.webmvc.validation.rule.mapper.ValidationRuleMapper;
  */
 @Component
 public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextInitializedBean {
-
-    private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class,
-            byte.class, Long.class, Integer.class, Short.class, Byte.class, BigInteger.class };
-    private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class,
-            Float.class, BigDecimal.class };
+    
+    private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class, byte.class, Long.class,
+            Integer.class, Short.class, Byte.class, BigInteger.class };
+    private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class, Float.class,
+            BigDecimal.class };
 
     @Autowired(required = false) // 如果工程未依赖tnxjee-repo-jpa，则可能没有该bean
     private ValidationConfigurationFactory validationConfigurationFactory;
@@ -52,29 +52,24 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void afterInitialized(ApplicationContext context) throws Exception {
-        Map<String, ValidationRuleMapper> beans = context
-                .getBeansOfType(ValidationRuleMapper.class);
+        Map<String, ValidationRuleMapper> beans = context.getBeansOfType(ValidationRuleMapper.class);
         for (ValidationRuleMapper<ValidationRule> ruleGenerator : beans.values()) {
-            Class<?> ruleClass = ClassUtil.getActualGenericType(ruleGenerator.getClass(),
-                    ValidationRuleMapper.class, 0);
+            Class<?> ruleClass = ClassUtil.getActualGenericType(ruleGenerator.getClass(), ValidationRuleMapper.class,
+                    0);
             this.ruleMappers.put(ruleClass, ruleGenerator);
         }
     }
 
     @Override
     @Cacheable("ApiModelMeta")
-    public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass,
-            Locale locale) {
+    public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass, Locale locale) {
         Map<String, ApiModelPropertyMeta> metas = new HashMap<>();
         if (this.validationConfigurationFactory != null) {
-            ValidationConfiguration configuration = this.validationConfigurationFactory
-                    .getConfiguration(modelClass);
+            ValidationConfiguration configuration = this.validationConfigurationFactory.getConfiguration(modelClass);
             ClassUtil.loopFields(modelClass, null, field -> {
                 String propertyName = field.getName();
-                String caption = this.propertyCaptionResolver.resolveCaption(modelClass,
-                        propertyName, locale);
-                if (propertyName.equals(caption)
-                        && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+                String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
+                if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
                     caption = null;
                 }
                 ApiModelPropertyType type = getType(field);
@@ -134,8 +129,8 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
         return null;
     }
 
-    private Map<String, Object> getValidation(ValidationConfiguration configuration,
-            String propertyName, Locale locale) {
+    private Map<String, Object> getValidation(ValidationConfiguration configuration, String propertyName,
+            Locale locale) {
         Map<String, Object> validation = new LinkedHashMap<>(); // 保留顺序
         Set<ValidationRule> rules = configuration.getRules(propertyName);
         for (ValidationRule rule : rules) {

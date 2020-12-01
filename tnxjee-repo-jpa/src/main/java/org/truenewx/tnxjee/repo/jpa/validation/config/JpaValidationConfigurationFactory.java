@@ -51,8 +51,7 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
     protected ValidationConfiguration buildConfiguration(Class<? extends Model> modelClass) {
         ValidationConfiguration configuration = super.buildConfiguration(modelClass);
         if (Entity.class.isAssignableFrom(modelClass)) {
-            addEntityClassRulesFromPersistentConfig(configuration,
-                    (Class<? extends Entity>) modelClass);
+            addEntityClassRulesFromPersistentConfig(configuration, (Class<? extends Entity>) modelClass);
         }
         return configuration;
     }
@@ -66,8 +65,7 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
     @SuppressWarnings("unchecked")
     private void addEntityClassRulesFromPersistentConfig(ValidationConfiguration configuration,
             Class<? extends Entity> entityClass) {
-        DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory
-                .getDataAccessTemplate(entityClass);
+        DataAccessTemplate accessTemplate = this.dataAccessTemplateFactory.getDataAccessTemplate(entityClass);
         if (accessTemplate instanceof JpaAccessTemplate) {
             JpaAccessTemplate jat = (JpaAccessTemplate) accessTemplate;
             String entityName = this.entityNameStrategy.getEntityName(entityClass);
@@ -76,11 +74,10 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
                 Iterator<Property> properties = persistentClass.getPropertyIterator();
                 while (properties.hasNext()) {
                     Property property = properties.next();
-                    PropertyDescriptor propertyDescriptor = BeanUtils
-                            .getPropertyDescriptor(entityClass, property.getName());
+                    PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(entityClass,
+                            property.getName());
                     if (propertyDescriptor != null) {
-                        addRuleByPersistentProperty(configuration, property, propertyDescriptor,
-                                null);
+                        addRuleByPersistentProperty(configuration, property, propertyDescriptor, null);
                     }
                 }
             }
@@ -88,19 +85,18 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
     }
 
     @SuppressWarnings("unchecked")
-    private void addRuleByPersistentProperty(ValidationConfiguration configuration,
-            Property property, PropertyDescriptor propertyDescriptor, String propertyNamePrefix) {
+    private void addRuleByPersistentProperty(ValidationConfiguration configuration, Property property,
+            PropertyDescriptor propertyDescriptor, String propertyNamePrefix) {
         if (StringUtils.isBlank(propertyNamePrefix)) { // 前缀默认为空
             propertyNamePrefix = Strings.EMPTY;
         }
         String propertyName = propertyDescriptor.getName();
         Class<?> propertyClass = propertyDescriptor.getPropertyType();
         // 只处理字符串型、数值、日期型
-        if (CharSequence.class.isAssignableFrom(propertyClass)
-                || Number.class.isAssignableFrom(propertyClass)
+        if (CharSequence.class.isAssignableFrom(propertyClass) || Number.class.isAssignableFrom(propertyClass)
                 || (propertyClass.isPrimitive() && propertyClass != boolean.class)
-                || Date.class.isAssignableFrom(propertyClass)
-                || Temporal.class.isAssignableFrom(propertyClass)) {
+                || Date.class.isAssignableFrom(propertyClass) || Temporal.class.isAssignableFrom(propertyClass)
+                || propertyClass.isEnum()) {
             Iterator<Column> columns = property.getColumnIterator();
             // 只支持对应且仅对应一个物理字段的
             if (!columns.hasNext()) {
@@ -118,8 +114,12 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
                     rule.setMax(maxLength);
                     configuration.addRule(propertyName, rule);
                 }
-            } else if (Date.class.isAssignableFrom(propertyClass)
-                    || Temporal.class.isAssignableFrom(propertyClass)) { // 日期型
+            } else if (propertyClass.isEnum()) { // 枚举型
+                if (!column.isNullable()) { // 不允许为null的枚举型，添加不允许为空白的约束
+                    configuration.addRule(propertyName, new MarkRule(NotBlank.class));
+                }
+            } else if (Date.class.isAssignableFrom(propertyClass) || Temporal.class
+                    .isAssignableFrom(propertyClass)) { // 日期型
                 if (!column.isNullable()) { // 不允许为null的日期型，添加不允许为空白的约束
                     configuration.addRule(propertyName, new MarkRule(NotBlank.class));
                 }
@@ -165,10 +165,8 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
                 // 必须同时有读方法和写方法才视为有效属性
                 if (pd.getReadMethod() != null && pd.getWriteMethod() != null) {
                     String propertyPath = propertyNamePrefix + pd.getName();
-                    Property referencedProperty = persistentClass
-                            .getReferencedProperty(propertyPath);
-                    addRuleByPersistentProperty(configuration, referencedProperty, pd,
-                            propertyNamePrefix);
+                    Property referencedProperty = persistentClass.getReferencedProperty(propertyPath);
+                    addRuleByPersistentProperty(configuration, referencedProperty, pd, propertyNamePrefix);
                 }
             }
         }
