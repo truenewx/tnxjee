@@ -1,15 +1,16 @@
 package org.truenewx.tnxjee.webmvc.http.converter;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
+import java.util.*;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
-import java.util.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.ser.PropertyWriter;
 
 /**
  * 枚举类型属性过滤器
@@ -46,18 +47,22 @@ public class EnumTypePropertyFilter extends TypedPropertyFilter {
             Enum<?> value = (Enum<?>) member.getValue(pojo);
             if (value != null) {
                 Class<?> beanClass = member.getDeclaringClass();
-                String[] pureEnumPropertyNames = this.pureEnumProperties.get(beanClass);
-                if (ArrayUtils.isNotEmpty(pureEnumPropertyNames)) {
-                    String propertyName = writer.getName();
-                    if (!ArrayUtils.contains(pureEnumPropertyNames, propertyName)) {
-                        String caption = this.enumDictResolver.getText(value, provider.getLocale());
-                        if (caption != null) {
-                            jgen.writeStringField(getCaptionPropertyName(propertyName), caption);
-                        }
+                String propertyName = writer.getName();
+                if (isWriteableCaptionProperty(beanClass, propertyName)) {
+                    String caption = this.enumDictResolver.getText(value, provider.getLocale());
+                    if (caption != null) {
+                        jgen.writeStringField(getCaptionPropertyName(propertyName), caption);
                     }
                 }
             }
         }
+    }
+
+    protected boolean isWriteableCaptionProperty(Class<?> beanClass, String enumPropertyName) {
+        String[] pureEnumPropertyNames = this.pureEnumProperties.get(beanClass);
+        // 未指定纯粹枚举属性集，或指定纯粹枚举属性集不包含指定枚举属性，则可以写入显示名称
+        return ArrayUtils.isEmpty(pureEnumPropertyNames) || !ArrayUtils
+                .contains(pureEnumPropertyNames, enumPropertyName);
     }
 
     protected String getCaptionPropertyName(String enumPropertyName) {

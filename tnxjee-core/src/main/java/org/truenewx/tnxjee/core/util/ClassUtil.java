@@ -566,10 +566,9 @@ public class ClassUtil {
      */
     public static boolean oneIsAssignableFrom(Class<?>[] classes, Class<?> clazz) {
         for (Class<?> type : classes) {
-            if (type == null || clazz == null) {
-                System.out.println();
-            }
-            if (type.isAssignableFrom(clazz)) {
+            if (type == null && clazz == null) {
+                return true;
+            } else if (type != null && clazz != null && type.isAssignableFrom(clazz)) {
                 return true;
             }
         }
@@ -701,6 +700,25 @@ public class ClassUtil {
             // 再遍历父类
             loopFields(clazz.getSuperclass(), fieldType, predicate);
         }
+    }
+
+    /**
+     * 判断指定类型是否包含可读的枚举属性
+     *
+     * @param clazz 类型
+     * @return 指定类型是否包含可读的枚举属性
+     */
+    public static boolean hasReadableEnumProperty(Class<?> clazz) {
+        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
+        for (PropertyDescriptor pd : pds) {
+            if (pd.getReadMethod() != null) {
+                Class<?> propertyType = pd.getPropertyType();
+                if (propertyType != null && propertyType.isEnum()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

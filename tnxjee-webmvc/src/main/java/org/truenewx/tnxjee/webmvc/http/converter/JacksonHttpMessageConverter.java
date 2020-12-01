@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
+import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
@@ -65,20 +66,26 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                     ObjectMapper mapper = internal ? this.internalMappers.get(methodKey)
                             : this.externalMappers.get(methodKey);
                     if (mapper == null) {
+                        Class<?> resultType = object.getClass();
                         ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
-                        if (ArrayUtils.isNotEmpty(resultFilters)) {
+                        if (ClassUtil.hasReadableEnumProperty(resultType) || ArrayUtils.isNotEmpty(resultFilters)) {
                             EnumTypePropertyFilter filter = createPropertyFilter();
                             filter.setEnumDictResolver(this.enumDictResolver);
                             for (ResultFilter resultFilter : resultFilters) {
-                                Class<?> beanClass = resultFilter.type();
-                                if (beanClass == Object.class) {
-                                    beanClass = object.getClass();
+                                Class<?> filteredType = resultFilter.type();
+                                if (filteredType == Object.class) {
+                                    filteredType = resultType;
                                 }
-                                filter.addIncludedProperties(beanClass, resultFilter.included());
-                                filter.addExcludedProperties(beanClass, resultFilter.excluded());
-                                filter.addPureEnumProperties(beanClass, resultFilter.pureEnum());
+                                filter.addIncludedProperties(filteredType, resultFilter.included());
+                                filter.addExcludedProperties(filteredType, resultFilter.excluded());
+                                filter.addPureEnumProperties(filteredType, resultFilter.pureEnum());
                             }
-                            mapper = JsonUtil.buildMapper(filter, filter.getTypes());
+                            // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
+                            Class<?>[] filteredTypes = filter.getTypes();
+                            if (!ArrayUtils.contains(filteredTypes, resultType)) {
+                                filteredTypes = ArrayUtils.add(filteredTypes, resultType);
+                            }
+                            mapper = JsonUtil.buildMapper(filter, filteredTypes);
                             if (internal) {
                                 mapper.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
                                 this.internalMappers.put(methodKey, mapper);
