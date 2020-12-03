@@ -5,9 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 /**
- * 登录认证令牌构建器
+ * 登录认证令牌解决器
  */
-public interface AuthenticationTokenBuilder<T extends AbstractAuthenticationToken> {
+public interface AuthenticationTokenResolver<T extends AbstractAuthenticationToken> {
 
     /**
      * 获取当前构建器对应的登录方式，返回空表示作为默认登录方式
@@ -16,6 +16,6 @@ public interface AuthenticationTokenBuilder<T extends AbstractAuthenticationToke
      */
     String getLoginMode();
 
-    T buildAuthenticationToken(HttpServletRequest request);
+    T resolveAuthenticationToken(HttpServletRequest request);
 
 }

@@ -3,16 +3,16 @@ package org.truenewx.tnxjee.webmvc.security.web.authentication;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 /**
- * 抽象的登录认证令牌构建器
+ * 抽象的登录认证令牌解决器
  *
  * @param <T> 令牌类型
  */
-public abstract class AbstractAuthenticationTokenBuilder<T extends AbstractAuthenticationToken>
-        implements AuthenticationTokenBuilder<T> {
+public abstract class AbstractAuthenticationTokenResolver<T extends AbstractAuthenticationToken>
+        implements AuthenticationTokenResolver<T> {
 
     private String loginMode;
 
-    public AbstractAuthenticationTokenBuilder(String loginMode) {
+    public AbstractAuthenticationTokenResolver(String loginMode) {
         this.loginMode = loginMode;
     }
 

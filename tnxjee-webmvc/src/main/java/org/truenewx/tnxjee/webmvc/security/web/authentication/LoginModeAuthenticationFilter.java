@@ -21,19 +21,19 @@ public class LoginModeAuthenticationFilter extends LoginAuthenticationFilter {
 
     public static final String PARAMETER_LOGIN_MODE = "loginMode";
 
-    private AuthenticationTokenBuilder<AbstractAuthenticationToken> defaultTokenBuilder;
-    private Map<String, AuthenticationTokenBuilder<AbstractAuthenticationToken>> tokenBuilderMapping = new HashMap<>();
+    private AuthenticationTokenResolver<AbstractAuthenticationToken> defaultTokenResolver;
+    private Map<String, AuthenticationTokenResolver<AbstractAuthenticationToken>> tokenResolverMapping = new HashMap<>();
 
     public LoginModeAuthenticationFilter(ApplicationContext context) {
         super(context);
 
-        this.tokenBuilderMapping.clear();
-        context.getBeansOfType(AuthenticationTokenBuilder.class).forEach((id, builder) -> {
-            String loginMode = builder.getLoginMode();
+        this.tokenResolverMapping.clear();
+        context.getBeansOfType(AuthenticationTokenResolver.class).forEach((id, resolver) -> {
+            String loginMode = resolver.getLoginMode();
             if (loginMode == null) {
-                this.defaultTokenBuilder = builder;
+                this.defaultTokenResolver = resolver;
             } else {
-                this.tokenBuilderMapping.put(loginMode, builder);
+                this.tokenResolverMapping.put(loginMode, resolver);
             }
         });
     }
@@ -42,15 +42,15 @@ public class LoginModeAuthenticationFilter extends LoginAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         String loginMode = obtainLoginMode(request);
-        AuthenticationTokenBuilder<AbstractAuthenticationToken> builder;
+        AuthenticationTokenResolver<AbstractAuthenticationToken> resolver;
         if (loginMode == null) {
-            builder = this.defaultTokenBuilder;
+            resolver = this.defaultTokenResolver;
         } else {
-            builder = this.tokenBuilderMapping.get(loginMode);
+            resolver = this.tokenResolverMapping.get(loginMode);
         }
-        if (builder != null) {
+        if (resolver != null) {
             try {
-                AbstractAuthenticationToken authRequest = builder.buildAuthenticationToken(request);
+                AbstractAuthenticationToken authRequest = resolver.resolveAuthenticationToken(request);
                 setDetails(request, authRequest);
                 return getAuthenticationManager().authenticate(authRequest);
             } catch (BusinessException e) {
