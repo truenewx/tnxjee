@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.truenewx.tnxjee.service.exception.BusinessException;
+import org.truenewx.tnxjee.webmvc.security.core.BusinessAuthenticationException;
 
 /**
  * 支持多种登录方式的认证过滤器。
@@ -47,9 +49,13 @@ public class LoginModeAuthenticationFilter extends LoginAuthenticationFilter {
             builder = this.tokenBuilderMapping.get(loginMode);
         }
         if (builder != null) {
-            AbstractAuthenticationToken authRequest = builder.buildAuthenticationToken(request);
-            setDetails(request, authRequest);
-            return getAuthenticationManager().authenticate(authRequest);
+            try {
+                AbstractAuthenticationToken authRequest = builder.buildAuthenticationToken(request);
+                setDetails(request, authRequest);
+                return getAuthenticationManager().authenticate(authRequest);
+            } catch (BusinessException e) {
+                throw new BusinessAuthenticationException(e);
+            }
         }
         // 找不到匹配登录方式的构建器，则采用父类的用户名密码登录方式
         return super.attemptAuthentication(request, response);
