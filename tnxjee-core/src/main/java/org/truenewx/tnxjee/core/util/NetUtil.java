@@ -271,7 +271,7 @@ public class NetUtil {
      * @return 合并之后的新URL
      */
     public static String mergeParams(String url, Map<String, Object> params, String encoding) {
-        if (params.isEmpty()) {
+        if (params == null || params.isEmpty()) {
             return url;
         }
         if (url.contains(Strings.QUESTION)) {
