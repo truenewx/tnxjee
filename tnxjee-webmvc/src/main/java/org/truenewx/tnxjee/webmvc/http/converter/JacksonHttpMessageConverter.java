@@ -23,9 +23,9 @@ import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
-import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
+import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -57,7 +57,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             throws IOException, HttpMessageNotWritableException {
         HttpServletRequest request = SpringWebContext.getRequest();
         if (request != null) {
-            boolean internal = isInternalRpc(request);
+            boolean internal = RpcUtil.isInternalRpc(request);
             try {
                 HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(request);
                 if (handlerMethod != null) {
@@ -105,15 +105,6 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
         }
         super.writeInternal(object, type, outputMessage);
-    }
-
-    private boolean isInternalRpc(HttpServletRequest request) {
-        String internalJwt = request.getHeader(WebConstants.HEADER_INTERNAL_JWT);
-        if (internalJwt != null) {
-            return true;
-        }
-        String userAgent = request.getHeader("User-Agent");
-        return userAgent == null || userAgent.toLowerCase().startsWith("java");
     }
 
     protected EnumTypePropertyFilter createPropertyFilter() {

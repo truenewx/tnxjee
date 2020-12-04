@@ -20,8 +20,8 @@ import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
-import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.webmvc.security.authentication.UserSpecificDetailsAuthenticationToken;
+import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -54,8 +54,8 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
                 Authentication authentication = securityContext.getAuthentication();
                 if (authentication == null) {
                     HttpServletRequest request = (HttpServletRequest) req;
-                    String token = request.getHeader(WebConstants.HEADER_INTERNAL_JWT);
-                    if (StringUtils.isNotBlank(token)) {
+                    String token = RpcUtil.getInternalJwt(request);
+                    if (token != null) {
                         try {
                             DecodedJWT jwt = this.verifier.verify(token);
                             String json = CollectionUtil.getFirst(jwt.getAudience(), null);

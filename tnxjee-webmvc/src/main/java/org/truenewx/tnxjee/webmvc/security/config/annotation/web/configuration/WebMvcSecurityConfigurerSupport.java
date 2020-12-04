@@ -91,6 +91,9 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         return new AccessDeniedBusinessExceptionHandler();
     }
 
+    /**
+     * 登出成功后的处理
+     */
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
         SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
