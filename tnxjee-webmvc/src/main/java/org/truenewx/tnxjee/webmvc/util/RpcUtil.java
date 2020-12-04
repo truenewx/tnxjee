@@ -46,7 +46,7 @@ public class RpcUtil {
     public static String getInternalJwt(HttpServletRequest request) {
         String jwt = request.getHeader(WebConstants.HEADER_INTERNAL_JWT);
         if (jwt != null && jwt.startsWith(JWT_PREFIX)) {
-            return jwt;
+            return jwt.substring(JWT_PREFIX.length());
         }
         return null;
     }
