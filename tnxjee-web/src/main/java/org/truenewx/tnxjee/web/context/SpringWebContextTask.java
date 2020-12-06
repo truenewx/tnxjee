@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.web.context;
 
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 传递Spring Web上下文的多线程任务
@@ -17,9 +18,13 @@ public abstract class SpringWebContextTask implements Runnable {
     @Override
     public final void run() {
         RequestContextHolder.setRequestAttributes(this.requestAttributes);
-        doRun();
+        try {
+            execute();
+        } catch (Exception e) {
+            LogUtil.error(getClass(), e);
+        }
     }
 
-    protected abstract void doRun();
+    protected abstract void execute();
 
 }
