@@ -395,10 +395,14 @@ public class BeanUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getTargetSource(T bean) throws Exception {
-        if (AopUtils.isAopProxy(bean) && bean instanceof Advised) {
-            Advised proxy = (Advised) bean;
-            return (T) proxy.getTargetSource().getTarget();
+    public static <T> T getTargetSource(T bean) {
+        try {
+            if (AopUtils.isAopProxy(bean) && bean instanceof Advised) {
+                Advised proxy = (Advised) bean;
+                return (T) proxy.getTargetSource().getTarget();
+            }
+        } catch (Exception e) {
+            LogUtil.error(BeanUtil.class, e);
         }
         return bean;
     }

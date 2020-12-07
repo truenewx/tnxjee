@@ -11,6 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.service.Service;
 import org.truenewx.tnxjee.service.impl.ServiceRegistrar;
 
@@ -18,7 +19,6 @@ import org.truenewx.tnxjee.service.impl.ServiceRegistrar;
  * 服务自动代理创建器
  *
  * @author jianglei
- * 
  */
 @Component
 public class ServiceAutoProxyCreator extends TransactionalAutoProxyCreator
@@ -55,13 +55,7 @@ public class ServiceAutoProxyCreator extends TransactionalAutoProxyCreator
     protected Object wrapIfNecessary(Object bean, String beanName) {
         if (isProxiable(bean, beanName)) {
             // 为服务父类中的全局事务属性配置添加代理
-            if (AopUtils.isAopProxy(bean) && bean instanceof Advised) { // 已经是代理，则需取到原始目标对象
-                Advised proxy = (Advised) bean;
-                try {
-                    bean = proxy.getTargetSource().getTarget();
-                } catch (Exception e) {
-                }
-            }
+            bean = BeanUtil.getTargetSource(bean); // 取到原始目标对象
 
             Object proxy = createProxy(bean, beanName);
             // 注册事务性bean和非事务性bean
@@ -109,7 +103,7 @@ public class ServiceAutoProxyCreator extends TransactionalAutoProxyCreator
     }
 
     private void mergeInterface(Set<Class<?>> interfaces, Class<?> interfaceClass) {
-        for (Iterator<Class<?>> iterator = interfaces.iterator(); iterator.hasNext();) {
+        for (Iterator<Class<?>> iterator = interfaces.iterator(); iterator.hasNext(); ) {
             Class<?> next = iterator.next();
             if (interfaceClass.isAssignableFrom(next)) { // 如果是已有接口的父接口，则忽略直接结束
                 return;
