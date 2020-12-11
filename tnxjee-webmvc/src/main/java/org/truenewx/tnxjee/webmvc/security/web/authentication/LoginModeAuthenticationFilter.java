@@ -24,6 +24,7 @@ public class LoginModeAuthenticationFilter extends LoginAuthenticationFilter {
     private AuthenticationTokenResolver<AbstractAuthenticationToken> defaultTokenResolver;
     private Map<String, AuthenticationTokenResolver<AbstractAuthenticationToken>> tokenResolverMapping = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public LoginModeAuthenticationFilter(ApplicationContext context) {
         super(context);
 
