@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.webmvc.security.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
@@ -22,10 +24,10 @@ import org.truenewx.tnxjee.web.util.WebUtil;
 @Component
 public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
 
-    private List<String> redirectWhileList;
+    private List<String> allowedHostList = new ArrayList<>();
 
-    public void setRedirectWhileList(List<String> redirectWhileList) {
-        this.redirectWhileList = redirectWhileList;
+    public void addAllowedHost(String... allowedHost) {
+        CollectionUtil.addAll(this.allowedHostList, allowedHost);
     }
 
     @Override
@@ -91,8 +93,8 @@ public class AjaxRedirectStrategy extends DefaultRedirectStrategy {
         if (Objects.equals(requestDomain, redirectDomain)) {
             return true;
         }
-        // 匹配白名单可以重定向
-        return StringUtil.antPathMatchOneOf(redirectUrl, this.redirectWhileList);
+        // 匹配允许名单可以重定向
+        return StringUtil.wildcardMatchOneOf(redirectHost, this.allowedHostList);
     }
 
     protected String buildRedirectBody(String redirectUrl) {
