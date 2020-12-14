@@ -1,0 +1,22 @@
+package org.truenewx.tnxjee.core.config;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.Resource;
+
+/**
+ * 占位符配置支持。由于占位符配置器在配置属性生效前创建，所以本类下不能使用配置属性
+ */
+public abstract class PlaceholderConfigurerSupport {
+
+    public PropertySourcesPlaceholderConfigurer placeholderConfigurer(Resource... locations) {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        if (ArrayUtils.isNotEmpty(locations)) {
+            configurer.setLocations(locations);
+            configurer.setIgnoreResourceNotFound(true);
+            configurer.setLocalOverride(true);
+        }
+        return configurer;
+    }
+
+}
