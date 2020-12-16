@@ -13,7 +13,6 @@
     <version>2.2.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>tnxjee-alone</module>
         <module>tnxjee-core</module>
         <module>tnxjee-model</module>
         <module>tnxjee-repo</module>
