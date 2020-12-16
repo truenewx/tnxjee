@@ -4,15 +4,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 默认线程池执行器
  *
  * @author jianglei
- * 
  */
-public class DefaultThreadPoolExecutor extends ThreadPoolExecutor {
+public class DefaultThreadPoolExecutor extends ThreadPoolExecutor implements DisposableBean {
 
     private int logPerTaskCount = 10;
 
@@ -42,6 +42,11 @@ public class DefaultThreadPoolExecutor extends ThreadPoolExecutor {
             LogUtil.info(getClass(), "Thread pool:size={}, largest={}, active={}, completed={}",
                     getPoolSize(), getLargestPoolSize(), getActiveCount(), completedTaskCount);
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
     }
 
 }
