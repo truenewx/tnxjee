@@ -9,7 +9,6 @@ import org.truenewx.tnxjee.core.util.EncryptUtil;
  * 扩展的MD5加密器
  *
  * @author jianglei
- *
  */
 public class Md5xEncryptor implements KeyEncryptor {
     /**
@@ -92,8 +91,8 @@ public class Md5xEncryptor implements KeyEncryptor {
         if (md5Source.length() != MD5_ENCRYPT_LENGTH) {
             return false;
         }
-        String encrptedResult = encryptByMd5Source(md5Source, secretKey, this.staticKey);
-        return encryptedText.equalsIgnoreCase(encrptedResult);
+        String encryptedResult = encryptByMd5Source(md5Source, secretKey, this.staticKey);
+        return encryptedText != null && encryptedText.equalsIgnoreCase(encryptedResult);
     }
 
     public String getMd5Source(String encryptedText) {
