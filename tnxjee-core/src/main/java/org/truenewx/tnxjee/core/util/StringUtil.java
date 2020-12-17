@@ -1025,4 +1025,11 @@ public class StringUtil {
         return cellphone;
     }
 
+    public static String requireNotBlankElse(String s, String defaultValue) {
+        if (StringUtils.isBlank(s)) {
+            return defaultValue;
+        }
+        return s;
+    }
+
 }
