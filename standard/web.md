@@ -29,7 +29,7 @@ Web应用开发分为两种模式：
   .web.controller.user.MemberRoleController，具有注解@RequestMapping("/user/member-role")。
 
   url|请求方法|Controller方法|说明
-      ---|---|---|---
+        ---|---|---|---
   /user/member-role/list|GET|list()|查询成员角色清单
   /user/member-role/add|POST|add()|新增成员角色
   /user/member-role/{id}|GET|detail()|获取指定id的成员角色详情
@@ -42,13 +42,12 @@ Web应用开发分为两种模式：
 6. 【强制】POST请求的请求参数优先通过body形式传递，在Controller方法中通过@RequestBody注解的CommandModel类接收参数。
    参数个数≤3个的，允许通过parameter形式传递，这是为了少写一些的简单CommandModel类，提高开发效率。
    也允许这两种形式同时使用，不过parameter形式传递的参数个数同样必须≤3个，这是为了可以复用CommandModel类，同样是为了提高开发效率。
-7. 【推荐】含有路径变量的POST请求，如果还有请求参数，则建议将路径变量和请求参数合并为CommandModel类，这样可以提高前端开发效率。
-8. 【强制】包含parameter形式请求参数的url，总长度不能超过2048位。
+7. 【强制】包含parameter形式请求参数的url，总长度不能超过2048位。
 
 > 说明：不同浏览器对于url的最大长度限制略有不同，并且对超出最大长度的处理逻辑也有差异，2048字节是取所有浏览器的最小值。
 > 2048位已经足够适应几乎所有的业务场景，如果GET请求的请求参数长度超出限制，就需要重新设计api，甚至重新设计页面和需求。
 
-9. 【强制】RPC请求的响应结果以JSON的格式传递，对于集合类型的结果（数组/Collection），至少返回空集合[]，而不返回null，以减少前端的为null判断。
+8. 【强制】RPC请求的响应结果以JSON的格式传递，对于集合类型的结果（数组/Collection），至少返回空集合[]，而不返回null，以减少前端的为null判断。
 
 ## 二、代码
 
@@ -63,6 +62,7 @@ Web应用开发分为两种模式：
 6. 【强制】JavaScript代码中的字符串使用单引号含括，而不使用双引号；必须使用 === 和 !== 进行相等和不等判断，而不使用 == 和 != 。
 6. 【推荐】套用JavaDoc的格式对JavaScript的类、属性、函数进行注释，其它注释规范与Java相同。
 7.
+
 【强制】使用idea编辑html、jsp和js文件，而不用eclipse进行编辑。idea对这些代码的格式化比eclipse好很多，格式化配置从[idea-code-style.xml](ide/idea-code-style.xml)
 导入。
 
