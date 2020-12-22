@@ -1025,11 +1025,44 @@ public class StringUtil {
         return cellphone;
     }
 
-    public static String requireNotBlankElse(String s, String defaultValue) {
+    /**
+     * 如果指定字符串为空，则返回指定默认值
+     *
+     * @param s            字符串
+     * @param defaultValue 默认值
+     * @return 处理后的结果
+     */
+    public static String ifBlank(String s, String defaultValue) {
         if (StringUtils.isBlank(s)) {
             return defaultValue;
         }
         return s;
+    }
+
+    /**
+     * 如果指定字符串不为空，则执行指定函数返回转换后的结果
+     *
+     * @param s        字符串
+     * @param function 转换函数
+     * @return 处理后的结果，指定字符串为空时返回null
+     */
+    public static <R> R ifNotBlank(String s, Function<String, R> function) {
+        return ifNotBlankElse(s, function, null);
+    }
+
+    /**
+     * 如果指定字符串不为空，则执行指定函数返回转换后的结果
+     *
+     * @param s             字符串
+     * @param function      转换函数
+     * @param defaultResult 指定字符串为空时的默认返回结果
+     * @return 处理后的结果
+     */
+    public static <R> R ifNotBlankElse(String s, Function<String, R> function, R defaultResult) {
+        if (StringUtils.isNotBlank(s)) {
+            return function.apply(s);
+        }
+        return defaultResult;
     }
 
 }
