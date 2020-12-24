@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1040,7 +1041,19 @@ public class StringUtil {
     }
 
     /**
-     * 如果指定字符串不为空，则执行指定函数返回转换后的结果
+     * 如果指定字符串不为空，则执行指定消费者
+     *
+     * @param s        字符串
+     * @param consumer 消费者
+     */
+    public static void ifNotBlank(String s, Consumer<String> consumer) {
+        if (StringUtils.isNotBlank(s)) {
+            consumer.accept(s);
+        }
+    }
+
+    /**
+     * 如果指定字符串不为空，则返回指定函数返回转换后的结果
      *
      * @param s        字符串
      * @param function 转换函数
