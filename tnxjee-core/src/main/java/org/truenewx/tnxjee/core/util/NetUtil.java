@@ -290,6 +290,32 @@ public class NetUtil {
         return Strings.EMPTY;
     }
 
+    public static String removeParams(String url, Collection<String> paramNames) {
+        if (paramNames.size() > 0) {
+            int index = url.indexOf(Strings.QUESTION);
+            if (index >= 0) {
+                // 去参数字符串且以&开头和结尾，以便于处理
+                String paramString = Strings.AND + url.substring(index + 1) + Strings.AND;
+                for (String paramName : paramNames) {
+                    String pattern = Strings.AND + paramName + Strings.EQUAL + "[^&=#?]+" + Strings.AND;
+                    paramString = paramString.replaceAll(pattern, Strings.AND);
+                }
+                paramString = paramString.substring(1); // 去掉开头的&
+                if (paramString.length() == 0) {
+                    url = url.substring(0, index);
+                } else {
+                    url = url.substring(0, index + 1) + paramString;
+                }
+            } // 不包含参数的URL无需处理
+        }
+        return url;
+    }
+
+    public static void main(String[] args) {
+        String url = "http://localhost:8881/user/login?service=user";
+        System.out.println(removeParams(url, Arrays.asList("service")));
+    }
+
     /**
      * 下载指定URL和参数表示的资源到指定本地文件
      *
