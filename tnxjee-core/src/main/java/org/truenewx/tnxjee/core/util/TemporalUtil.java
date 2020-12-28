@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
@@ -16,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  * Java 8 新版时间相关类的工具类
  *
  * @author jianglei
- * 
  */
 public class TemporalUtil {
 
@@ -70,10 +64,8 @@ public class TemporalUtil {
     /**
      * 按照指定格式格式化时间点对象为字符串型日期
      *
-     * @param temporal
-     *            时间点
-     * @param pattern
-     *            日期格式
+     * @param temporal 时间点
+     * @param pattern  日期格式
      * @return 字符串型日期
      */
     public static String format(Temporal temporal, String pattern) {
@@ -105,8 +97,7 @@ public class TemporalUtil {
     /**
      * 按照短日期格式(yyyy-MM-dd)格式化时间点对象为字符串型日期
      *
-     * @param instant
-     *            时间点
+     * @param instant 时间点
      * @return 字符串型日期
      */
     public static String formatShort(Instant instant) {
@@ -117,11 +108,18 @@ public class TemporalUtil {
         return format(date, DateUtil.SHORT_DATE_PATTERN);
     }
 
+    public static String format(LocalTime time) {
+        return format(time, DateUtil.TIME_PATTERN);
+    }
+
+    public static String format(LocalDateTime dateTime) {
+        return format(dateTime, DateUtil.LONG_DATE_PATTERN);
+    }
+
     /**
      * 按照长日期格式(yyyy-MM-dd HH:mm:ss)转换时间点对象为字符串型日期
      *
-     * @param instant
-     *            时间点
+     * @param instant 时间点
      * @return 字符串型日期
      */
     public static String formatLong(Instant instant) {
@@ -131,8 +129,7 @@ public class TemporalUtil {
     /**
      * 按照长日期格式(yyyyMMddHHmmss)转换时间点对象为字符串型日期
      *
-     * @param instant
-     *            时间点
+     * @param instant 时间点
      * @return 字符串型日期
      */
     public static String formatLongNoDelimiter(Instant instant) {
@@ -142,10 +139,8 @@ public class TemporalUtil {
     /**
      * 计算指定两个时间之间的相差天数。如果earlierTime晚于laterTime，则返回负值
      *
-     * @param earlierTime
-     *            较早时间
-     * @param laterTime
-     *            较晚时间
+     * @param earlierTime 较早时间
+     * @param laterTime   较晚时间
      * @return 相差天数
      */
     public static int daysBetween(Instant earlierTime, Instant laterTime) {
@@ -157,10 +152,8 @@ public class TemporalUtil {
     /**
      * 计算指定两个日期之间的相差天数。如果earlierDate晚于laterDate，则返回负值
      *
-     * @param earlierDate
-     *            较早日期
-     * @param laterDate
-     *            较晚日期
+     * @param earlierDate 较早日期
+     * @param laterDate   较晚日期
      * @return 相差天数
      */
     public static int daysBetween(LocalDate earlierDate, LocalDate laterDate) {
@@ -182,16 +175,11 @@ public class TemporalUtil {
     /**
      * 为指定时间点设置时分秒纳秒，返回新日期
      *
-     * @param instant
-     *            原时间点
-     * @param hour
-     *            时
-     * @param minute
-     *            分
-     * @param second
-     *            秒
-     * @param nanoOfSecond
-     *            纳秒
+     * @param instant      原时间点
+     * @param hour         时
+     * @param minute       分
+     * @param second       秒
+     * @param nanoOfSecond 纳秒
      * @return 新时间点
      */
     public static Instant setTime(Instant instant, int hour, int minute, int second,
