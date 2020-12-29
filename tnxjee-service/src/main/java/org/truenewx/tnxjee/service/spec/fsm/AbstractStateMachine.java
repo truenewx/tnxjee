@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
 import org.truenewx.tnxjee.service.transaction.annotation.WriteTransactional;
@@ -11,7 +12,7 @@ import org.truenewx.tnxjee.service.transaction.annotation.WriteTransactional;
 /**
  * 抽象的有限状态机
  *
- * @param <U> 实体类型
+ * @param <U> 单体类型
  * @param <K> 标识类型
  * @param <S> 状态枚举类型
  * @param <T> 转换枚举类型
@@ -24,15 +25,20 @@ public abstract class AbstractStateMachine<U extends Unity<K>, K extends Seriali
      * 起始状态
      */
     private S startState;
-
-    private List<StateTransitAction<U, K, S, T, I>> actions = new ArrayList<>();
+    /**
+     * 转换动作映射集：转换-动作
+     */
+    private Map<T, StateTransitAction<U, K, S, T, I>> transitionActionMapping = new HashMap<>();
 
     public AbstractStateMachine(S startState) {
         this.startState = startState;
     }
 
     public void setActions(Collection<? extends StateTransitAction<U, K, S, T, I>> actions) {
-        this.actions.addAll(actions);
+        this.transitionActionMapping.clear();
+        actions.forEach(action -> {
+            this.transitionActionMapping.put(action.getTransition(), action);
+        });
     }
 
     @Override
@@ -43,85 +49,77 @@ public abstract class AbstractStateMachine<U extends Unity<K>, K extends Seriali
     @Override
     public Set<T> getTransitions(S state) {
         Set<T> transitions = new HashSet<>();
-        for (StateTransitAction<U, K, S, T, I> action : this.actions) {
+        this.transitionActionMapping.values().forEach(action -> {
             if (ArrayUtils.contains(action.getBeginStates(), state)) {
                 transitions.add(action.getTransition());
             }
-        }
+        });
         return transitions;
     }
 
     @Override
     public S[] getBeginStates(T transition) {
-        for (StateTransitAction<U, K, S, T, I> action : this.actions) {
-            if (action.getTransition() == transition) {
-                return action.getBeginStates();
-            }
-        }
-        return null;
-    }
-
-    private StateTransitAction<U, K, S, T, I> getStateTransitAction(S state, T transition, Object condition) {
-        for (StateTransitAction<U, K, S, T, I> action : this.actions) {
-            if (action.getTransition() == transition
-                    && action.getEndState(state, condition) != null) {
-                return action;
-            }
-        }
-        return null;
+        StateTransitAction<U, K, S, T, I> action = this.transitionActionMapping.get(transition);
+        return action == null ? null : action.getBeginStates();
     }
 
     @Override
-    public S getNextState(S state, T transition, Object condition) {
-        StateTransitAction<U, K, S, T, I> action = getStateTransitAction(state, transition, condition);
-        if (action != null) {
-            return action.getEndState(state, condition);
-        }
-        return null;
+    public S getEndState(S beginState, T transition, Object condition) {
+        StateTransitAction<U, K, S, T, I> action = this.transitionActionMapping.get(transition);
+        return action == null ? null : action.getEndState(beginState, condition);
     }
 
     @Override
     @WriteTransactional
-    public U transit(I userIdentity, K key, T transition, Object context) {
-        U entity = loadUnity(userIdentity, key, context);
-        S state = getState(entity);
-        Object condition = getCondition(userIdentity, entity, context);
-        StateTransitAction<U, K, S, T, I> action = getStateTransitAction(state, transition, condition);
+    public U transit(I userIdentity, K id, T transition, Object context) {
+        U unity = loadUnity(userIdentity, id, context);
+        S state = getState(unity);
+        Object condition = getCondition(userIdentity, unity, context);
+
+        StateTransitAction<U, K, S, T, I> action = this.transitionActionMapping.get(transition);
         if (action == null) {
             throw new StateIntransitableException(state, transition);
         }
-        if (!action.execute(userIdentity, entity, context)) {
+        S endState = action.getEndState(state, condition);
+        if (endState == null) {
+            throw new StateIntransitableException(state, transition);
+        }
+        if (!action.execute(userIdentity, unity, endState, context)) {
             return null;
         }
-        return entity;
+        // 正常执行完毕后，最新的状态应该等于指定的结束状态
+        Assert.isTrue(getState(unity) == endState, () -> {
+            return "The last state of " + unity + " should be " + endState;
+        });
+        return unity;
     }
 
     /**
-     * 加载指定实体，需确保返回非空的实体，如果找不到指定实体，则需抛出业务异常
+     * 加载指定单体，需确保返回非空的单体，如果找不到指定单体，则需抛出业务异常
      *
      * @param userIdentity 用户标识
-     * @param key          实体标识
+     * @param id           单体id
      * @param context      上下文
-     * @return 实体
+     * @return 单体
      */
-    protected abstract U loadUnity(I userIdentity, K key, Object context);
+    protected abstract U loadUnity(I userIdentity, K id, Object context);
 
     /**
-     * 从指定实体中获取状态值。实体可能包含多个状态属性，故不通过让实体实现获取状态的接口来实现
+     * 从指定单体中获取状态值。单体可能包含多个状态属性，故不通过让单体实现获取状态的接口来实现
      *
-     * @param entity 实体
+     * @param unity 单体
      * @return 状态值
      */
-    protected abstract S getState(U entity);
+    protected abstract S getState(U unity);
 
     /**
      * 获取转换条件，用于定位转换动作
      *
      * @param userIdentity 用户标识
-     * @param entity       实体
+     * @param unity        单体
      * @param context      转换上下文
      * @return 转换条件
      */
-    protected abstract Object getCondition(I userIdentity, U entity, Object context);
+    protected abstract Object getCondition(I userIdentity, U unity, Object context);
 
 }

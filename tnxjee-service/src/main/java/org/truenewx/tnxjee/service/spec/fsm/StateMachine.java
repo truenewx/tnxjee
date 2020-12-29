@@ -44,24 +44,24 @@ public interface StateMachine<U extends Unity<K>, K extends Serializable, S exte
     S[] getBeginStates(T transition);
 
     /**
-     * 获取在指定状态下，在指定条件下，进行指定转换后将进入的下一个状态
+     * 获取在指定开始状态下，在指定条件下，进行指定转换后将进入的结束状态
      *
-     * @param state      状态
+     * @param beginState 开始状态
      * @param transition 转换
      * @param condition  条件
-     * @return 下一个状态
+     * @return 结束状态
      */
-    S getNextState(S state, T transition, Object condition);
+    S getEndState(S beginState, T transition, Object condition);
 
     /**
      * 指定用户对指定单体进行指定转换
      *
      * @param userIdentity 用户标识
-     * @param key          单体标识
+     * @param id           单体标识
      * @param transition   转换
      * @param context      上下文
      * @return 转换影响的单体
      */
-    U transit(I userIdentity, K key, T transition, Object context);
+    U transit(I userIdentity, K id, T transition, Object context);
 
 }

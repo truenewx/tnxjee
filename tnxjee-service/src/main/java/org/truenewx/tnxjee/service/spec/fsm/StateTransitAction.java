@@ -24,27 +24,28 @@ public interface StateTransitAction<U extends Unity<K>, K extends Serializable, 
     T getTransition();
 
     /**
-     * @return 当前转换动作可能的起始状态集
+     * @return 当前转换动作可能的开始状态集
      */
     S[] getBeginStates();
 
     /**
-     * 获取在指定起始状态执行当前转换动作后的结束状态
+     * 获取在指定开始状态执行当前转换动作后的结束状态
      *
-     * @param beginState 起始状态
+     * @param beginState 开始状态
      * @param condition  条件
      * @return 结束状态，如果在指定起始状态下不能根据指定条件执行当前转换动作，则返回null
      */
     S getEndState(S beginState, Object condition);
 
     /**
-     * 指定用户对指定标识表示的单体，在指定上下文情况时，执行动作
+     * 指定用户对指定单体，在指定上下文情况时，执行动作
      *
      * @param userIdentity 用户标识
-     * @param entity       单体标识
+     * @param unity        单体
+     * @param endState     执行动作后应该处于的结束状态
      * @param context      上下文
-     * @return 动作是否正常执行
+     * @return 动作是否已正常执行
      */
-    boolean execute(I userIdentity, U entity, Object context);
+    boolean execute(I userIdentity, U unity, S endState, Object context);
 
 }
