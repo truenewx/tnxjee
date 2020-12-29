@@ -7,7 +7,6 @@ import javax.persistence.Converter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.JsonUtil;
-import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * Map-JSON字符串的属性转换器
@@ -41,7 +40,7 @@ public class MapToJsonAttributeConverter implements AttributeConverter<Map<Strin
             try {
                 return JsonUtil.json2Map(dbData);
             } catch (Exception e) {
-                LogUtil.error(getClass(), e);
+                throw new RuntimeException(e);
             }
         }
         return null;
