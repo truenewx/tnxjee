@@ -27,10 +27,8 @@ public abstract class WebViewSecurityConfigurerSupport extends WebMvcSecurityCon
     @Bean
     @Override
     public AccessDeniedHandler accessDeniedHandler() {
-        AccessDeniedHandlerImpl accessDeniedHandler =
-                (AccessDeniedHandlerImpl) super.accessDeniedHandler();
-        accessDeniedHandler
-                .setErrorPage(this.viewResolvableExceptionResolver.getBusinessErrorPath());
+        AccessDeniedHandlerImpl accessDeniedHandler = (AccessDeniedHandlerImpl) super.accessDeniedHandler();
+        accessDeniedHandler.setErrorPage(this.viewResolvableExceptionResolver.getBusinessErrorPath());
         return accessDeniedHandler;
     }
 

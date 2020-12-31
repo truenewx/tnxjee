@@ -2,10 +2,7 @@ package org.truenewx.tnxjee.webmvc.security.config.annotation.web.configuration;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
@@ -106,7 +102,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     }
 
     protected String getLogoutSuccessUrl() {
-        return null;
+        return getLoginFormUrl(); // 登出成功后默认跳转到登录表单页
     }
 
     @Override
@@ -125,8 +121,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
             web.securityInterceptor(interceptor);
         });
 
-        Collection<String> ignoringAntPatterns = getIgnoringAntPatterns();
-        web.ignoring().antMatchers(ignoringAntPatterns.toArray(new String[ignoringAntPatterns.size()]));
+        web.ignoring().antMatchers(getIgnoringAntPatterns().toArray(new String[0]));
     }
 
     /**
@@ -171,17 +166,24 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         http.addFilterAfter(new InternalJwtAuthenticationFilter(getApplicationContext()),
                 UsernamePasswordAuthenticationFilter.class);
 
-        Collection<RequestMatcher> anonymousMatcherCollection = getAnonymousRequestMatchers();
-        RequestMatcher[] anonymousMatchers = anonymousMatcherCollection
-                .toArray(new RequestMatcher[anonymousMatcherCollection.size()]);
+        RequestMatcher[] anonymousMatchers = getAnonymousRequestMatchers().toArray(new RequestMatcher[0]);
         // @formatter:off
-        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest().authenticated().and()
+        http.authorizeRequests().requestMatchers(anonymousMatchers).permitAll().anyRequest().authenticated()
+                .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler()).and().logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher(getLogoutProcessUrl())) // 不限定POST请求
-                .logoutSuccessHandler(logoutSuccessHandler()).deleteCookies(getLogoutClearCookies()).permitAll();
-        configure(http.logout());
+                .accessDeniedHandler(accessDeniedHandler())
+                .and()
+                .logout().logoutUrl(getLogoutProcessUrl()).logoutSuccessHandler(logoutSuccessHandler())
+                .deleteCookies(getLogoutClearCookies()).permitAll();
         // @formatter:on
+
+        // 附加配置
+        Map<String, WebHttpSecurityConfigurer> additionalConfigurers = getApplicationContext()
+                .getBeansOfType(WebHttpSecurityConfigurer.class);
+        for (WebHttpSecurityConfigurer configurer : additionalConfigurers.values()) {
+            configurer.configure(http);
+        }
+
         if (this.corsRegistryProperties.isAllowCredentials()) {
             http.cors().and().csrf().disable(); // 开启cors则必须关闭csrf，以允许跨站点请求
         } else if (this.securityProperties.isCsrfDisabled()) {
@@ -192,14 +194,6 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     @SuppressWarnings({ "rawtypes" })
     protected Collection<SecurityConfigurerAdapter> getSecurityConfigurerAdapters() {
         return getApplicationContext().getBeansOfType(SecurityConfigurerAdapter.class).values();
-    }
-
-    /**
-     * 配置登出
-     *
-     * @param logoutConfigurer 登出配置器
-     */
-    protected void configure(LogoutConfigurer<HttpSecurity> logoutConfigurer) {
     }
 
     /**
