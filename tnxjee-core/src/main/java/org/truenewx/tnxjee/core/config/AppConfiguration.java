@@ -10,12 +10,21 @@ import org.truenewx.tnxjee.core.Strings;
  */
 public class AppConfiguration {
 
+    private String caption;
     private String userType;
     private String gatewayUri;
     private String directUri;
     private String contextPath = Strings.EMPTY;
     private String loginPath = "/login/cas";
     private String logoutPath = "/logout";
+
+    public String getCaption() {
+        return this.caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
 
     public String getUserType() {
         return this.userType;
@@ -80,6 +89,12 @@ public class AppConfiguration {
         this.logoutPath = logoutPath;
     }
 
+    /**
+     * 获取上下文根路径
+     *
+     * @param direct 是否直连路径，false-网关路径，如果有的话
+     * @return 上下文根路径
+     */
     public String getContextUri(boolean direct) {
         String uri = getGatewayUri();
         // 默认为网关地址，指定需要直连地址或网关地址为空，则使用直连地址
