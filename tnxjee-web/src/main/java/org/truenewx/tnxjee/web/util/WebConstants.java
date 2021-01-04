@@ -32,4 +32,9 @@ public class WebConstants {
      */
     public static final String HEADER_INTERNAL_JWT = "Internal-Jwt";
 
+    /**
+     * 默认的登录成功跳转目标参数
+     */
+    public static final String DEFAULT_LOGIN_SUCCESS_REDIRECT_PARAMETER = "_next";
+
 }

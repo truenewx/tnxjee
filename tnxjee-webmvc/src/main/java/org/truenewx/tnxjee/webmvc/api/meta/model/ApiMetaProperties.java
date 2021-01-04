@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.webmvc.api.meta.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.truenewx.tnxjee.web.util.WebConstants;
 
 /**
  * API元数据配置属性
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApiMetaProperties {
 
     private String[] appNames;
-    private String loginSuccessRedirectParameter = "_next";
+    private String loginSuccessRedirectParameter = WebConstants.DEFAULT_LOGIN_SUCCESS_REDIRECT_PARAMETER;
 
     public String[] getAppNames() {
         return this.appNames;
