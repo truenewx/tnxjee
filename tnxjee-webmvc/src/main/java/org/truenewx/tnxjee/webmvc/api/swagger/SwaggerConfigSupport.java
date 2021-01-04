@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.webmvc.api.swagger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.truenewx.tnxjee.core.config.AppConstants;
 import org.truenewx.tnxjee.core.version.VersionReader;
 
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,7 +22,7 @@ public abstract class SwaggerConfigSupport {
 
     @Autowired
     private VersionReader versionReader;
-    @Value("${spring.application.name}")
+    @Value(AppConstants.EL_SPRING_APP_NAME)
     private String appName;
 
     @Bean

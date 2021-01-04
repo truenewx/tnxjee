@@ -69,6 +69,17 @@ public class CommonProperties implements InitializingBean {
         return this.apps.get(name);
     }
 
+    public AppConfiguration findAppByContextUri(String contextUri, boolean direct) {
+        if (contextUri != null) {
+            for (AppConfiguration configuration : this.apps.values()) {
+                if (contextUri.equals(configuration.getContextUri(direct))) {
+                    return configuration;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * 获取所有应用URI，提供给cors配置，作为允许跨域访问的地址清单
      *
@@ -92,5 +103,6 @@ public class CommonProperties implements InitializingBean {
         });
         return urls;
     }
+
 
 }

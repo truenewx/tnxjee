@@ -52,8 +52,7 @@ public class ResolvableExceptionAuthenticationFailureHandler implements Authenti
         if (WebUtil.isAjaxRequest(request)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
-            String targetUrl =
-                    this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
+            String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             } else { // 跳转到目标地址

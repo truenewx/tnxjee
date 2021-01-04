@@ -72,11 +72,6 @@
         <dependencies><!-- ${project.version}是实际子工程的版本号，此处不能采用 -->
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-alone</artifactId>
-                <version>${tnxjee.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-core</artifactId>
                 <version>${tnxjee.version}</version>
             </dependency>
@@ -123,11 +118,6 @@
             <dependency>
                 <groupId>org.truenewx.tnxjee</groupId>
                 <artifactId>tnxjee-web</artifactId>
-                <version>${tnxjee.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.truenewx.tnxjee</groupId>
-                <artifactId>tnxjee-webflux</artifactId>
                 <version>${tnxjee.version}</version>
             </dependency>
             <dependency>

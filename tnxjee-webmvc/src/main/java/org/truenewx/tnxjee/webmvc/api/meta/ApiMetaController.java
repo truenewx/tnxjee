@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.config.AppConfiguration;
+import org.truenewx.tnxjee.core.config.AppConstants;
 import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
@@ -37,7 +38,7 @@ public class ApiMetaController {
     private ApiMetaProperties apiMetaProperties;
     @Autowired
     private CommonProperties commonProperties;
-    @Value("${spring.application.name}")
+    @Value(AppConstants.EL_SPRING_APP_NAME)
     private String baseApp;
 
     @GetMapping("/context")

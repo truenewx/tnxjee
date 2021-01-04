@@ -16,6 +16,7 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.config.AppConstants;
 import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.SpringUtil;
@@ -49,7 +50,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
         // 存在多个微服务应用，则许可名称前需添加当前应用前缀
         CommonProperties commonProperties = SpringUtil.getFirstBeanByClass(context, CommonProperties.class);
         if (commonProperties != null && commonProperties.getApps().size() > 1) {
-            String appName = context.getEnvironment().getProperty("spring.application.name");
+            String appName = context.getEnvironment().getProperty(AppConstants.PROPERTY_SPRING_APP_NAME);
             if (StringUtils.isNotBlank(appName)) {
                 this.permissionPrefix = appName + Strings.DOT;
             }
