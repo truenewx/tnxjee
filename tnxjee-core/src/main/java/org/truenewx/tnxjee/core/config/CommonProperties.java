@@ -66,14 +66,15 @@ public class CommonProperties implements InitializingBean {
     }
 
     public AppConfiguration getApp(String name) {
-        return this.apps.get(name);
+        return name == null ? null : this.apps.get(name);
     }
 
-    public AppConfiguration findAppByContextUri(String contextUri, boolean direct) {
+    public String findAppName(String contextUri, boolean direct) {
         if (contextUri != null) {
-            for (AppConfiguration configuration : this.apps.values()) {
+            for (Map.Entry<String, AppConfiguration> entry : this.apps.entrySet()) {
+                AppConfiguration configuration = entry.getValue();
                 if (contextUri.equals(configuration.getContextUri(direct))) {
-                    return configuration;
+                    return entry.getKey();
                 }
             }
         }

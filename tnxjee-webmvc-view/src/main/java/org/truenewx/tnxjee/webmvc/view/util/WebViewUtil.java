@@ -9,10 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.web.util.WebUtil;
-import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
+import org.truenewx.tnxjee.webmvc.security.web.SecurityUrlProvider;
 import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
@@ -54,19 +55,26 @@ public class WebViewUtil {
     public static String getPreviousUrl(HttpServletRequest request) {
         String prevUrl = getRelativePreviousUrl(request, true);
         if (prevUrl != null) {
-            String action = WebUtil.getRelativeRequestAction(request);
-            if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
+            if (isLoginUrl(request, prevUrl)) { // 如果前一页为登录页，则执行默认的前一页规则，以避免跳转相同页
                 prevUrl = null;
             } else {
-                LoginUrlResolver loginUrlResolver = SpringUtil
-                        .getFirstBeanByClass(SpringWebMvcUtil.getApplicationContext(request),
-                                LoginUrlResolver.class);
-                if (loginUrlResolver != null && loginUrlResolver.isLoginUrl(prevUrl)) {
+                String action = WebUtil.getRelativeRequestAction(request);
+                if (prevUrl.startsWith(action)) { // 如果前一页url以当前action开头，则执行默认的前一页规则，以避免跳转相同页
                     prevUrl = null;
                 }
             }
         }
         return prevUrl;
+    }
+
+    public static boolean isLoginUrl(HttpServletRequest request, String url) {
+        ApplicationContext context = SpringWebMvcUtil.getApplicationContext(request);
+        SecurityUrlProvider securityUrlProvider = SpringUtil.getFirstBeanByClass(context, SecurityUrlProvider.class);
+        if (securityUrlProvider != null) {
+            String loginFormUrl = securityUrlProvider.getLoginFormUrl(request);
+            return url.equals(loginFormUrl) || url.startsWith(loginFormUrl + Strings.QUESTION);
+        }
+        return false;
     }
 
     /**

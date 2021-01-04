@@ -1,7 +1,6 @@
 package org.truenewx.tnxjee.webmvc.security.web.authentication;
 
 import java.io.IOException;
-import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,20 +21,17 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
 
     @Autowired
     private RedirectStrategy redirectStrategy;
-    private Function<String, Integer> responseStatusFunction = redirectUrl -> {
-        // AJAX请求无法正确执行302跳转至开启CORS的目标地址，未登录时默认报401错误
-        return HttpServletResponse.SC_UNAUTHORIZED;
-    };
     private boolean ajaxToForm;
 
     public WebAuthenticationEntryPoint(String loginFormUrl) {
         super(loginFormUrl);
     }
 
-    public void setResponseStatusFunction(Function<String, Integer> responseStatusFunction) {
-        this.responseStatusFunction = responseStatusFunction;
-    }
-
+    /**
+     * 设置是否将AJAX请求直接跳转到登录表单页
+     *
+     * @param ajaxToForm 是否将AJAX请求直接跳转到登录表单页
+     */
     public void setAjaxToForm(boolean ajaxToForm) {
         this.ajaxToForm = ajaxToForm;
     }
@@ -47,20 +43,15 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        if (WebUtil.isAjaxRequest(request)) {
+        if (WebUtil.isAjaxRequest(request)) { // AJAX请求执行特殊的跳转
             String redirectLoginUrl = buildRedirectUrlToLoginPage(request, response, authException);
-            Integer status = this.responseStatusFunction == null ? null :
-                    this.responseStatusFunction.apply(redirectLoginUrl);
-            // 不是默认状态，则进行特殊的跳转
-            if (status != null && status != HttpServletResponse.SC_FOUND) {
-                if (this.ajaxToForm) {
-                    response.setHeader(WebConstants.HEADER_LOGIN_URL, redirectLoginUrl);
-                } else {
-                    this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
-                }
-                response.setStatus(status);
-                return;
+            if (this.ajaxToForm) { // AJAX请求直接跳转到登录表单页
+                response.setHeader(WebConstants.HEADER_LOGIN_URL, redirectLoginUrl);
+            } else {
+                this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
             }
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
         super.commence(request, response, authException);
     }

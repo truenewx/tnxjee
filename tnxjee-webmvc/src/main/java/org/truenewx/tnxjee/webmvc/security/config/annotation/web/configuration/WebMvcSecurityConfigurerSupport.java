@@ -32,11 +32,11 @@ import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.webmvc.api.meta.ApiMetaController;
 import org.truenewx.tnxjee.webmvc.security.access.UserAuthorityAccessDecisionManager;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
+import org.truenewx.tnxjee.webmvc.security.web.SecurityUrlProvider;
 import org.truenewx.tnxjee.webmvc.security.web.access.AccessDeniedBusinessExceptionHandler;
 import org.truenewx.tnxjee.webmvc.security.web.access.intercept.WebFilterInvocationSecurityMetadataSource;
 import org.truenewx.tnxjee.webmvc.security.web.authentication.InternalJwtAuthenticationFilter;
 import org.truenewx.tnxjee.webmvc.security.web.authentication.WebAuthenticationEntryPoint;
-import org.truenewx.tnxjee.webmvc.servlet.mvc.LoginUrlResolver;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 
 /**
@@ -44,7 +44,7 @@ import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
  */
 // 安全配置器与MVC配置器如果合并在同一个类中，webmvc-view工程启动时无法即时注入配置属性实例，导致启动失败
 @EnableWebSecurity
-public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigurerAdapter implements LoginUrlResolver {
+public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
@@ -54,6 +54,10 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     private WebSecurityProperties securityProperties;
     @Autowired
     private CorsRegistryProperties corsRegistryProperties;
+    @Autowired(required = false)
+    protected SecurityUrlProvider urlProvider = new SecurityUrlProvider() {
+        // 所有方法都有默认实现，默认实例无需提供
+    };
 
     /**
      * 获取访问资源需要具备的权限
@@ -68,7 +72,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
      */
     @Bean
     public WebAuthenticationEntryPoint authenticationEntryPoint() {
-        return new WebAuthenticationEntryPoint(getLoginFormUrl());
+        return new WebAuthenticationEntryPoint(this.urlProvider.getDefaultLoginFormUrl());
     }
 
     /**
@@ -94,15 +98,11 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     public LogoutSuccessHandler logoutSuccessHandler() {
         SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
         successHandler.setRedirectStrategy(this.redirectStrategy);
-        String logoutSuccessUrl = getLogoutSuccessUrl();
+        String logoutSuccessUrl = this.urlProvider.getLogoutSuccessUrl();
         if (logoutSuccessUrl != null) {
             successHandler.setDefaultTargetUrl(logoutSuccessUrl);
         }
         return successHandler;
-    }
-
-    protected String getLogoutSuccessUrl() {
-        return getLoginFormUrl(); // 登出成功后默认跳转到登录表单页
     }
 
     @Override
@@ -173,7 +173,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
                 .accessDeniedHandler(accessDeniedHandler())
                 .and()
-                .logout().logoutUrl(getLogoutProcessUrl()).logoutSuccessHandler(logoutSuccessHandler())
+                .logout().logoutUrl(this.urlProvider.getLogoutProcessUrl()).logoutSuccessHandler(logoutSuccessHandler())
                 .deleteCookies(getLogoutClearCookies()).permitAll();
         // @formatter:on
 
@@ -206,8 +206,18 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         matchers.add(new AntPathRequestMatcher("/error/**"));
         // 打开登录表单页面和登出的请求始终可匿名访问
         // 注意：不能将请求URL加入忽略清单中，如果加入，则请求将无法经过安全框架过滤器处理
-        matchers.add(new AntPathRequestMatcher(getLoginFormUrl(), HttpMethod.GET.name()));
-        matchers.add(new AntPathRequestMatcher(getLogoutProcessUrl()));
+        String loginFormUrl = this.urlProvider.getDefaultLoginFormUrl();
+        if (loginFormUrl.startsWith(Strings.SLASH)) { // 相对路径才需要添加到匿名清单中
+            int index = loginFormUrl.indexOf(Strings.QUESTION);
+            if (index > 0) { // 去掉登录表单地址中可能的参数
+                loginFormUrl = loginFormUrl.substring(0, index);
+            }
+            matchers.add(new AntPathRequestMatcher(loginFormUrl, HttpMethod.GET.name()));
+        }
+        String logoutProcessUrl = this.urlProvider.getLogoutProcessUrl();
+        if (logoutProcessUrl.startsWith(Strings.SLASH)) { // 相对路径才需要添加到匿名清单中
+            matchers.add(new AntPathRequestMatcher(logoutProcessUrl));
+        }
 
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Method method = handlerMethod.getMethod();
@@ -232,25 +242,8 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
         return matchers;
     }
 
-    @Override
-    public String getLoginFormUrl() {
-        return "/login";
-    }
-
-    @Override
-    public boolean isLoginUrl(String url) {
-        return url.startsWith(getLoginFormUrl());
-    }
-
     protected String[] getLogoutClearCookies() {
         return new String[]{ "JSESSIONID", "SESSION" };
-    }
-
-    /**
-     * @return 登出处理地址
-     */
-    protected String getLogoutProcessUrl() {
-        return "/logout";
     }
 
 }

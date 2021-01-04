@@ -49,12 +49,4 @@ public abstract class WebViewSecurityConfigurerSupport extends WebMvcSecurityCon
         return patterns;
     }
 
-    /**
-     * @return 登出成功后的跳转地址，默认为登录表单页面地址
-     */
-    @Override
-    protected String getLogoutSuccessUrl() {
-        return getLoginFormUrl();
-    }
-
 }
