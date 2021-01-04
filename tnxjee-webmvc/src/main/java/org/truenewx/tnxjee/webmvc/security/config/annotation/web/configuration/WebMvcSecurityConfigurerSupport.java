@@ -54,10 +54,15 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
     private WebSecurityProperties securityProperties;
     @Autowired
     private CorsRegistryProperties corsRegistryProperties;
-    @Autowired(required = false)
+
     protected SecurityUrlProvider urlProvider = new SecurityUrlProvider() {
         // 所有方法都有默认实现，默认实例无需提供
     };
+
+    @Autowired(required = false)
+    public void setUrlProvider(SecurityUrlProvider urlProvider) {
+        this.urlProvider = urlProvider;
+    }
 
     /**
      * 获取访问资源需要具备的权限
