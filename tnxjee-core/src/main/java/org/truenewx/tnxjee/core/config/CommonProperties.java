@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.truenewx.tnxjee.core.Strings;
 
 /**
  * Web通用配置属性
@@ -69,11 +70,12 @@ public class CommonProperties implements InitializingBean {
         return name == null ? null : this.apps.get(name);
     }
 
-    public String findAppName(String contextUri, boolean direct) {
-        if (contextUri != null) {
+    public String findAppName(String url, boolean direct) {
+        if (url != null) {
             for (Map.Entry<String, AppConfiguration> entry : this.apps.entrySet()) {
                 AppConfiguration configuration = entry.getValue();
-                if (contextUri.equals(configuration.getContextUri(direct))) {
+                String contextUri = configuration.getContextUri(direct);
+                if (url.equals(contextUri) || url.startsWith(contextUri + Strings.SLASH)) {
                     return entry.getKey();
                 }
             }
