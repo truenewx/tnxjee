@@ -12,6 +12,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.truenewx.tnxjee.web.util.WebConstants;
 import org.truenewx.tnxjee.web.util.WebUtil;
+import org.truenewx.tnxjee.webmvc.security.web.SecurityUrlProvider;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
 /**
@@ -21,10 +22,21 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
 
     @Autowired
     private RedirectStrategy redirectStrategy;
+    @Autowired(required = false)
+    private SecurityUrlProvider securityUrlProvider;
     private boolean ajaxToForm;
 
     public WebAuthenticationEntryPoint(String loginFormUrl) {
         super(loginFormUrl);
+    }
+
+    @Override
+    protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception) {
+        if (this.securityUrlProvider != null) {
+            return this.securityUrlProvider.getLoginFormUrl(request);
+        }
+        return super.determineUrlToUseForThisRequest(request, response, exception);
     }
 
     /**
