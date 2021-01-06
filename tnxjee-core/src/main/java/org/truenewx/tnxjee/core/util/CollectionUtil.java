@@ -391,4 +391,44 @@ public class CollectionUtil {
         }
     }
 
+    /**
+     * 将指定映射集转换为按值排序的映射集返回，指定映射集没有变化
+     *
+     * @param map 映射集
+     * @return 按值排序的映射集
+     */
+    public static <K, V extends Comparable<V>> Map<K, V> sortedByValueMap(Map<K, V> map) {
+        if (map == null) {
+            return null;
+        }
+        Map<K, V> result = new LinkedHashMap<>();
+        List<Map.Entry<K, V>> entryList = new ArrayList<>(map.entrySet());
+        entryList.sort(Map.Entry.comparingByValue());
+        entryList.forEach(entry -> {
+            result.put(entry.getKey(), entry.getValue());
+        });
+        return result;
+    }
+
+
+    /**
+     * 将指定映射集转换为按值排序的映射集返回，指定映射集没有变化
+     *
+     * @param map        映射集
+     * @param comparator 排序比较器
+     * @return 按值排序的映射集
+     */
+    public static <K, V> Map<K, V> sortedByValueMap(Map<K, V> map, Comparator<V> comparator) {
+        if (map == null || comparator == null) {
+            return map;
+        }
+        Map<K, V> result = new LinkedHashMap<>();
+        List<Map.Entry<K, V>> entryList = new ArrayList<>(map.entrySet());
+        entryList.sort((o1, o2) -> comparator.compare(o1.getValue(), o2.getValue()));
+        entryList.forEach(entry -> {
+            result.put(entry.getKey(), entry.getValue());
+        });
+        return result;
+    }
+
 }
