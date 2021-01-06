@@ -665,7 +665,7 @@ public class ClassUtil {
      * @param predicate       遍历断言，返回false则终止遍历
      * @param <A>             注解类型
      */
-    public static <A extends Annotation> void loopFields(Class<?> clazz, Class<A> annotationClass,
+    public static <A extends Annotation> void loopFieldsByAnnotation(Class<?> clazz, Class<A> annotationClass,
             BiPredicate<Field, A> predicate) {
         if (clazz != Object.class) {
             for (Field field : clazz.getDeclaredFields()) {
@@ -677,7 +677,7 @@ public class ClassUtil {
                 }
             }
             // 再遍历父类
-            loopFields(clazz.getSuperclass(), annotationClass, predicate);
+            loopFieldsByAnnotation(clazz.getSuperclass(), annotationClass, predicate);
         }
     }
 
@@ -688,7 +688,7 @@ public class ClassUtil {
      * @param fieldType 字段类型
      * @param predicate 遍历断言，返回false则终止遍历
      */
-    public static void loopFields(Class<?> clazz, Class<?> fieldType, Predicate<Field> predicate) {
+    public static void loopFieldsByType(Class<?> clazz, Class<?> fieldType, Predicate<Field> predicate) {
         if (clazz != Object.class) {
             for (Field field : clazz.getDeclaredFields()) {
                 if (fieldType == null || fieldType.isAssignableFrom(field.getType())) {
@@ -698,7 +698,7 @@ public class ClassUtil {
                 }
             }
             // 再遍历父类
-            loopFields(clazz.getSuperclass(), fieldType, predicate);
+            loopFieldsByType(clazz.getSuperclass(), fieldType, predicate);
         }
     }
 

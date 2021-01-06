@@ -46,10 +46,12 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
         return super.decode(methodKey, response);
     }
 
-    private SingleException buildException(MessagedError error) {
-        if (BusinessException.class.getSimpleName().equals(error.getType())) {
+    private SingleException buildException(MessagedError error) throws ClassNotFoundException {
+        String type = error.getType();
+        Class<?> clazz = Class.forName(type);
+        if (BusinessException.class.isAssignableFrom(clazz)) {
             return new BusinessException(error);
-        } else if (FormatException.class.getSimpleName().equals(error.getType())) {
+        } else if (clazz == FormatException.class) {
             return new FormatException(error);
         }
         return null;

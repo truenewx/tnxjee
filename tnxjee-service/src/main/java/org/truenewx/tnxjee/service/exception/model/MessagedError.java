@@ -19,7 +19,7 @@ public class MessagedError {
 
     public MessagedError(String message, SingleException se) {
         this.message = message;
-        this.type = se.getClass().getSimpleName();
+        this.type = se.getClass().getName();
         this.code = se.getCode();
         this.field = se.getProperty();
     }
