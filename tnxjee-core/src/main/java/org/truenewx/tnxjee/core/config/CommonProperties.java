@@ -1,15 +1,13 @@
 package org.truenewx.tnxjee.core.config;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.CollectionUtil;
 
 /**
  * Web通用配置属性
@@ -20,16 +18,22 @@ import org.truenewx.tnxjee.core.Strings;
 @ConfigurationProperties("tnxjee.common")
 public class CommonProperties implements InitializingBean {
 
-    private Map<String, AppConfiguration> apps = new HashMap<>();
+    private Map<String, AppConfiguration> apps = new HashMap<>(); // 必须用Map，在Spring占位符表达式中才可以取指定应用的配置
     private boolean gatewayEnabled;
     private String gatewayUri;
 
     public Map<String, AppConfiguration> getApps() {
-        return this.apps;
+        return Collections.unmodifiableMap(this.apps);
     }
 
     public void setApps(Map<String, AppConfiguration> apps) {
-        this.apps = apps;
+        this.apps = CollectionUtil.sortedByValueMap(apps, (app1, app2) -> {
+            int result = app1.getContextUri(false).compareTo(app2.getContextUri(false));
+            if (result == 0) {
+                result = app1.getContextPath().compareTo(app2.getContextPath());
+            }
+            return -result; // 反向排序，以避免错误匹配
+        });
     }
 
     public boolean isGatewayEnabled() {
@@ -64,6 +68,10 @@ public class CommonProperties implements InitializingBean {
                 app.setGatewayUri(null);
             });
         }
+    }
+
+    public int getAppSize() {
+        return this.apps.size();
     }
 
     public AppConfiguration getApp(String name) {

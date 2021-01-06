@@ -49,7 +49,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     public void afterInitialized(ApplicationContext context) {
         // 存在多个微服务应用，则许可名称前需添加当前应用前缀
         CommonProperties commonProperties = SpringUtil.getFirstBeanByClass(context, CommonProperties.class);
-        if (commonProperties != null && commonProperties.getApps().size() > 1) {
+        if (commonProperties != null && commonProperties.getAppSize() > 1) {
             String appName = context.getEnvironment().getProperty(AppConstants.PROPERTY_SPRING_APP_NAME);
             if (StringUtils.isNotBlank(appName)) {
                 this.permissionPrefix = appName + Strings.DOT;
