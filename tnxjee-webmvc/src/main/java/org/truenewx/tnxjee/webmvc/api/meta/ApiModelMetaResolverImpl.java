@@ -35,7 +35,7 @@ import org.truenewx.tnxjee.webmvc.validation.rule.mapper.ValidationRuleMapper;
  */
 @Component
 public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextInitializedBean {
-    
+
     private static final Class<?>[] INTEGER_CLASSES = { long.class, int.class, short.class, byte.class, Long.class,
             Integer.class, Short.class, Byte.class, BigInteger.class };
     private static final Class<?>[] DECIMAL_CLASSES = { double.class, float.class, Double.class, Float.class,
@@ -66,7 +66,7 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
         Map<String, ApiModelPropertyMeta> metas = new HashMap<>();
         if (this.validationConfigurationFactory != null) {
             ValidationConfiguration configuration = this.validationConfigurationFactory.getConfiguration(modelClass);
-            ClassUtil.loopFields(modelClass, null, field -> {
+            ClassUtil.loopFieldsByType(modelClass, null, field -> {
                 String propertyName = field.getName();
                 String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
                 if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {

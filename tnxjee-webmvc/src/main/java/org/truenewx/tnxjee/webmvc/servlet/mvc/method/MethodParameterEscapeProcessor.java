@@ -1,15 +1,15 @@
 package org.truenewx.tnxjee.webmvc.servlet.mvc.method;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.web.util.HtmlUtils;
 import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.annotation.Escaped;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 方法参数转义处理器
@@ -36,7 +36,7 @@ public class MethodParameterEscapeProcessor {
                 Set<String> properties = this.beanPropertiesMapping.get(clazz);
                 if (properties == null) {
                     Set<String> escapedProperties = new HashSet<>();
-                    ClassUtil.loopFields(clazz, Escaped.class, ((field, escaped) -> {
+                    ClassUtil.loopFieldsByAnnotation(clazz, Escaped.class, (field, escaped) -> {
                         // 字符串类型且需HTML转义的字段才是有效的转义字段
                         Class<?> type = field.getType();
                         if (type == String.class) {
@@ -45,7 +45,7 @@ public class MethodParameterEscapeProcessor {
                             escape(BeanUtil.getPropertyValue(object, field.getName()), opposite);
                         }
                         return true;
-                    }));
+                    });
                     properties = escapedProperties;
                     this.beanPropertiesMapping.put(clazz, properties);
                 }
