@@ -3,6 +3,9 @@ package org.truenewx.tnxjee.model.query;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.Strings;
+
 /**
  * 字段排序
  *
@@ -11,6 +14,7 @@ import java.util.Objects;
 public class FieldOrder implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 3974601723760230151L;
+    private static final String DESC = "desc";
 
     private String name;
     private boolean desc;
@@ -21,6 +25,25 @@ public class FieldOrder implements Serializable, Cloneable {
     public FieldOrder(String name, boolean desc) {
         this.name = name;
         this.desc = desc;
+    }
+
+    public static FieldOrder of(String order) {
+        if (StringUtils.isNotBlank(order)) {
+            order = order.trim();
+            if (order.length() > 0) {
+                String fieldName;
+                boolean desc = false;
+                int index = order.indexOf(Strings.SPACE);
+                if (index > 0) {
+                    fieldName = order.substring(0, index);
+                    desc = FieldOrder.DESC.equalsIgnoreCase(order.substring(index + 1));
+                } else {
+                    fieldName = order;
+                }
+                return new FieldOrder(fieldName, desc);
+            }
+        }
+        return null;
     }
 
     public String getName() {
@@ -58,7 +81,10 @@ public class FieldOrder implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return this.name + " " + this.desc;
+        if (this.desc) {
+            return this.name + Strings.SPACE + DESC;
+        }
+        return this.name;
     }
 
     @Override

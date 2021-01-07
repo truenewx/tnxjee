@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.StringUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class Querying extends Pagination implements QueryModel, Paging {
 
     private static final long serialVersionUID = -3979291396866569456L;
-    private static final String DESC = "desc";
 
     private QueryIgnoring ignoring;
 
@@ -52,25 +52,13 @@ public abstract class Querying extends Pagination implements QueryModel, Paging 
         if (StringUtils.isNotBlank(orderBy)) {
             String[] orders = orderBy.split(Strings.COMMA);
             for (String order : orders) {
-                order = order.trim();
-                if (order.length() > 0) {
-                    String fieldName;
-                    boolean desc = false;
-                    int index = order.indexOf(Strings.SPACE);
-                    if (index > 0) {
-                        fieldName = order.substring(0, index);
-                        desc = DESC.equalsIgnoreCase(order.substring(index + 1));
-                    } else {
-                        fieldName = order;
-                    }
-                    addOrder(fieldName, desc);
-                }
+                addOrder(FieldOrder.of(order));
             }
         }
     }
 
     public String getOrderBy() {
-        return toOrderBy(getOrders());
+        return StringUtil.ifBlank(toOrderBy(getOrders()), null);
     }
 
     /**
@@ -81,17 +69,16 @@ public abstract class Querying extends Pagination implements QueryModel, Paging 
      * @return 排序语句
      */
     public static String toOrderBy(Collection<FieldOrder> orders) {
-        StringBuilder orderString = new StringBuilder();
-        for (FieldOrder order : orders) {
-            orderString.append(Strings.COMMA).append(order.getName());
-            if (order.isDesc()) {
-                orderString.append(Strings.SPACE).append(DESC);
+        StringBuilder orderBy = new StringBuilder();
+        if (orders != null) {
+            for (FieldOrder order : orders) {
+                orderBy.append(Strings.COMMA).append(order.toString());
+            }
+            if (orderBy.length() > 0) {
+                orderBy.deleteCharAt(0); // 去掉首位的多余逗号
             }
         }
-        if (orderString.length() > 0) {
-            orderString.deleteCharAt(0); // 去掉首位的多余逗号
-        }
-        return orderString.toString();
+        return orderBy.toString();
     }
 
 }
