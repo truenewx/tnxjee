@@ -12,7 +12,6 @@ import org.truenewx.tnxjee.core.util.function.FuncMinNumber;
  * 数学工具类
  *
  * @author jianglei
- * 
  */
 public class MathUtil {
     /**
@@ -299,14 +298,13 @@ public class MathUtil {
         return (T) FuncMinNumber.INSTANCE.apply(type);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Number> T minValue(Class<?> type, int precision, int scale) {
         T typeMinValue = minValue(type);
         if (typeMinValue != null) {
             if (precision == 0) {
                 return typeMinValue;
             }
-            BigDecimal typeMinDecimal = new BigDecimal(typeMinValue.doubleValue()); // 负值
+            BigDecimal typeMinDecimal = BigDecimal.valueOf(typeMinValue.doubleValue()); // 负值
             // 各数值类型的最小值均为整数，转换为朴素字符串形式后，字符串长度-1即为最小值长度
             int minLength = typeMinDecimal.toPlainString().length() - 1; // 负值带有负号
             // 最小值都不是最大长度下的最大值（即-999...999），所以实际允许的整数部分长度必须小于上述最小值长度
@@ -317,23 +315,29 @@ public class MathUtil {
             }
             // 否则，整数部分和小数部分全为9，取负号，即为结果
             BigDecimal min = BigDecimal.TEN.pow(intLength)
-                    .subtract(BigDecimal.ONE.divide(BigDecimal.TEN.pow(scale)))
+                    .subtract(BigDecimal.ONE.divide(BigDecimal.TEN.pow(scale), RoundingMode.HALF_UP))
                     .setScale(scale, RoundingMode.HALF_UP).negate();
-            if (type == Long.class) {
-                return (T) Long.valueOf(min.longValue());
-            } else if (type == Integer.class) {
-                return (T) Integer.valueOf(min.intValue());
-            } else if (type == Short.class) {
-                return (T) Short.valueOf(min.shortValue());
-            } else if (type == Byte.class) {
-                return (T) Byte.valueOf(min.byteValue());
-            } else if (type == Double.class) {
-                return (T) Double.valueOf(min.doubleValue());
-            } else if (type == Float.class) {
-                return (T) Float.valueOf(min.floatValue());
-            } else if (type == BigDecimal.class) {
-                return (T) min;
-            }
+            return toNumber(type, min);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Number> T toNumber(Class<?> type, BigDecimal decimal) {
+        if (type == Long.class) {
+            return (T) Long.valueOf(decimal.longValue());
+        } else if (type == Integer.class) {
+            return (T) Integer.valueOf(decimal.intValue());
+        } else if (type == Short.class) {
+            return (T) Short.valueOf(decimal.shortValue());
+        } else if (type == Byte.class) {
+            return (T) Byte.valueOf(decimal.byteValue());
+        } else if (type == Double.class) {
+            return (T) Double.valueOf(decimal.doubleValue());
+        } else if (type == Float.class) {
+            return (T) Float.valueOf(decimal.floatValue());
+        } else if (type == BigDecimal.class) {
+            return (T) decimal;
         }
         return null;
     }
@@ -349,14 +353,13 @@ public class MathUtil {
         return (T) FuncMaxNumber.INSTANCE.apply(type);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Number> T maxValue(Class<?> type, int precision, int scale) {
         T typeMaxValue = maxValue(type);
         if (typeMaxValue != null) {
             if (precision == 0) {
                 return typeMaxValue;
             }
-            BigDecimal typeMaxDecimal = new BigDecimal(typeMaxValue.doubleValue());
+            BigDecimal typeMaxDecimal = BigDecimal.valueOf(typeMaxValue.doubleValue());
             // 各数值类型的最大值均为整数，转换为朴素字符串形式后，字符串长度即为最大值长度
             int maxLength = typeMaxDecimal.toPlainString().length();
             // 最大值都不是最大长度下的最大值（即999...999），所以实际允许的整数部分长度必须小于上述最大值长度
@@ -367,23 +370,9 @@ public class MathUtil {
             }
             // 否则，整数部分和小数部分全为9即为结果
             BigDecimal max = BigDecimal.TEN.pow(intLength)
-                    .subtract(BigDecimal.ONE.divide(BigDecimal.TEN.pow(scale)))
+                    .subtract(BigDecimal.ONE.divide(BigDecimal.TEN.pow(scale), RoundingMode.HALF_UP))
                     .setScale(scale, RoundingMode.HALF_UP);
-            if (type == Long.class) {
-                return (T) Long.valueOf(max.longValue());
-            } else if (type == Integer.class) {
-                return (T) Integer.valueOf(max.intValue());
-            } else if (type == Short.class) {
-                return (T) Short.valueOf(max.shortValue());
-            } else if (type == Byte.class) {
-                return (T) Byte.valueOf(max.byteValue());
-            } else if (type == Double.class) {
-                return (T) Double.valueOf(max.doubleValue());
-            } else if (type == Float.class) {
-                return (T) Float.valueOf(max.floatValue());
-            } else if (type == BigDecimal.class) {
-                return (T) max;
-            }
+            toNumber(type, max);
         }
         return null;
     }

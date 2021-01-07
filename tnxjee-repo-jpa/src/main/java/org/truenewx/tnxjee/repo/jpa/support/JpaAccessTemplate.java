@@ -31,8 +31,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     private boolean nativeMode;
     private int maxPageSize = 200;
 
-    public JpaAccessTemplate(EntityManagerFactory entityManagerFactory,
-            MetadataProvider metadataProvider) {
+    public JpaAccessTemplate(EntityManagerFactory entityManagerFactory, MetadataProvider metadataProvider) {
         Assert.notNull(entityManagerFactory, "entityManagerFactory must not be null");
         Assert.notNull(metadataProvider, "metadataProvider must not be null");
         this.entityManagerFactory = entityManagerFactory;
@@ -172,8 +171,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize,
-            int pageNo) {
+    public <T> List<T> list(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, false);
@@ -204,8 +202,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue,
-            int pageSize, int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, String paramName, Object paramValue, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamToQuery(query, paramName, paramValue);
         applyPagingToQuery(query, pageSize, pageNo, true);
@@ -213,8 +210,7 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize,
-            int pageNo) {
+    public <T> List<T> listWithOneMore(CharSequence ql, Map<String, ?> params, int pageSize, int pageNo) {
         Query query = createQuery(ql);
         applyParamsToQuery(query, params);
         applyPagingToQuery(query, pageSize, pageNo, true);

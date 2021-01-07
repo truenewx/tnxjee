@@ -8,20 +8,4 @@ import org.truenewx.tnxjee.model.Model;
  * @author jianglei
  */
 public interface QueryModel extends Model {
-
-    /**
-     * @return 分页信息
-     */
-    Paging getPaging();
-
-    /**
-     * @return 是否获取总数
-     */
-    boolean isTotalable();
-
-    /**
-     * @return 是否获取记录清单
-     */
-    boolean isListable();
-
 }

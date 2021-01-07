@@ -11,6 +11,7 @@ import java.util.SortedMap;
  *
  * @author jianglei
  */
+@Deprecated
 public class QuerySort implements Serializable {
 
     private static final long serialVersionUID = 1091207925288843577L;
@@ -31,7 +32,7 @@ public class QuerySort implements Serializable {
     public static QuerySort of(SortedMap<String, Boolean> orderMap) {
         QuerySort sort = new QuerySort();
         orderMap.forEach((fieldName, desc) -> {
-            sort.addOrder(fieldName, desc);
+//            sort.addOrder(fieldName, desc);
         });
         return sort;
     }
@@ -53,13 +54,6 @@ public class QuerySort implements Serializable {
             this.orders = new ArrayList<FieldOrder>();
         }
         return this.orders;
-    }
-
-    public void addOrder(String fieldName, boolean desc) {
-        if (this.orders == null) {
-            this.orders = new ArrayList<>();
-        }
-        this.orders.add(new FieldOrder(fieldName, desc));
     }
 
 }

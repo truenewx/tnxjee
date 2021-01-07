@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.QuerySort;
+import org.truenewx.tnxjee.model.query.FieldOrder;
+import org.truenewx.tnxjee.model.query.Pagination;
 import org.truenewx.tnxjee.repo.support.DataAccessTemplate;
 import org.truenewx.tnxjee.repo.util.RepoUtil;
 
@@ -56,7 +56,7 @@ public class MongoAccessTemplate implements DataAccessTemplate {
             if (pageNo <= 0) { // 页码最小为1
                 pageNo = 1;
             }
-            query.skip(pageSize * (pageNo - 1));
+            query.skip((long) pageSize * (pageNo - 1));
             query.limit(oneMore ? (pageSize + 1) : pageSize);
         }
     }
@@ -71,14 +71,14 @@ public class MongoAccessTemplate implements DataAccessTemplate {
     }
 
     public <T extends Entity> List<T> list(Class<T> entityClass, Query query, int pageSize, int pageNo,
-            QuerySort sort) {
+            List<FieldOrder> orders) {
         applyPagingToQuery(query, pageSize, pageNo, false);
-        query.with(RepoUtil.toSort(sort));
+        query.with(RepoUtil.toSort(orders));
         return list(entityClass, query);
     }
 
-    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, Paging paging) {
-        query.with(RepoUtil.toPageable(paging));
+    public <T extends Entity> List<T> list(Class<T> entityClass, Query query, Pagination pagination) {
+        query.with(RepoUtil.toPageable(pagination));
         return list(entityClass, query);
     }
 
@@ -97,13 +97,14 @@ public class MongoAccessTemplate implements DataAccessTemplate {
     }
 
     public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, int pageSize, int pageNo,
-            QuerySort sort) {
-        query.with(RepoUtil.toSort(sort));
+            FieldOrder... orders) {
+        query.with(RepoUtil.toSort(orders));
         return listWithOneMore(entityClass, query, pageSize, pageNo);
     }
 
-    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, Paging paging) {
-        return listWithOneMore(entityClass, query, paging.getPageSize(), paging.getPageNo(), paging.getSort());
+    public <T extends Entity> List<T> listWithOneMore(Class<T> entityClass, Query query, Pagination pagination) {
+        query.with(RepoUtil.toSort(pagination.getOrders()));
+        return listWithOneMore(entityClass, query, pagination.getPageSize(), pagination.getPageNo());
     }
 
     public long update(Class<?> entityClass, Query query, String propertyName, Object propertyValue) {
@@ -113,9 +114,7 @@ public class MongoAccessTemplate implements DataAccessTemplate {
 
     public long update(Class<?> entityClass, Query query, Map<String, Object> values) {
         Update update = new Update();
-        values.forEach((key, value) -> {
-            update.set(key, value);
-        });
+        values.forEach(update::set);
         return this.mongoOperations.upsert(query, update, entityClass).getModifiedCount();
     }
 

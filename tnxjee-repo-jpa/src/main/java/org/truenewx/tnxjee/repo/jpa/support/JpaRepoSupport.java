@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
+import org.truenewx.tnxjee.model.query.FieldOrder;
 import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.QueryModel;
+import org.truenewx.tnxjee.model.query.QueryIgnoring;
 import org.truenewx.tnxjee.model.query.QueryResult;
-import org.truenewx.tnxjee.model.query.QuerySort;
 import org.truenewx.tnxjee.repo.jpa.JpaRepo;
 import org.truenewx.tnxjee.repo.jpa.util.OqlUtil;
 import org.truenewx.tnxjee.repo.support.RepoSupport;
@@ -55,20 +56,19 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         getAccessTemplate().refresh(entity);
     }
 
-    private QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize,
-            int pageNo, QuerySort sort,
-            boolean totalable, boolean listable) {
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, QueryIgnoring ignoring, int pageSize,
+            int pageNo, List<FieldOrder> orders) {
         Long total = null;
-        if ((pageSize > 0 || !listable) && totalable) { // 需分页查询且需要获取总数时，才获取总数
+        if (pageSize > 0 && ignoring != QueryIgnoring.TOTAL) { // 需分页查询且不忽略总数时，才获取总数
             total = getAccessTemplate().count("select count(*) " + ql, params);
         }
 
         List<T> records;
         // 已知总数为0或无需查询记录清单，则不查询记录清单
-        if ((total != null && total == 0) || !listable) {
+        if ((total != null && total == 0) || ignoring == QueryIgnoring.RECORD) {
             records = new ArrayList<>();
         } else {
-            String orderString = OqlUtil.buildOrderString(sort);
+            String orderString = OqlUtil.buildOrderString(orders);
             if (StringUtils.isNotBlank(orderString)) {
                 if (ql instanceof StringBuffer) {
                     ((StringBuffer) ql).append(orderString);
@@ -84,22 +84,13 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         return QueryResult.of(records, pageSize, pageNo, total);
     }
 
-    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params,
-            QueryModel queryModel) {
-        Paging paging = queryModel.getPaging();
-        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort(),
-                queryModel.isTotalable(),
-                queryModel.isListable());
-    }
-
     protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
-        return query(ql, params, paging.getPageSize(), paging.getPageNo(), paging.getSort());
+        return query(ql, params, paging.getIgnoring(), paging.getPageSize(), paging.getPageNo(), paging.getOrders());
     }
 
-    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize,
-            int pageNo,
-            QuerySort sort) {
-        return query(ql, params, pageSize, pageNo, sort, true, true);
+    protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, int pageSize, int pageNo,
+            FieldOrder... orders) {
+        return query(ql, params, null, pageSize, pageNo, Arrays.asList(orders));
     }
 
     protected final Column getColumn(String propertyName) {
@@ -175,7 +166,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
                 int scale = column.getScale();
                 Number maxValue2 = MathUtil.maxValue(type, precision, scale);
                 // 两个最大值中的较小者，才是实际允许的最大值
-                if (maxValue2.doubleValue() < maxValue.doubleValue()) {
+                if (maxValue2 != null && maxValue2.doubleValue() < maxValue.doubleValue()) {
                     maxValue = maxValue2;
                 }
             }

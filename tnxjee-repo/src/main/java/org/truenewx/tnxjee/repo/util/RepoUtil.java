@@ -1,15 +1,17 @@
 package org.truenewx.tnxjee.repo.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.util.CollectionUtils;
 import org.truenewx.tnxjee.model.query.FieldOrder;
-import org.truenewx.tnxjee.model.query.Paging;
-import org.truenewx.tnxjee.model.query.QuerySort;
+import org.truenewx.tnxjee.model.query.Pagination;
 
 /**
  * Repo工具类
@@ -37,30 +39,38 @@ public class RepoUtil {
         }
     }
 
-    public static Sort toSort(QuerySort querySort) {
-        if (querySort == null) {
+    public static Sort toSort(FieldOrder... fieldOrders) {
+        if (ArrayUtils.isEmpty(fieldOrders)) {
             return Sort.unsorted();
         }
         List<Order> orders = new ArrayList<>();
-        List<FieldOrder> fieldOrders = querySort.getOrders();
-        if (fieldOrders != null) {
-            fieldOrders.forEach(fieldOrder -> {
-                orders.add(toOrder(fieldOrder));
-            });
+        for (FieldOrder fieldOrder : fieldOrders) {
+            orders.add(toOrder(fieldOrder));
         }
         return Sort.by(orders);
     }
 
-    public static Pageable toPageable(Paging paging) {
-        if (paging == null || paging.getPageSize() <= 0) {
+    public static Sort toSort(Collection<FieldOrder> fieldOrders) {
+        if (CollectionUtils.isEmpty(fieldOrders)) {
+            return Sort.unsorted();
+        }
+        List<Order> orders = new ArrayList<>();
+        for (FieldOrder fieldOrder : fieldOrders) {
+            orders.add(toOrder(fieldOrder));
+        }
+        return Sort.by(orders);
+    }
+
+    public static Pageable toPageable(Pagination pagination) {
+        if (pagination == null || pagination.getPageSize() <= 0) {
             return Pageable.unpaged();
         }
-        Sort sort = toSort(paging.getSort());
-        int pageNo = paging.getPageNo() - 1; // Pageable的页码从0开始计数
+        Sort sort = toSort(pagination.getOrders());
+        int pageNo = pagination.getPageNo() - 1; // Pageable的页码从0开始计数
         if (pageNo < 0) {
             pageNo = 0;
         }
-        return PageRequest.of(pageNo, paging.getPageSize(), sort);
+        return PageRequest.of(pageNo, pagination.getPageSize(), sort);
     }
 
     public static FieldOrder toFieldOrder(Order order) {
@@ -70,7 +80,7 @@ public class RepoUtil {
         return new FieldOrder(order.getProperty(), order.isDescending());
     }
 
-    public static QuerySort toQuerySort(Sort sort) {
+    public static List<FieldOrder> toFieldOrders(Sort sort) {
         if (sort == null || sort.isUnsorted()) {
             return null;
         }
@@ -78,16 +88,18 @@ public class RepoUtil {
         sort.forEach(order -> {
             fieldOrders.add(toFieldOrder(order));
         });
-        return new QuerySort(fieldOrders);
+        return fieldOrders;
     }
 
-    public static Paging toPaging(Pageable pageable) {
-        QuerySort querySort = toQuerySort(pageable.getSort());
+    public static Pagination toPagination(Pageable pageable) {
+        List<FieldOrder> orders = toFieldOrders(pageable.getSort());
         int pageNo = pageable.getPageNumber() + 1; // Paging的页码从1开始计数
         if (pageNo < 1) {
             pageNo = 1;
         }
-        return new Paging(pageable.getPageSize(), pageNo, querySort);
+        Pagination pagination = new Pagination(pageable.getPageSize(), pageNo);
+        pagination.setOrders(orders);
+        return pagination;
     }
 
 }
