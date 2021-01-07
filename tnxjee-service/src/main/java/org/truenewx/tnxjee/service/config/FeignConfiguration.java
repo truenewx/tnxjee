@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.feign;
+package org.truenewx.tnxjee.service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
