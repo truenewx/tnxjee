@@ -9,8 +9,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import org.truenewx.tnxjee.core.util.ClassUtil;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.truenewx.tnxjee.model.annotation.RpcJson;
 
 import feign.Param;
 import feign.QueryMapEncoder;
@@ -75,12 +74,12 @@ public class BeanPropertyQueryMapEncoder implements QueryMapEncoder {
 
         private static boolean contains(Class<?> type, PropertyDescriptor pd) {
             // Getter方法被Json序列化忽略，则视为不包含
-            if (pd.getReadMethod().getAnnotation(JsonIgnore.class) != null) {
+            if (pd.getReadMethod().getAnnotation(RpcJson.class) != null) {
                 return false;
             }
             Field field = ClassUtil.findField(type, pd.getName());
             // 声明字段被Json序列化忽略，则视为不包含
-            return field == null || field.getAnnotation(JsonIgnore.class) == null;
+            return field == null || field.getAnnotation(RpcJson.class) == null;
         }
     }
 }
