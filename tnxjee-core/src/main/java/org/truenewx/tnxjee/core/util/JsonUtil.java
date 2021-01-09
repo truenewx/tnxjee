@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 public class JsonUtil {
 
     private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper CLASSED_MAPPER = copyNonConcreteAndCollectionMapper();
 
     static {
         DEFAULT_MAPPER.findAndRegisterModules();
@@ -46,6 +47,11 @@ public class JsonUtil {
         return DEFAULT_MAPPER.copy();
     }
 
+    /**
+     * 复制一个将对象类型写入JSON串的映射器
+     *
+     * @return 将对象类型写入JSON串的映射器
+     */
     public static ObjectMapper copyNonConcreteAndCollectionMapper() {
         return copyDefaultMapper().setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
     }
@@ -130,6 +136,14 @@ public class JsonUtil {
             filter = new TypedPropertyFilter().addAllProperties(filteredPropertiesMap);
         }
         return toJson(obj, filter);
+    }
+
+    public static String toJsonWithClass(Object obj) {
+        try {
+            return CLASSED_MAPPER.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
