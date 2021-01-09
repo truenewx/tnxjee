@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
-import org.truenewx.tnxjee.model.annotation.RpcJson;
+import org.truenewx.tnxjee.model.annotation.RequestParamIgnore;
 
 /**
  * 分页查询条件。通过创建子类附带更多的查询条件
@@ -42,7 +42,7 @@ public abstract class Querying extends Pagination implements QueryModel, Paging 
     //////
 
     @Override
-    @RpcJson // 避免RPC请求时传递复杂的集合属性，通过下面的动态orderBy属性实现字段排序传递
+    @RequestParamIgnore // 避免RPC请求时传递复杂的集合属性，通过下面的动态orderBy属性实现字段排序传递
     public List<FieldOrder> getOrders() {
         return super.getOrders();
     }
