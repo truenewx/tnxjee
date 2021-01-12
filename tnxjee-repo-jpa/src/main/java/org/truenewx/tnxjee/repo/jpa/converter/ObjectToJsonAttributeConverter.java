@@ -35,7 +35,7 @@ public class ObjectToJsonAttributeConverter implements AttributeConverter<Object
     public Object convertToEntityAttribute(String dbData) {
         if (StringUtils.isNotBlank(dbData)) {
             try {
-                this.mapper.readValue(dbData, Object.class);
+                return this.mapper.readValue(dbData, Object.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
