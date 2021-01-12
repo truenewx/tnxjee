@@ -1011,19 +1011,45 @@ public class StringUtil {
         return s1 != null && s1.equals(s2);
     }
 
-    /**
-     * 替换手机号码中间4位为指定字符
-     *
-     * @param cellphone 手机号码
-     * @param c         目标字符
-     * @return 替换后的字符串
-     */
-    public static String replaceCellphoneMiddle(String cellphone, char c) {
-        if (isCellphone(cellphone)) {
-            String target = "$1" + c + c + c + c + "$2";
-            return cellphone.replaceAll("(\\d{3})\\d{4}(\\d{4})", target);
+    public static String replace(String s, int start, int length, char replacement) {
+        if (s != null && start >= 0 && length > 0 && s.length() > start) {
+            String prefix = s.substring(0, start);
+            int index = start + length;
+            String suffix = index >= s.length() ? Strings.EMPTY : s.substring(index);
+            int size = s.length() - prefix.length() - suffix.length();
+            s = prefix + String.valueOf(replacement).repeat(size) + suffix;
         }
-        return cellphone;
+        return s;
+    }
+
+    /**
+     * 掩盖指定字符串的中间部分
+     *
+     * @param s 要掩盖的字符串
+     * @return 掩盖后的字符串
+     */
+    public static String maskMiddle(String s) {
+        if (s == null) {
+            return null;
+        }
+        int start = s.length() / 3;
+        int length = (s.length() - start) / 2;
+        return replace(s, start, length, '*');
+    }
+
+    /**
+     * 掩盖指定字符串的末尾部分
+     *
+     * @param s 要掩盖的字符串
+     * @return 掩盖后的字符串
+     */
+    public static String maskEnd(String s) {
+        if (s == null) {
+            return null;
+        }
+        int start = (2 * s.length()) / 3;
+        int length = s.length() - start;
+        return replace(s, start, length, '*');
     }
 
     /**
