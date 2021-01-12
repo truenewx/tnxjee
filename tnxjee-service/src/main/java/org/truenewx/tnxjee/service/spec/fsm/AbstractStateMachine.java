@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 import org.truenewx.tnxjee.model.spec.user.UserIdentity;
+import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
 import org.truenewx.tnxjee.service.transaction.annotation.WriteTransactional;
 
 /**
@@ -72,14 +73,16 @@ public abstract class AbstractStateMachine<U extends Unity<K>, K extends Seriali
     @Override
     @WriteTransactional
     public U transit(I userIdentity, K id, T transition, Object context) {
-        U unity = loadUnity(userIdentity, id, context);
+        U unity = loadUnity(id);
         S state = getState(unity);
-        Object condition = getCondition(userIdentity, unity, context);
-
         StateTransitAction<U, K, S, T, I> action = this.transitionActionMapping.get(transition);
         if (action == null) {
             throw new StateIntransitableException(state, transition);
         }
+        if (!action.check(userIdentity, unity)) {
+            throw new NoAccessAuthority();
+        }
+        Object condition = getCondition(userIdentity, unity, context);
         S endState = action.getEndState(state, condition);
         if (endState == null) {
             throw new StateIntransitableException(state, transition);
@@ -97,12 +100,10 @@ public abstract class AbstractStateMachine<U extends Unity<K>, K extends Seriali
     /**
      * 加载指定单体，需确保返回非空的单体，如果找不到指定单体，则需抛出业务异常
      *
-     * @param userIdentity 用户标识
-     * @param id           单体id
-     * @param context      上下文
+     * @param id 单体id
      * @return 单体
      */
-    protected abstract U loadUnity(I userIdentity, K id, Object context);
+    protected abstract U loadUnity(K id);
 
     /**
      * 从指定单体中获取状态值。单体可能包含多个状态属性，故不通过让单体实现获取状态的接口来实现

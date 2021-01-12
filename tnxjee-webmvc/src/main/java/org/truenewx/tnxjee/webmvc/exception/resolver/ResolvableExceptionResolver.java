@@ -26,8 +26,8 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
     private ResolvableExceptionMessageSaver messageSaver;
 
     @Override
-    protected final ModelAndView doResolveException(HttpServletRequest request,
-            HttpServletResponse response, Object handler, Exception ex) {
+    protected final ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
+            Object handler, Exception ex) {
         if (handler instanceof HandlerMethod) {
             if (ex instanceof ConstraintViolationException) {
                 ConstraintViolationException cve = (ConstraintViolationException) ex;
@@ -58,8 +58,7 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
         return null;
     }
 
-    private FormatException buildFormatException(ConstraintViolation<?> violation,
-            HttpServletRequest request) {
+    private FormatException buildFormatException(ConstraintViolation<?> violation, HttpServletRequest request) {
         String code = violation.getMessageTemplate().replace("{", "").replace("}", "");
         String property = violation.getPropertyPath().toString();
         return new FormatException(code, violation.getRootBeanClass(), property);
@@ -112,10 +111,8 @@ public abstract class ResolvableExceptionResolver extends AbstractHandlerExcepti
     }
 
     private String buildLogMessage(FormatException fe) {
-        return "====== " + fe.getCode() + Strings.LEFT_BRACKET +
-                fe.getModelClass().getName() + Strings.DOT + fe.getProperty() +
-                Strings.RIGHT_BRACKET +
-                " ======";
+        return "====== " + fe.getCode() + Strings.LEFT_BRACKET + fe.getModelClass().getName() + Strings.DOT + fe
+                .getProperty() + Strings.RIGHT_BRACKET + " ======";
     }
 
 }

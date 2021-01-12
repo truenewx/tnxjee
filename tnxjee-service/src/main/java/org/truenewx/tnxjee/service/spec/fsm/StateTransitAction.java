@@ -38,6 +38,15 @@ public interface StateTransitAction<U extends Unity<K>, K extends Serializable, 
     S getEndState(S beginState, Object condition);
 
     /**
+     * 检查指定用户对指定单体是否具有当前动作的操作权限
+     *
+     * @param userIdentity 用户标识
+     * @param unity        单体
+     * @return 是否具有权限
+     */
+    boolean check(I userIdentity, U unity);
+
+    /**
      * 指定用户对指定单体，在指定上下文情况时，执行动作
      *
      * @param userIdentity 用户标识
