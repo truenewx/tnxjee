@@ -116,5 +116,13 @@ public class CommonProperties implements InitializingBean {
         return urls;
     }
 
+    public AppFacade getAppFacade(String name) {
+        AppFacade basic = new AppFacade();
+        basic.setName(name);
+        AppConfiguration appConfig = getApp(basic.getName());
+        basic.setCaption(appConfig.getCaption());
+        basic.setContextUri(appConfig.getContextUri(false));
+        return basic;
+    }
 
 }
