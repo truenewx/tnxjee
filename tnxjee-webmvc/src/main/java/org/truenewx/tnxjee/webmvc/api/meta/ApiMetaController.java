@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.webmvc.api.meta;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +17,9 @@ import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.config.AppConfiguration;
 import org.truenewx.tnxjee.core.config.AppConstants;
 import org.truenewx.tnxjee.core.config.CommonProperties;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.enums.EnumItem;
+import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.Model;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiContext;
@@ -34,6 +38,8 @@ public class ApiMetaController {
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
     private ApiModelMetaResolver metaResolver;
+    @Autowired
+    private EnumDictResolver enumDictResolver;
     @Autowired
     private ApiMetaProperties apiMetaProperties;
     @Autowired
@@ -80,6 +86,17 @@ public class ApiMetaController {
             }
         }
         return null;
+    }
+
+    @GetMapping("/enums")
+    @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
+    public Collection<EnumItem> enumItems(@RequestParam("type") String type,
+            @RequestParam(value = "subtype", required = false) String subtype, HttpServletRequest request) {
+        EnumType enumType = this.enumDictResolver.getEnumType(type, subtype, request.getLocale());
+        if (enumType != null) {
+            return enumType.getItems();
+        }
+        return Collections.emptyList();
     }
 
 }
