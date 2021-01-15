@@ -14,7 +14,6 @@ import org.truenewx.tnxjee.core.Strings;
  * 日期工具类
  *
  * @author jianglei
- * 
  */
 public class DateUtil {
 
@@ -39,6 +38,10 @@ public class DateUtil {
      * 没分隔符长日期格式
      */
     public static final String LONG_DATE_NO_DELIMITER_PATTERN = "yyyyMMddHHmmss";
+    /**
+     * 精确到分钟的长日期格式
+     */
+    public static final String LONG_DATE_PATTERN_TO_MINUTE = "yyyy-MM-dd HH:mm";
 
     private static final long MS_ONE_SECOND = 1000;
 
