@@ -85,6 +85,9 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
     }
 
     protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
+        if (paging == null) {
+            return query(ql, params, null, 0, 1, null);
+        }
         return query(ql, params, paging.getIgnoring(), paging.getPageSize(), paging.getPageNo(), paging.getOrders());
     }
 
