@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.webmvc.security.access;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +17,7 @@ import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.model.spec.user.security.GrantedAuthorityKind;
 import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
+import org.truenewx.tnxjee.model.spec.user.security.UserGrantedAuthority;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.NoAccessAuthority;
 import org.truenewx.tnxjee.web.util.WebUtil;
@@ -31,8 +33,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
     }
 
     @Override
-    public void decide(Authentication authentication, Object object,
-            Collection<ConfigAttribute> configAttributes)
+    public void decide(Authentication authentication, Object object, Collection<ConfigAttribute> configAttributes)
             throws AccessDeniedException, InsufficientAuthenticationException {
         super.decide(authentication, object, configAttributes);
 
@@ -44,8 +45,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         }
     }
 
-    private boolean contains(FilterInvocation fi,
-            Collection<? extends GrantedAuthority> authorities,
+    private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
             Collection<ConfigAttribute> configAttributes) {
         for (ConfigAttribute attribute : configAttributes) {
             if (!contains(fi, authorities, attribute)) { // 只要有一个要求的权限未包含，则不匹配
@@ -56,8 +56,8 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         return true;
     }
 
-    private boolean contains(FilterInvocation fi,
-            Collection<? extends GrantedAuthority> authorities, ConfigAttribute attribute) {
+    private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
+            ConfigAttribute attribute) {
         if (supports(attribute)) {
             UserConfigAuthority configAuthority = (UserConfigAuthority) attribute;
             if (configAuthority.isDenyAll()) {
@@ -76,8 +76,30 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
     }
 
     @Override
-    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type,
-            String rank, String permission) {
+    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type, String rank,
+            String permission) {
+        // 用户类型、级别、许可均未限定，则视为匹配
+        if (StringUtils.isBlank(type) && StringUtils.isBlank(rank) && StringUtils.isBlank(permission)) {
+            return true;
+        }
+        for (GrantedAuthority authority : authorities) {
+            if (authority instanceof UserGrantedAuthority) {
+                UserGrantedAuthority userAuthority = (UserGrantedAuthority) authority;
+                if (StringUtils.isNotBlank(type) && !type.equals(userAuthority.getType())) { // 限定了用户类型但不匹配则跳过
+                    continue;
+                }
+                if (StringUtils.isNotBlank(rank) && !rank.equals(userAuthority.getRank())) { // 限定了用户级别但不匹配则跳过
+                    continue;
+                }
+                if (StringUtils.isNotBlank(permission)) { // 限定了许可
+                    Set<String> permissions = userAuthority.getPermissions();
+                    if (permissions == null || !permissions.contains(permission)) { // 但不匹配则跳过
+                        continue;
+                    }
+                }
+                return true;
+            }
+        }
         return isKindGranted(authorities, GrantedAuthorityKind.TYPE, type)
                 // 类型不为空才检查级别
                 && (StringUtils.isBlank(type) || isKindGranted(authorities, GrantedAuthorityKind.RANK, rank))

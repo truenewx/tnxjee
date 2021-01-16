@@ -1,9 +1,6 @@
 package org.truenewx.tnxjee.webmvc.security.web.access.intercept;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,11 +134,8 @@ public class WebFilterInvocationSecurityMetadataSource implements
                 if (handlerMethod != null) {
                     String methodKey = handlerMethod.getMethod().toString();
                     ConfigAttribute userConfigAuthority = this.configAttributeMap.get(methodKey);
-                    if (userConfigAuthority == null) { // 加入一个没有权限限制的必备权限，以标记进行过处理
-                        attributes.add(new UserConfigAuthority());
-                    } else {
-                        attributes.add(userConfigAuthority);
-                    }
+                    // 加入一个没有权限限制的必备权限，以标记进行过处理
+                    attributes.add(Objects.requireNonNullElseGet(userConfigAuthority, UserConfigAuthority::new));
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);

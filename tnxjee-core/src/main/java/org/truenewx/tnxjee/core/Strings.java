@@ -122,6 +122,11 @@ public class Strings {
     public static final String WELL = "#";
 
     /**
+     * 竖杠
+     */
+    public static final String VERTICAL_BAR = "|";
+
+    /**
      * 字符编码：UTF-8
      */
     public static final String ENCODING_UTF8 = "UTF-8";
