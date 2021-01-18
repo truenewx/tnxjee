@@ -2,7 +2,6 @@ package org.truenewx.tnxjee.webmvc.security.access;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,8 +24,7 @@ import org.truenewx.tnxjee.web.util.WebUtil;
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends UnanimousBased
-        implements GrantedAuthorityDecider {
+public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
         super(Collections.singletonList(new WebExpressionVoter()));
@@ -70,13 +68,13 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
                 }
             }
             return isGranted(authorities, configAuthority.getType(), configAuthority.getRank(),
-                    configAuthority.getPermission());
+                    configAuthority.getApp(), configAuthority.getPermission());
         }
         return true; // 不支持的配置权限视为匹配
     }
 
     @Override
-    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type, String rank,
+    public boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type, String rank, String app,
             String permission) {
         // 用户类型、级别、许可均未限定，则视为匹配
         if (StringUtils.isBlank(type) && StringUtils.isBlank(rank) && StringUtils.isBlank(permission)) {
@@ -85,19 +83,9 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         for (GrantedAuthority authority : authorities) {
             if (authority instanceof UserGrantedAuthority) {
                 UserGrantedAuthority userAuthority = (UserGrantedAuthority) authority;
-                if (StringUtils.isNotBlank(type) && !type.equals(userAuthority.getType())) { // 限定了用户类型但不匹配则跳过
-                    continue;
+                if (userAuthority.matches(type, rank, null, permission)) {
+                    return true;
                 }
-                if (StringUtils.isNotBlank(rank) && !rank.equals(userAuthority.getRank())) { // 限定了用户级别但不匹配则跳过
-                    continue;
-                }
-                if (StringUtils.isNotBlank(permission)) { // 限定了许可
-                    Set<String> permissions = userAuthority.getPermissions();
-                    if (permissions == null || !permissions.contains(permission)) { // 但不匹配则跳过
-                        continue;
-                    }
-                }
-                return true;
             }
         }
         return isKindGranted(authorities, GrantedAuthorityKind.TYPE, type)
@@ -106,8 +94,8 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
                 && isKindGranted(authorities, GrantedAuthorityKind.PERMISSION, permission);
     }
 
-    private boolean isKindGranted(Collection<? extends GrantedAuthority> authorities,
-            GrantedAuthorityKind kind, String name) {
+    private boolean isKindGranted(Collection<? extends GrantedAuthority> authorities, GrantedAuthorityKind kind,
+            String name) {
         if (StringUtils.isBlank(name)) { // 配置权限不限制，则视为匹配包含
             return true;
         }
@@ -123,7 +111,6 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased
         }
         return false;
     }
-
 
     @Override
     public boolean supports(ConfigAttribute attribute) {

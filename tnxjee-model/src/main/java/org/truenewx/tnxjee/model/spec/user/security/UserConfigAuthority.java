@@ -17,6 +17,7 @@ public class UserConfigAuthority implements ConfigAttribute {
 
     private String type;
     private String rank;
+    private String app;
     private String permission;
     /**
      * 是否仅限内网访问
@@ -27,8 +28,7 @@ public class UserConfigAuthority implements ConfigAttribute {
      */
     private boolean denyAll;
 
-    public UserConfigAuthority(String type, String rank, String permission,
-            boolean intranet) {
+    public UserConfigAuthority(String type, String rank, String app, String permission, boolean intranet) {
         if (type == null) {
             type = Strings.EMPTY;
         }
@@ -37,12 +37,17 @@ public class UserConfigAuthority implements ConfigAttribute {
             rank = Strings.EMPTY;
         }
         Assert.isTrue(!rank.contains(SEPARATOR), () -> "The rank can not contain '" + SEPARATOR + "'");
+        if (app == null) {
+            app = Strings.EMPTY;
+        }
+        Assert.isTrue(!app.contains(SEPARATOR), () -> "The app can not contain '" + SEPARATOR + "'");
         if (permission == null) {
             permission = Strings.EMPTY;
         }
         Assert.isTrue(!permission.contains(SEPARATOR), () -> "The permission can not contain '" + SEPARATOR + "'");
         this.type = type;
         this.rank = rank;
+        this.app = app;
         this.permission = permission;
         this.intranet = intranet;
     }
@@ -70,6 +75,10 @@ public class UserConfigAuthority implements ConfigAttribute {
         return this.rank;
     }
 
+    public String getApp() {
+        return this.app;
+    }
+
     public String getPermission() {
         return this.permission;
     }
@@ -84,7 +93,7 @@ public class UserConfigAuthority implements ConfigAttribute {
 
     @Override
     public String getAttribute() {
-        return this.denyAll ? ATTRIBUTE_DENY_ALL : (this.type + SEPARATOR + this.rank + SEPARATOR + this.permission);
+        return this.denyAll ? ATTRIBUTE_DENY_ALL : (this.type + SEPARATOR + this.rank + SEPARATOR + this.app + SEPARATOR + this.permission);
     }
 
     @Override

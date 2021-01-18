@@ -15,10 +15,11 @@ public interface GrantedAuthorityDecider {
      * @param authorities 获权集合
      * @param type        用户类型
      * @param rank        用户级别
+     * @param app
      * @param permission  许可
      * @return 是否为已获权
      */
     boolean isGranted(Collection<? extends GrantedAuthority> authorities, String type, String rank,
-            String permission);
+            String app, String permission);
 
 }

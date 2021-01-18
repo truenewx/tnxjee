@@ -1,10 +1,15 @@
 package org.truenewx.tnxjee.webmvc.security.web.access.intercept;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
@@ -29,14 +34,15 @@ import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
  * WEB过滤器调用安全元数据源<br>
  * 用于获取访问资源需要具备的权限
  */
-public class WebFilterInvocationSecurityMetadataSource implements
-        FilterInvocationSecurityMetadataSource, ContextInitializedBean, ConfigAuthorityResolver {
+public class WebFilterInvocationSecurityMetadataSource
+        implements FilterInvocationSecurityMetadataSource, ContextInitializedBean, ConfigAuthorityResolver {
 
     private FilterInvocationSecurityMetadataSource origin;
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     private final Map<String, ConfigAttribute> configAttributeMap = new HashMap<>();
-    private String permissionPrefix = Strings.EMPTY;
+    @Value(AppConstants.PROPERTY_SPRING_APP_NAME)
+    private String limitedApp;
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -44,13 +50,10 @@ public class WebFilterInvocationSecurityMetadataSource implements
 
     @Override
     public void afterInitialized(ApplicationContext context) {
-        // 存在多个微服务应用，则许可名称前需添加当前应用前缀
+        // 不存在多个微服务时，不限定应用
         CommonProperties commonProperties = SpringUtil.getFirstBeanByClass(context, CommonProperties.class);
-        if (commonProperties != null && commonProperties.getAppSize() > 1) {
-            String appName = context.getEnvironment().getProperty(AppConstants.PROPERTY_SPRING_APP_NAME);
-            if (StringUtils.isNotBlank(appName)) {
-                this.permissionPrefix = appName + Strings.DOT;
-            }
+        if (commonProperties == null || commonProperties.getAppSize() == 1) {
+            this.limitedApp = null;
         }
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             UserConfigAuthority userConfigAuthority = getUserConfigAuthority(handlerMethod);
@@ -71,15 +74,13 @@ public class WebFilterInvocationSecurityMetadataSource implements
         UserConfigAuthority authority = null;
         ConfigAuthority configAuthority = handlerMethod.getMethodAnnotation(ConfigAuthority.class);
         if (configAuthority != null) {
-            String permission = withPermissionPrefix(configAuthority.permission());
             authority = new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
-                    permission, configAuthority.intranet());
+                    configAuthority.permission(), this.limitedApp, configAuthority.intranet());
         } else { // 没有@ConfigAuthority则考虑@ConfigPermission
             ConfigPermission configPermission = handlerMethod.getMethodAnnotation(ConfigPermission.class);
             if (configPermission != null) {
-                String permission = withPermissionPrefix(getDefaultPermission(url));
                 authority = new UserConfigAuthority(configPermission.type(), configPermission.rank(),
-                        permission, configPermission.intranet());
+                        getDefaultPermission(url), this.limitedApp, configPermission.intranet());
             }
         }
         if (authority == null) { // 没有配置权限限定，则拒绝所有访问
@@ -104,10 +105,6 @@ public class WebFilterInvocationSecurityMetadataSource implements
         return url.replaceAll(Strings.SLASH, Strings.DOT);
     }
 
-    private String withPermissionPrefix(String permission) {
-        return StringUtils.isBlank(permission) ? Strings.EMPTY : (this.permissionPrefix + permission);
-    }
-
     @Override
     public boolean supports(Class<?> clazz) {
         return FilterInvocation.class.isAssignableFrom(clazz);
@@ -119,8 +116,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
     }
 
     @Override
-    public Collection<ConfigAttribute> getAttributes(Object object)
-            throws IllegalArgumentException {
+    public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
         Collection<ConfigAttribute> attributes = null;
         if (this.origin != null) {
             attributes = this.origin.getAttributes(object);
@@ -129,8 +125,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
             attributes = attributes == null ? new HashSet<>() : new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
             try {
-                HandlerMethod handlerMethod = this.handlerMethodMapping
-                        .getHandlerMethod(fi.getRequest());
+                HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(fi.getRequest());
                 if (handlerMethod != null) {
                     String methodKey = handlerMethod.getMethod().toString();
                     ConfigAttribute userConfigAuthority = this.configAttributeMap.get(methodKey);
@@ -151,8 +146,7 @@ public class WebFilterInvocationSecurityMetadataSource implements
         }
         for (ConfigAttribute attribute : originalAttributes) {
             // 原始配置属性包含不限制访问，说明也不是登录才能访问，不支持
-            if ("permitAll".equals(attribute.getAttribute())
-                    || "permitAll".equals(attribute.toString())) {
+            if ("permitAll".equals(attribute.getAttribute()) || "permitAll".equals(attribute.toString())) {
                 return false;
             }
         }

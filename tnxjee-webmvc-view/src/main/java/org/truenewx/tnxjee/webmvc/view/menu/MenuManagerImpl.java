@@ -7,10 +7,12 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.config.AppConstants;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.function.ProfileSupplier;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
@@ -37,6 +39,8 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
     private ConfigAuthorityResolver authorityResolver;
     @Autowired
     private GrantedAuthorityDecider authorityDecider;
+    @Value(AppConstants.EL_SPRING_APP_NAME)
+    private String appName;
 
     @Autowired
     public void setParser(MenuParser parser) {
@@ -98,7 +102,9 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
                 if (isGranted(grantedAuthorities, configAuthority)) { // 权限匹配，加入目标集合
                     MenuLink grantedLink = link.cloneWithoutOperations();
                     for (MenuOperation operation : link.getOperations()) {
-                        if (this.authorityDecider.isGranted(grantedAuthorities, this.menu.getUserType(), operation.getRank(), operation.getPermission())) {
+                        if (this.authorityDecider
+                                .isGranted(grantedAuthorities, this.menu.getUserType(), operation.getRank(),
+                                        this.appName, operation.getPermission())) {
                             grantedLink.getOperations().add(operation);
                         }
                     }
@@ -113,11 +119,13 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
         String permission = link.getPermission();
         // 用户类型是一定在菜单中有配置的，所以不视为在菜单中配置权限的标志
         boolean menuConfigured = StringUtils.isNotBlank(rank) || StringUtils.isNotBlank(permission);
-        UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(link.getPath(), HttpMethod.GET);
+        UserConfigAuthority configAuthority = this.authorityResolver
+                .resolveConfigAuthority(link.getPath(), HttpMethod.GET);
         // 不允许菜单配置中有权限配置，同时对应的Controller方法上也有权限配置，且两者不一致
         if (menuConfigured && configAuthority != null
                 && (!StringUtil.equalsIgnoreBlank(this.menu.getUserType(), configAuthority.getType())
                 || !StringUtil.equalsIgnoreBlank(rank, configAuthority.getRank())
+                || !StringUtil.equalsIgnoreBlank(this.appName, configAuthority.getApp())
                 || !StringUtil.equalsIgnoreBlank(permission, configAuthority.getPermission()))) {
             throw new ConflictedMenuLinkConfigAuthorityException(link);
         }
@@ -125,7 +133,7 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
             return configAuthority;
         }
         if (menuConfigured) {
-            return new UserConfigAuthority(this.menu.getUserType(), rank, permission, false);
+            return new UserConfigAuthority(this.menu.getUserType(), rank, this.appName, permission, false);
         }
         // 两者都没有权限配置时返回null
         return null;
@@ -138,7 +146,7 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
             return false;
         }
         return this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(),
-                configAuthority.getPermission());
+                configAuthority.getApp(), configAuthority.getPermission());
     }
 
 }
