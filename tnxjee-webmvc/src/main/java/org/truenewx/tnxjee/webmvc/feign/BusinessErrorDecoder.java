@@ -30,14 +30,16 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
                 String json = IOUtils.toString(response.body().asReader(StandardCharsets.UTF_8));
                 MessagedErrorBody body = JsonUtil.json2Bean(json, MessagedErrorBody.class);
                 MessagedError[] errors = body.getErrors();
-                if (errors.length == 1) {
-                    return buildException(errors[0]);
-                } else if (errors.length > 1) {
-                    SingleException[] exceptions = new SingleException[errors.length];
-                    for (int i = 0; i < errors.length; i++) {
-                        exceptions[i] = buildException(errors[i]);
+                if (errors != null) {
+                    if (errors.length == 1) {
+                        return buildException(errors[0]);
+                    } else if (errors.length > 1) {
+                        SingleException[] exceptions = new SingleException[errors.length];
+                        for (int i = 0; i < errors.length; i++) {
+                            exceptions[i] = buildException(errors[i]);
+                        }
+                        return new MultiException(exceptions);
                     }
-                    return new MultiException(exceptions);
                 }
             }
         } catch (Exception e) {
