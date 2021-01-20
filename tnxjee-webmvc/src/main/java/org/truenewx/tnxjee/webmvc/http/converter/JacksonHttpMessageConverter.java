@@ -3,9 +3,11 @@ package org.truenewx.tnxjee.webmvc.http.converter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +20,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
+import org.truenewx.tnxjee.core.jackson.BeanEnumSerializerModifier;
 import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
+import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
@@ -68,9 +72,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                     if (mapper == null) {
                         Class<?> resultType = object.getClass();
                         ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
-                        if (ClassUtil.hasReadableEnumProperty(resultType) || ArrayUtils.isNotEmpty(resultFilters)) {
-                            EnumTypePropertyFilter filter = createPropertyFilter();
-                            filter.setEnumDictResolver(this.enumDictResolver);
+                        if (ArrayUtils.isNotEmpty(resultFilters) || ClassUtil.hasReadableEnumProperty(resultType)) {
+                            TypedPropertyFilter filter = new TypedPropertyFilter();
+                            BeanEnumSerializerModifier modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
                             for (ResultFilter resultFilter : resultFilters) {
                                 Class<?> filteredType = resultFilter.type();
                                 if (filteredType == Object.class) {
@@ -78,7 +82,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                                 }
                                 filter.addIncludedProperties(filteredType, resultFilter.included());
                                 filter.addExcludedProperties(filteredType, resultFilter.excluded());
-                                filter.addPureEnumProperties(filteredType, resultFilter.pureEnum());
+                                modifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
                             }
                             // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
                             Class<?>[] filteredTypes = filter.getTypes();
@@ -86,6 +90,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                                 filteredTypes = ArrayUtils.add(filteredTypes, resultType);
                             }
                             mapper = JsonUtil.buildMapper(filter, filteredTypes);
+                            // 注册枚举常量序列化器
+                            mapper.setSerializerFactory(mapper.getSerializerFactory().withSerializerModifier(modifier));
                             if (internal) {
                                 mapper.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
                                 this.internalMappers.put(methodKey, mapper);
@@ -97,7 +103,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                         }
                     }
                     String json = mapper.writeValueAsString(object);
-                    IOUtils.write(json, outputMessage.getBody(), getDefaultCharset().name());
+                    Charset charset = Objects.requireNonNullElse(getDefaultCharset(), StandardCharsets.UTF_8);
+                    IOUtils.write(json, outputMessage.getBody(), charset.name());
                     return;
                 }
             } catch (Exception e) {
@@ -105,10 +112,6 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
         }
         super.writeInternal(object, type, outputMessage);
-    }
-
-    protected EnumTypePropertyFilter createPropertyFilter() {
-        return new EnumTypePropertyFilter();
     }
 
 }

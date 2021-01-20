@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 public class JsonUtil {
 
     private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
-    private static final ObjectMapper CLASSED_MAPPER = copyNonConcreteAndCollectionMapper();
+    private static final ObjectMapper CLASSED_MAPPER;
 
     static {
         DEFAULT_MAPPER.findAndRegisterModules();
@@ -41,6 +41,9 @@ public class JsonUtil {
         DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
         DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
+        
+        // 默认的映射器初始化后在初始化带类型的映射器
+        CLASSED_MAPPER = copyNonConcreteAndCollectionMapper();
     }
 
     public static ObjectMapper copyDefaultMapper() {
