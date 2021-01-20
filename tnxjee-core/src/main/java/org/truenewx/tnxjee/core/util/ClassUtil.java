@@ -713,8 +713,14 @@ public class ClassUtil {
         for (PropertyDescriptor pd : pds) {
             if (pd.getReadMethod() != null) {
                 Class<?> propertyType = pd.getPropertyType();
-                if (propertyType != null && propertyType.isEnum()) {
-                    return true;
+                if (propertyType != null) {
+                    if (propertyType.isEnum()) { // 属性类型为枚举的，则直接返回true
+                        return true;
+                    }
+                    // 属性类型为复合类型，则检查该属性类型是否包含枚举属性
+                    if (ClassUtil.isComplex(propertyType) && hasReadableEnumProperty(propertyType)) {
+                        return true;
+                    }
                 }
             }
         }
