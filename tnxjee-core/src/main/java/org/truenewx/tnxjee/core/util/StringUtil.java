@@ -87,6 +87,8 @@ public class StringUtil {
 
     public static final String CELLPHONE_PATTERN = "^1\\d{10}$";
 
+    public static final String CHINESE_PATTERN = "^[\\u4E00-\\u9FA5]+$";
+
     private static final PathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
     private static final Map<String, ResourceBundle> resourceBundleCache = new Hashtable<>();
