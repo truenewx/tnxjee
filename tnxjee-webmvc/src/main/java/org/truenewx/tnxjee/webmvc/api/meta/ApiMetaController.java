@@ -70,10 +70,9 @@ public class ApiMetaController {
     @GetMapping("/method")
     @SuppressWarnings("unchecked")
     @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
-    public Map<String, ApiModelPropertyMeta> method(@RequestParam("url") String url,
-            HttpServletRequest request) {
-        HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(url,
-                HttpMethod.POST);
+    @ResultFilter(type = ApiModelPropertyMeta.class, pureEnum = "type")
+    public Map<String, ApiModelPropertyMeta> method(@RequestParam("url") String url, HttpServletRequest request) {
+        HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(url, HttpMethod.POST);
         if (handlerMethod != null) {
             for (MethodParameter methodParameter : handlerMethod.getMethodParameters()) {
                 if (methodParameter.getParameterAnnotation(RequestBody.class) != null) {
