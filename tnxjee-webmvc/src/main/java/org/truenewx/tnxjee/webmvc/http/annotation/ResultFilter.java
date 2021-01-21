@@ -32,4 +32,9 @@ public @interface ResultFilter {
      * @return 纯粹的枚举属性名称集
      */
     String[] pureEnum() default {};
+
+    /**
+     * @return 是否附带类型字段
+     */
+    boolean withClass() default true;
 }

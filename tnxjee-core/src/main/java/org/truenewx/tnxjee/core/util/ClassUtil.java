@@ -302,11 +302,9 @@ public class ClassUtil {
     public static Object getPublicStaticPropertyValue(Class<?> clazz, String propertyName) {
         try {
             Field field = clazz.getDeclaredField(propertyName);
-            if (field != null) {
-                int modifiers = field.getModifiers();
-                if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-                    return field.get(null);
-                }
+            int modifiers = field.getModifiers();
+            if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
+                return field.get(null);
             }
         } catch (Exception e) {
             // 忽略异常，返回null
@@ -586,8 +584,8 @@ public class ClassUtil {
         if (componentType != null) {
             return isComplex(componentType);
         }
-        return !isSimpleValueType(type) && !Map.class.isAssignableFrom(type)
-                && !Collection.class.isAssignableFrom(type);
+        return type != Object.class && !isSimpleValueType(type) && !Map.class.isAssignableFrom(type) && !Iterable.class
+                .isAssignableFrom(type);
     }
 
     /**

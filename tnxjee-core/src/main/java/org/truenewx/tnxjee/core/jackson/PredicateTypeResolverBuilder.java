@@ -1,8 +1,8 @@
 package org.truenewx.tnxjee.core.jackson;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.function.Predicate;
+
+import org.truenewx.tnxjee.core.util.ClassUtil;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JavaType;
@@ -16,15 +16,14 @@ public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolv
 
     private static final long serialVersionUID = -1000737704428050672L;
 
-    private Predicate<Class<?>> predicate = clazz -> true;
+    private Predicate<Class<?>> predicate;
 
     public PredicateTypeResolverBuilder(ObjectMapper.DefaultTyping t) {
         super(t, LaissezFaireSubTypeValidator.instance);
     }
 
     public static final Predicate<Class<?>> PREDICATE_NON_COLLECTION = clazz -> {
-        return !clazz.isArray() && !Collection.class.isAssignableFrom(clazz)
-                && !Map.class.isAssignableFrom(clazz);
+        return !clazz.isArray() && ClassUtil.isComplex(clazz);
     };
 
     public static PredicateTypeResolverBuilder NON_CONCRETE_AND_COLLECTION = createNonConcrete(
@@ -45,7 +44,10 @@ public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolv
 
     @Override
     public boolean useForType(JavaType t) {
-        return super.useForType(t) && this.predicate.test(t.getRawClass());
+        if (this.predicate != null) {
+            return this.predicate.test(t.getRawClass());
+        }
+        return super.useForType(t);
     }
 
 }

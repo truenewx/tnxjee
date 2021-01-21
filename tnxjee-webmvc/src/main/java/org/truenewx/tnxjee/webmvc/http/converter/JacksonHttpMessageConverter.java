@@ -5,9 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,15 +42,15 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @Autowired
     private EnumDictResolver enumDictResolver;
 
-    private final ObjectMapper defaultExternalMapper; // 默认的对外JSON映射器，不含@class
+    private final ObjectMapper defaultMapper; // 不生成@class字段的默认映射器
     private final Map<String, ObjectMapper> externalMappers = new HashMap<>(); // 对外的JSON映射器集，不含@class
     private final Map<String, ObjectMapper> internalMappers = new HashMap<>(); // 对内的JSON映射器集，包含@class
 
     public JacksonHttpMessageConverter() {
         // 默认JSON映射器包含@class构建，以便于在读取时可反序列化包含@class的JSON串
-        super(JsonUtil.copyNonConcreteAndCollectionMapper());
+        super(JsonUtil.copyClassedMapper());
         setDefaultCharset(StandardCharsets.UTF_8);
-        this.defaultExternalMapper = JsonUtil.copyDefaultMapper();
+        this.defaultMapper = JsonUtil.copyDefaultMapper();
     }
 
     @Override
@@ -75,6 +73,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                         if (ArrayUtils.isNotEmpty(resultFilters) || ClassUtil.hasReadableEnumProperty(resultType)) {
                             TypedPropertyFilter filter = new TypedPropertyFilter();
                             BeanEnumSerializerModifier modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
+                            Collection<Class<?>> withoutClassFieldTypes = new ArrayList<>();
                             for (ResultFilter resultFilter : resultFilters) {
                                 Class<?> filteredType = resultFilter.type();
                                 if (filteredType == Object.class) {
@@ -83,6 +82,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                                 filter.addIncludedProperties(filteredType, resultFilter.included());
                                 filter.addExcludedProperties(filteredType, resultFilter.excluded());
                                 modifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
+                                if (!resultFilter.withClass()) {
+                                    withoutClassFieldTypes.add(filteredType);
+                                }
                             }
                             // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
                             Class<?>[] filteredTypes = filter.getTypes();
@@ -93,13 +95,20 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                             // 注册枚举常量序列化器
                             mapper.setSerializerFactory(mapper.getSerializerFactory().withSerializerModifier(modifier));
                             if (internal) {
-                                mapper.setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
+                                mapper.setDefaultTyping(PredicateTypeResolverBuilder.createNonConcrete(clazz -> {
+                                    for (Class<?> filterType : withoutClassFieldTypes) {
+                                        if (filterType.isAssignableFrom(clazz)) {
+                                            return false;
+                                        }
+                                    }
+                                    return PredicateTypeResolverBuilder.PREDICATE_NON_COLLECTION.test(clazz);
+                                }));
                                 this.internalMappers.put(methodKey, mapper);
                             } else {
                                 this.externalMappers.put(methodKey, mapper);
                             }
                         } else { // 没有结果过滤设置的取默认映射器
-                            mapper = internal ? getObjectMapper() : this.defaultExternalMapper;
+                            mapper = internal ? getObjectMapper() : this.defaultMapper;
                         }
                     }
                     String json = mapper.writeValueAsString(object);

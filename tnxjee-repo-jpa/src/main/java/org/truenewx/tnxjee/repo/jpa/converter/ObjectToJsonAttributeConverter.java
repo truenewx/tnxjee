@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Converter
 public class ObjectToJsonAttributeConverter implements AttributeConverter<Object, String> {
 
-    private ObjectMapper mapper = JsonUtil.copyNonConcreteAndCollectionMapper();
+    private ObjectMapper mapper = JsonUtil.copyClassedMapper();
 
     @Override
     public String convertToDatabaseColumn(Object attribute) {

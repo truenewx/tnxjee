@@ -41,9 +41,9 @@ public class JsonUtil {
         DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
         DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
-        
+
         // 默认的映射器初始化后在初始化带类型的映射器
-        CLASSED_MAPPER = copyNonConcreteAndCollectionMapper();
+        CLASSED_MAPPER = copyClassedMapper();
     }
 
     public static ObjectMapper copyDefaultMapper() {
@@ -55,7 +55,7 @@ public class JsonUtil {
      *
      * @return 将对象类型写入JSON串的映射器
      */
-    public static ObjectMapper copyNonConcreteAndCollectionMapper() {
+    public static ObjectMapper copyClassedMapper() {
         return copyDefaultMapper().setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
     }
 
