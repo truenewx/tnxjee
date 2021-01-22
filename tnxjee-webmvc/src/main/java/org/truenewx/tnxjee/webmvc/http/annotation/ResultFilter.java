@@ -36,5 +36,5 @@ public @interface ResultFilter {
     /**
      * @return 是否附带类型字段
      */
-    boolean withClass() default true;
+    boolean withClassField() default false;
 }
