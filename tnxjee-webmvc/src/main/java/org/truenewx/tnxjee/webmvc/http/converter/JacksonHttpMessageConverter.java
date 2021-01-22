@@ -57,9 +57,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     }
 
     private void withSerializerModifier(ObjectMapper mapper, BeanSerializerModifier modifier) {
-        if (modifier != null) {
-            mapper.setSerializerFactory(mapper.getSerializerFactory().withSerializerModifier(modifier));
-        }
+        mapper.setSerializerFactory(mapper.getSerializerFactory().withSerializerModifier(modifier));
     }
 
     private String getMapperKey(boolean internal, Method method) {
@@ -108,7 +106,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @SuppressWarnings("deprecation")
     private ObjectMapper buildMapper(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
         TypedPropertyFilter filter = new TypedPropertyFilter();
-        BeanEnumSerializerModifier modifier = null;
+        BeanEnumSerializerModifier modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
         Collection<Class<?>> withClassFieldTypes = new ArrayList<>();
         for (ResultFilter resultFilter : resultFilters) {
             Class<?> filteredType = resultFilter.type();
@@ -117,13 +115,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
             filter.addIncludedProperties(filteredType, resultFilter.included());
             filter.addExcludedProperties(filteredType, resultFilter.excluded());
-            String[] pureEnumFields = resultFilter.pureEnum();
-            if (ArrayUtils.isNotEmpty(pureEnumFields)) {
-                if (modifier == null) {
-                    modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
-                }
-                modifier.addIgnoredPropertiesNames(filteredType, pureEnumFields);
-            }
+            modifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
             if (resultFilter.withClassField()) {
                 withClassFieldTypes.add(filteredType);
             }

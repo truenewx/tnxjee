@@ -27,8 +27,11 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
     }
 
     public void addIgnoredPropertiesNames(Class<?> beanClass, String... ignoredPropertyNames) {
-        Collection<String> names = this.ignoredPropertyNamesMapping.computeIfAbsent(beanClass, k -> new HashSet<>());
-        CollectionUtil.addAll(names, ignoredPropertyNames);
+        if (ignoredPropertyNames.length > 0) {
+            Collection<String> names = this.ignoredPropertyNamesMapping
+                    .computeIfAbsent(beanClass, k -> new HashSet<>());
+            CollectionUtil.addAll(names, ignoredPropertyNames);
+        }
     }
 
     private boolean isIgnored(Object bean, String propertyName) {
