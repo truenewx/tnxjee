@@ -1,9 +1,12 @@
 package org.truenewx.tnxjee.repo.jpa.converter;
 
+import java.util.Map;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.util.JsonUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +38,17 @@ public class ObjectToJsonAttributeConverter implements AttributeConverter<Object
     public Object convertToEntityAttribute(String dbData) {
         if (StringUtils.isNotBlank(dbData)) {
             try {
-                return this.mapper.readValue(dbData, Object.class);
+                Object value = this.mapper.readValue(dbData, Object.class);
+                if (value instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> map = (Map<String, Object>) value;
+                    String className = (String) map.get(PredicateTypeResolverBuilder.getTypePropertyName());
+                    if (StringUtils.isNotBlank(className)) {
+                        Class<?> clazz = Class.forName(className);
+                        value = this.mapper.readValue(dbData, clazz);
+                    }
+                }
+                return value;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

@@ -33,8 +33,12 @@ public class PredicateTypeResolverBuilder extends ObjectMapper.DefaultTypeResolv
         PredicateTypeResolverBuilder builder = new PredicateTypeResolverBuilder(
                 ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
         builder.init(JsonTypeInfo.Id.CLASS, null).inclusion(JsonTypeInfo.As.PROPERTY)
-                .typeProperty(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
+                .typeProperty(getTypePropertyName());
         return builder.predicate(predicate);
+    }
+
+    public static String getTypePropertyName() {
+        return JsonTypeInfo.Id.CLASS.getDefaultPropertyName();
     }
 
     public PredicateTypeResolverBuilder predicate(Predicate<Class<?>> predicate) {
