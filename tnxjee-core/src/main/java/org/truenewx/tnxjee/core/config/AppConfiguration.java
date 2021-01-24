@@ -16,7 +16,6 @@ public class AppConfiguration {
     public static final String USER_TYPE_ALL = Strings.ASTERISK;
 
     private String caption;
-    private String userType;
     private String gatewayUri;
     private String directUri;
     private String contextPath = Strings.EMPTY;
@@ -29,17 +28,6 @@ public class AppConfiguration {
 
     public void setCaption(String caption) {
         this.caption = caption;
-    }
-
-    public String getUserType() {
-        return this.userType;
-    }
-
-    /**
-     * @param userType 对应的用户类型，默认为空，表示无用户类型区别
-     */
-    public void setUserType(String userType) {
-        this.userType = userType;
     }
 
     public String getGatewayUri() {
