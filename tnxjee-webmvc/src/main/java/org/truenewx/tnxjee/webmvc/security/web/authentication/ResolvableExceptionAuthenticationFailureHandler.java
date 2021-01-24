@@ -1,7 +1,6 @@
 package org.truenewx.tnxjee.webmvc.security.web.authentication;
 
 import java.io.IOException;
-import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import org.truenewx.tnxjee.webmvc.exception.message.ResolvableExceptionMessageSa
 public class ResolvableExceptionAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private boolean useForward = true;
-    private Function<HttpServletRequest, String> targetUrlFunction = request -> null;
+    private LoginViewResultResolver loginViewResultResolver = new DefaultLoginViewResultResolver();
     @Autowired
     private ResolvableExceptionMessageSaver resolvableExceptionMessageSaver;
     @Autowired
@@ -35,12 +34,13 @@ public class ResolvableExceptionAuthenticationFailureHandler implements Authenti
         this.useForward = useForward;
     }
 
-    public void setTargetUrlFunction(Function<HttpServletRequest, String> targetUrlFunction) {
-        this.targetUrlFunction = targetUrlFunction;
+    @Autowired(required = false)
+    public void setLoginViewResultResolver(LoginViewResultResolver loginViewResultResolver) {
+        this.loginViewResultResolver = loginViewResultResolver;
     }
 
-    public Function<HttpServletRequest, String> getTargetUrlFunction() {
-        return this.targetUrlFunction;
+    public LoginViewResultResolver getLoginViewResultResolver() {
+        return this.loginViewResultResolver;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ResolvableExceptionAuthenticationFailureHandler implements Authenti
         if (WebUtil.isAjaxRequest(request)) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         } else {
-            String targetUrl = this.targetUrlFunction == null ? null : this.targetUrlFunction.apply(request);
+            String targetUrl = this.loginViewResultResolver.resolveLoginViewResult(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             } else { // 跳转到目标地址
