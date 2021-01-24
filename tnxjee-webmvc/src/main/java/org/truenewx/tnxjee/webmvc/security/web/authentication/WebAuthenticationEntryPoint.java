@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -24,7 +25,7 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     private RedirectStrategy redirectStrategy;
     @Autowired(required = false)
     private SecurityUrlProvider securityUrlProvider;
-    private boolean ajaxToForm;
+    private boolean ajaxGetToForm;
 
     public WebAuthenticationEntryPoint(String loginFormUrl) {
         super(loginFormUrl);
@@ -40,12 +41,12 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
     }
 
     /**
-     * 设置是否将AJAX请求直接跳转到登录表单页
+     * 设置是否将AJAX的GET请求直接跳转到登录表单页
      *
-     * @param ajaxToForm 是否将AJAX请求直接跳转到登录表单页
+     * @param ajaxGetToForm 是否将AJAX的GET请求直接跳转到登录表单页
      */
-    public void setAjaxToForm(boolean ajaxToForm) {
-        this.ajaxToForm = ajaxToForm;
+    public void setAjaxGetToForm(boolean ajaxGetToForm) {
+        this.ajaxGetToForm = ajaxGetToForm;
     }
 
     @Override
@@ -57,7 +58,8 @@ public class WebAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoin
         }
         if (WebUtil.isAjaxRequest(request)) { // AJAX请求执行特殊的跳转
             String redirectLoginUrl = buildRedirectUrlToLoginPage(request, response, authException);
-            if (this.ajaxToForm) { // AJAX请求直接跳转到登录表单页
+            // AJAX POST请求无法通过自动登录重新提交，一定直接跳转到登录表单页，或者设置为AJAX的GET请求直接跳转到登录表单页
+            if (this.ajaxGetToForm || HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
                 response.setHeader(WebConstants.HEADER_LOGIN_URL, redirectLoginUrl);
             } else {
                 this.redirectStrategy.sendRedirect(request, response, redirectLoginUrl);
