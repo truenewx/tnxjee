@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.web.context;
 
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.truenewx.tnxjee.core.util.LogUtil;
@@ -10,13 +12,16 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 public abstract class SpringWebContextTask implements Runnable {
 
     private RequestAttributes requestAttributes;
+    private SecurityContext securityContext;
 
     public SpringWebContextTask() {
         this.requestAttributes = RequestContextHolder.currentRequestAttributes();
+        this.securityContext = SecurityContextHolder.getContext();
     }
 
     @Override
     public final void run() {
+        SecurityContextHolder.setContext(this.securityContext);
         RequestContextHolder.setRequestAttributes(this.requestAttributes);
         try {
             execute();
