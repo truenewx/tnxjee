@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import org.truenewx.tnxjee.core.jackson.NonConcreteTypeResolverBuilder;
@@ -32,7 +34,7 @@ public class JacksonUtil {
         DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
 
-        // 默认的映射器初始化后在初始化带类型的映射器
+        // 默认的映射器初始化后再初始化带类型属性的映射器
         CLASSED_MAPPER = copyClassedMapper();
     }
 
@@ -90,6 +92,14 @@ public class JacksonUtil {
 
     public static String getTypePropertyName() {
         return JsonTypeInfo.Id.CLASS.getDefaultPropertyName();
+    }
+
+    public static boolean isSerializableNonConcrete(Class<?> clazz) {
+        int modifiers = clazz.getModifiers();
+        if ((modifiers & (Modifier.INTERFACE | Modifier.ABSTRACT)) != 0) {
+            return Serializable.class.isAssignableFrom(clazz);
+        }
+        return false;
     }
 
 }

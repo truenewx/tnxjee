@@ -1,6 +1,6 @@
 package org.truenewx.tnxjee.core.jackson;
 
-import java.io.Serializable;
+import org.truenewx.tnxjee.core.util.JacksonUtil;
 
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JavaType;
@@ -27,7 +27,7 @@ public class NonConcreteTypeResolverBuilder extends ObjectMapper.DefaultTypeReso
         if (TreeNode.class.isAssignableFrom(clazz)) {
             return false;
         }
-        return type.isJavaLangObject() || (!type.isConcrete() && Serializable.class.isAssignableFrom(clazz));
+        return type.isJavaLangObject() || JacksonUtil.isSerializableNonConcrete(clazz);
     }
 
 }

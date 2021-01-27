@@ -30,6 +30,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.PropertyMeta;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
+import org.truenewx.tnxjee.webmvc.http.annotation.ResultWithClassField;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
@@ -98,10 +99,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         String mapperKey = getMapperKey(internal, method);
         ObjectMapper writer = this.writers.get(mapperKey);
         if (writer == null) {
-            Class<?> resultType = method.getReturnType();
             ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
-            if (ArrayUtils.isNotEmpty(resultFilters) || requiresBuildWriter(resultType)) {
-                writer = buildWriter(internal, resultType, resultFilters);
+            if (ArrayUtils.isNotEmpty(resultFilters) || requiresBuildWriterWithClassProperty(internal, method)) {
+                writer = buildWriter(internal, method.getReturnType(), resultFilters);
                 this.writers.put(mapperKey, writer);
             } else { // 没有结果过滤设置的取默认映射器
                 writer = internal ? this.defaultInternalWriter : this.defaultExternalWriter;
@@ -110,12 +110,22 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         return writer;
     }
 
-    private boolean requiresBuildWriter(Class<?> resultType) {
-        Collection<PropertyMeta> metas = ClassUtil.findPropertyMetas(resultType, true, false, true, null);
-        for (PropertyMeta meta : metas) {
-            // 需要序列化的属性中包含集合类型，则结果类需要构建特殊的输出器
-            if (!meta.containsAnnotation(JsonIgnore.class) && Iterable.class.isAssignableFrom(meta.getType())) {
+    private boolean requiresBuildWriterWithClassProperty(boolean internal, Method method) {
+        if (internal) { // 内部调用才可能需要构建输出类型字段的输出器
+            // 方法上有@ResultWithClassField注解，则一定输出类型字段
+            if (method.getAnnotation(ResultWithClassField.class) != null) {
                 return true;
+            }
+            Collection<PropertyMeta> metas = ClassUtil
+                    .findPropertyMetas(method.getReturnType(), true, false, true, null);
+            for (PropertyMeta meta : metas) {
+                // 需要序列化的属性中包含集合或可序列化的非具化类型，则需要构建输出类型字段的输出器
+                if (!meta.containsAnnotation(JsonIgnore.class)) {
+                    Class<?> type = meta.getType();
+                    if (Iterable.class.isAssignableFrom(type) || JacksonUtil.isSerializableNonConcrete(type)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
