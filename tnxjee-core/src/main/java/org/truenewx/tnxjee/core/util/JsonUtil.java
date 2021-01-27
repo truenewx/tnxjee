@@ -3,26 +3,18 @@ package org.truenewx.tnxjee.core.util;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
 /**
@@ -32,68 +24,12 @@ import com.fasterxml.jackson.databind.type.CollectionType;
  */
 public class JsonUtil {
 
-    private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
-    private static final ObjectMapper CLASSED_MAPPER;
-
-    static {
-        DEFAULT_MAPPER.findAndRegisterModules();
-        DEFAULT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL); // 序列化时不输出null
-        DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
-        DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
-        DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
-
-        // 默认的映射器初始化后在初始化带类型的映射器
-        CLASSED_MAPPER = copyClassedMapper();
-    }
-
-    public static ObjectMapper copyDefaultMapper() {
-        return DEFAULT_MAPPER.copy();
-    }
-
-    /**
-     * 复制一个将对象类型写入JSON串的映射器
-     *
-     * @return 将对象类型写入JSON串的映射器
-     */
-    public static ObjectMapper copyClassedMapper() {
-        return copyDefaultMapper().setDefaultTyping(PredicateTypeResolverBuilder.NON_CONCRETE_AND_COLLECTION);
-    }
-
-    @JsonFilter("DynamicFilter")
-    private interface DynamicFilter {
-    }
-
-    public static ObjectMapper buildMapper(PropertyFilter filter, Class<?>... beanClasses) {
-        ObjectMapper mapper = copyDefaultMapper();
-        if (filter != null && beanClasses.length > 0) {
-            for (Class<?> beanClass : beanClasses) {
-                JsonUtil.registerFilterable(mapper, beanClass);
-            }
-            String filterId = DynamicFilter.class.getAnnotation(JsonFilter.class).value();
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter(filterId, filter);
-            mapper.setFilterProvider(filterProvider);
-        }
-        return mapper;
-    }
-
-    private static void registerFilterable(ObjectMapper mapper, Class<?> beanClass) {
-        if (mapper.addMixIn(beanClass, DynamicFilter.class) == null) { // 首次注册才考虑同时注册复合属性类型
-            Collection<PropertyMeta> propertyMetas = ClassUtil.findPropertyMetas(beanClass, true, false, true,
-                    (propertyType, propertyName) -> {
-                        return ClassUtil.isComplex(propertyType);
-                    });
-            propertyMetas.forEach(meta -> {
-                registerFilterable(mapper, meta.getType());
-            });
-        }
-    }
-
     private static String toJson(Object obj, PropertyFilter filter) {
         ObjectMapper mapper;
         if (filter != null) {
-            mapper = buildMapper(filter, obj.getClass());
+            mapper = JacksonUtil.buildMapper(filter, obj.getClass());
         } else {
-            mapper = DEFAULT_MAPPER;
+            mapper = JacksonUtil.DEFAULT_MAPPER;
         }
         try {
             return mapper.writeValueAsString(obj);
@@ -143,7 +79,7 @@ public class JsonUtil {
 
     public static String toJsonWithClass(Object obj) {
         try {
-            return CLASSED_MAPPER.writeValueAsString(obj);
+            return JacksonUtil.CLASSED_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -157,7 +93,7 @@ public class JsonUtil {
      */
     public static Map<String, Object> json2Map(String json) {
         try {
-            return DEFAULT_MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {
+            return JacksonUtil.DEFAULT_MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -173,7 +109,7 @@ public class JsonUtil {
      */
     public static <T> T json2Bean(String json, Class<T> beanClass) {
         try {
-            return DEFAULT_MAPPER.readValue(json, beanClass);
+            return JacksonUtil.DEFAULT_MAPPER.readValue(json, beanClass);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -204,7 +140,7 @@ public class JsonUtil {
      */
     public static List<Object> json2List(String json) {
         try {
-            return DEFAULT_MAPPER.readValue(json, new TypeReference<List<Object>>() {
+            return JacksonUtil.DEFAULT_MAPPER.readValue(json, new TypeReference<List<Object>>() {
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -219,9 +155,10 @@ public class JsonUtil {
      * @return 转换形成的对象List
      */
     public static <T> List<T> json2List(String json, Class<T> componentType) {
-        CollectionType type = DEFAULT_MAPPER.getTypeFactory().constructCollectionType(List.class, componentType);
+        CollectionType type = JacksonUtil.DEFAULT_MAPPER.getTypeFactory()
+                .constructCollectionType(List.class, componentType);
         try {
-            return DEFAULT_MAPPER.readValue(json, type);
+            return JacksonUtil.DEFAULT_MAPPER.readValue(json, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -12,6 +12,9 @@ public class Paged extends Pagination {
     private Long total;
     private boolean morePage;
 
+    protected Paged() {
+    }
+
     public Paged(int pageSize, int pageNo, long total) {
         super(pageSize, pageNo);
         this.total = total;

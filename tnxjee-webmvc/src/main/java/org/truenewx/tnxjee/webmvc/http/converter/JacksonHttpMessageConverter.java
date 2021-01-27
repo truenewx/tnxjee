@@ -5,7 +5,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,15 +23,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.jackson.BeanEnumSerializerModifier;
-import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
-import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.ClassUtil;
+import org.truenewx.tnxjee.core.util.JacksonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.core.util.PropertyMeta;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
@@ -43,17 +48,19 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @Autowired
     private EnumDictResolver enumDictResolver;
 
-    private final Map<String, ObjectMapper> mappers = new HashMap<>();
+    private final Map<String, ObjectMapper> writers = new HashMap<>();
+    private final ObjectMapper defaultInternalWriter = JacksonUtil.copyDefaultMapper();
+    private final ObjectMapper defaultExternalWriter = JacksonUtil.copyDefaultMapper();
 
     public JacksonHttpMessageConverter() {
-        super(JsonUtil.copyDefaultMapper());
+        super(JacksonUtil.copyClassedMapper()); // 默认映射器实际上作为了读取器，始终具有读取类型字段的能力
         setDefaultCharset(StandardCharsets.UTF_8);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 默认JSON映射器具有枚举常量附加显示名称字段的能力
-        withSerializerModifier(getObjectMapper(), new BeanEnumSerializerModifier(this.enumDictResolver));
+        // 默认外部输出器需要附加枚举常量显示名称输出能力
+        withSerializerModifier(this.defaultExternalWriter, new BeanEnumSerializerModifier(this.enumDictResolver));
     }
 
     private void withSerializerModifier(ObjectMapper mapper, BeanSerializerModifier modifier) {
@@ -74,7 +81,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                 if (handlerMethod != null) {
                     Method method = handlerMethod.getMethod();
                     boolean internal = RpcUtil.isInternalRpc(request);
-                    ObjectMapper mapper = getMapper(internal, method, object);
+                    ObjectMapper mapper = getWriter(internal, method, object);
                     String json = mapper.writeValueAsString(object);
                     Charset charset = Objects.requireNonNullElse(getDefaultCharset(), StandardCharsets.UTF_8);
                     IOUtils.write(json, outputMessage.getBody(), charset.name());
@@ -87,27 +94,38 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         super.writeInternal(object, type, outputMessage);
     }
 
-    private ObjectMapper getMapper(boolean internal, Method method, Object object) {
+    private ObjectMapper getWriter(boolean internal, Method method, Object object) {
         String mapperKey = getMapperKey(internal, method);
-        ObjectMapper mapper = this.mappers.get(mapperKey);
-        if (mapper == null) {
-            Class<?> resultType = object.getClass();
+        ObjectMapper writer = this.writers.get(mapperKey);
+        if (writer == null) {
+            Class<?> resultType = method.getReturnType();
             ResultFilter[] resultFilters = method.getAnnotationsByType(ResultFilter.class);
-            if (ArrayUtils.isNotEmpty(resultFilters)) {
-                mapper = buildMapper(internal, resultType, resultFilters);
-                this.mappers.put(mapperKey, mapper);
+            if (ArrayUtils.isNotEmpty(resultFilters) || requiresBuildWriter(resultType)) {
+                writer = buildWriter(internal, resultType, resultFilters);
+                this.writers.put(mapperKey, writer);
             } else { // 没有结果过滤设置的取默认映射器
-                mapper = getObjectMapper();
+                writer = internal ? this.defaultInternalWriter : this.defaultExternalWriter;
             }
         }
-        return mapper;
+        return writer;
     }
 
+    private boolean requiresBuildWriter(Class<?> resultType) {
+        Collection<PropertyMeta> metas = ClassUtil.findPropertyMetas(resultType, true, false, true, null);
+        for (PropertyMeta meta : metas) {
+            // 需要序列化的属性中包含集合类型，则结果类需要构建特殊的输出器
+            if (!meta.containsAnnotation(JsonIgnore.class) && Iterable.class.isAssignableFrom(meta.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     @SuppressWarnings("deprecation")
-    private ObjectMapper buildMapper(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
+    private ObjectMapper buildWriter(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
         TypedPropertyFilter filter = new TypedPropertyFilter();
         BeanEnumSerializerModifier modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
-        Collection<Class<?>> withClassFieldTypes = new ArrayList<>();
         for (ResultFilter resultFilter : resultFilters) {
             Class<?> filteredType = resultFilter.type();
             if (filteredType == Object.class) {
@@ -116,27 +134,17 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             filter.addIncludedProperties(filteredType, resultFilter.included());
             filter.addExcludedProperties(filteredType, resultFilter.excluded());
             modifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
-            if (resultFilter.withClassField()) {
-                withClassFieldTypes.add(filteredType);
-            }
         }
         // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
         Class<?>[] filteredTypes = filter.getTypes();
         if (!ArrayUtils.contains(filteredTypes, resultType)) {
             filteredTypes = ArrayUtils.add(filteredTypes, resultType);
         }
-        ObjectMapper mapper = JsonUtil.buildMapper(filter, filteredTypes);
-        withSerializerModifier(mapper, modifier);
-        // 内部请求，且含有需要附带类型字段的类型时，激活附带类型字段的功能
-        if (internal && withClassFieldTypes.size() > 0) {
-            mapper.setDefaultTyping(PredicateTypeResolverBuilder.createNonConcrete(clazz -> {
-                for (Class<?> filterType : withClassFieldTypes) {
-                    if (filterType.isAssignableFrom(clazz)) {
-                        return true;
-                    }
-                }
-                return false;
-            }));
+        ObjectMapper mapper = JacksonUtil.buildMapper(filter, filteredTypes);
+        if (internal) { // 内部输出器需要附加类型属性输出能力
+            JacksonUtil.withClassProperty(mapper);
+        } else { // 外部输出器需要附加枚举常量显示名称输出能力
+            withSerializerModifier(mapper, modifier);
         }
         return mapper;
     }

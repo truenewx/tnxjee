@@ -14,6 +14,9 @@ public class QueryResult<T> implements Iterable<T> {
     private List<T> records;
     private Paged paged;
 
+    protected QueryResult() {
+    }
+
     public QueryResult(List<T> records, Paged paged) {
         this.records = Objects.requireNonNullElse(records, Collections.emptyList());
         this.paged = paged;

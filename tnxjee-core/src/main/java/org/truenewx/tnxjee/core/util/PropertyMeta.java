@@ -8,7 +8,6 @@ import java.util.List;
  * 属性元数据
  *
  * @author jianglei
- * 
  */
 public class PropertyMeta {
     private String name;
@@ -42,4 +41,14 @@ public class PropertyMeta {
     public List<Annotation> getAnnotations() {
         return this.annotations;
     }
+
+    public boolean containsAnnotation(Class<? extends Annotation> annotationType) {
+        for (Annotation annotation : this.annotations) {
+            if (annotation.getClass() == annotationType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

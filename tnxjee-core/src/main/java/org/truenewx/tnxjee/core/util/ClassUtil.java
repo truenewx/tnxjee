@@ -3,7 +3,6 @@ package org.truenewx.tnxjee.core.util;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -322,7 +321,7 @@ public class ClassUtil {
         Set<String> names = new HashSet<>();
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor pd : propertyDescriptors) {
-            if (isSimpleValueType(pd.getPropertyType())) {
+            if (BeanUtils.isSimpleValueType(pd.getPropertyType())) {
                 String name = pd.getName();
                 if (!"class".equals(name)) {
                     names.add(name);
@@ -330,10 +329,6 @@ public class ClassUtil {
             }
         }
         return names;
-    }
-
-    public static boolean isSimpleValueType(Class<?> type) {
-        return BeanUtils.isSimpleValueType(type) || Temporal.class.isAssignableFrom(type);
     }
 
     /**
@@ -348,7 +343,7 @@ public class ClassUtil {
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor pd : propertyDescriptors) {
             Class<?> propertyType = pd.getPropertyType();
-            if (propertyType != null && isSimpleValueType(propertyType)) {
+            if (propertyType != null && BeanUtils.isSimpleValueType(propertyType)) {
                 String name = pd.getName();
                 if (!"class".equals(name)) {
                     Field field = findField(clazz, name);
@@ -379,7 +374,7 @@ public class ClassUtil {
                 Class<?> superclass = clazz.getSuperclass();
                 if (superclass != null && superclass != Object.class) {
                     Collection<PropertyMeta> propertyMetas = findPropertyMetas(superclass, gettable,
-                            settable, parent, includePredicate);
+                            settable, true, includePredicate);
                     for (PropertyMeta propertyMeta : propertyMetas) {
                         result.put(propertyMeta.getName(), propertyMeta);
                     }
@@ -584,9 +579,19 @@ public class ClassUtil {
         if (componentType != null) {
             return isComplex(componentType);
         }
-        return type != Object.class && !isSimpleValueType(type) && !Map.class.isAssignableFrom(type) && !Iterable.class
-                .isAssignableFrom(type);
+        return type != Object.class && !BeanUtils.isSimpleValueType(type) && !isAggregation(type);
     }
+
+    /**
+     * 判断指定类型是否集合类型。集合类型包括数组、Map、Iterable
+     *
+     * @param type 类型
+     * @return 指定类型是否集合类型
+     */
+    public static boolean isAggregation(Class<?> type) {
+        return type.isArray() || Map.class.isAssignableFrom(type) || Iterable.class.isAssignableFrom(type);
+    }
+
 
     /**
      * 获取指定类型（包括父类）中指定方法名称和参数个数的公开方法清单
@@ -596,8 +601,7 @@ public class ClassUtil {
      * @param argCount   参数个数，小于0时忽略个数，返回所有同名方法
      * @return 指定类型中指定方法名称和参数个数的公开方法清单
      */
-    public static Collection<Method> findPublicMethods(Class<?> type, String methodName,
-            int argCount) {
+    public static Collection<Method> findPublicMethods(Class<?> type, String methodName, int argCount) {
         Collection<Method> methods = new ArrayList<>();
         for (Method method : type.getMethods()) {
             if (method.getName().equals(methodName)

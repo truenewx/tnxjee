@@ -374,7 +374,7 @@ public class BeanUtil {
         Class<?> targetClass = target.getClass();
         for (PropertyDescriptor pd : propertyDescriptors) {
             try {
-                if (ClassUtil.isSimpleValueType(pd.getPropertyType())) {
+                if (BeanUtils.isSimpleValueType(pd.getPropertyType())) {
                     String name = pd.getDisplayName();
                     if (!"class".equals(name)) {
                         PropertyDescriptor writePd = BeanUtils.getPropertyDescriptor(targetClass,

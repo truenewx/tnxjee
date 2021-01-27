@@ -6,8 +6,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
-import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.JacksonUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Converter
 public class ObjectToJsonAttributeConverter implements AttributeConverter<Object, String> {
 
-    private ObjectMapper mapper = JsonUtil.copyClassedMapper();
+    private ObjectMapper mapper = JacksonUtil.copyClassedMapper();
 
     @Override
     public String convertToDatabaseColumn(Object attribute) {
@@ -42,7 +41,7 @@ public class ObjectToJsonAttributeConverter implements AttributeConverter<Object
                 if (value instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> map = (Map<String, Object>) value;
-                    String className = (String) map.get(PredicateTypeResolverBuilder.getTypePropertyName());
+                    String className = (String) map.get(JacksonUtil.getTypePropertyName());
                     if (StringUtils.isNotBlank(className)) {
                         Class<?> clazz = Class.forName(className);
                         value = this.mapper.readValue(dbData, clazz);

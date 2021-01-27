@@ -33,8 +33,4 @@ public @interface ResultFilter {
      */
     String[] pureEnum() default {};
 
-    /**
-     * @return 是否附带类型字段
-     */
-    boolean withClassField() default false;
 }
