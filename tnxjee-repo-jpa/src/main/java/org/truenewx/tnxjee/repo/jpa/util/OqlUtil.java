@@ -72,7 +72,7 @@ public class OqlUtil {
                 } else {
                     condition.append(Comparison.NOT_IN.toQlString());
                 }
-                String paramName = fieldName.replaceAll("\\.", Strings.UNDERLINE);
+                String paramName = getParamName(fieldName);
                 condition.append(Strings.LEFT_BRACKET).append(Strings.COLON).append(paramName)
                         .append(Strings.RIGHT_BRACKET);
                 params.put(paramName, fieldParamValues);
@@ -82,7 +82,7 @@ public class OqlUtil {
                 for (Object fieldParamValue : fieldParamValues) {
                     condition.append(junction).append(fieldName);
                     if (fieldParamValue != null) { // 忽略为null的参数值
-                        String paramName = fieldName.replaceAll("\\.", Strings.UNDERLINE) + (i++);
+                        String paramName = getParamName(fieldName) + (i++);
                         condition.append(comparison.toQlString()).append(Strings.COLON)
                                 .append(paramName);
                         if (comparison == Comparison.LIKE || comparison == Comparison.NOT_LIKE) {
@@ -102,6 +102,10 @@ public class OqlUtil {
             }
         }
         return condition.toString();
+    }
+
+    private static String getParamName(String fieldName) {
+        return fieldName.replaceAll("\\.", Strings.UNDERLINE);
     }
 
     /**
@@ -144,6 +148,31 @@ public class OqlUtil {
                 condition.append(" not");
             }
             condition.append(" null");
+        }
+        return condition.toString();
+    }
+
+    /**
+     * 构建索引字段Like条件子句
+     *
+     * @param params          查询参数映射集，相关查询参数会写入该映射集中
+     * @param fieldName       索引字段名
+     * @param fieldParamValue 索引字段参数值，应该为汉语拼音
+     * @return 索引字段Like条件子句
+     */
+    public static String buildIndexLikeConditionString(Map<String, Object> params, String fieldName,
+            String fieldParamValue) {
+        StringBuilder condition = new StringBuilder();
+        if (StringUtils.isNotBlank(fieldParamValue)) {
+            condition.append(fieldName).append(" like :");
+            String paramName = getParamName(fieldName);
+            condition.append(paramName);
+            StringBuilder likeValue = new StringBuilder(Strings.PERCENT);
+            char[] chars = fieldParamValue.toCharArray();
+            for (char c : chars) {
+                likeValue.append(c).append(Strings.PERCENT);
+            }
+            params.put(paramName, likeValue.toString());
         }
         return condition.toString();
     }
