@@ -101,9 +101,9 @@ public class DateUtil {
         if (StringUtils.isEmpty(date)) {
             return null;
         }
-        DateFormat formater = new SimpleDateFormat(pattern);
+        DateFormat formatter = new SimpleDateFormat(pattern);
         try {
-            return formater.parse(date);
+            return formatter.parse(date);
         } catch (ParseException e) {
             return null;
         }
@@ -120,8 +120,7 @@ public class DateUtil {
         if (date == null) {
             return null;
         }
-        DateFormat formater = new SimpleDateFormat(pattern);
-        return formater.format(date);
+        return new SimpleDateFormat(pattern).format(date);
     }
 
     /**
