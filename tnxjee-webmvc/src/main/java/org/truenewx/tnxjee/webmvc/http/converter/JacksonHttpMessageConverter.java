@@ -26,7 +26,6 @@ import org.truenewx.tnxjee.core.jackson.BeanEnumSerializerModifier;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JacksonUtil;
-import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.PropertyMeta;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
@@ -77,19 +76,15 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             throws IOException, HttpMessageNotWritableException {
         HttpServletRequest request = SpringWebContext.getRequest();
         if (request != null) {
-            try {
-                HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(request);
-                if (handlerMethod != null) {
-                    Method method = handlerMethod.getMethod();
-                    boolean internal = RpcUtil.isInternalRpc(request);
-                    ObjectMapper mapper = getWriter(internal, method, object);
-                    String json = mapper.writeValueAsString(object);
-                    Charset charset = Objects.requireNonNullElse(getDefaultCharset(), StandardCharsets.UTF_8);
-                    IOUtils.write(json, outputMessage.getBody(), charset.name());
-                    return;
-                }
-            } catch (Exception e) {
-                LogUtil.error(getClass(), e);
+            HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(request);
+            if (handlerMethod != null) {
+                Method method = handlerMethod.getMethod();
+                boolean internal = RpcUtil.isInternalRpc(request);
+                ObjectMapper mapper = getWriter(internal, method, object);
+                String json = mapper.writeValueAsString(object);
+                Charset charset = Objects.requireNonNullElse(getDefaultCharset(), StandardCharsets.UTF_8);
+                IOUtils.write(json, outputMessage.getBody(), charset.name());
+                return;
             }
         }
         super.writeInternal(object, type, outputMessage);

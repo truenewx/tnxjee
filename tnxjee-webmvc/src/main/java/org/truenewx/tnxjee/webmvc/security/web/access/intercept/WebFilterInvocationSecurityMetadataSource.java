@@ -120,16 +120,12 @@ public class WebFilterInvocationSecurityMetadataSource
         if (supports(attributes)) {
             attributes = attributes == null ? new HashSet<>() : new HashSet<>(attributes);
             FilterInvocation fi = (FilterInvocation) object;
-            try {
-                HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(fi.getRequest());
-                if (handlerMethod != null) {
-                    String methodKey = handlerMethod.getMethod().toString();
-                    ConfigAttribute userConfigAuthority = this.configAttributeMap.get(methodKey);
-                    // 加入一个没有权限限制的必备权限，以标记进行过处理
-                    attributes.add(Objects.requireNonNullElseGet(userConfigAuthority, UserConfigAuthority::new));
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException(e);
+            HandlerMethod handlerMethod = this.handlerMethodMapping.getHandlerMethod(fi.getRequest());
+            if (handlerMethod != null) {
+                String methodKey = handlerMethod.getMethod().toString();
+                ConfigAttribute userConfigAuthority = this.configAttributeMap.get(methodKey);
+                // 加入一个没有权限限制的必备权限，以标记进行过处理
+                attributes.add(Objects.requireNonNullElseGet(userConfigAuthority, UserConfigAuthority::new));
             }
         }
         return attributes;

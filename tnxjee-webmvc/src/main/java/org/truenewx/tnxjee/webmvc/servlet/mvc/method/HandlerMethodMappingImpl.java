@@ -15,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.webmvc.http.HttpAction;
 
 /**
@@ -28,8 +29,13 @@ public class HandlerMethodMappingImpl implements HandlerMethodMapping {
     private Map<HttpAction, HandlerMethod> handlerMethods;
 
     @Override
-    public HandlerExecutionChain getHandlerChain(HttpServletRequest request) throws Exception {
-        return this.handlerMapping.getHandler(request);
+    public HandlerExecutionChain getHandlerChain(HttpServletRequest request) {
+        try {
+            return this.handlerMapping.getHandler(request);
+        } catch (Exception e) {
+            LogUtil.debug(getClass(), e); // 仅作为调试日志打印
+            return null;
+        }
     }
 
     @Override

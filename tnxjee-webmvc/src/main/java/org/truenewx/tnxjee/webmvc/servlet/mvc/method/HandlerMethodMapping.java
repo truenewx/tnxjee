@@ -14,9 +14,9 @@ import org.truenewx.tnxjee.webmvc.http.HttpAction;
  */
 public interface HandlerMethodMapping {
 
-    HandlerExecutionChain getHandlerChain(HttpServletRequest request) throws Exception;
+    HandlerExecutionChain getHandlerChain(HttpServletRequest request);
 
-    default HandlerMethod getHandlerMethod(HttpServletRequest request) throws Exception {
+    default HandlerMethod getHandlerMethod(HttpServletRequest request) {
         HandlerExecutionChain chain = getHandlerChain(request);
         if (chain != null) {
             Object handler = chain.getHandler();
