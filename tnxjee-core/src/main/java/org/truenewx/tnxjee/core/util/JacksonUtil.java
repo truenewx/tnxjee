@@ -1,15 +1,15 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.Serializable;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.function.Predicate;
 
-import org.truenewx.tnxjee.core.jackson.NonConcreteTypeResolverBuilder;
+import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -34,8 +34,8 @@ public class JacksonUtil {
         DEFAULT_MAPPER.enable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS); // 日期类型的Key转换为时间戳
         DEFAULT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // 反序列化时允许未知属性
 
-        // 默认的映射器初始化后再初始化带类型属性的映射器
-        CLASSED_MAPPER = copyClassedMapper();
+        // 默认的映射器初始化后再初始化带复合类型属性的映射器
+        CLASSED_MAPPER = copyComplexClassedMapper();
     }
 
     public static ObjectMapper copyDefaultMapper() {
@@ -43,12 +43,21 @@ public class JacksonUtil {
     }
 
     /**
-     * 复制一个将对象类型写入JSON串的映射器
+     * 复制一个将复合对象类型写入JSON串的映射器
      *
-     * @return 将对象类型写入JSON串的映射器
+     * @return 将复合对象类型写入JSON串的映射器
      */
-    public static ObjectMapper copyClassedMapper() {
-        return withClassProperty(copyDefaultMapper());
+    public static ObjectMapper copyComplexClassedMapper() {
+        return withComplexClassProperty(copyDefaultMapper());
+    }
+
+    /**
+     * 复制一个将非具化对象类型写入JSON串的映射器
+     *
+     * @return 将非具化对象类型写入JSON串的映射器
+     */
+    public static ObjectMapper copyNonConcreteClassedMapper() {
+        return withNonConcreteClassProperty(copyDefaultMapper());
     }
 
     @JsonFilter("DynamicFilter")
@@ -84,22 +93,26 @@ public class JacksonUtil {
         }
     }
 
-    public static ObjectMapper withClassProperty(ObjectMapper mapper) {
-        NonConcreteTypeResolverBuilder builder = new NonConcreteTypeResolverBuilder();
+    public static ObjectMapper withComplexClassProperty(ObjectMapper mapper) {
+        return withClassProperty(mapper, type -> {
+            return ClassUtil.isComplex(type.getRawClass());
+        });
+    }
+
+    public static ObjectMapper withClassProperty(ObjectMapper mapper, Predicate<JavaType> predicate) {
+        PredicateTypeResolverBuilder builder = new PredicateTypeResolverBuilder(predicate);
         builder.init(JsonTypeInfo.Id.CLASS, null).inclusion(JsonTypeInfo.As.PROPERTY);
         return mapper.setDefaultTyping(builder);
     }
 
-    public static String getTypePropertyName() {
-        return JsonTypeInfo.Id.CLASS.getDefaultPropertyName();
+    public static ObjectMapper withNonConcreteClassProperty(ObjectMapper mapper) {
+        return withClassProperty(mapper, type -> {
+            return type.isJavaLangObject() || ClassUtil.isSerializableNonConcrete(type.getRawClass());
+        });
     }
 
-    public static boolean isSerializableNonConcrete(Class<?> clazz) {
-        int modifiers = clazz.getModifiers();
-        if ((modifiers & (Modifier.INTERFACE | Modifier.ABSTRACT)) != 0) {
-            return Serializable.class.isAssignableFrom(clazz);
-        }
-        return false;
+    public static String getTypePropertyName() {
+        return JsonTypeInfo.Id.CLASS.getDefaultPropertyName();
     }
 
 }

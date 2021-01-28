@@ -54,7 +54,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     private final ObjectMapper defaultExternalWriter = JacksonUtil.copyDefaultMapper();
 
     public JacksonHttpMessageConverter() {
-        super(JacksonUtil.copyClassedMapper()); // 默认映射器实际上作为了读取器，始终具有读取类型字段的能力
+        super(JacksonUtil.copyNonConcreteClassedMapper()); // 默认映射器实际上作为了读取器，始终具有读取类型字段的能力
         setDefaultCharset(StandardCharsets.UTF_8);
     }
 
@@ -122,7 +122,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
                 // 需要序列化的属性中包含集合或可序列化的非具化类型，则需要构建输出类型字段的输出器
                 if (!meta.containsAnnotation(JsonIgnore.class)) {
                     Class<?> type = meta.getType();
-                    if (Iterable.class.isAssignableFrom(type) || JacksonUtil.isSerializableNonConcrete(type)) {
+                    if (Iterable.class.isAssignableFrom(type) || ClassUtil.isSerializableNonConcrete(type)) {
                         return true;
                     }
                 }
@@ -152,7 +152,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         }
         ObjectMapper mapper = JacksonUtil.buildMapper(filter, filteredTypes);
         if (internal) { // 内部输出器需要附加类型属性输出能力
-            JacksonUtil.withClassProperty(mapper);
+            JacksonUtil.withNonConcreteClassProperty(mapper);
         } else { // 外部输出器需要附加枚举常量显示名称输出能力
             withSerializerModifier(mapper, modifier);
         }
