@@ -15,6 +15,11 @@ import org.truenewx.tnxjee.core.Strings;
 public @interface ConfigPermission {
 
     /**
+     * @return 分组，一般用于区分业务类型
+     */
+    String group() default Strings.EMPTY;
+
+    /**
      * @return 所需用户类型
      */
     String type() default Strings.EMPTY;
