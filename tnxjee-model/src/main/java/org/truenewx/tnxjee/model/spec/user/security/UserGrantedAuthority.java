@@ -87,23 +87,24 @@ public class UserGrantedAuthority implements GrantedAuthority {
     }
 
     public boolean matches(String type, String rank, String app, String permission) {
-        if (StringUtils.isNotBlank(type) && !type.equals(this.type)) { // 限定了用户类型但不相等，则不匹配
+        if (StringUtils.isNotBlank(type) && !Strings.ASTERISK.equals(this.type) && !type.equals(this.type)) {
             return false;
         }
-        if (StringUtils.isNotBlank(rank) && !rank.equals(this.rank)) { // 限定了用户级别但不相等，则不匹配
+        if (StringUtils.isNotBlank(rank) && !Strings.ASTERISK.equals(this.rank) && !rank.equals(this.rank)) {
             return false;
         }
-        if (StringUtils.isNotBlank(app) && !app.equals(this.app)) { // 限定了应用但不相等，则不匹配
-            return false;
-        }
-        // 限定了许可但未包含，则不匹配
         if (StringUtils.isNotBlank(permission)) {
+            // 限定了许可才判断应用限定
+            if (StringUtils.isNotBlank(app) && !Strings.ASTERISK.equals(this.app) && !app.equals(this.app)) {
+                return false;
+            }
             for (String pattern : this.permissions) {
-                // 忽略大小写通配符匹配，则视为匹配
+                // 有一个许可忽略大小写通配符匹配，则视为匹配
                 if (StringUtil.wildcardMatch(permission.toLowerCase(), pattern.toLowerCase())) {
                     return true;
                 }
             }
+            // 限定了许可但未包含，则不匹配
             return false;
         }
         return true;
