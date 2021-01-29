@@ -97,7 +97,13 @@ public class UserGrantedAuthority implements GrantedAuthority {
             return false;
         }
         // 限定了许可但未包含，则不匹配
-        if (StringUtils.isNotBlank(permission) && !StringUtil.wildcardMatchOneOf(permission, this.permissions)) {
+        if (StringUtils.isNotBlank(permission)) {
+            for (String pattern : this.permissions) {
+                // 忽略大小写通配符匹配，则视为匹配
+                if (StringUtil.wildcardMatch(permission.toLowerCase(), pattern.toLowerCase())) {
+                    return true;
+                }
+            }
             return false;
         }
         return true;

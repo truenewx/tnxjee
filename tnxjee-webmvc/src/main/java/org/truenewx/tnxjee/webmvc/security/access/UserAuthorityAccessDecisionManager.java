@@ -83,7 +83,7 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
         for (GrantedAuthority authority : authorities) {
             if (authority instanceof UserGrantedAuthority) {
                 UserGrantedAuthority userAuthority = (UserGrantedAuthority) authority;
-                if (userAuthority.matches(type, rank, null, permission)) {
+                if (userAuthority.matches(type, rank, app, permission)) {
                     return true;
                 }
             }

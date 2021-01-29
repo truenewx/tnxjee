@@ -97,8 +97,8 @@ public class WebFilterInvocationSecurityMetadataSource
         url = url.replaceAll("/\\{[^}]*\\}/", Strings.SLASH);
         // 去掉头尾的/
         url = StringUtils.strip(url, Strings.SLASH);
-        // 替换中间的/为.
-        return url.replaceAll(Strings.SLASH, Strings.DOT);
+        // 替换中间的/为_
+        return url.replaceAll(Strings.SLASH, Strings.UNDERLINE);
     }
 
     @Override
