@@ -1,16 +1,15 @@
 package org.truenewx.tnxjee.core.beans.factory.config;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 
 /**
  * Bean属性值配置器
  *
  * @author jianglei
- * 
  */
 public class BeanPropertyValueConfigurer implements InitializingBean, ContextInitializedBean {
     /**
@@ -72,15 +71,14 @@ public class BeanPropertyValueConfigurer implements InitializingBean, ContextIni
     @Override
     public void afterPropertiesSet() throws Exception {
         if (this.bean != null) {
-            BeanUtils.setProperty(this.bean, this.propertyName, this.propertyValue);
+            BeanUtil.setPropertyValue(this.bean, this.propertyName, this.propertyValue);
         }
     }
 
     @Override
     public void afterInitialized(ApplicationContext context) throws Exception {
         if (this.bean == null) {
-            Assert.isTrue(this.beanName != null || this.beanClass != null,
-                    "beanName or beanClass must be not null"); // Bean名称或类型至少一个不为null
+            Assert.isTrue(this.beanName != null || this.beanClass != null, "beanName or beanClass must be not null"); // Bean名称或类型至少一个不为null
             if (this.beanName != null && this.beanClass != null) {
                 this.bean = context.getBean(this.beanName, this.beanClass);
             } else if (this.beanName != null) {

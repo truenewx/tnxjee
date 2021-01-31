@@ -1,6 +1,12 @@
 package org.truenewx.tnxjee.webmvc.validation;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.internal.engine.ValidatorImpl;
 import org.hibernate.validator.internal.engine.valueextraction.ValueExtractorManager;
@@ -25,12 +31,6 @@ import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * 从模型的属性注解获取校验规则的元数据提供者<br>
  * 使得控制层得以校验模型中的字段约束，值得注意的是，这里并不包含ORM层的字段约束校验，后者交给数据层执行。<br>
@@ -48,19 +48,15 @@ public class ModelAnnotationMetaDataProvider implements MetaDataProvider {
     public ModelAnnotationMetaDataProvider(LocalValidatorFactoryBean validator) {
         // 将自身介入字段校验体系中
         ValidatorImpl targetValidator = BeanUtil.getFieldValue(validator, "targetValidator");
-        BeanMetaDataManager beanMetaDataManager = BeanUtil.getFieldValue(targetValidator,
-                "beanMetaDataManager");
-        List<MetaDataProvider> metaDataProviders = BeanUtil.getFieldValue(beanMetaDataManager,
-                "metaDataProviders");
+        BeanMetaDataManager beanMetaDataManager = BeanUtil.getFieldValue(targetValidator, "beanMetaDataManager");
+        List<MetaDataProvider> metaDataProviders = BeanUtil.getFieldValue(beanMetaDataManager, "metaDataProviders");
         for (int i = 0; i < metaDataProviders.size(); i++) {
             MetaDataProvider metaDataProvider = metaDataProviders.get(i);
             if (metaDataProvider instanceof AnnotationMetaDataProvider) {
                 this.delegate = (AnnotationMetaDataProvider) metaDataProvider;
                 metaDataProviders.set(i, this);
-                this.typeResolutionHelper = BeanUtil.getFieldValue(this.delegate,
-                        "typeResolutionHelper");
-                this.valueExtractorManager = BeanUtil.getFieldValue(this.delegate,
-                        "valueExtractorManager");
+                this.typeResolutionHelper = BeanUtil.getFieldValue(this.delegate, "typeResolutionHelper");
+                this.valueExtractorManager = BeanUtil.getFieldValue(this.delegate, "valueExtractorManager");
                 break;
             }
         }
@@ -77,32 +73,26 @@ public class ModelAnnotationMetaDataProvider implements MetaDataProvider {
         if (beanClass != CommandModel.class && CommandModel.class.isAssignableFrom(beanClass)) { // 仅处理命令模型
             Class<?> entityClass = ClassUtil.getActualGenericType(beanClass, CommandModel.class, 0);
             if (entityClass != null) { // 将命令模型对应的实体类型中的属性约束注解规则合并至命令模型的属性约束注解规则中
-                BeanConfiguration<?> entityConfiguration = this.delegate
-                        .getBeanConfiguration(entityClass);
-                for (ConstrainedElement constrainedElement : configuration
-                        .getConstrainedElements()) {
+                BeanConfiguration<?> entityConfiguration = this.delegate.getBeanConfiguration(entityClass);
+                for (ConstrainedElement constrainedElement : configuration.getConstrainedElements()) {
                     if (constrainedElement instanceof ConstrainedField) { // 为简化计，仅考虑字段上的约束
                         ConstrainedField constrainedField = (ConstrainedField) constrainedElement;
                         Field field = constrainedField.getField();
-                        Set<MetaConstraint<?>> entityFieldConstraints = getFieldMetaConstraints(
-                                entityConfiguration, field);
+                        Set<MetaConstraint<?>> entityFieldConstraints = getFieldMetaConstraints(entityConfiguration,
+                                field);
                         if (CollectionUtils.isNotEmpty(entityFieldConstraints)) { // 存在有对应的实体类型字段约束才需要合并
-                            Set<MetaConstraint<?>> constraints = new HashSet<>(
-                                    constrainedField.getConstraints());
+                            Set<MetaConstraint<?>> constraints = new HashSet<>(constrainedField.getConstraints());
                             for (MetaConstraint<?> constraint : entityFieldConstraints) {
                                 // 从实体类型得到的字段约束不能直接使用，需复制一份后再修改其中的字段定位，才可用于命令模型字段
                                 // 否则会改动实体类型的字段约束，导致数据层校验失效
-                                ConstraintDescriptorImpl<?> constraintDescriptor = constraint
-                                        .getDescriptor();
+                                ConstraintDescriptorImpl<?> constraintDescriptor = constraint.getDescriptor();
                                 try {
                                     Constructor<FieldConstraintLocation> constructor = FieldConstraintLocation.class
                                             .getDeclaredConstructor(Field.class);
                                     constructor.setAccessible(true);
-                                    FieldConstraintLocation location = constructor
-                                            .newInstance(field);
-                                    constraints.add(MetaConstraints.create(
-                                            this.typeResolutionHelper, this.valueExtractorManager,
-                                            constraintDescriptor, location));
+                                    FieldConstraintLocation location = constructor.newInstance(field);
+                                    constraints.add(MetaConstraints.create(this.typeResolutionHelper,
+                                            this.valueExtractorManager, constraintDescriptor, location));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -116,14 +106,12 @@ public class ModelAnnotationMetaDataProvider implements MetaDataProvider {
         return configuration;
     }
 
-    private Set<MetaConstraint<?>> getFieldMetaConstraints(BeanConfiguration<?> configuration,
-            Field field) {
+    private Set<MetaConstraint<?>> getFieldMetaConstraints(BeanConfiguration<?> configuration, Field field) {
         String fieldName = field.getName();
         InheritConstraint inheritConstraint = field.getAnnotation(InheritConstraint.class);
         if (inheritConstraint != null) { // 考虑约束继承
             Class<? extends Entity> inheritedEntityClass = inheritConstraint.type();
-            if (inheritedEntityClass != Entity.class
-                    && inheritedEntityClass != configuration.getBeanClass()) {
+            if (inheritedEntityClass != Entity.class && inheritedEntityClass != configuration.getBeanClass()) {
                 configuration = this.delegate.getBeanConfiguration(inheritedEntityClass);
             }
             String inheritedFieldName = inheritConstraint.value();

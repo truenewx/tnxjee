@@ -2,11 +2,9 @@ package org.truenewx.tnxjee.core.util;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 
@@ -124,11 +122,7 @@ public class JsonUtil {
     public static void jsonCoverBean(String json, Object bean) {
         Map<String, Object> map = json2Map(json);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            try {
-                BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                // 出现异常则忽略该属性的覆盖操作
-            }
+            BeanUtil.setPropertyValue(bean, entry.getKey(), entry.getValue());
         }
     }
 
@@ -155,8 +149,8 @@ public class JsonUtil {
      * @return 转换形成的对象List
      */
     public static <T> List<T> json2List(String json, Class<T> componentType) {
-        CollectionType type = JacksonUtil.DEFAULT_MAPPER.getTypeFactory()
-                .constructCollectionType(List.class, componentType);
+        CollectionType type = JacksonUtil.DEFAULT_MAPPER.getTypeFactory().constructCollectionType(List.class,
+                componentType);
         try {
             return JacksonUtil.DEFAULT_MAPPER.readValue(json, type);
         } catch (IOException e) {

@@ -1,8 +1,12 @@
 package org.truenewx.tnxjee.webmvc.security.web.access.intercept;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,13 +74,13 @@ public class WebFilterInvocationSecurityMetadataSource
         UserConfigAuthority authority = null;
         ConfigAuthority configAuthority = handlerMethod.getMethodAnnotation(ConfigAuthority.class);
         if (configAuthority != null) {
-            authority = new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
-                    this.limitedApp, configAuthority.permission(), configAuthority.intranet());
+            authority = new UserConfigAuthority(configAuthority.type(), configAuthority.rank(), this.limitedApp,
+                    configAuthority.permission(), configAuthority.intranet());
         } else { // 没有@ConfigAuthority则考虑@ConfigPermission
             ConfigPermission configPermission = handlerMethod.getMethodAnnotation(ConfigPermission.class);
             if (configPermission != null) {
-                authority = new UserConfigAuthority(configPermission.type(), configPermission.rank(),
-                        this.limitedApp, getDefaultPermission(url), configPermission.intranet());
+                authority = new UserConfigAuthority(configPermission.type(), configPermission.rank(), this.limitedApp,
+                        getDefaultPermission(url), configPermission.intranet());
             }
         }
         if (authority == null) { // 没有配置权限限定，则拒绝所有访问
