@@ -48,9 +48,10 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
 
     @Override
     public Region getRegion(String regionCode, Locale locale) {
+        regionCode = regionCode.toUpperCase();
         String nation = getNation(regionCode);
         if (nation != null) {
-            NationalRegionSource nationalOptionSource = this.nationalSources.get(nation); // nation已经最大化
+            NationalRegionSource nationalOptionSource = this.nationalSources.get(nation); // nation已经大写化
             if (nationalOptionSource != null) {
                 if (nation.equals(regionCode)) { // 指定区划即为国家，直接取国家区划选项
                     return nationalOptionSource.getNationalRegion(locale);
