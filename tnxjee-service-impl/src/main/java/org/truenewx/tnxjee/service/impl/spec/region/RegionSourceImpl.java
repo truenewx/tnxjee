@@ -1,10 +1,6 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.context.ApplicationContext;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
@@ -16,7 +12,6 @@ import org.truenewx.tnxjee.service.spec.region.RegionSource;
  * 行政区划来源实现
  *
  * @author jianglei
- * 
  */
 public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     /**
@@ -34,9 +29,8 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     }
 
     @Override
-    public void afterInitialized(ApplicationContext context) throws Exception {
-        Map<String, NationalRegionSource> nrss = context.getBeansOfType(NationalRegionSource.class);
-        setNationalSources(nrss.values()); // 如果有重复，则覆盖原有配置
+    public void afterInitialized(ApplicationContext context) {
+        setNationalSources(context.getBeansOfType(NationalRegionSource.class).values()); // 如果有重复，则覆盖原有配置
     }
 
     /**
@@ -56,7 +50,7 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     public Region getRegion(String regionCode, Locale locale) {
         String nation = getNation(regionCode);
         if (nation != null) {
-            NationalRegionSource nationalOptionSource = this.nationalSources.get(nation);
+            NationalRegionSource nationalOptionSource = this.nationalSources.get(nation); // nation已经最大化
             if (nationalOptionSource != null) {
                 if (nation.equals(regionCode)) { // 指定区划即为国家，直接取国家区划选项
                     return nationalOptionSource.getNationalRegion(locale);
@@ -69,9 +63,9 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     }
 
     @Override
-    public Region getRegion(String nation, String provinceCaption, String cityCaption,
-            String countyCaption, Locale locale) {
-        NationalRegionSource nationalOptionSource = this.nationalSources.get(nation);
+    public Region getRegion(String nation, String provinceCaption, String cityCaption, String countyCaption,
+            Locale locale) {
+        NationalRegionSource nationalOptionSource = this.nationalSources.get(nation.toUpperCase());
         if (nationalOptionSource != null) {
             if (provinceCaption == null) { // 如果未指定省份名称，则直接取国家区划选项
                 return nationalOptionSource.getNationalRegion(locale);
@@ -94,7 +88,7 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
 
     @Override
     public Region getNationalRegion(String nation, Locale locale) {
-        NationalRegionSource source = this.nationalSources.get(nation);
+        NationalRegionSource source = this.nationalSources.get(nation.toUpperCase());
         if (source != null) {
             return source.getNationalRegion(locale);
         }

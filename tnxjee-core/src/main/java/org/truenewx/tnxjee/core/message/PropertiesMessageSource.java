@@ -1,13 +1,8 @@
 package org.truenewx.tnxjee.core.message;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +22,7 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 public class PropertiesMessageSource extends ReloadableResourceBundleMessageSource
         implements MessagesSource, InitializingBean {
 
-    private static String PROPERTIES_SUFFIX = ".properties";
+    private static final String PROPERTIES_SUFFIX = ".properties";
 
     @Autowired
     private Environment environment;

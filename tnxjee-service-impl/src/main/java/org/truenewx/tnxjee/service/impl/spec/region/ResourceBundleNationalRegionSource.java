@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.message.MessagesSource;
 import org.truenewx.tnxjee.service.spec.region.Region;
@@ -17,19 +18,13 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
     /**
      * 消息集来源
      */
+    @Autowired
     private MessagesSource messagesSource;
     /**
      * 区域选项映射集解析器
      */
+    @Autowired
     private RegionMapParser parser;
-
-    public void setMessagesSource(MessagesSource messagesSource) {
-        this.messagesSource = messagesSource;
-    }
-
-    public void setParser(RegionMapParser parser) {
-        this.parser = parser;
-    }
 
     /**
      * 构建指定显示区域的当前国家行政区划
@@ -51,7 +46,7 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
                 Map<String, Region> captionSubsMap = new HashMap<>();
                 for (Region sub : subs) {
                     codeSubsMap.put(sub.getCode(), sub);
-                    StringBuffer caption = new StringBuffer(sub.getCaption());
+                    StringBuilder caption = new StringBuilder(sub.getCaption());
                     Region parent = sub.getParent();
                     if (parent == null) { // 所有子选项中未指定父选项的才作为下一级子选项加入国家级选项中
                         nationalRegion.addSub(sub);

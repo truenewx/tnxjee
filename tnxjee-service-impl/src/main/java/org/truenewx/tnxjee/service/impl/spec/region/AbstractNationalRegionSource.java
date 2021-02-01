@@ -1,14 +1,15 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.service.spec.region.NationalRegionSource;
 import org.truenewx.tnxjee.service.spec.region.Region;
+import org.truenewx.tnxjee.service.spec.region.RegionNationCodes;
 import org.truenewx.tnxjee.service.spec.region.RegionSource;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author jianglei
@@ -16,9 +17,9 @@ import java.util.Map;
 public abstract class AbstractNationalRegionSource implements NationalRegionSource {
 
     /**
-     * 国家代号
+     * 国家代号，默认为中国
      */
-    private String nation;
+    private String nation = RegionNationCodes.CHINA;
     /**
      * 显示区域-当前国家级行政区划的映射集
      */

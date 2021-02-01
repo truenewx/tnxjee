@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.StringUtil;
@@ -15,7 +10,6 @@ import org.truenewx.tnxjee.service.spec.region.Region;
  * 源于中国国家统计局数据的行政区划映射集解析器
  *
  * @author jianglei
- * 
  */
 public class StatsGovCnRegionMapParser implements RegionMapParser {
     /**
