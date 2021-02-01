@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.message.MessagesSource;
 import org.truenewx.tnxjee.service.spec.region.Region;
@@ -14,11 +15,12 @@ import org.truenewx.tnxjee.service.spec.region.Region;
  *
  * @author jianglei
  */
+@Component
 public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSource {
     /**
      * 消息集来源
      */
-    @Autowired
+    @Autowired(required = false)
     private MessagesSource messagesSource;
     /**
      * 区域选项映射集解析器

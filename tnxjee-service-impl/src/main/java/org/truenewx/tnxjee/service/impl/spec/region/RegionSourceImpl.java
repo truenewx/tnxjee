@@ -3,6 +3,7 @@ package org.truenewx.tnxjee.service.impl.spec.region;
 import java.util.*;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.service.spec.region.NationalRegionSource;
 import org.truenewx.tnxjee.service.spec.region.Region;
@@ -13,6 +14,7 @@ import org.truenewx.tnxjee.service.spec.region.RegionSource;
  *
  * @author jianglei
  */
+@Component
 public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     /**
      * 国家级行政区划解析器映射集
