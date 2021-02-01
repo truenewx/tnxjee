@@ -19,7 +19,7 @@ public abstract class RegionControllerSupport {
 
     @GetMapping("/{regionCode}")
     @ConfigAnonymous
-    @ResultFilter(type = Region.class, included = { "group", "code", "caption", "level", "subs" })
+    @ResultFilter(type = Region.class, included = { "group", "code", "caption", "level", "subs", "includingSub" })
     public Region detail(@PathVariable("regionCode") String regionCode, HttpServletRequest request) {
         return this.source.getRegion(regionCode, request.getLocale());
     }
