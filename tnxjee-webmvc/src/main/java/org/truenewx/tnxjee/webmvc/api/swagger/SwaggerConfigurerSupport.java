@@ -15,10 +15,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger配置支持
+ * Swagger配置器支持
  */
 @EnableSwagger2
-public abstract class SwaggerConfigSupport {
+public abstract class SwaggerConfigurerSupport {
 
     @Autowired
     private VersionReader versionReader;
