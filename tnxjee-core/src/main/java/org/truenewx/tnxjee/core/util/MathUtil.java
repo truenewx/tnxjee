@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.core.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
@@ -280,13 +281,11 @@ public class MathUtil {
      * @param toPercent 是否转换为百分比
      * @return 格式化后的字符串
      */
-    public static String formatNumber(Object number, int minScale, int maxScale,
-            boolean toPercent) {
+    public static String formatNumber(Object number, int minScale, int maxScale, boolean toPercent) {
         if (number == null) {
             return "";
         }
-        NumberFormat format = toPercent ? NumberFormat.getPercentInstance()
-                : NumberFormat.getNumberInstance();
+        NumberFormat format = toPercent ? NumberFormat.getPercentInstance() : NumberFormat.getNumberInstance();
         format.setGroupingUsed(false);
         format.setMinimumFractionDigits(minScale);
         format.setMaximumFractionDigits(maxScale);
@@ -435,8 +434,8 @@ public class MathUtil {
     }
 
     public static int bytes2Int(byte[] bytes, int offset) {
-        return (((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16)
-                | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF));
+        return (((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8)
+                | (bytes[offset + 3] & 0xFF));
     }
 
     public static int hex2Int(String hex) {
@@ -449,6 +448,28 @@ public class MathUtil {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T parse(String s, Class<T> type) {
+        if (type == BigDecimal.class) {
+            return (T) new BigDecimal(s);
+        } else if (type == BigInteger.class) {
+            return (T) new BigInteger(s);
+        } else if (type == Integer.class) {
+            return (T) Integer.valueOf(s);
+        } else if (type == Long.class) {
+            return (T) Long.valueOf(s);
+        } else if (type == Float.class) {
+            return (T) Float.valueOf(s);
+        } else if (type == Double.class) {
+            return (T) Double.valueOf(s);
+        } else if (type == Short.class) {
+            return (T) Short.valueOf(s);
+        } else if (type == Byte.class) {
+            return (T) Byte.valueOf(s);
+        }
+        return null;
     }
 
 }

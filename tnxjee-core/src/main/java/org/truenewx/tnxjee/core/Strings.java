@@ -127,9 +127,15 @@ public class Strings {
     public static final String VERTICAL_BAR = "|";
 
     /**
+     * 无穷大
+     */
+    public static final String INFINITY = "∞";
+
+    /**
      * 字符编码：UTF-8
      */
     public static final String ENCODING_UTF8 = "UTF-8";
+
 
     /**
      * 字符编码：GBK
