@@ -44,27 +44,31 @@ public class NumberRange<T extends Number> implements Binate<T, T> {
             throw new NumberFormatException("NumberRange must contain one ','");
         }
         T min;
-        String minString = s.substring(0, index);
-        if ("-∞".equals(minString)) {
+        String minString = s.substring(0, index).trim();
+        if (minString.length() == 0 || "-∞".equals(minString)) {
             min = null;
+            inclusiveMin = false; // 没有下限，则一定不包含最小值
         } else {
             min = MathUtil.parse(minString, type);
         }
         T max;
-        String maxString = s.substring(index + 1, s.length() - 1);
-        if ("+∞".equals(maxString)) {
+        String maxString = s.substring(index + 1, s.length() - 1).trim();
+        if (maxString.length() == 0 || "+∞".equals(maxString)) {
             max = null;
         } else {
             max = MathUtil.parse(maxString, type);
         }
 
         boolean inclusiveMax;
-        if (s.endsWith(Strings.RIGHT_SQUARE_BRACKET)) {
-            inclusiveMax = true;
-        } else if (s.endsWith(Strings.RIGHT_BRACKET)) {
+        if (s.endsWith(Strings.RIGHT_BRACKET)) {
             inclusiveMax = false;
+        } else if (s.endsWith(Strings.RIGHT_SQUARE_BRACKET)) {
+            inclusiveMax = true;
         } else {
             throw new NumberFormatException("NumberRange must end with ']' or ')'");
+        }
+        if (max == null) { // 没有上限，则一定不包含最大值
+            inclusiveMax = false;
         }
 
         NumberRange<T> range = new NumberRange<>();
