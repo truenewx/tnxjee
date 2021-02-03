@@ -1,7 +1,8 @@
 <code_scheme name="Default 2" version="173">
   <option name="FORMATTER_TAGS_ENABLED" value="true" />
   <option name="SOFT_MARGINS" value="120" />
-  <DB2CodeStyleSettings version="2">
+  <DB2CodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -12,7 +13,8 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </DB2CodeStyleSettings>
-  <DerbyCodeStyleSettings version="2">
+  <DerbyCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -23,7 +25,8 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </DerbyCodeStyleSettings>
-  <H2CodeStyleSettings version="2">
+  <H2CodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -34,7 +37,8 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </H2CodeStyleSettings>
-  <HSQLCodeStyleSettings version="2">
+  <HSQLCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -71,16 +75,8 @@
       </value>
     </option>
   </JavaCodeStyleSettings>
-  <JetCodeStyleSettings>
-    <option name="PACKAGES_TO_USE_STAR_IMPORTS">
-      <value>
-        <package name="java.util" withSubpackages="false" static="false" />
-        <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
-        <package name="io.ktor" withSubpackages="true" static="false" />
-      </value>
-    </option>
-  </JetCodeStyleSettings>
-  <MSSQLCodeStyleSettings version="2">
+  <MSSQLCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -91,8 +87,7 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </MSSQLCodeStyleSettings>
-  <MySQLCodeStyleSettings version="2">
-    <option name="USE_GENERIC_STYLE" value="true" />
+  <MySQLCodeStyleSettings version="5">
     <option name="INSERT_TABLE_EL_LINE" value="1" />
     <option name="INSERT_VALUES_EL_LINE" value="1" />
     <option name="INSERT_EL_WRAP" value="0" />
@@ -105,8 +100,10 @@
     <option name="TABLE_NULLABILITIES_ALIGN" value="false" />
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
+    <option name="USE_GENERIC_STYLE" value="true" />
   </MySQLCodeStyleSettings>
-  <OracleCodeStyleSettings version="2">
+  <OracleCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -117,7 +114,8 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </OracleCodeStyleSettings>
-  <PostgresCodeStyleSettings version="2">
+  <PostgresCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -128,7 +126,8 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </PostgresCodeStyleSettings>
-  <SQLiteCodeStyleSettings version="2">
+  <SQLiteCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -139,12 +138,14 @@
     <option name="CREATE_SCHEMA_CONTENT_INDENT" value="false" />
     <option name="VIEW_INDENT_QUERY" value="true" />
   </SQLiteCodeStyleSettings>
-  <SqlCodeStyleSettings version="2">
+  <SqlCodeStyleSettings version="5">
+    <option name="KEYWORD_CASE" value="1" />
+    <option name="IDENTIFIER_CASE" value="1" />
     <option name="INSERT_INTO_NL" value="2" />
     <option name="INSERT_OPENING" value="0" />
-    <option name="INSERT_CONTENT" value="0" />
-    <option name="INSERT_TABLE_EL_LINE" value="0" />
-    <option name="INSERT_EL_WRAP" value="0" />
+    <option name="INSERT_CONTENT" value="2" />
+    <option name="INSERT_TABLE_EL_LINE" value="1" />
+    <option name="INSERT_VALUES_EL_LINE" value="101" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -159,7 +160,8 @@
     <option name="PRIMARY_KEY_NAME_TEMPLATE" value="pk_{table}" />
     <option name="FOREIGN_KEY_NAME_TEMPLATE" value="fk_{table}_{columns}" />
   </SqlCodeStyleSettings>
-  <SybaseCodeStyleSettings version="2">
+  <SybaseCodeStyleSettings version="5">
+    <option name="USE_GENERAL_STYLE" value="false" />
     <option name="SET_ALIGN_EQUAL_SIGN" value="false" />
     <option name="TABLE_OPENING" value="1" />
     <option name="TABLE_CONTENT" value="2" />
@@ -276,6 +278,12 @@
   <codeStyleSettings language="TSQL">
     <option name="KEEP_LINE_BREAKS" value="false" />
     <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+  </codeStyleSettings>
+  <codeStyleSettings language="Vue">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="4" />
+      <option name="TAB_SIZE" value="4" />
+    </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="XML">
     <option name="RIGHT_MARGIN" value="120" />
