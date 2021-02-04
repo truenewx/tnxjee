@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.jpa.converter;
+package org.truenewx.tnxjee.repo.jpa.converter.spec;
 
 /**
  * 整型用户标识属性转换器

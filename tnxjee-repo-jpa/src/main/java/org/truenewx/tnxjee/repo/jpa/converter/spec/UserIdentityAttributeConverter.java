@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.repo.jpa.converter;
+package org.truenewx.tnxjee.repo.jpa.converter.spec;
 
 import java.io.Serializable;
 
