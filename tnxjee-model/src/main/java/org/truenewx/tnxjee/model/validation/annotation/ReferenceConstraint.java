@@ -12,8 +12,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ReferenceConstraint {
+
     /**
-     * @return 被引用约束的对应实体的包含的属性名称集合，为空则不包含任何属性
+     * @return 引用模型包含的属性名称集合，为空则不包含任何属性
      */
     String[] value() default {};
+
 }
