@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import javax.validation.Constraint;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +19,7 @@ import org.truenewx.tnxjee.model.entity.Entity;
 import org.truenewx.tnxjee.model.validation.annotation.InheritConstraint;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfigurationFactory;
+import org.truenewx.tnxjee.model.validation.rule.MarkRule;
 import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
 import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
 
@@ -27,7 +29,7 @@ import org.truenewx.tnxjee.repo.validation.rule.builder.ValidationRuleBuilder;
  * @author jianglei
  */
 public class DefaultValidationConfigurationFactory implements ValidationConfigurationFactory, ContextInitializedBean {
- 
+
     private Map<Class<? extends Model>, ValidationConfiguration> configurations = new HashMap<>();
     private Map<Class<Annotation>, ValidationRuleBuilder<?>> ruleBuilders = new HashMap<>();
 
@@ -142,6 +144,16 @@ public class DefaultValidationConfigurationFactory implements ValidationConfigur
         if (method != null) {
             for (Annotation annotation : method.getAnnotations()) {
                 addRuleByPropertyAnnotation(configuration, propertyName, annotation);
+            }
+        }
+        // 确保原生类型的字段具有非空规则
+        if (field.getType().isPrimitive()) {
+            MarkRule markRule = configuration.getRule(propertyName, MarkRule.class);
+            if (markRule == null) {
+                markRule = new MarkRule(NotNull.class);
+                configuration.addRule(propertyName, markRule);
+            } else {
+                markRule.getAnnotationTypes().add(NotNull.class);
             }
         }
     }

@@ -10,10 +10,12 @@ import javax.validation.constraints.Email;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.enums.EnumSub;
@@ -21,6 +23,7 @@ import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.Model;
+import org.truenewx.tnxjee.model.validation.annotation.ReferenceConstraint;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfiguration;
 import org.truenewx.tnxjee.model.validation.config.ValidationConfigurationFactory;
 import org.truenewx.tnxjee.model.validation.rule.ValidationRule;
@@ -65,33 +68,54 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
     public Map<String, ApiModelPropertyMeta> resolve(Class<? extends Model> modelClass, Locale locale) {
         Map<String, ApiModelPropertyMeta> metas = new HashMap<>();
         if (this.validationConfigurationFactory != null) {
-            ValidationConfiguration configuration = this.validationConfigurationFactory.getConfiguration(modelClass);
-            ClassUtil.loopFieldsByType(modelClass, null, field -> {
-                String propertyName = field.getName();
-                String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
-                if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
-                    caption = null;
-                }
-                ApiModelPropertyType type = getType(field);
-                ApiModelPropertyMeta meta = new ApiModelPropertyMeta(caption, type);
-                Map<String, Object> validation = getValidation(configuration, propertyName, locale);
-                if (validation.size() > 0) {
-                    meta.setValidation(validation);
-                }
-                Class<?> fieldType = field.getType();
-                if (fieldType.isEnum()) {
-                    EnumSub enumSub = field.getAnnotation(EnumSub.class);
-                    String subtype = enumSub == null ? null : enumSub.value();
-                    EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), subtype, locale);
-                    if (enumType != null) {
-                        meta.setEnums(enumType.getItems());
-                    }
-                }
-                metas.put(propertyName, meta);
-                return true;
-            });
+            addMetas(metas, modelClass, locale, null, null);
         }
         return metas;
+    }
+
+    private void addMetas(Map<String, ApiModelPropertyMeta> metas, Class<? extends Model> modelClass, Locale locale,
+            String propertyNamePrefix, String[] validPropertyNames) {
+        // 限制了属性名清单，但清单为空，则无需进行任何处理，直接返回
+        if (validPropertyNames != null && validPropertyNames.length == 0) {
+            return;
+        }
+        ValidationConfiguration configuration = this.validationConfigurationFactory.getConfiguration(modelClass);
+        ClassUtil.loopFieldsByType(modelClass, null, field -> {
+            Class<?> fieldType = field.getType();
+            String propertyName = field.getName();
+            // 未限制属性名或属性名在限制清单内，才添加属性元数据
+            if (validPropertyNames == null || ArrayUtils.contains(validPropertyNames, propertyName)) {
+                if (BeanUtils.isSimpleValueType(fieldType)) { // 属性为简单类型，则可以直接获取元数据
+                    String caption = this.propertyCaptionResolver.resolveCaption(modelClass, propertyName, locale);
+                    if (propertyName.equals(caption) && !Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+                        caption = null;
+                    }
+                    ApiModelPropertyType type = getType(field);
+                    ApiModelPropertyMeta meta = new ApiModelPropertyMeta(caption, type);
+                    Map<String, Object> validation = getValidation(configuration, propertyName, locale);
+                    if (validation.size() > 0) {
+                        meta.setValidation(validation);
+                    }
+                    if (fieldType.isEnum()) {
+                        EnumSub enumSub = field.getAnnotation(EnumSub.class);
+                        String subtype = enumSub == null ? null : enumSub.value();
+                        EnumType enumType = this.enumDictResolver.getEnumType(fieldType.getName(), subtype, locale);
+                        if (enumType != null) {
+                            meta.setEnums(enumType.getItems());
+                        }
+                    }
+                    String key = propertyNamePrefix == null ? propertyName : propertyNamePrefix + propertyName;
+                    metas.put(key, meta);
+                } else if (Model.class.isAssignableFrom(fieldType)) {
+                    ReferenceConstraint referenceConstraint = field.getAnnotation(ReferenceConstraint.class);
+                    if (referenceConstraint != null) {
+                        addMetas(metas, fieldType.asSubclass(Model.class), locale, propertyName + Strings.DOT,
+                                referenceConstraint.value());
+                    }
+                }
+            }
+            return true;
+        });
     }
 
     private ApiModelPropertyType getType(Field field) {
