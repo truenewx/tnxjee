@@ -161,10 +161,10 @@ public class DefaultValidationConfigurationFactory implements ValidationConfigur
     @SuppressWarnings("unchecked")
     private void addRuleByPropertyAnnotation(ValidationConfiguration configuration, String propertyName,
             Annotation annotation) {
-        Class<? extends Annotation> annoClass = annotation.annotationType();
-        if (isConstraintAnnotation(annoClass)) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        if (isConstraintAnnotation(annotationType)) {
             ValidationRuleBuilder<ValidationRule> builder = (ValidationRuleBuilder<ValidationRule>) this.ruleBuilders
-                    .get(annoClass);
+                    .get(annotationType);
             if (builder != null) {
                 Class<? extends ValidationRule> ruleClass = ClassUtil.getActualGenericType(builder.getClass(),
                         ValidationRuleBuilder.class, 0);

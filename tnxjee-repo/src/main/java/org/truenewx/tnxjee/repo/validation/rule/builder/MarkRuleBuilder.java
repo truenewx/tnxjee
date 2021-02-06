@@ -9,8 +9,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.model.validation.constraint.Cellphone;
-import org.truenewx.tnxjee.model.validation.constraint.IdCardNo;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsAngleBracket;
 import org.truenewx.tnxjee.model.validation.constraint.NotContainsHtmlChars;
 import org.truenewx.tnxjee.model.validation.rule.MarkRule;
@@ -22,10 +20,11 @@ import org.truenewx.tnxjee.model.validation.rule.MarkRule;
  */
 @Component
 public class MarkRuleBuilder implements ValidationRuleBuilder<MarkRule> {
+
     @Override
     public Class<?>[] getConstraintTypes() {
-        return new Class<?>[]{ NotNull.class, NotEmpty.class, NotBlank.class, Email.class, Cellphone.class,
-                IdCardNo.class, NotContainsAngleBracket.class, NotContainsHtmlChars.class };
+        return new Class<?>[]{ NotNull.class, NotEmpty.class, NotBlank.class, Email.class,
+                NotContainsAngleBracket.class, NotContainsHtmlChars.class };
     }
 
     @Override
