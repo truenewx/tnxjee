@@ -6,6 +6,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
+import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.model.validation.constraint.validator.CellphoneValidator;
 
 /**
@@ -16,7 +17,7 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.CellphoneValida
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Pattern(regexp = "1[0-9]{10}")
+@Pattern(regexp = StringUtil.CELLPHONE_PATTERN)
 @Constraint(validatedBy = CellphoneValidator.class)
 public @interface Cellphone {
 

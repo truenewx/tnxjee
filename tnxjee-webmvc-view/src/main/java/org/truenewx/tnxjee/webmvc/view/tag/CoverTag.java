@@ -50,7 +50,7 @@ public class CoverTag extends SimpleTagSupport {
                 coverIndex = 3;
                 coverLength = 4;
                 distLength = coverLength;
-            } else if (StringUtil.isIdentityNo(this.value)) { // 身份证号码掩盖第十一至十七位
+            } else if (StringUtil.isIdCardNo(this.value)) { // 身份证号码掩盖第十一至十七位
                 coverIndex = 10;
                 coverLength = 6;
                 distLength = coverLength;
