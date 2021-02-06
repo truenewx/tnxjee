@@ -100,8 +100,7 @@ public class PropertiesMessageSource extends ReloadableResourceBundleMessageSour
     }
 
     @Override
-    public Map<String, String> getMessages(Locale locale, String prefix,
-            boolean resultContainsPrefix) {
+    public Map<String, String> getMessages(Locale locale, String prefix, boolean resultContainsPrefix) {
         Map<String, String> messages = new TreeMap<>();
         int prefixLength = prefix.length();
         Properties properties = getMergedProperties(locale).getProperties();

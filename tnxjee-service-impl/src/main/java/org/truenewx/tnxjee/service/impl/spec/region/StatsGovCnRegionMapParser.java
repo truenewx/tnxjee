@@ -15,14 +15,14 @@ import org.truenewx.tnxjee.service.spec.region.Region;
 public class StatsGovCnRegionMapParser implements RegionMapParser {
 
     @Override
-    public Iterable<Region> parseAll(Map<String, String> codeCaptionMap) {
+    public Iterable<Region> parseAll(String nationCode, Map<String, String> codeCaptionMap) {
         // 取得排好序的代号集
         Set<String> codes = new TreeSet<>(codeCaptionMap.keySet());
         // 遍历排序后的代号集构建结果
         Collection<Region> result = new ArrayList<>();
         Map<String, Region> codeRegionMapping = new HashMap<>();
         for (String code : codes) {
-            if (code.length() == 8) { // 代码一定是8位的
+            if (code.startsWith(nationCode) && code.length() == 8) { // 代码一定以国家代号开头，且是8位的
                 String value = codeCaptionMap.get(code);
                 String caption;
                 String group;

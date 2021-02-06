@@ -36,13 +36,13 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
      */
     @Override
     protected Region buildNationalRegion(Locale locale) {
-        Map<String, String> messages = this.messagesSource.getMessages(locale);
         String nation = getNation();
+        Map<String, String> messages = this.messagesSource.getMessages(locale, nation, true);
         String nationCaption = messages.get(nation);
         if (nationCaption != null) { // 取得到国家显示名才构建国家级区域选项
             Region nationalRegion = new Region(nation, nationCaption);
             if (this.parser != null) {
-                Iterable<Region> subs = this.parser.parseAll(messages);
+                Iterable<Region> subs = this.parser.parseAll(nation, messages);
 
                 Map<String, Region> codeSubsMap = new HashMap<>();
                 Map<String, Region> captionSubsMap = new HashMap<>();
