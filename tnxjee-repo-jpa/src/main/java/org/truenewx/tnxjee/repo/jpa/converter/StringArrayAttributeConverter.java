@@ -16,27 +16,24 @@ public class StringArrayAttributeConverter implements AttributeConverter<String[
 
     @Override
     public String convertToDatabaseColumn(String[] attribute) {
-        String s = null;
-        if (attribute != null) {
-            if (attribute.length == 0) {
-                s = Strings.EMPTY;
-            } else {
-                s = StringUtils.join(attribute, Strings.COMMA);
-            }
+        if (attribute == null) {
+            return null;
         }
-        return s;
+        if (attribute.length == 0) {
+            return Strings.EMPTY;
+        }
+        return StringUtils.join(attribute, Strings.COMMA);
     }
 
     @Override
     public String[] convertToEntityAttribute(String dbData) {
-        if (dbData != null) {
-            if (StringUtils.isBlank(dbData)) {
-                return new String[0];
-            } else {
-                return dbData.split(Strings.COMMA);
-            }
+        if (dbData == null) {
+            return null;
         }
-        return null;
+        if (StringUtils.isBlank(dbData)) {
+            return new String[0];
+        }
+        return dbData.split(Strings.COMMA);
     }
 
 }

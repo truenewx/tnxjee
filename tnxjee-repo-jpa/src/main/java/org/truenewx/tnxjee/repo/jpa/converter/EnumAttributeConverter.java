@@ -13,15 +13,15 @@ import org.truenewx.tnxjee.model.spec.enums.support.EnumValueHelper;
  * @author jianglei
  */
 @Converter
-public class EnumAttributeConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
+public abstract class EnumAttributeConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
 
-    private Class<T> entityClass;
+    private Class<T> enumType;
 
-    protected Class<T> getEnumClass() {
-        if (this.entityClass == null) {
-            this.entityClass = ClassUtil.getActualGenericType(getClass(), 0);
+    protected Class<T> getEnumType() {
+        if (this.enumType == null) {
+            this.enumType = ClassUtil.getActualGenericType(getClass(), 0);
         }
-        return this.entityClass;
+        return this.enumType;
     }
 
     @Override
@@ -35,9 +35,9 @@ public class EnumAttributeConverter<T extends Enum<T>> implements AttributeConve
 
     @Override
     public T convertToEntityAttribute(String dbData) {
-        T attribute = EnumValueHelper.valueOf(getEnumClass(), dbData);
+        T attribute = EnumValueHelper.valueOf(getEnumType(), dbData);
         if (attribute == null) {
-            attribute = EnumUtils.getEnum(getEnumClass(), dbData);
+            attribute = EnumUtils.getEnum(getEnumType(), dbData);
         }
         return attribute;
     }
