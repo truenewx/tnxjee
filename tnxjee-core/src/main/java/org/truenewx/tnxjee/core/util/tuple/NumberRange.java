@@ -1,11 +1,15 @@
 package org.truenewx.tnxjee.core.util.tuple;
 
+import java.util.function.Supplier;
+
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.MathUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * TODO 类说明
+ * 数值范围
  *
  * @author jianglei
  */
@@ -23,6 +27,11 @@ public class NumberRange<T extends Number> implements Binate<T, T> {
     private boolean inclusiveMax;
 
     public static <T extends Number> NumberRange<T> parse(String s, Class<T> type) {
+        return parse(s, type, NumberRange::new);
+    }
+
+    protected static <T extends Number> NumberRange<T> parse(String s, Class<T> type,
+            Supplier<NumberRange<T>> creator) {
         if (StringUtils.isBlank(s)) {
             return null;
         }
@@ -34,14 +43,14 @@ public class NumberRange<T extends Number> implements Binate<T, T> {
         } else if (s.startsWith(Strings.LEFT_BRACKET)) {
             inclusiveMin = false;
         } else {
-            throw new NumberFormatException("NumberRange must start with '[' or '('");
+            throw new IllegalArgumentException("NumberRange must start with '[' or '('");
         }
 
         // 去掉首位的[或(
         s = s.substring(1);
         int index = s.indexOf(Strings.COMMA);
         if (index < 0) {
-            throw new NumberFormatException("NumberRange must contain one ','");
+            throw new IllegalArgumentException("NumberRange must contain one ','");
         }
         T min;
         String minString = s.substring(0, index).trim();
@@ -65,13 +74,13 @@ public class NumberRange<T extends Number> implements Binate<T, T> {
         } else if (s.endsWith(Strings.RIGHT_SQUARE_BRACKET)) {
             inclusiveMax = true;
         } else {
-            throw new NumberFormatException("NumberRange must end with ']' or ')'");
+            throw new IllegalArgumentException("NumberRange must end with ']' or ')'");
         }
         if (max == null) { // 没有上限，则一定不包含最大值
             inclusiveMax = false;
         }
 
-        NumberRange<T> range = new NumberRange<>();
+        NumberRange<T> range = creator.get();
         range.setMin(min);
         range.setMax(max);
         range.setInclusiveMin(inclusiveMin);
@@ -112,11 +121,13 @@ public class NumberRange<T extends Number> implements Binate<T, T> {
     }
 
     @Override
+    @JsonIgnore
     public T getLeft() {
         return getMin();
     }
 
     @Override
+    @JsonIgnore
     public T getRight() {
         return getMax();
     }

@@ -1,6 +1,11 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
@@ -72,8 +77,11 @@ public class TemporalUtil {
         if (temporal == null) {
             return null;
         }
-        return DateTimeFormatter.ofPattern(pattern).withZone(TemporalUtil.DEFAULT_ZONE_ID)
-                .format(temporal);
+        return formatter(pattern).format(temporal);
+    }
+
+    private static DateTimeFormatter formatter(String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).withZone(TemporalUtil.DEFAULT_ZONE_ID);
     }
 
     public static String format(Temporal temporal) {
@@ -88,8 +96,7 @@ public class TemporalUtil {
         } else if (temporal instanceof LocalTime) {
             return format(temporal, DateUtil.TIME_PATTERN);
         } else if (temporal instanceof ZonedDateTime) {
-            return ((ZonedDateTime) temporal)
-                    .format(DateTimeFormatter.ofPattern(DateUtil.LONG_DATE_PATTERN));
+            return ((ZonedDateTime) temporal).format(DateTimeFormatter.ofPattern(DateUtil.LONG_DATE_PATTERN));
         }
         return temporal.toString();
     }
@@ -182,18 +189,17 @@ public class TemporalUtil {
      * @param nanoOfSecond 纳秒
      * @return 新时间点
      */
-    public static Instant setTime(Instant instant, int hour, int minute, int second,
-            int nanoOfSecond) {
+    public static Instant setTime(Instant instant, int hour, int minute, int second, int nanoOfSecond) {
         LocalDateTime dateTime = toLocalDateTime(instant);
-        dateTime = LocalDateTime.of(dateTime.getYear(), dateTime.getMonthValue(),
-                dateTime.getDayOfMonth(), hour, minute, second, nanoOfSecond);
+        dateTime = LocalDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(), hour,
+                minute, second, nanoOfSecond);
         return toInstant(dateTime);
     }
 
     public static Instant parseInstant(String s) {
         if (StringUtils.isNotBlank(s)) {
             try {
-                return Instant.parse(s);
+                return formatter(DateUtil.LONG_DATE_PATTERN).parse(s, Instant::from);
             } catch (DateTimeParseException e) {
                 return null;
             }
@@ -204,7 +210,7 @@ public class TemporalUtil {
     public static LocalDate parseDate(String s) {
         if (StringUtils.isNotBlank(s)) {
             try {
-                return LocalDate.parse(s);
+                return formatter(DateUtil.SHORT_DATE_PATTERN).parse(s, LocalDate::from);
             } catch (DateTimeParseException e) {
                 return null;
             }
@@ -215,7 +221,7 @@ public class TemporalUtil {
     public static LocalTime parseTime(String s) {
         if (StringUtils.isNotBlank(s)) {
             try {
-                return LocalTime.parse(s);
+                return formatter(DateUtil.TIME_PATTERN).parse(s, LocalTime::from);
             } catch (DateTimeParseException e) {
                 return null;
             }
@@ -226,10 +232,24 @@ public class TemporalUtil {
     public static LocalDateTime parseDateTime(String s) {
         if (StringUtils.isNotBlank(s)) {
             try {
-                return LocalDateTime.parse(s);
+                return formatter(DateUtil.LONG_DATE_PATTERN).parse(s, LocalDateTime::from);
             } catch (DateTimeParseException e) {
                 return null;
             }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Temporal> T parse(String s, Class<T> type) {
+        if (type == Instant.class) {
+            return (T) parseInstant(s);
+        } else if (type == LocalDate.class) {
+            return (T) parseDate(s);
+        } else if (type == LocalDateTime.class) {
+            return (T) parseDateTime(s);
+        } else if (type == LocalTime.class) {
+            return (T) parseTime(s);
         }
         return null;
     }
