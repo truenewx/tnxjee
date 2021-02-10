@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
@@ -199,6 +194,10 @@ public class TemporalUtil {
     public static Instant parseInstant(String s) {
         if (StringUtils.isNotBlank(s)) {
             try {
+                Long millis = MathUtil.parseLongObject(s, null);
+                if (millis != null) { // 纯数字的视为毫秒数进行解析
+                    return Instant.ofEpochMilli(millis);
+                }
                 return formatter(DateUtil.LONG_DATE_PATTERN).parse(s, Instant::from);
             } catch (DateTimeParseException e) {
                 return null;
