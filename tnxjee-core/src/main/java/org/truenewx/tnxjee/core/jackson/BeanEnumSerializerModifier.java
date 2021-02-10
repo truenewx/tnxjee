@@ -64,7 +64,7 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
                                 String caption = BeanEnumSerializerModifier.this.enumDictResolver
                                         .getText(value, prov.getLocale());
                                 if (caption != null) {
-                                    gen.writeStringField(getEnumCaptionPropertyName(propertyName), caption);
+                                    gen.writeStringField(getCaptionPropertyName(propertyName), caption);
                                 }
                             }
                         }
@@ -76,8 +76,8 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
         return beanProperties;
     }
 
-    protected String getEnumCaptionPropertyName(String enumPropertyName) {
-        return enumPropertyName + Strings.UNDERLINE + "caption";
+    protected String getCaptionPropertyName(String propertyName) {
+        return propertyName + Strings.UNDERLINE + "caption";
     }
 
 }

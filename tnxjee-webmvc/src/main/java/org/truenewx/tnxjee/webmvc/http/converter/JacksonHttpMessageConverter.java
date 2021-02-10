@@ -27,9 +27,11 @@ import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JacksonUtil;
 import org.truenewx.tnxjee.core.util.PropertyMeta;
+import org.truenewx.tnxjee.service.spec.region.RegionSource;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultWithClassField;
+import org.truenewx.tnxjee.webmvc.jackson.BeanRegionSerializerModifier;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
@@ -47,6 +49,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
     private EnumDictResolver enumDictResolver;
+    @Autowired(required = false)
+    private RegionSource regionSource;
 
     private final Map<String, ObjectMapper> writers = new HashMap<>();
     private final ObjectMapper defaultInternalWriter = JacksonUtil.copyDefaultMapper();
@@ -59,8 +63,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 默认外部输出器需要附加枚举常量显示名称输出能力
+        // 默认外部输出器需要附加名称输出能力
         withSerializerModifier(this.defaultExternalWriter, new BeanEnumSerializerModifier(this.enumDictResolver));
+        withSerializerModifier(this.defaultExternalWriter, new BeanRegionSerializerModifier(this.regionSource));
     }
 
     private void withSerializerModifier(ObjectMapper mapper, BeanSerializerModifier modifier) {
@@ -130,7 +135,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @SuppressWarnings("deprecation")
     private ObjectMapper buildWriter(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
         TypedPropertyFilter filter = new TypedPropertyFilter();
-        BeanEnumSerializerModifier modifier = new BeanEnumSerializerModifier(this.enumDictResolver);
+        BeanEnumSerializerModifier enumModifier = new BeanEnumSerializerModifier(this.enumDictResolver);
         for (ResultFilter resultFilter : resultFilters) {
             Class<?> filteredType = resultFilter.type();
             if (filteredType == Object.class) {
@@ -138,7 +143,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
             filter.addIncludedProperties(filteredType, resultFilter.included());
             filter.addExcludedProperties(filteredType, resultFilter.excluded());
-            modifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
+            enumModifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
         }
         // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
         Class<?>[] filteredTypes = filter.getTypes();
@@ -148,8 +153,9 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         ObjectMapper mapper = JacksonUtil.buildMapper(filter, filteredTypes);
         if (internal) { // 内部输出器需要附加类型属性输出能力
             JacksonUtil.withNonConcreteClassProperty(mapper);
-        } else { // 外部输出器需要附加枚举常量显示名称输出能力
-            withSerializerModifier(mapper, modifier);
+        } else { // 外部输出器需要附加显示名称输出能力
+            withSerializerModifier(mapper, enumModifier);
+            withSerializerModifier(mapper, new BeanRegionSerializerModifier(this.regionSource));
         }
         return mapper;
     }
