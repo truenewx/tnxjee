@@ -75,7 +75,7 @@ public class TemporalUtil {
         return formatter(pattern).format(temporal);
     }
 
-    private static DateTimeFormatter formatter(String pattern) {
+    public static DateTimeFormatter formatter(String pattern) {
         return DateTimeFormatter.ofPattern(pattern).withZone(TemporalUtil.DEFAULT_ZONE_ID);
     }
 

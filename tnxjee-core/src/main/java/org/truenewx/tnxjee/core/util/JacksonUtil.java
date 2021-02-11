@@ -1,5 +1,9 @@
 package org.truenewx.tnxjee.core.util;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -15,6 +19,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 
 /**
  * Jackson序列化工具类
@@ -28,6 +39,23 @@ public class JacksonUtil {
     static final ObjectMapper CLASSED_MAPPER;
 
     static {
+        // 初始化JavaTimeModule
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        //处理LocalDateTime
+        DateTimeFormatter dateTimeFormatter = TemporalUtil.formatter(DateUtil.LONG_DATE_PATTERN);
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+        //处理LocalDate
+        DateTimeFormatter dateFormatter = TemporalUtil.formatter(DateUtil.SHORT_DATE_PATTERN);
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+        //处理LocalTime
+        DateTimeFormatter timeFormatter = TemporalUtil.formatter(DateUtil.TIME_PATTERN);
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        //注册时间模块
+        DEFAULT_MAPPER.registerModule(javaTimeModule);
+
         DEFAULT_MAPPER.findAndRegisterModules();
         DEFAULT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL); // 序列化时不输出null
         DEFAULT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS); // 允许序列化空对象
