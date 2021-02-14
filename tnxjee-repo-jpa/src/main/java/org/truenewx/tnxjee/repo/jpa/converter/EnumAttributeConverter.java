@@ -4,6 +4,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.spec.enums.support.EnumValueHelper;
 
@@ -26,6 +27,9 @@ public abstract class EnumAttributeConverter<T extends Enum<T>> implements Attri
 
     @Override
     public String convertToDatabaseColumn(T attribute) {
+        if (attribute == null) {
+            return null;
+        }
         String value = EnumValueHelper.getValue(attribute);
         if (value == null) {
             value = attribute.name();
@@ -35,6 +39,9 @@ public abstract class EnumAttributeConverter<T extends Enum<T>> implements Attri
 
     @Override
     public T convertToEntityAttribute(String dbData) {
+        if (StringUtils.isBlank(dbData)) {
+            return null;
+        }
         T attribute = EnumValueHelper.valueOf(getEnumType(), dbData);
         if (attribute == null) {
             attribute = EnumUtils.getEnum(getEnumType(), dbData);
