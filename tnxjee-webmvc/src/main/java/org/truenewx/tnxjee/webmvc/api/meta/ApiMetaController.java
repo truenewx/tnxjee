@@ -1,14 +1,12 @@
 package org.truenewx.tnxjee.webmvc.api.meta;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +32,9 @@ import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 @RestController
 @RequestMapping("/api/meta")
 public class ApiMetaController {
+
+    @Autowired
+    private ApplicationContext context;
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
@@ -68,7 +69,6 @@ public class ApiMetaController {
     }
 
     @GetMapping("/method")
-    @SuppressWarnings("unchecked")
     @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
     @ResultFilter(type = ApiModelPropertyMeta.class, pureEnum = "type")
     public Map<String, ApiModelPropertyMeta> method(@RequestParam("url") String url, HttpServletRequest request) {
@@ -76,15 +76,34 @@ public class ApiMetaController {
         if (handlerMethod != null) {
             for (MethodParameter methodParameter : handlerMethod.getMethodParameters()) {
                 if (methodParameter.getParameterAnnotation(RequestBody.class) != null) {
-                    Class<?> parameterType = methodParameter.getParameterType();
-                    if (Model.class.isAssignableFrom(parameterType)) {
-                        Class<? extends Model> modelClass = (Class<? extends Model>) parameterType;
-                        Map<String, ApiModelPropertyMeta> metas = this.metaResolver
-                                .resolve(modelClass, request.getLocale());
-                        return metas; // 为了便于调试，抽取变量
-                    }
+                    return getMetas(methodParameter.getParameterType(), request.getLocale());
                 }
             }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, ApiModelPropertyMeta> getMetas(Class<?> clazz, Locale locale) {
+        if (Model.class.isAssignableFrom(clazz)) {
+            Class<? extends Model> modelClass = (Class<? extends Model>) clazz;
+            Map<String, ApiModelPropertyMeta> metas = this.metaResolver.resolve(modelClass, locale);
+            return metas; // 为了便于调试，抽取变量
+        }
+        return null;
+    }
+
+    @GetMapping("/model")
+    @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
+    @ResultFilter(type = ApiModelPropertyMeta.class, pureEnum = "type")
+    public Map<String, ApiModelPropertyMeta> model(@RequestParam("type") String type, HttpServletRequest request) {
+        try {
+            ClassLoader classLoader = this.context.getClassLoader();
+            if (classLoader != null) {
+                Class<?> clazz = classLoader.loadClass(type);
+                return getMetas(clazz, request.getLocale());
+            }
+        } catch (ClassNotFoundException ignored) {
         }
         return null;
     }
