@@ -240,7 +240,7 @@ public class TemporalUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Temporal> T parse(String s, Class<T> type) {
+    public static <T extends Temporal> T parse(Class<T> type, String s) {
         if (type == Instant.class) {
             return (T) parseInstant(s);
         } else if (type == LocalDate.class) {
@@ -249,6 +249,22 @@ public class TemporalUtil {
             return (T) parseDateTime(s);
         } else if (type == LocalTime.class) {
             return (T) parseTime(s);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Temporal> T parse(Class<T> type, String s, String pattern) {
+        if (StringUtils.isNotBlank(s)) {
+            if (type == Instant.class) {
+                return (T) formatter(pattern).parse(s, Instant::from);
+            } else if (type == LocalDate.class) {
+                return (T) formatter(pattern).parse(s, LocalDate::from);
+            } else if (type == LocalDateTime.class) {
+                return (T) formatter(pattern).parse(s, LocalDateTime::from);
+            } else if (type == LocalTime.class) {
+                return (T) formatter(pattern).parse(s, LocalTime::from);
+            }
         }
         return null;
     }

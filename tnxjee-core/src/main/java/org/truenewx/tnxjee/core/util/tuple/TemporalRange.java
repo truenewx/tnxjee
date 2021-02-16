@@ -60,7 +60,7 @@ public class TemporalRange<T extends Temporal> implements Binate<T, T> {
             begin = null;
             inclusiveMin = false; // 没有下限，则一定不包含最小值
         } else {
-            begin = TemporalUtil.parse(beginString, type);
+            begin = TemporalUtil.parse(type, beginString);
         }
 
         T end;
@@ -68,7 +68,7 @@ public class TemporalRange<T extends Temporal> implements Binate<T, T> {
         if (endString.length() == 0) {
             end = null;
         } else {
-            end = TemporalUtil.parse(endString, type);
+            end = TemporalUtil.parse(type, endString);
         }
 
         boolean inclusiveMax;
