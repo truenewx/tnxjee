@@ -162,6 +162,24 @@ public class TemporalUtil {
         return (int) (laterDate.toEpochDay() - earlierDate.toEpochDay());
     }
 
+    /**
+     * 计算指定两个日期之间的相差月数。如果earlierDate晚于laterDate，则返回负值
+     *
+     * @param earlierDate 较早日期
+     * @param laterDate   较晚日期
+     * @return 相差月数
+     */
+    public static int monthsBetween(LocalDate earlierDate, LocalDate laterDate) {
+        int dYear = laterDate.getYear() - earlierDate.getYear();
+        int dMonth = laterDate.getMonthValue() - earlierDate.getMonthValue();
+        int dDay = laterDate.getDayOfMonth() - earlierDate.getDayOfMonth();
+        int months = dYear * 12 + dMonth;
+        if (dDay < 0) {
+            months--;
+        }
+        return months;
+    }
+
     public static Instant addYears(Instant instant, int years) {
         return toInstant(toLocalDateTime(instant).plusYears(years));
     }
