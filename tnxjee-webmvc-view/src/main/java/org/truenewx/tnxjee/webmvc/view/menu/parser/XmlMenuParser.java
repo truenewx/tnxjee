@@ -16,7 +16,9 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.core.util.algorithm.AlgoParseString;
-import org.truenewx.tnxjee.webmvc.view.menu.model.*;
+import org.truenewx.tnxjee.webmvc.view.menu.model.Menu;
+import org.truenewx.tnxjee.webmvc.view.menu.model.MenuElement;
+import org.truenewx.tnxjee.webmvc.view.menu.model.MenuItem;
 
 /**
  * XML配置文件的菜单解析器
@@ -80,49 +82,25 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
         menuElement.setProfiles(getProfiles(domElement));
     }
 
-    private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions)
-            throws Exception {
+    private List<MenuItem> getItems(Element element, Map<String, Object> parentOptions) throws Exception {
         List<MenuItem> items = new ArrayList<>();
-        for (Element subElement : element.elements()) {
-            MenuItem item = getItem(subElement, parentOptions);
-            if (item != null) {
-                items.add(item);
-            }
+        for (Element itemElement : element.elements("item")) {
+            items.add(getItem(itemElement, parentOptions));
         }
         return items;
     }
 
     private MenuItem getItem(Element element, Map<String, Object> parentOptions) throws Exception {
-        MenuItem item = null;
-        String elementName = element.getName();
-        if ("node".equals(elementName)) {
-            item = getNode(element, parentOptions);
-        } else if ("link".equals(elementName)) {
-            item = getLink(element, parentOptions);
-        }
+        MenuItem item = new MenuItem();
+        parseElementCommon(item, element, parentOptions);
+        item.setPath(element.attributeValue("path"));
+        item.setRank(element.attributeValue("rank"));
+        item.setPermission(getPermission(element));
+        item.setIcon(element.attributeValue("icon"));
+        item.setTarget(element.attributeValue("type"));
+        item.setTarget(element.attributeValue("target"));
+        item.setSubs(getItems(element, item.getOptions()));
         return item;
-    }
-
-    private MenuNode getNode(Element element, Map<String, Object> parentOptions) throws Exception {
-        MenuNode node = new MenuNode();
-        parseElementCommon(node, element, parentOptions);
-        node.setIcon(element.attributeValue("icon"));
-        node.setSubs(getItems(element, node.getOptions()));
-        return node;
-    }
-
-    private MenuLink getLink(Element element, Map<String, Object> parentOptions) throws Exception {
-        MenuLink link = new MenuLink();
-        parseElementCommon(link, element, parentOptions);
-        link.setIcon(element.attributeValue("icon"));
-        link.setPath(element.attributeValue("path"));
-        link.setTarget(element.attributeValue("target"));
-        link.setRank(element.attributeValue("rank"));
-        link.setPermission(getPermission(element));
-        for (Element operationElement : element.elements("operation")) {
-            link.getOperations().add(getOperation(operationElement, link.getOptions()));
-        }
-        return link;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -140,15 +118,6 @@ public class XmlMenuParser implements MenuParser, ResourceLoaderAware {
             }
         }
         return permission;
-    }
-
-    private MenuOperation getOperation(Element element, Map<String, Object> parentOptions)
-            throws Exception {
-        MenuOperation operation = new MenuOperation();
-        parseElementCommon(operation, element, parentOptions);
-        operation.setRank(element.attributeValue("rank"));
-        operation.setPermission(getPermission(element));
-        return operation;
     }
 
     private Map<Locale, String> getCaptions(Element element) {

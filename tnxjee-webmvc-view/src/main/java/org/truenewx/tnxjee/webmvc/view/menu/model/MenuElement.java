@@ -9,14 +9,14 @@ import org.truenewx.tnxjee.core.util.CollectionUtil;
 /**
  * 菜单元素
  */
-public abstract class MenuElement implements Cloneable, Serializable {
+public abstract class MenuElement implements Serializable {
 
     private static final long serialVersionUID = -3827849614788066392L;
 
     /**
-     * 选项映射集
+     * 可见环境集合
      */
-    private Map<String, Object> options = new HashMap<>();
+    private Set<String> profiles = new HashSet<>();
     /**
      * 显示名称映射集
      */
@@ -26,16 +26,16 @@ public abstract class MenuElement implements Cloneable, Serializable {
      */
     private Map<Locale, String> descs = new HashMap<>();
     /**
-     * 可见环境集合
+     * 选项映射集
      */
-    private Set<String> profiles = new HashSet<>();
+    private Map<String, Object> options = new HashMap<>();
 
-    public Map<String, Object> getOptions() {
-        return this.options;
+    public Set<String> getProfiles() {
+        return this.profiles;
     }
 
-    public void setOptions(Map<String, Object> options) {
-        CollectionUtil.reset(options, this.options);
+    public void setProfiles(Set<String> profiles) {
+        CollectionUtil.reset(profiles, this.profiles);
     }
 
     public Map<Locale, String> getCaptions() {
@@ -54,14 +54,15 @@ public abstract class MenuElement implements Cloneable, Serializable {
         CollectionUtil.reset(descs, this.descs);
     }
 
-
-    public Set<String> getProfiles() {
-        return this.profiles;
+    public Map<String, Object> getOptions() {
+        return this.options;
     }
 
-    public void setProfiles(Set<String> profiles) {
-        CollectionUtil.reset(profiles, this.profiles);
+    public void setOptions(Map<String, Object> options) {
+        CollectionUtil.reset(options, this.options);
     }
+
+    //////
 
     public void setCaption(String caption) {
         this.captions.put(Locale.getDefault(), caption);
@@ -79,12 +80,12 @@ public abstract class MenuElement implements Cloneable, Serializable {
         return this.descs.get(Locale.getDefault());
     }
 
-
-    protected void clone(MenuElement source, MenuElement target) {
-        CollectionUtil.reset(source.options, target.options);
-        CollectionUtil.reset(source.captions, target.captions);
-        CollectionUtil.reset(source.descs, target.descs);
-        CollectionUtil.reset(source.profiles, target.profiles);
+    protected <T extends MenuElement> T cloneTo(T target) {
+        CollectionUtil.reset(this.profiles, target.getProfiles());
+        CollectionUtil.reset(this.captions, target.getCaptions());
+        CollectionUtil.reset(this.descs, target.getDescs());
+        CollectionUtil.reset(this.options, target.getOptions());
+        return target;
     }
 
     public boolean matchesProfile(String profile) {

@@ -31,19 +31,15 @@ public class Menu extends MenuElement {
         CollectionUtil.reset(items, this.items);
     }
 
-    public Menu cloneWithoutItems() {
-        Menu menu = new Menu(this.userType);
-        clone(this, menu);
-        return menu;
-    }
-
-    @Override
-    public Menu clone() {
-        Menu menu = cloneWithoutItems();
-        this.items.forEach(item -> {
-            menu.items.add(item.clone());
-        });
-        return menu;
+    public Menu clone(boolean withItems) {
+        Menu target = cloneTo(new Menu(this.userType));
+        if (withItems) {
+            target.items.clear();
+            this.items.forEach(item -> {
+                target.items.add(item.clone(true));
+            });
+        }
+        return target;
     }
 
 }

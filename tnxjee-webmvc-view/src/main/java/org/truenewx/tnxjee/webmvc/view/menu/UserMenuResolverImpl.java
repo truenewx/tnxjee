@@ -17,7 +17,8 @@ import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.security.util.SecurityUtil;
 import org.truenewx.tnxjee.webmvc.security.web.access.ConfigAuthorityResolver;
 import org.truenewx.tnxjee.webmvc.view.menu.config.MenuProperties;
-import org.truenewx.tnxjee.webmvc.view.menu.model.*;
+import org.truenewx.tnxjee.webmvc.view.menu.model.Menu;
+import org.truenewx.tnxjee.webmvc.view.menu.model.MenuItem;
 
 /**
  * 用户菜单解决器实现
@@ -74,29 +75,23 @@ public class UserMenuResolverImpl implements UserMenuResolver {
             List<Integer> indexes) {
         for (int i = 0; i < items.size(); i++) {
             MenuItem item = items.get(i);
-            if (item instanceof MenuLink) {
-                MenuLink link = (MenuLink) item;
-                if (link.getPath().equals(path)) {
+
+            if (StringUtils.isNotBlank(item.getPath())) { // 菜单项配有路径，则比较路径
+                if (item.getPath().equals(path)) {
                     indexes.add(i);
                     return; // 找到匹配的直接返回
                 }
-                // 不匹配则尝试比较所有操作
-                for (MenuOperation operation : link.getOperations()) {
-                    if (StringUtil.equalsIgnoreBlank(configAuthority.getRank(), operation.getRank())
-                            && StringUtil
-                            .equalsIgnoreBlank(configAuthority.getPermission(), operation.getPermission())) {
-                        // 菜单链接下有操作的权限与地址所需权限匹配，则视为菜单链接匹配
-                        indexes.add(i);
-                        return; // 找到匹配的直接返回
-                    }
+            } else { // 没有配路径，则尝试比较权限等级和许可
+                if (StringUtil.equalsIgnoreBlank(configAuthority.getRank(), item.getRank()) && StringUtil
+                        .equalsIgnoreBlank(configAuthority.getPermission(), item.getPermission())) {
+                    indexes.add(i);
+                    return; // 找到匹配的直接返回
                 }
-            } else if (item instanceof MenuNode) {
-                MenuNode node = (MenuNode) item;
-                List<MenuItem> subs = node.getSubs();
-                applyIndex(subs, configAuthority, path, indexes);
-                if (indexes.size() > 0) {
-                    indexes.add(0, i);
-                }
+            }
+            // 不匹配则尝试比较下级菜单项
+            applyIndex(item.getSubs(), configAuthority, path, indexes);
+            if (indexes.size() > 0) { // 下级菜单项匹配，则当前菜单项视为匹配，加入当前索引
+                indexes.add(0, i);
             }
         }
     }
