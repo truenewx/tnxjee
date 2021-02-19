@@ -40,6 +40,10 @@ public class QueryResult<T> implements Iterable<T> {
         return new QueryResult<>(records, paged);
     }
 
+    public static <T> QueryResult<T> empty(Pagination pagination) {
+        return new QueryResult<>(null, Paged.of(pagination, 0));
+    }
+
     public List<T> getRecords() {
         return this.records;
     }
