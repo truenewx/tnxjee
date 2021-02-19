@@ -1107,4 +1107,29 @@ public class StringUtil {
         return defaultResult;
     }
 
+    /**
+     * 在指定字符串的每个字符之间都插入指定字符串
+     *
+     * @param s           被插入的字符串
+     * @param insertChars 插入的字符串
+     * @param justified   字符串两端是否也都插入
+     */
+    public static String insertEach(String s, String insertChars, boolean justified) {
+        if (s == null) {
+            return null;
+        }
+        StringBuilder result = new StringBuilder();
+        if (justified) {
+            result.append(insertChars);
+        }
+        char[] chars = s.toCharArray();
+        for (char c : chars) {
+            result.append(c).append(insertChars);
+        }
+        if (!justified) {
+            result.delete(result.length() - insertChars.length(), result.length());
+        }
+        return result.toString();
+    }
+
 }
