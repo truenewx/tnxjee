@@ -29,6 +29,7 @@ import org.truenewx.tnxjee.core.spec.Name;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.IOUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.core.util.StringUtil;
 
 /**
  * 枚举字典工厂（解析器实现）
@@ -207,8 +208,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      * @param subtype  枚举子类型名
      * @return 枚举类型
      */
-    private EnumType readEnumType(SAXReader reader, Resource resource, String type,
-            String subtype) {
+    private EnumType readEnumType(SAXReader reader, Resource resource, String type, String subtype) {
         if (resource != null) {
             try {
                 Document doc = reader.read(resource.getInputStream());
@@ -216,7 +216,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
                 for (Element typeElement : typeElements) {
                     String typeName = typeElement.attributeValue("name");
                     String typeSubname = typeElement.attributeValue("subname");
-                    if (type.equals(typeName) && StringUtils.equals(subtype, typeSubname)) {
+                    if (type.equals(typeName) && StringUtil.equalsIgnoreBlank(subtype, typeSubname)) {
                         String typeCaption = typeElement.attributeValue("caption");
                         EnumType enumType = new EnumType(typeName, typeSubname, typeCaption);
                         addEnumItemsToEnumType(typeElement, enumType);

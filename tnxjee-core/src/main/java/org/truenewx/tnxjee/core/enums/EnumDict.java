@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.tuple.Binary;
 import org.truenewx.tnxjee.core.util.tuple.Binate;
 
@@ -11,7 +12,6 @@ import org.truenewx.tnxjee.core.util.tuple.Binate;
  * 枚举字典
  *
  * @author jianglei
- * 
  */
 public class EnumDict {
 
@@ -32,8 +32,11 @@ public class EnumDict {
 
     public void addType(EnumType type) {
         if (type != null) {
-            Binate<String, String> key = new Binary<>(type.getName(),
-                    type.getSubname());
+            String subname = type.getSubname();
+            if (StringUtils.isBlank(subname)) {
+                subname = null;
+            }
+            Binate<String, String> key = new Binary<>(type.getName(), subname);
             this.types.put(key, type);
         }
     }
@@ -43,6 +46,9 @@ public class EnumDict {
     }
 
     public EnumType getType(String name, String subname) {
+        if (StringUtils.isBlank(subname)) {
+            subname = null;
+        }
         Binate<String, String> key = new Binary<>(name, subname);
         return this.types.get(key);
     }
