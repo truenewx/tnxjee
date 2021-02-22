@@ -33,7 +33,8 @@ public class BeanRegionSerializerModifier extends BeanSerializerModifier {
         if (this.regionSource != null) {
             for (int i = 0; i < beanProperties.size(); i++) {
                 BeanPropertyWriter writer = beanProperties.get(i);
-                if (writer.getType().getRawClass() == String.class && writer.getAnnotation(RegionCode.class) != null) {
+                RegionCode regionCodeAnnotation = writer.getAnnotation(RegionCode.class);
+                if (writer.getType().getRawClass() == String.class && regionCodeAnnotation != null) {
                     beanProperties.set(i, new BeanPropertyWriter(writer) {
 
                         private static final long serialVersionUID = 1410150784339432332L;
@@ -51,6 +52,17 @@ public class BeanRegionSerializerModifier extends BeanSerializerModifier {
                                 if (region != null) {
                                     String caption = region.getCaption();
                                     if (caption != null) {
+                                        StringBuilder sb = new StringBuilder(caption);
+                                        Region parentRegion = region.getParent();
+                                        while (parentRegion != null && parentRegion.getLevel() >= regionCodeAnnotation
+                                                .captionLevel()) {
+                                            String parentCaption = parentRegion.getCaption();
+                                            if (parentCaption != null) {
+                                                sb.insert(0, parentCaption);
+                                            }
+                                            parentRegion = parentRegion.getParent();
+                                        }
+                                        caption = sb.toString();
                                         gen.writeStringField(getCaptionPropertyName(propertyName), caption);
                                     }
                                 }
