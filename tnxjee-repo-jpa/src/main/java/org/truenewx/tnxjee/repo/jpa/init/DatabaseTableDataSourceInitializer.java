@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.config.AppConstants;
 
@@ -17,8 +18,8 @@ public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializ
     private String tableName;
     private String keyFiledName;
     private String valueFieldName;
-    @Value(AppConstants.EL_SPRING_APP_NAME)
-    private String appName;
+    @Autowired
+    private Environment environment;
 
     public DatabaseTableDataSourceInitializer(Resource root, String tableName, String keyFiledName,
             String valueFieldName) {
@@ -52,7 +53,8 @@ public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializ
     }
 
     private String getKey() {
-        return this.appName + ".sql_last_version";
+        String appName = this.environment.getProperty(AppConstants.PROPERTY_SPRING_APP_NAME);
+        return appName + ".sql_last_version";
     }
 
     @Override
