@@ -31,8 +31,10 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.repo.jpa.hibernate.HibernateJpaPersistenceProvider;
 import org.truenewx.tnxjee.repo.jpa.hibernate.MetadataProvider;
+import org.truenewx.tnxjee.repo.jpa.init.SmartDataSourceInitializer;
 import org.truenewx.tnxjee.repo.jpa.support.JpaAccessTemplate;
 
 /**
@@ -84,6 +86,12 @@ public class JpaDataConfiguration extends JpaBaseConfiguration {
             });
             initializer.setDatabasePopulator(populator);
             initializer.afterPropertiesSet();
+        }
+        // 先执行静态配置的sql脚本，再执行智能判断的sql脚本
+        SmartDataSourceInitializer smartDataSourceInitializer = SpringUtil
+                .getFirstBeanByClass(this.context, SmartDataSourceInitializer.class);
+        if (smartDataSourceInitializer != null && !smartDataSourceInitializer.isDisabled()) {
+            smartDataSourceInitializer.execute(getDataSource());
         }
     }
 
