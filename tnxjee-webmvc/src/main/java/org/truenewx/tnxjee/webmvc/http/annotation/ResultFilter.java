@@ -21,9 +21,8 @@ public @interface ResultFilter {
     String[] included() default {};
 
     /**
-     * @return 排除的属性名称集，为空则不限定
+     * @return 排除的属性名称集，为空则不限定。后续新增属性不会被排除，务必谨慎使用
      */
-    @Deprecated
     String[] excluded() default {};
 
     /**
