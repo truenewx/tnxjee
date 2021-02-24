@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.config.AppConstants;
 
 /**
@@ -15,18 +14,14 @@ import org.truenewx.tnxjee.core.config.AppConstants;
  */
 public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializer {
 
-    private String tableName;
-    private String keyFiledName;
-    private String valueFieldName;
+    private String querySql;
+    private String updateSql;
     @Autowired
     private Environment environment;
 
-    public DatabaseTableDataSourceInitializer(Resource root, String tableName, String keyFiledName,
-            String valueFieldName) {
-        super(root);
-        this.tableName = tableName;
-        this.keyFiledName = keyFiledName;
-        this.valueFieldName = valueFieldName;
+    public DatabaseTableDataSourceInitializer(String tableName, String keyFiledName, String valueFieldName) {
+        this.querySql = "select " + valueFieldName + " from " + tableName + " where " + keyFiledName + "=?";
+        this.updateSql = "update " + tableName + " set " + valueFieldName + "=? where " + keyFiledName + "=?";
     }
 
     @Override
@@ -40,8 +35,7 @@ public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializ
 
     private String getLastVersion(Connection connection) throws SQLException {
         String lastVersion = null;
-        String sql = "select " + this.valueFieldName + " from " + this.tableName + " where " + this.keyFiledName + "=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = connection.prepareStatement(this.querySql);
         statement.setString(1, getKey());
         ResultSet rs = statement.executeQuery();
         if (rs.next()) {
@@ -59,8 +53,7 @@ public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializ
 
     @Override
     protected void updateVersion(Connection connection, String version) throws SQLException {
-        String sql = "update " + this.tableName + " set " + this.valueFieldName + "=? where " + this.keyFiledName + "=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = connection.prepareStatement(this.updateSql);
         statement.setString(1, version);
         statement.setString(2, getKey());
         statement.executeUpdate();
