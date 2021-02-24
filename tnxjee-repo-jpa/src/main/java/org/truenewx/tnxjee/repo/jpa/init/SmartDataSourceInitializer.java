@@ -2,7 +2,12 @@ package org.truenewx.tnxjee.repo.jpa.init;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
@@ -60,6 +65,8 @@ public abstract class SmartDataSourceInitializer {
                     updateVersion(connection, lastVersion);
                     this.logger.info("======== The last executed script version is {}", lastVersion);
                 }
+            } else {
+                this.logger.info("======== No scripts need to be executed.");
             }
         } catch (Exception e) {
             LogUtil.error(getClass(), e);
@@ -79,7 +86,10 @@ public abstract class SmartDataSourceInitializer {
                 if (resource.isReadable()) {
                     String path = resource.getURI().toString();
                     String relativePath = path.substring(rootPathLength);
-                    String version = relativePath.substring(1, relativePath.lastIndexOf(Strings.SLASH));
+                    if (relativePath.startsWith(Strings.SLASH)) {
+                        relativePath = relativePath.substring(1);
+                    }
+                    String version = relativePath.substring(0, relativePath.indexOf(Strings.SLASH));
                     if (executable(connection, version)) {
                         List<Resource> versionResources = mapping.computeIfAbsent(version, k -> new ArrayList<>());
                         String filename = resource.getFilename();
