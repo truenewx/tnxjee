@@ -2,12 +2,7 @@ package org.truenewx.tnxjee.repo.jpa.init;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.sql.DataSource;
 
@@ -53,14 +48,14 @@ public abstract class SmartDataSourceInitializer {
             Map<String, List<Resource>> mapping = getVersionResourcesMapping(connection);
             if (mapping.size() > 0) {
                 String lastVersion = null;
+                this.logger.info("======== Begin execute sql scripts:");
                 for (Map.Entry<String, List<Resource>> entry : mapping.entrySet()) {
                     Resource[] resources = entry.getValue().toArray(new Resource[0]);
                     DatabasePopulator databasePopulator = new ResourceDatabasePopulator(resources);
-                    this.logger.info("======== Begin execute sql scripts:");
                     databasePopulator.populate(connection);
-                    this.logger.info("======== The above scripts are executed.");
                     lastVersion = entry.getKey();
                 }
+                this.logger.info("======== The above scripts are executed.");
                 if (lastVersion != null) {
                     updateVersion(connection, lastVersion);
                     this.logger.info("======== The last executed script version is {}", lastVersion);
