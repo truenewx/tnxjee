@@ -1,18 +1,11 @@
 package org.truenewx.tnxjee.core.enums;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 枚举项
  *
  * @author jianglei
- * 
  */
 public class EnumItem implements Comparable<EnumItem> {
 
@@ -74,13 +67,8 @@ public class EnumItem implements Comparable<EnumItem> {
         addChildren(children);
     }
 
-    /**
-     * 获取子项集的值
-     *
-     * @return
-     */
     public Iterable<EnumItem> getChildren() {
-        return this.children.values();
+        return this.children.isEmpty() ? null : this.children.values();
     }
 
     /**
