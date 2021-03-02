@@ -20,6 +20,7 @@ import org.truenewx.tnxjee.core.enums.EnumItem;
 import org.truenewx.tnxjee.core.enums.EnumType;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.Model;
+import org.truenewx.tnxjee.model.spec.enums.EnumGrouped;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiContext;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiMetaProperties;
 import org.truenewx.tnxjee.webmvc.api.meta.model.ApiModelPropertyMeta;
@@ -109,12 +110,37 @@ public class ApiMetaController {
     }
 
     @GetMapping("/enums")
-    @ResultFilter(type = EnumItem.class, included = { "key", "caption" })
+    @ResultFilter(type = EnumItem.class, included = { "key", "caption", "children" })
     public Collection<EnumItem> enumItems(@RequestParam("type") String type,
-            @RequestParam(value = "subtype", required = false) String subtype, HttpServletRequest request) {
-        EnumType enumType = this.enumDictResolver.getEnumType(type, subtype, request.getLocale());
+            @RequestParam(value = "subtype", required = false) String subtype,
+            @RequestParam(value = "grouped", defaultValue = "false") boolean grouped, HttpServletRequest request) {
+        Locale locale = request.getLocale();
+        EnumType enumType = this.enumDictResolver.getEnumType(type, subtype, locale);
         if (enumType != null) {
-            return enumType.getItems();
+            Collection<EnumItem> items = enumType.getItems();
+            if (grouped) { // 考虑分组
+                try {
+                    Class<?> clazz = Objects.requireNonNull(this.context.getClassLoader()).loadClass(type);
+                    if (clazz.isEnum() && EnumGrouped.class.isAssignableFrom(clazz)) {
+                        Map<Enum<?>, EnumItem> groupEnumItemMap = new TreeMap<>();
+                        for (EnumItem item : items) {
+                            EnumGrouped<?> enumConstant = (EnumGrouped<?>) Enum
+                                    .valueOf((Class<Enum>) clazz, item.getKey());
+                            Enum<?> groupEnum = enumConstant.group();
+                            EnumItem groupEnumItem = groupEnumItemMap.get(groupEnum);
+                            if (groupEnumItem == null) {
+                                groupEnumItem = this.enumDictResolver.getEnumItem(groupEnum, locale);
+                                groupEnumItemMap.put(groupEnum, groupEnumItem);
+                            }
+                            groupEnumItem.addChild(item);
+                        }
+                        return groupEnumItemMap.values();
+                    }
+                } catch (ClassNotFoundException ignored) {
+                    // 忽略
+                }
+            }
+            return items;
         }
         return Collections.emptyList();
     }
