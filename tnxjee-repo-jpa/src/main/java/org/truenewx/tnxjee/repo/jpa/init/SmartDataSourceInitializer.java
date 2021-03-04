@@ -44,29 +44,35 @@ public abstract class SmartDataSourceInitializer {
 
     public void execute(DataSource dataSource) {
         Connection connection = DataSourceUtils.getConnection(dataSource);
-        try {
-            Map<String, List<Resource>> mapping = getVersionResourcesMapping(connection);
-            if (mapping.size() > 0) {
-                String lastVersion = null;
-                this.logger.info("======== Begin execute sql scripts:");
-                for (Map.Entry<String, List<Resource>> entry : mapping.entrySet()) {
+        Map<String, List<Resource>> mapping = getVersionResourcesMapping(connection);
+        if (mapping.size() > 0) {
+            String lastVersion = null;
+            this.logger.info("======== Begin execute sql scripts:");
+            for (Map.Entry<String, List<Resource>> entry : mapping.entrySet()) {
+                try {
                     Resource[] resources = entry.getValue().toArray(new Resource[0]);
                     DatabasePopulator databasePopulator = new ResourceDatabasePopulator(resources);
                     databasePopulator.populate(connection);
                     lastVersion = entry.getKey();
+                } catch (Exception e) {
+                    LogUtil.error(getClass(), e);
+                    // 有一个版本的脚本出现问题，则后续版本的脚本不执行
+                    break;
                 }
-                this.logger.info("======== The above scripts are executed.");
+            }
+            this.logger.info("======== The above scripts are executed.");
+            try {
                 if (lastVersion != null) {
                     updateVersion(connection, lastVersion);
                     this.logger.info("======== The last executed script version is {}", lastVersion);
                 }
-            } else {
-                this.logger.info("======== No scripts need to be executed.");
+            } catch (Exception e) {
+                LogUtil.error(getClass(), e);
+            } finally {
+                DataSourceUtils.releaseConnection(connection, dataSource);
             }
-        } catch (Exception e) {
-            LogUtil.error(getClass(), e);
-        } finally {
-            DataSourceUtils.releaseConnection(connection, dataSource);
+        } else {
+            this.logger.info("======== No scripts need to be executed.");
         }
     }
 
