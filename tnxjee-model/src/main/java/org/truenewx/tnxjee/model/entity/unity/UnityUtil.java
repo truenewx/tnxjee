@@ -1,11 +1,7 @@
 package org.truenewx.tnxjee.model.entity.unity;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 单体工具类
@@ -125,6 +121,17 @@ public class UnityUtil {
             map.put(unity.getId(), unity);
         }
         return map;
+    }
+
+    public static <T extends Unity<K>, K extends Serializable> T getById(Collection<T> unities, K id) {
+        if (unities != null && id != null) {
+            for (T unity : unities) {
+                if (id.equals(unity.getId())) {
+                    return unity;
+                }
+            }
+        }
+        return null;
     }
 
 }
