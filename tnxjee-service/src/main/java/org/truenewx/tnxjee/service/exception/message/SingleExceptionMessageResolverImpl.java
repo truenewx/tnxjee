@@ -5,6 +5,8 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.FormatException;
@@ -21,6 +23,8 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
     @Autowired
     private MessageSource messageSource;
     @Autowired
+    private EnumDictResolver enumDictResolver;
+    @Autowired
     private PropertyCaptionResolver propertyCaptionResolver;
 
     @Override
@@ -30,7 +34,8 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
         }
         if (se instanceof BusinessException) {
             BusinessException be = (BusinessException) se;
-            return this.messageSource.getMessage(be.getCode(), be.getArgs(), be.getCode(), locale);
+            String[] args = getArgTexts(be.getArgs(), locale);
+            return this.messageSource.getMessage(be.getCode(), args, be.getCode(), locale);
         } else if (se instanceof FormatException) {
             FormatException fe = (FormatException) se;
             String propertyCaption = this.propertyCaptionResolver
@@ -43,6 +48,25 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
             return propertyCaption + message;
         }
         return null;
+    }
+
+    private String[] getArgTexts(Object[] args, Locale locale) {
+        if (args == null) {
+            return null;
+        }
+        String[] result = new String[args.length];
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            if (arg instanceof Enum<?>) {
+                result[i] = this.enumDictResolver.getText((Enum<?>) arg, locale);
+            } else if (arg != null) {
+                result[i] = arg.toString();
+            }
+            if (result[i] == null) {
+                result[i] = Strings.EMPTY;
+            }
+        }
+        return result;
     }
 
 }
