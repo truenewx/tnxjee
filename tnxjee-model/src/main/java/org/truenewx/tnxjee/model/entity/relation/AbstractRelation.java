@@ -3,8 +3,6 @@ package org.truenewx.tnxjee.model.entity.relation;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * 抽象的关系
  *
@@ -12,21 +10,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @param <R> 右标识类型
  * @author jianglei
  */
-public abstract class AbstractRelation<L extends Serializable, R extends Serializable>
-        implements Relation<L, R> {
+public abstract class AbstractRelation<L extends Serializable, R extends Serializable> implements Relation<L, R> {
 
-    @JsonIgnore
     public abstract <K extends RelationKey<L, R>> K getId();
 
     @Override
-    @JsonIgnore
     public L getLeftId() {
         RelationKey<L, R> id = getId();
         return id == null ? null : id.getLeft();
     }
 
     @Override
-    @JsonIgnore
     public R getRightId() {
         RelationKey<L, R> id = getId();
         return id == null ? null : id.getRight();
@@ -47,8 +41,8 @@ public abstract class AbstractRelation<L extends Serializable, R extends Seriali
         }
         @SuppressWarnings("unchecked")
         Relation<L, R> other = (Relation<L, R>) obj;
-        return Objects.deepEquals(getLeftId(), other.getLeftId())
-                && Objects.deepEquals(getRightId(), other.getRightId());
+        return Objects.equals(getLeftId(), other.getLeftId())
+                && Objects.equals(getRightId(), other.getRightId());
     }
 
 }
