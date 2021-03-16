@@ -13,7 +13,7 @@ import org.truenewx.tnxjee.model.annotation.RequestParamIgnore;
  *
  * @author jianglei
  */
-public abstract class Querying extends Pagination implements QueryModel, Paging {
+public class Querying extends Pagination implements QueryModel, Paging {
 
     private static final long serialVersionUID = -3979291396866569456L;
 
