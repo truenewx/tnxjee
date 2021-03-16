@@ -3,25 +3,30 @@ package org.truenewx.tnxjee.model.entity.relation;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 抽象的关系
  *
- * @author jianglei
  * @param <L> 左标识类型
  * @param <R> 右标识类型
+ * @author jianglei
  */
 public abstract class AbstractRelation<L extends Serializable, R extends Serializable>
         implements Relation<L, R> {
 
+    @JsonIgnore
     public abstract <K extends RelationKey<L, R>> K getId();
 
     @Override
+    @JsonIgnore
     public L getLeftId() {
         RelationKey<L, R> id = getId();
         return id == null ? null : id.getLeft();
     }
 
     @Override
+    @JsonIgnore
     public R getRightId() {
         RelationKey<L, R> id = getId();
         return id == null ? null : id.getRight();
