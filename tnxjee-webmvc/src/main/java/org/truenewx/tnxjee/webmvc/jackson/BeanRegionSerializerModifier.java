@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.util.BeanUtil;
+import org.truenewx.tnxjee.model.validation.constraint.RegionCode;
 import org.truenewx.tnxjee.service.spec.region.Region;
-import org.truenewx.tnxjee.service.spec.region.RegionCode;
 import org.truenewx.tnxjee.service.spec.region.RegionSource;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -55,7 +55,7 @@ public class BeanRegionSerializerModifier extends BeanSerializerModifier {
                                         StringBuilder sb = new StringBuilder(caption);
                                         Region parentRegion = region.getParent();
                                         while (parentRegion != null && parentRegion.getLevel() >= regionCodeAnnotation
-                                                .captionLevel()) {
+                                                .captionBeginLevel()) {
                                             String parentCaption = parentRegion.getCaption();
                                             if (parentCaption != null) {
                                                 sb.insert(0, parentCaption);

@@ -88,6 +88,8 @@ public class StringUtil {
 
     public static final String ID_CARD_NO_PATTERN = "(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)";
 
+    public static final String REGION_CODE_PATTERN = "^[A-Z]{2}[0-9]{6}$";
+
     public static final String CHINESE_PATTERN = "^[\\u4E00-\\u9FA5]+$";
 
     private static final PathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
