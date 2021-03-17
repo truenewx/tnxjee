@@ -537,8 +537,7 @@ public class ClassUtil {
      * @param propertyType 期望的属性类型，为空时忽略属性类型限制
      * @return 符合Bean规范的属性描述集合
      */
-    public static List<PropertyDescriptor> findBeanPropertyDescriptors(Class<?> clazz,
-            Class<?> propertyType) {
+    public static List<PropertyDescriptor> findPropertyDescriptors(Class<?> clazz, Class<?> propertyType) {
         List<PropertyDescriptor> list = new ArrayList<>();
         PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor pd : pds) {
@@ -549,6 +548,27 @@ public class ClassUtil {
             }
         }
         return list;
+    }
+
+    /**
+     * 在指定类型中遍历指定属性类型的属性描述
+     *
+     * @param clazz        类型
+     * @param propertyType 期望的属性类型，为空时忽略属性类型限制
+     * @param predicate    遍历断言，返回false则终止遍历
+     */
+    public static void loopPropertyDescriptors(Class<?> clazz, Class<?> propertyType,
+            Predicate<PropertyDescriptor> predicate) {
+        PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
+        for (PropertyDescriptor pd : pds) {
+            Class<?> pt = pd.getPropertyType();
+            // 带参数的get方法会导致属性类型为null的属性描述，应忽略
+            if (pt != null && (propertyType == null || propertyType.isAssignableFrom(pt))) {
+                if (!predicate.test(pd)) {
+                    return;
+                }
+            }
+        }
     }
 
     /**

@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.webmvc.jackson;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.service.spec.region.Region;
 import org.truenewx.tnxjee.service.spec.region.RegionCode;
 import org.truenewx.tnxjee.service.spec.region.RegionSource;
@@ -63,7 +63,8 @@ public class BeanRegionSerializerModifier extends BeanSerializerModifier {
                                             parentRegion = parentRegion.getParent();
                                         }
                                         caption = sb.toString();
-                                        gen.writeStringField(getCaptionPropertyName(propertyName), caption);
+                                        gen.writeStringField(BeanUtil.getEnumCaptionPropertyName(propertyName),
+                                                caption);
                                     }
                                 }
                             }
@@ -74,10 +75,6 @@ public class BeanRegionSerializerModifier extends BeanSerializerModifier {
             }
         }
         return beanProperties;
-    }
-
-    protected String getCaptionPropertyName(String propertyName) {
-        return propertyName + Strings.UNDERLINE + "caption";
     }
 
 }

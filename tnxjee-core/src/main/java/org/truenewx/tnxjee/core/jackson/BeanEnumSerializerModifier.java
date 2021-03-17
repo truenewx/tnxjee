@@ -3,9 +3,9 @@ package org.truenewx.tnxjee.core.jackson;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.enums.EnumItemKey;
+import org.truenewx.tnxjee.core.util.BeanUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -80,7 +80,8 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
                                             }
                                         }
                                         if (map.size() > 0) {
-                                            gen.writeObjectField(getCaptionPropertyName(propertyName), map);
+                                            gen.writeObjectField(BeanUtil.getEnumCaptionPropertyName(propertyName),
+                                                    map);
                                         }
                                     }
                                 }
@@ -101,7 +102,7 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
                                     }
                                 }
                                 if (caption != null) {
-                                    gen.writeStringField(getCaptionPropertyName(propertyName), caption);
+                                    gen.writeStringField(BeanUtil.getEnumCaptionPropertyName(propertyName), caption);
                                 }
                             }
 
@@ -112,10 +113,6 @@ public class BeanEnumSerializerModifier extends BeanSerializerModifier {
             }
         }
         return beanProperties;
-    }
-
-    protected String getCaptionPropertyName(String propertyName) {
-        return propertyName + Strings.UNDERLINE + "caption";
     }
 
 }

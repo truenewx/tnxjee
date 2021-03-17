@@ -89,7 +89,6 @@ public class SpringWebMvcUtil {
         return NetUtil.standardizeUrl(url);
     }
 
-
     private static String getPath(RequestMapping requestMapping) {
         return requestMapping == null ? null : ArrayUtil.get(requestMapping.value(), 0);
     }
