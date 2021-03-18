@@ -16,22 +16,20 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.truenewx.tnxjee.core.enums.EnumDictResolver;
-import org.truenewx.tnxjee.core.jackson.BeanEnumSerializerModifier;
 import org.truenewx.tnxjee.core.jackson.TypedPropertyFilter;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.JacksonUtil;
 import org.truenewx.tnxjee.core.util.PropertyMeta;
-import org.truenewx.tnxjee.service.spec.region.RegionSource;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultFilter;
 import org.truenewx.tnxjee.webmvc.http.annotation.ResultWithClassField;
-import org.truenewx.tnxjee.webmvc.jackson.BeanRegionSerializerModifier;
+import org.truenewx.tnxjee.webmvc.jackson.AdditionalCaptionBeanSerializerModifier;
 import org.truenewx.tnxjee.webmvc.servlet.mvc.method.HandlerMethodMapping;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 
@@ -48,9 +46,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
     @Autowired
     private HandlerMethodMapping handlerMethodMapping;
     @Autowired
-    private EnumDictResolver enumDictResolver;
-    @Autowired(required = false)
-    private RegionSource regionSource;
+    private ApplicationContext context;
 
     private final Map<String, ObjectMapper> writers = new HashMap<>();
     private final ObjectMapper defaultInternalWriter = JacksonUtil.copyDefaultMapper();
@@ -63,9 +59,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 默认外部输出器需要附加名称输出能力
-        withSerializerModifier(this.defaultExternalWriter, new BeanEnumSerializerModifier(this.enumDictResolver));
-        withSerializerModifier(this.defaultExternalWriter, new BeanRegionSerializerModifier(this.regionSource));
+        // 默认外部输出器需要附加显示名称输出能力
+        withSerializerModifier(this.defaultExternalWriter, new AdditionalCaptionBeanSerializerModifier(this.context));
     }
 
     private void withSerializerModifier(ObjectMapper mapper, BeanSerializerModifier modifier) {
@@ -133,7 +128,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
 
     private ObjectMapper buildWriter(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
         TypedPropertyFilter filter = new TypedPropertyFilter();
-        BeanEnumSerializerModifier enumModifier = new BeanEnumSerializerModifier(this.enumDictResolver);
+        AdditionalCaptionBeanSerializerModifier additionalCaptionModifier = new AdditionalCaptionBeanSerializerModifier(
+                this.context);
         for (ResultFilter resultFilter : resultFilters) {
             Class<?> filteredType = resultFilter.type();
             if (filteredType == Object.class) {
@@ -141,7 +137,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             }
             filter.addIncludedProperties(filteredType, resultFilter.included());
             filter.addExcludedProperties(filteredType, resultFilter.excluded());
-            enumModifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
+            additionalCaptionModifier.addIgnoredPropertiesNames(filteredType, resultFilter.pureEnum());
         }
         // 被过滤的类型中如果不包含结果类型，则加入结果类型，以确保至少包含结果类型
         Class<?>[] filteredTypes = filter.getTypes();
@@ -152,8 +148,7 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         if (internal) { // 内部输出器需要附加类型属性输出能力
             JacksonUtil.withNonConcreteClassProperty(mapper);
         } else { // 外部输出器需要附加显示名称输出能力
-            withSerializerModifier(mapper, enumModifier);
-            withSerializerModifier(mapper, new BeanRegionSerializerModifier(this.regionSource));
+            withSerializerModifier(mapper, additionalCaptionModifier);
         }
         return mapper;
     }

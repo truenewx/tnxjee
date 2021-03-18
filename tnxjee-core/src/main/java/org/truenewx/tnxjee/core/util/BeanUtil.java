@@ -4,7 +4,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,8 +14,6 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.lang.Nullable;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 
 /**
  * Bean工具类
@@ -281,43 +281,6 @@ public class BeanUtil {
     }
 
     /**
-     * 抽取指定bean中的所有枚举类型字段为Map
-     *
-     * @param bean             bean对象
-     * @param enumDictResolver 枚举字典解决器，不为null时为枚举字段附加显示名称字段
-     * @param locale           区域
-     * @return 枚举Map
-     */
-    public static Map<String, Object> extractEnumMap(Object bean, EnumDictResolver enumDictResolver, Locale locale) {
-        if (bean == null) {
-            return null;
-        }
-        Map<String, Object> map = new LinkedHashMap<>();
-        ClassUtil.loopPropertyDescriptors(bean.getClass(), Enum.class, pd -> {
-            Method readMethod = pd.getReadMethod();
-            if (readMethod != null) {
-                try {
-                    Enum<?> value = (Enum<?>) readMethod.invoke(bean);
-                    if (value != null) {
-                        map.put(pd.getName(), value);
-                        if (enumDictResolver != null) {
-                            map.put(getEnumCaptionPropertyName(pd.getName()), enumDictResolver.getText(value, locale));
-                        }
-                    }
-                } catch (Exception e) {
-                    LogUtil.error(BeanUtil.class, e);
-                }
-            }
-            return true;
-        });
-        return map;
-    }
-
-    public static String getEnumCaptionPropertyName(String enumPropertyName) {
-        return enumPropertyName + Strings.UNDERLINE + "caption";
-    }
-
-    /**
      * 从指定Map中取值设置到指定bean对象中
      *
      * @param bean         bean对象
@@ -443,4 +406,5 @@ public class BeanUtil {
         }
         return bean;
     }
+
 }
