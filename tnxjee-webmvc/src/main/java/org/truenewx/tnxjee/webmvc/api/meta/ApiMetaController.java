@@ -109,8 +109,9 @@ public class ApiMetaController {
         return null;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @GetMapping("/enums")
-    @ResultFilter(type = EnumItem.class, included = { "key", "caption", "children" })
+    @ResultFilter(type = EnumItem.class, included = { "key", "caption", "searchIndex", "children" })
     public Collection<EnumItem> enumItems(@RequestParam("type") String type,
             @RequestParam(value = "subtype", required = false) String subtype,
             @RequestParam(value = "grouped", defaultValue = "false") boolean grouped, HttpServletRequest request) {
@@ -124,8 +125,8 @@ public class ApiMetaController {
                     if (clazz.isEnum() && EnumGrouped.class.isAssignableFrom(clazz)) {
                         Map<Enum<?>, EnumItem> groupEnumItemMap = new TreeMap<>();
                         for (EnumItem item : items) {
-                            EnumGrouped<?> enumConstant = (EnumGrouped<?>) Enum
-                                    .valueOf((Class<Enum>) clazz, item.getKey());
+                            EnumGrouped<?> enumConstant = (EnumGrouped<?>) Enum.valueOf((Class<Enum>) clazz,
+                                    item.getKey());
                             Enum<?> groupEnum = enumConstant.group();
                             EnumItem groupEnumItem = groupEnumItemMap.get(groupEnum);
                             if (groupEnumItem == null) {

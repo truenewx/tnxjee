@@ -2,6 +2,9 @@ package org.truenewx.tnxjee.core.enums;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.util.StringUtil;
+
 /**
  * 枚举项
  *
@@ -12,6 +15,7 @@ public class EnumItem implements Comparable<EnumItem> {
     private int ordinal;
     private String key;
     private String caption;
+    private String searchIndex;
     private Map<String, EnumItem> children = new LinkedHashMap<>();
 
     public EnumItem(int ordinal, String key, String caption) {
@@ -21,6 +25,9 @@ public class EnumItem implements Comparable<EnumItem> {
         this.ordinal = ordinal;
         this.key = key;
         this.caption = caption;
+        if (caption != null) { // 默认以显示名称拼音作为搜索索引
+            this.searchIndex = StringUtil.toPinyin(caption);
+        }
     }
 
     public int getOrdinal() {
@@ -33,6 +40,20 @@ public class EnumItem implements Comparable<EnumItem> {
 
     public String getCaption() {
         return this.caption;
+    }
+
+    public String getSearchIndex() {
+        return this.searchIndex;
+    }
+
+    public void setSearchIndex(String searchIndex) {
+        this.searchIndex = searchIndex;
+    }
+
+    public boolean matches(String keyword) {
+        return StringUtils.isBlank(keyword) || StringUtil.matchesForEach(this.key, keyword)
+                || StringUtil.matchesForEach(this.caption, keyword)
+                || StringUtil.matchesForEach(this.searchIndex, keyword);
     }
 
     /**

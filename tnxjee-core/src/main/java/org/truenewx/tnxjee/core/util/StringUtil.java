@@ -1134,4 +1134,29 @@ public class StringUtil {
         return result.toString();
     }
 
+    /**
+     * 用搜索关键字中的每一个字符依次进行匹配搜索
+     *
+     * @param content 搜索内容
+     * @param keyword 搜索关键字
+     * @return 是否匹配
+     */
+    public static boolean matchesForEach(String content, String keyword) {
+        if (StringUtils.isBlank(content)) { // 搜索内容为空，则无法匹配
+            return false;
+        }
+        if (StringUtils.isBlank(keyword)) { // 搜索关键字为空，则全部匹配
+            return true;
+        }
+        int index = 0;
+        for (char c : keyword.toCharArray()) {
+            index = content.indexOf(c, index);
+            if (index < 0) { // 搜索关键字中有一个字符未被包含在内容中，则不匹配
+                return false;
+            }
+        }
+        // 遍历后没有不匹配的字符，则说明整理匹配
+        return true;
+    }
+
 }
