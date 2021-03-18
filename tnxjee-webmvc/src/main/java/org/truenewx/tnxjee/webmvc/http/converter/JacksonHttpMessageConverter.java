@@ -116,8 +116,8 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
             if (method.getAnnotation(ResultWithClassField.class) != null) {
                 return true;
             }
-            Collection<PropertyMeta> metas = ClassUtil
-                    .findPropertyMetas(method.getReturnType(), true, false, true, null);
+            Collection<PropertyMeta> metas = ClassUtil.findPropertyMetas(method.getReturnType(), true, false, true,
+                    null);
             for (PropertyMeta meta : metas) {
                 // 需要序列化的属性中包含集合或可序列化的非具化类型，则需要构建输出类型字段的输出器
                 if (!meta.containsAnnotation(JsonIgnore.class)) {
@@ -131,8 +131,6 @@ public class JacksonHttpMessageConverter extends MappingJackson2HttpMessageConve
         return false;
     }
 
-
-    @SuppressWarnings("deprecation")
     private ObjectMapper buildWriter(boolean internal, Class<?> resultType, ResultFilter[] resultFilters) {
         TypedPropertyFilter filter = new TypedPropertyFilter();
         BeanEnumSerializerModifier enumModifier = new BeanEnumSerializerModifier(this.enumDictResolver);
