@@ -23,7 +23,7 @@ public class LongArrayAttributeConverter implements AttributeConverter<long[], S
         if (attribute.length == 0) {
             return Strings.EMPTY;
         }
-        return StringUtils.join(attribute, Strings.COMMA);
+        return StringUtils.join(attribute, ',');
     }
 
     @Override
