@@ -56,7 +56,7 @@ public abstract class AbstractService<T extends Entity> extends ServiceSupport i
      */
     protected void assertNotNull(T entity) {
         if (entity == null) {
-            String code = getNonexistentErorrCode();
+            String code = getNonexistentErrorCode();
             if (code != null) {
                 throw new BusinessException(code);
             }
@@ -75,7 +75,7 @@ public abstract class AbstractService<T extends Entity> extends ServiceSupport i
      *
      * @return 实体不存在的错误码
      */
-    protected String getNonexistentErorrCode() {
+    protected String getNonexistentErrorCode() {
         return null;
     }
 
