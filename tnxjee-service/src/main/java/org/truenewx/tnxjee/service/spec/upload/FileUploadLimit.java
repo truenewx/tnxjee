@@ -1,7 +1,15 @@
-package org.truenewx.tnxjee.model.spec;
+package org.truenewx.tnxjee.service.spec.upload;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
+import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.ArrayUtil;
+import org.truenewx.tnxjee.core.util.MathUtil;
 import org.truenewx.tnxjee.core.util.Mimetypes;
+import org.truenewx.tnxjee.model.spec.FlatSize;
+import org.truenewx.tnxjee.service.exception.BusinessException;
 
 /**
  * 文件上传限制
@@ -75,6 +83,34 @@ public class FileUploadLimit {
         this.imageable = true;
         this.croppable = croppable;
         this.sizes = sizes;
+    }
+
+    public String validate(long fileSize, String filename) {
+        if (fileSize > this.capacity) {
+            throw new BusinessException(UploadExceptionCodes.CAPACITY_EXCEEDS_LIMIT,
+                    MathUtil.getCapacityCaption(this.capacity, 2));
+        }
+        String extension = FilenameUtils.getExtension(filename);
+        if (StringUtils.isBlank(extension)) {
+            throw new BusinessException(UploadExceptionCodes.NOT_SUPPORT_BLANK_EXTENSION);
+        }
+        if (ArrayUtils.isNotEmpty(this.extensions)) { // 上传限制中没有设置扩展名，则不限定扩展名
+            if (this.extensionsRejected) { // 拒绝扩展名模式
+                if (ArrayUtil.containsIgnoreCase(this.extensions, extension)) {
+                    throw new BusinessException(UploadExceptionCodes.UNSUPPORTED_EXTENSION,
+                            StringUtils.join(this.extensions, Strings.COMMA), filename);
+                }
+            } else { // 允许扩展名模式
+                if (!ArrayUtil.containsIgnoreCase(this.extensions, extension)) {
+                    throw new BusinessException(UploadExceptionCodes.ONLY_SUPPORTED_EXTENSION,
+                            StringUtils.join(this.extensions, Strings.COMMA), filename);
+                }
+            }
+        }
+        if (extension.length() > 0) {
+            extension = Strings.DOT + extension;
+        }
+        return extension;
     }
 
 }

@@ -15,7 +15,7 @@ public class StateIntransitableException extends BusinessException {
     /**
      * 状态不可转换的异常错误码
      */
-    public static String CODE = "error.fsm.state_intransitable";
+    public static String CODE = "error.service.fsm.state_intransitable";
 
     public StateIntransitableException(Enum<?> state, Enum<?> transition) {
         super(CODE, state, transition);

@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.function.FuncMaxNumber;
 import org.truenewx.tnxjee.core.util.function.FuncMinNumber;
 
@@ -470,6 +471,36 @@ public class MathUtil {
             return (T) Byte.valueOf(s);
         }
         return null;
+    }
+
+    public static String toShortString(BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        String s = value.toString();
+        while (s.contains(Strings.DOT) && s.endsWith("0")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        if (s.endsWith(Strings.DOT)) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
+
+
+    public static String getCapacityCaption(long capacity, int scale) {
+        String[] units = { "B", "KB", "MB", "GB", "TB", "PB" };
+        int unitIndex = 0;
+        BigDecimal value = BigDecimal.valueOf(capacity);
+        BigDecimal base = BigDecimal.valueOf(1024);
+        for (; unitIndex < units.length; unitIndex++) {
+            if (value.compareTo(base) >= 0) {
+                value = value.divide(base, scale, RoundingMode.HALF_UP);
+            } else {
+                break;
+            }
+        }
+        return toShortString(value) + units[unitIndex];
     }
 
 }
