@@ -7,29 +7,18 @@ import org.truenewx.tnxjee.service.exception.SingleException;
  *
  * @author jianglei
  */
-public class MessagedError {
+public class MessagedError extends CodedError {
 
-    private String message;
     private String type;
-    private String code;
     private String field;
 
     public MessagedError() {
     }
 
-    public MessagedError(String message, SingleException se) {
-        this.message = message;
+    public MessagedError(SingleException se, String message) {
+        super(se.getCode(), message);
         this.type = se.getClass().getName();
-        this.code = se.getCode();
         this.field = se.getProperty();
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getType() {
@@ -38,14 +27,6 @@ public class MessagedError {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getField() {

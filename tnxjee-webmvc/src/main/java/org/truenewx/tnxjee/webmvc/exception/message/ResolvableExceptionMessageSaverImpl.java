@@ -68,7 +68,7 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
 
     private MessagedError buildError(SingleException se, Locale locale) {
         String message = this.resolver.resolveMessage(se, locale);
-        return new MessagedError(message, se);
+        return new MessagedError(se, message);
     }
 
 }
