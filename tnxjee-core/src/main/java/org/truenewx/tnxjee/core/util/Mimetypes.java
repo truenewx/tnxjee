@@ -1,18 +1,23 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.truenewx.tnxjee.core.Strings;
 
+/**
+ *
+ */
 public class Mimetypes {
 
     public static final String DEFAULT_MIMETYPE = "application/octet-stream";
-
     private static Mimetypes INSTANCE = null;
 
-    private HashMap<String, String> extensionToMimetypeMap = new HashMap<>();
+    private Properties properties = new Properties();
 
     private Mimetypes() {
     }
@@ -23,40 +28,27 @@ public class Mimetypes {
         }
 
         INSTANCE = new Mimetypes();
-        InputStream in = INSTANCE.getClass().getResourceAsStream("/mime.types");
-        if (in != null) {
+        Resource resource = new ClassPathResource("META-INF/mime-types.properties");
+        InputStream in = null;
+        try {
+            in = resource.getInputStream();
+            INSTANCE.loadMimetypes(in);
+        } catch (IOException e) {
+            LogUtil.error(Mimetypes.class, e);
+        } finally {
             try {
-                INSTANCE.loadMimetypes(in);
-            } catch (IOException e) {
-                LogUtil.error(Mimetypes.class, e);
-            } finally {
-                try {
+                if (in != null) {
                     in.close();
-                } catch (IOException ex) {
-                    LogUtil.error(Mimetypes.class, ex);
                 }
+            } catch (IOException ex) {
+                LogUtil.error(Mimetypes.class, ex);
             }
         }
         return INSTANCE;
     }
 
-    public void loadMimetypes(InputStream is) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String line = null;
-
-        while ((line = br.readLine()) != null) {
-            line = line.trim();
-            if (line.length() > 0 && !line.startsWith("#")) {
-                StringTokenizer st = new StringTokenizer(line, " \t");
-                if (st.countTokens() > 1) {
-                    String extension = st.nextToken();
-                    if (st.hasMoreTokens()) {
-                        String mimetype = st.nextToken();
-                        this.extensionToMimetypeMap.put(extension.toLowerCase(), mimetype);
-                    }
-                }
-            }
-        }
+    public void loadMimetypes(InputStream in) throws IOException {
+        this.properties.load(in);
     }
 
     private String getMimetypeByExtension(String fileName) {
@@ -66,18 +58,12 @@ public class Mimetypes {
             extension = fileName.substring(index + 1);
         }
         extension = extension.toLowerCase();
-        if (this.extensionToMimetypeMap.containsKey(extension)) {
-            return this.extensionToMimetypeMap.get(extension);
-        }
-        return null;
+        return this.properties.getProperty(extension);
     }
 
     public String getMimetype(String fileName) {
         String mimeType = getMimetypeByExtension(fileName);
-        if (mimeType != null) {
-            return mimeType;
-        }
-        return DEFAULT_MIMETYPE;
+        return mimeType == null ? DEFAULT_MIMETYPE : mimeType;
     }
 
     public String getMimetype(File file) {
