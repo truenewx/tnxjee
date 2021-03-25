@@ -24,12 +24,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.support.ServletContextResource;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.WebUtils;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.core.util.Mimetypes;
-import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.core.util.*;
 import org.truenewx.tnxjee.model.spec.Terminal;
 import org.truenewx.tnxjee.model.spec.enums.Device;
 import org.truenewx.tnxjee.model.spec.enums.OS;
@@ -590,6 +589,14 @@ public class WebUtil {
             value = (String) request.getAttribute(name);
         }
         return value;
+    }
+
+    public static MultipartFile getMultipartFile(MultipartHttpServletRequest request, String fileParameterName) {
+        if (StringUtils.isNotBlank(fileParameterName)) {
+            return request.getFile(fileParameterName);
+        } else {
+            return CollectionUtil.getFirst(request.getFileMap().values(), null);
+        }
     }
 
 }
