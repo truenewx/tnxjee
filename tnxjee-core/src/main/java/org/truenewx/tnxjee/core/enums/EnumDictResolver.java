@@ -2,13 +2,13 @@ package org.truenewx.tnxjee.core.enums;
 
 import java.util.Locale;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.truenewx.tnxjee.core.i18n.TextResolver;
 
 /**
  * 枚举字典解析器
  *
  * @author jianglei
- * 
  */
 public interface EnumDictResolver extends TextResolver {
     /**
@@ -32,5 +32,16 @@ public interface EnumDictResolver extends TextResolver {
     EnumType getEnumType(String type, String subtype, Locale locale);
 
     EnumItem getEnumItem(Enum<?> enumConstant, Locale locale);
+
+    default <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, Locale locale) {
+        EnumType enumType = getEnumType(enumClass.getName(), locale);
+        if (enumType != null) {
+            EnumItem enumItem = enumType.getItemByCaption(caption);
+            if (enumItem != null) {
+                return EnumUtils.getEnum(enumClass, enumItem.getKey());
+            }
+        }
+        return null;
+    }
 
 }
