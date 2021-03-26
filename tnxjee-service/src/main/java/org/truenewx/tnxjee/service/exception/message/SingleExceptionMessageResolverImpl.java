@@ -28,26 +28,9 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
     private PropertyCaptionResolver propertyCaptionResolver;
 
     @Override
-    public String resolveMessage(SingleException se, Locale locale) {
-        if (se.isMessageLocalized()) {
-            return se.getLocalizedMessage();
-        }
-        if (se instanceof BusinessException) {
-            BusinessException be = (BusinessException) se;
-            String[] args = getArgTexts(be.getArgs(), locale);
-            return this.messageSource.getMessage(be.getCode(), args, be.getCode(), locale);
-        } else if (se instanceof FormatException) {
-            FormatException fe = (FormatException) se;
-            String propertyCaption = this.propertyCaptionResolver
-                    .resolveCaption(fe.getModelClass(), fe.getProperty(), locale);
-            if (propertyCaption == null) {
-                propertyCaption = fe.getProperty(); // 如果均未取到，则取属性名
-            }
-            String message =
-                    this.messageSource.getMessage(fe.getCode(), null, fe.getCode(), locale);
-            return propertyCaption + message;
-        }
-        return null;
+    public String resolveMessage(String code, Locale locale, Object... args) {
+        String[] argTexts = getArgTexts(args, locale);
+        return this.messageSource.getMessage(code, argTexts, code, locale);
     }
 
     private String[] getArgTexts(Object[] args, Locale locale) {
@@ -67,6 +50,27 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
             }
         }
         return result;
+    }
+
+    @Override
+    public String resolveMessage(SingleException se, Locale locale) {
+        if (se.isMessageLocalized()) {
+            return se.getLocalizedMessage();
+        }
+        if (se instanceof BusinessException) {
+            BusinessException be = (BusinessException) se;
+            return resolveMessage(be.getCode(), locale, be.getArgs());
+        } else if (se instanceof FormatException) {
+            FormatException fe = (FormatException) se;
+            String propertyCaption = this.propertyCaptionResolver
+                    .resolveCaption(fe.getModelClass(), fe.getProperty(), locale);
+            if (propertyCaption == null) {
+                propertyCaption = fe.getProperty(); // 如果均未取到，则取属性名
+            }
+            String message = resolveMessage(fe.getCode(), locale);
+            return propertyCaption + message;
+        }
+        return null;
     }
 
 }
