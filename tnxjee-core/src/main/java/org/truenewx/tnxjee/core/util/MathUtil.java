@@ -487,7 +487,6 @@ public class MathUtil {
         return s;
     }
 
-
     public static String getCapacityCaption(long capacity, int scale) {
         String[] units = { "B", "KB", "MB", "GB", "TB", "PB" };
         int unitIndex = 0;
@@ -501,6 +500,35 @@ public class MathUtil {
             }
         }
         return toShortString(value) + units[unitIndex];
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T toValue(BigDecimal decimal, Class<T> valueType) {
+        if (decimal == null || valueType == null) {
+            return null;
+        }
+        if (valueType == BigDecimal.class) {
+            return (T) decimal;
+        }
+        if (valueType == int.class || valueType == Integer.class) {
+            return (T) Integer.valueOf(decimal.intValue());
+        }
+        if (valueType == long.class || valueType == Long.class) {
+            return (T) Long.valueOf(decimal.longValue());
+        }
+        if (valueType == byte.class || valueType == Byte.class) {
+            return (T) Byte.valueOf(decimal.byteValue());
+        }
+        if (valueType == short.class || valueType == Short.class) {
+            return (T) Short.valueOf(decimal.shortValue());
+        }
+        if (valueType == float.class || valueType == Float.class) {
+            return (T) Float.valueOf(decimal.floatValue());
+        }
+        if (valueType == double.class || valueType == Double.class) {
+            return (T) Double.valueOf(decimal.doubleValue());
+        }
+        return null;
     }
 
 }
