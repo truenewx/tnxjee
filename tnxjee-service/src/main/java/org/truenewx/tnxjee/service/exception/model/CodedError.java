@@ -2,6 +2,8 @@ package org.truenewx.tnxjee.service.exception.model;
 
 /**
  * 具有编码的错误
+ *
+ * @author jianglei
  */
 public class CodedError {
 
