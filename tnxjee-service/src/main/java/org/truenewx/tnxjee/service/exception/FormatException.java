@@ -3,7 +3,7 @@ package org.truenewx.tnxjee.service.exception;
 import java.util.Objects;
 
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 
 /**
  * 格式异常，必须绑定属性
@@ -23,7 +23,7 @@ public class FormatException extends SingleException {
         this.property = property;
     }
 
-    public FormatException(MessagedError error) {
+    public FormatException(ExceptionError error) {
         super(error);
     }
 

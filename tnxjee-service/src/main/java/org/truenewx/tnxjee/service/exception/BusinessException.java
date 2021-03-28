@@ -1,8 +1,9 @@
 package org.truenewx.tnxjee.service.exception;
 
 import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 
 /**
  * 业务异常，可以绑定属性，默认未绑定属性
@@ -21,7 +22,7 @@ public class BusinessException extends SingleException {
         this.args = args;
     }
 
-    public BusinessException(MessagedError error) {
+    public BusinessException(ExceptionError error) {
         super(error);
     }
 

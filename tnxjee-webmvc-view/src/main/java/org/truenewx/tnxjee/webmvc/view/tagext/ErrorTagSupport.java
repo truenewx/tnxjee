@@ -6,7 +6,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 import org.truenewx.tnxjee.webmvc.exception.message.ResolvableExceptionMessageSaver;
 
 /**
@@ -25,10 +25,9 @@ public abstract class ErrorTagSupport extends TagSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<MessagedError> getErrors() {
+    protected List<ExceptionError> getErrors() {
         ServletRequest request = this.pageContext.getRequest();
-        return (List<MessagedError>) request
-                .getAttribute(ResolvableExceptionMessageSaver.ATTRIBUTE);
+        return (List<ExceptionError>) request.getAttribute(ResolvableExceptionMessageSaver.ATTRIBUTE);
     }
 
     protected final boolean matches(boolean inverse) {
@@ -40,12 +39,12 @@ public abstract class ErrorTagSupport extends TagSupport {
     }
 
     private boolean hasError() {
-        List<MessagedError> errors = getErrors();
+        List<ExceptionError> errors = getErrors();
         if (errors != null) {
             if (Strings.ASTERISK.equals(this.field)) {
                 return errors.size() > 0;
             }
-            for (MessagedError error : errors) {
+            for (ExceptionError error : errors) {
                 if (this.field.equals(error.getField())) {
                     return true;
                 }

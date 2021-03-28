@@ -11,25 +11,27 @@ import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.FormatException;
 import org.truenewx.tnxjee.service.exception.MultiException;
 import org.truenewx.tnxjee.service.exception.SingleException;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
-import org.truenewx.tnxjee.webmvc.exception.model.MessagedErrorBody;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
+import org.truenewx.tnxjee.webmvc.exception.model.ExceptionErrorBody;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
 /**
- * 业务错误解码器
+ * 异常错误解码器
+ *
+ * @author jianglei
  */
 @Component
-public class BusinessErrorDecoder extends ErrorDecoder.Default {
+public class ExceptionErrorDecoder extends ErrorDecoder.Default {
 
     @Override
     public Exception decode(String methodKey, Response response) {
         try {
             if (response.status() == HttpStatus.FORBIDDEN.value()) {
                 String json = IOUtils.toString(response.body().asReader(StandardCharsets.UTF_8));
-                MessagedErrorBody body = JsonUtil.json2Bean(json, MessagedErrorBody.class);
-                MessagedError[] errors = body.getErrors();
+                ExceptionErrorBody body = JsonUtil.json2Bean(json, ExceptionErrorBody.class);
+                ExceptionError[] errors = body.getErrors();
                 if (errors != null) {
                     if (errors.length == 1) {
                         return buildException(errors[0]);
@@ -48,7 +50,7 @@ public class BusinessErrorDecoder extends ErrorDecoder.Default {
         return super.decode(methodKey, response);
     }
 
-    private SingleException buildException(MessagedError error) throws ClassNotFoundException {
+    private SingleException buildException(ExceptionError error) throws ClassNotFoundException {
         String type = error.getType();
         Class<?> clazz = Class.forName(type);
         if (BusinessException.class.isAssignableFrom(clazz)) {

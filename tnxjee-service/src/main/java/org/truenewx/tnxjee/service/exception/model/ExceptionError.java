@@ -3,19 +3,19 @@ package org.truenewx.tnxjee.service.exception.model;
 import org.truenewx.tnxjee.service.exception.SingleException;
 
 /**
- * 已消息化的错误
+ * 来源于异常的错误
  *
  * @author jianglei
  */
-public class MessagedError extends CodedError {
+public class ExceptionError extends CodedError {
 
     private String type;
     private String field;
 
-    public MessagedError() {
+    public ExceptionError() {
     }
 
-    public MessagedError(SingleException se, String message) {
+    public ExceptionError(SingleException se, String message) {
         super(se.getCode(), message);
         this.type = se.getClass().getName();
         this.field = se.getProperty();

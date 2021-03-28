@@ -2,11 +2,13 @@ package org.truenewx.tnxjee.webmvc.view.tag;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
+
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 import org.truenewx.tnxjee.webmvc.view.tagext.ErrorTagSupport;
 
 /**
@@ -27,7 +29,7 @@ public class ErrorsTag extends ErrorTagSupport {
     @Override
     public int doEndTag() throws JspException {
         StringBuffer message = new StringBuffer();
-        List<MessagedError> errors = getErrors();
+        List<ExceptionError> errors = getErrors();
         if (errors != null) {
             errors.forEach(error -> {
                 if (Strings.ASTERISK.equals(this.field) || this.field.equals(error.getField())) {

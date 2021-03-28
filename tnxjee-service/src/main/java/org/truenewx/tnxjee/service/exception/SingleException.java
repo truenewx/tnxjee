@@ -1,8 +1,9 @@
 package org.truenewx.tnxjee.service.exception;
 
 import java.util.Objects;
+
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 
 /**
  * 只包含一个异常信息的单异常<br/>
@@ -21,7 +22,7 @@ public abstract class SingleException extends ResolvableException {
         super(message);
     }
 
-    protected SingleException(MessagedError error) {
+    protected SingleException(ExceptionError error) {
         this(error.getMessage());
         this.code = error.getCode();
         this.property = error.getField();

@@ -19,9 +19,9 @@ import org.truenewx.tnxjee.service.exception.MultiException;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
 import org.truenewx.tnxjee.service.exception.SingleException;
 import org.truenewx.tnxjee.service.exception.message.SingleExceptionMessageResolver;
-import org.truenewx.tnxjee.service.exception.model.MessagedError;
+import org.truenewx.tnxjee.service.exception.model.ExceptionError;
 import org.truenewx.tnxjee.web.util.WebUtil;
-import org.truenewx.tnxjee.webmvc.exception.model.MessagedErrorBody;
+import org.truenewx.tnxjee.webmvc.exception.model.ExceptionErrorBody;
 import org.truenewx.tnxjee.webmvc.util.SpringWebMvcUtil;
 
 /**
@@ -36,11 +36,11 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
     @Override
     public void saveMessage(HttpServletRequest request, HttpServletResponse response,
             HandlerMethod handlerMethod, ResolvableException re) {
-        List<MessagedError> errors = buildErrors(re, request.getLocale());
+        List<ExceptionError> errors = buildErrors(re, request.getLocale());
         if (errors.size() > 0) {
             if (WebUtil.isAjaxRequest(request) || SpringWebMvcUtil.isResponseBody(handlerMethod)) {
                 try {
-                    MessagedErrorBody body = new MessagedErrorBody(errors);
+                    ExceptionErrorBody body = new ExceptionErrorBody(errors);
                     String json = JsonUtil.toJson(body);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -54,8 +54,8 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
         }
     }
 
-    private List<MessagedError> buildErrors(ResolvableException re, Locale locale) {
-        List<MessagedError> errors = new ArrayList<>();
+    private List<ExceptionError> buildErrors(ResolvableException re, Locale locale) {
+        List<ExceptionError> errors = new ArrayList<>();
         if (re instanceof SingleException) {
             errors.add(buildError((SingleException) re, locale));
         } else if (re instanceof MultiException) {
@@ -66,9 +66,9 @@ public class ResolvableExceptionMessageSaverImpl implements ResolvableExceptionM
         return errors;
     }
 
-    private MessagedError buildError(SingleException se, Locale locale) {
+    private ExceptionError buildError(SingleException se, Locale locale) {
         String message = this.resolver.resolveMessage(se, locale);
-        return new MessagedError(se, message);
+        return new ExceptionError(se, message);
     }
 
 }
