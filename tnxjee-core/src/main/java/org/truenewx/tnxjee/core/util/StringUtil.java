@@ -1159,4 +1159,26 @@ public class StringUtil {
         return true;
     }
 
+    /**
+     * 在指定字符串中依次查找指定搜索字符串集
+     *
+     * @param s                      字符串
+     * @param searchStrings          搜索字符串集
+     * @param plusSearchStringLength 返回结果位置是否加入匹配的搜索字符串的长度
+     * @return 匹配的索引位置
+     */
+    public static int indexOfFirstInTurn(String s, String[] searchStrings, boolean plusSearchStringLength) {
+        if (StringUtils.isNotBlank(s) && searchStrings != null) {
+            for (String searchString : searchStrings) {
+                if (StringUtils.isNotBlank(searchString)) {
+                    int index = s.indexOf(searchString);
+                    if (index >= 0) {
+                        return plusSearchStringLength ? (index + searchString.length()) : index;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
 }
