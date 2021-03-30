@@ -1,11 +1,6 @@
 package org.truenewx.tnxjee.service.spec.region;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
  * 行政区划
  *
  * @author jianglei
- * 
  */
 public class Region {
     /**
@@ -24,6 +18,10 @@ public class Region {
      * 显示名
      */
     private String caption;
+    /**
+     * 后缀
+     */
+    private String suffix;
     /**
      * 分组
      */
@@ -49,10 +47,12 @@ public class Region {
     /**
      * @param code    代号
      * @param caption 显示名
+     * @param suffix  后缀
      * @param group   所属分组
      */
-    public Region(String code, String caption, String group) {
+    public Region(String code, String caption, String suffix, String group) {
         this(code, caption);
+        this.suffix = suffix;
         this.group = group;
     }
 
@@ -72,12 +72,20 @@ public class Region {
         return this.caption;
     }
 
-    protected void setGroup(String group) {
-        this.group = group;
+    public String getSuffix() {
+        return this.suffix;
+    }
+
+    protected void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String getGroup() {
         return this.group;
+    }
+
+    protected void setGroup(String group) {
+        this.group = group;
     }
 
     public Region getParent() {
@@ -94,6 +102,17 @@ public class Region {
 
     public Collection<Region> getSubs() {
         return this.subMap == null ? null : this.subMap.values();
+    }
+
+    public String getCaption(boolean withSuffix) {
+        if (this.suffix != null && withSuffix) {
+            return this.caption + this.suffix;
+        }
+        return this.caption;
+    }
+
+    public String getFullCaption() {
+        return getCaption(true);
     }
 
     /**
@@ -129,19 +148,32 @@ public class Region {
     /**
      * 获取显示名为指定显示名的下级行政区划
      *
-     * @param caption 显示名
+     * @param caption    显示名
+     * @param withSuffix 是否加上后缀进行查找
      * @return 匹配的下级行政区划，如果没找到则返回null
      */
 
-    public Region findSubByCaption(String caption) {
+    public Region findSubByCaption(String caption, boolean withSuffix) {
         if (this.subMap != null && StringUtils.isNotEmpty(caption)) {
             for (Region sub : this.subMap.values()) {
-                if (StringUtils.equals(caption, sub.getCaption())) {
+                if (StringUtils.equals(caption, sub.getCaption(withSuffix))) {
                     return sub;
                 }
             }
         }
         return null;
+    }
+
+    public List<Region> findSubsByCaptionMinLength(int captionMinLength, boolean withSuffix) {
+        List<Region> subs = new ArrayList<>();
+        if (this.subMap != null) {
+            for (Region sub : this.subMap.values()) {
+                if (sub.getCaption(withSuffix).length() >= captionMinLength) {
+                    subs.add(sub);
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -188,7 +220,7 @@ public class Region {
     }
 
     public Region clone(boolean includingSubs) {
-        Region option = new Region(this.code, this.caption, this.group);
+        Region option = new Region(this.code, this.caption, null, this.group);
         option.parent = this.parent;
         if (includingSubs) {
             option.subMap = new LinkedHashMap<>(this.subMap);

@@ -1,25 +1,33 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.service.spec.region.NationalRegionSource;
-import org.truenewx.tnxjee.service.spec.region.Region;
-import org.truenewx.tnxjee.service.spec.region.RegionNationCodes;
-import org.truenewx.tnxjee.service.spec.region.RegionSource;
+import org.truenewx.tnxjee.core.util.StringUtil;
+import org.truenewx.tnxjee.service.exception.BusinessException;
+import org.truenewx.tnxjee.service.spec.region.*;
 
 /**
  * @author jianglei
  */
-public abstract class AbstractNationalRegionSource implements NationalRegionSource {
+public abstract class AbstractNationalRegionSource implements NationalRegionSource, MessageSourceAware {
+
+    private static final String CITY_SUFFIXES_FORMAT = "constant.tnxjee.service.region.%s.city_suffixes";
+    private static final String COUNTY_SUFFIXES_FORMAT = "constant.tnxjee.service.region.%s.county_suffixes";
+    private static final String PROVINCE_LEVEL_CITY_SUFFIXES_FORMAT = "constant.tnxjee.service.region.%s.province_level_city_suffixes";
+    private static final String CITY_LEVEL_COUNTY_SUFFIXES_FORMAT = "constant.tnxjee.service.region.%s.city_level_county_suffixes";
 
     /**
      * 国家代号，默认为中国
      */
-    private String nation = RegionNationCodes.CHINA;
+    private String nationCode = RegionNationCodes.CHINA;
     /**
      * 显示区域-当前国家级行政区划的映射集
      */
@@ -29,20 +37,42 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
      */
     protected Map<Locale, Map<String, Region>> localeCodeSubsMap = new HashMap<>();
     /**
-     * 显示区域-区划名称-行政区划的映射集
+     * 显示区域-区划简称-行政区划的映射集
      */
-    protected Map<Locale, Map<String, Region>> localeCaptionSubsMap = new HashMap<>();
+    protected Map<Locale, Map<String, Region>> localeShortCaptionSubsMap = new HashMap<>();
+    /**
+     * 显示区域-区划全称-行政区划的映射集
+     */
+    protected Map<Locale, Map<String, Region>> localeFullCaptionSubsMap = new HashMap<>();
 
+    private String[] citySuffixes = {};
+    private String[] countySuffixes = {};
+    private String[] provinceLevelCitySuffixes = {};
+    private String[] cityLevelCountySuffixes = {};
 
-    public void setNation(String nation) {
-        Assert.isTrue(nation.length() == RegionSource.NATION_LENGTH,
+    @Override
+    public void setMessageSource(MessageSource messageSource) {
+        this.citySuffixes = getTexts(messageSource, CITY_SUFFIXES_FORMAT);
+        this.countySuffixes = getTexts(messageSource, COUNTY_SUFFIXES_FORMAT);
+        this.provinceLevelCitySuffixes = getTexts(messageSource, PROVINCE_LEVEL_CITY_SUFFIXES_FORMAT);
+        this.cityLevelCountySuffixes = getTexts(messageSource, CITY_LEVEL_COUNTY_SUFFIXES_FORMAT);
+    }
+
+    private String[] getTexts(MessageSource messageSource, String format) {
+        String code = String.format(format, getNationCode().toLowerCase());
+        String text = messageSource.getMessage(code, null, Locale.getDefault());
+        return text.split(Strings.COMMA);
+    }
+
+    public void setNationCode(String nationCode) {
+        Assert.isTrue(nationCode.length() == RegionSource.NATION_LENGTH,
                 "The length of nation must be " + RegionSource.NATION_LENGTH);
-        this.nation = nation.toUpperCase();
+        this.nationCode = nationCode.toUpperCase();
     }
 
     @Override
-    public String getNation() {
-        return this.nation;
+    public String getNationCode() {
+        return this.nationCode;
     }
 
     @Override
@@ -74,22 +104,18 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
     }
 
     @Override
-    public Region getSubRegion(String provinceCaption, String cityCaption, String countyCaption,
+    public Region getSubRegion(String provinceCaption, String cityCaption, String countyCaption, boolean withSuffix,
             Locale locale) {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        Map<String, Region> captionSubsMap = this.localeCaptionSubsMap.get(locale);
-        if (captionSubsMap == null) {
-            buildNationalRegion(locale);
-            captionSubsMap = this.localeCaptionSubsMap.get(locale);
-        }
+        Map<String, Region> captionSubsMap = getCaptionSubsMap(withSuffix, locale);
         if (captionSubsMap != null) {
-            StringBuffer caption = new StringBuffer(provinceCaption);
+            StringBuilder caption = new StringBuilder(provinceCaption);
             if (cityCaption != null) {
-                caption.append(Strings.MINUS).append(cityCaption);
+                caption.append(cityCaption);
                 if (countyCaption != null) { // 市级名称不为空，县级名称才有效
-                    caption.append(Strings.MINUS).append(countyCaption);
+                    caption.append(countyCaption);
                 }
             }
             return captionSubsMap.get(caption.toString());
@@ -97,5 +123,89 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         return null;
     }
 
+    private Map<String, Region> getCaptionSubsMap(boolean withSuffix, Locale locale) {
+        Map<Locale, Map<String, Region>> localeCaptionSubsMap = withSuffix ? this.localeFullCaptionSubsMap : this.localeShortCaptionSubsMap;
+        Map<String, Region> captionSubsMap = localeCaptionSubsMap.get(locale);
+        if (captionSubsMap == null) {
+            buildNationalRegion(locale);
+            captionSubsMap = localeCaptionSubsMap.get(locale);
+        }
+        return captionSubsMap;
+    }
+
     protected abstract Region buildNationalRegion(Locale locale);
+
+    @Override
+    public Region parseSubRegion(String caption, boolean withSuffix, Locale locale) {
+        Map<String, Region> captionSubsMap = getCaptionSubsMap(withSuffix, locale);
+        if (captionSubsMap != null) {
+            return captionSubsMap.get(caption);
+        }
+        return null;
+    }
+
+    @Override
+    public RegionAddress parseAddress(String address, boolean withSuffix, Locale locale) {
+        if (address == null || address.length() < 10) { // 地址至少10位才可能合规
+            return null;
+        }
+        Region nationalRegion = getNationalRegion(locale);
+
+        // 先查找省级区划
+        Region province = null;
+        try {
+            int normalProvinceCaptionLength = withSuffix ? 3 : 2; // 一般的省级区划名称长度，后缀为一个字
+            province = nationalRegion.findSubByCaption(address.substring(0, normalProvinceCaptionLength), withSuffix);
+            if (province == null) { // 再尝试匹配超过一般长度的省级名称
+                List<Region> provinces = nationalRegion
+                        .findSubsByCaptionMinLength(normalProvinceCaptionLength + 1, withSuffix);
+                for (Region p : provinces) {
+                    if (address.startsWith(p.getCaption(withSuffix))) {
+                        province = p;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (province == null) { // 无法正确匹配省级区划
+            throw new BusinessException(RegionExceptionCodes.PROVINCE_ERROR);
+        }
+
+        // 此时省级区划一定已经找到，去掉省级区划名称后，查找市级区划
+        String regionCaption = address.substring(province.getCaption(withSuffix).length());
+        Region city = null;
+        // 如果省级区划为直辖市，则市级区划后缀需是特殊的市级区县后缀
+        boolean provincialCity = ArrayUtils.contains(this.provinceLevelCitySuffixes, province.getSuffix());
+        String[] citySuffixes = provincialCity ? this.cityLevelCountySuffixes : this.citySuffixes;
+        int index = StringUtil.indexOfFirstInTurn(regionCaption, citySuffixes, true);
+        if (index > 0) {
+            String cityCaption = regionCaption.substring(0, index);
+            city = province.findSubByCaption(cityCaption, withSuffix);
+        }
+        if (city == null) { // 无法正确匹配市级区划
+            throw new BusinessException(RegionExceptionCodes.CITY_ERROR);
+        }
+
+        // 此时市级区划一定已经找到，去掉市级区划名称后，查找县级区划
+        Region county = null;
+        // 直辖市的下级市级行政区划就是县级区划，无需再往下找县级区划
+        if (provincialCity) {
+            county = city;
+        } else {
+            regionCaption = regionCaption.substring(city.getCaption(withSuffix).length());
+            index = StringUtil.indexOfFirstInTurn(regionCaption, this.countySuffixes, true);
+            if (index > 0) {
+                String countyCaption = regionCaption.substring(0, index);
+                county = city.findSubByCaption(countyCaption, withSuffix);
+            }
+            if (county == null) { // 无法正确匹配县级区划
+                throw new BusinessException(RegionExceptionCodes.COUNTY_ERROR);
+            }
+        }
+
+        // 此时县级区划一定已经找到，去掉县级区划名称后，剩下的是地址详情
+        String detail = regionCaption.substring(county.getCaption(withSuffix).length());
+        return new RegionAddress(county.getCode(), detail);
+    }
+
 }

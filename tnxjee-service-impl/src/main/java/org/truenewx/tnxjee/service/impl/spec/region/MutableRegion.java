@@ -24,6 +24,11 @@ public class MutableRegion extends Region {
     }
 
     @Override
+    public void setSuffix(String suffix) {
+        super.setSuffix(suffix);
+    }
+
+    @Override
     public void setGroup(String group) {
         super.setGroup(group);
     }

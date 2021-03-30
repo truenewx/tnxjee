@@ -23,7 +23,7 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
 
     public void setNationalSources(Iterable<NationalRegionSource> nationalRegionSources) {
         for (NationalRegionSource nationalRegionSource : nationalRegionSources) {
-            String nation = nationalRegionSource.getNation();
+            String nation = nationalRegionSource.getNationCode();
             if (nation != null && nation.length() == RegionSource.NATION_LENGTH) { // 国家代号必须为固定长度
                 this.nationalSources.put(nation.toUpperCase(), nationalRegionSource);
             }
@@ -35,13 +35,18 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
         setNationalSources(context.getBeansOfType(NationalRegionSource.class).values()); // 如果有重复，则覆盖原有配置
     }
 
+    @Override
+    public NationalRegionSource getNationalRegionSource(String nationCode) {
+        return this.nationalSources.get(nationCode.toUpperCase());
+    }
+
     /**
      * 从区划代号中获取国家代号，如果区划代号不合法，则返回null
      *
      * @param region 区划代号
      * @return 国家代号
      */
-    private String getNation(String region) {
+    private String getNationCode(String region) {
         if (region.length() >= RegionSource.NATION_LENGTH) {
             return region.substring(0, RegionSource.NATION_LENGTH).toUpperCase();
         }
@@ -51,14 +56,14 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     @Override
     public Region getRegion(String regionCode, Locale locale) {
         regionCode = regionCode.toUpperCase();
-        String nation = getNation(regionCode);
-        if (nation != null) {
-            NationalRegionSource nationalOptionSource = this.nationalSources.get(nation); // nation已经大写化
-            if (nationalOptionSource != null) {
-                if (nation.equals(regionCode)) { // 指定区划即为国家，直接取国家区划选项
-                    return nationalOptionSource.getNationalRegion(locale);
+        String nationCode = getNationCode(regionCode);
+        if (nationCode != null) {
+            NationalRegionSource nationalRegionSource = getNationalRegionSource(nationCode);
+            if (nationalRegionSource != null) {
+                if (nationCode.equals(regionCode)) { // 指定区划即为国家，直接取国家区划选项
+                    return nationalRegionSource.getNationalRegion(locale);
                 } else { // 否则从子孙区划中查找
-                    return nationalOptionSource.getSubRegion(regionCode, locale);
+                    return nationalRegionSource.getSubRegion(regionCode, locale);
                 }
             }
         }
@@ -66,15 +71,15 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     }
 
     @Override
-    public Region getRegion(String nation, String provinceCaption, String cityCaption, String countyCaption,
-            Locale locale) {
-        NationalRegionSource nationalOptionSource = this.nationalSources.get(nation.toUpperCase());
+    public Region getRegion(String nationCode, String provinceCaption, String cityCaption, String countyCaption,
+            boolean withSuffix, Locale locale) {
+        NationalRegionSource nationalOptionSource = getNationalRegionSource(nationCode);
         if (nationalOptionSource != null) {
             if (provinceCaption == null) { // 如果未指定省份名称，则直接取国家区划选项
                 return nationalOptionSource.getNationalRegion(locale);
             } else { // 否则从子孙区划中查找
-                return nationalOptionSource.getSubRegion(provinceCaption, cityCaption,
-                        countyCaption, locale);
+                return nationalOptionSource
+                        .getSubRegion(provinceCaption, cityCaption, countyCaption, withSuffix, locale);
             }
         }
         return null;
@@ -90,8 +95,8 @@ public class RegionSourceImpl implements RegionSource, ContextInitializedBean {
     }
 
     @Override
-    public Region getNationalRegion(String nation, Locale locale) {
-        NationalRegionSource source = this.nationalSources.get(nation.toUpperCase());
+    public Region getNationalRegion(String nationCode, Locale locale) {
+        NationalRegionSource source = getNationalRegionSource(nationCode);
         if (source != null) {
             return source.getNationalRegion(locale);
         }

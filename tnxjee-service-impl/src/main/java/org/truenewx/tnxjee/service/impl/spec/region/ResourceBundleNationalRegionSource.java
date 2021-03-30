@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.message.MessagesSource;
 import org.truenewx.tnxjee.service.spec.region.Region;
 
@@ -17,6 +16,7 @@ import org.truenewx.tnxjee.service.spec.region.Region;
  */
 @Component
 public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSource {
+
     /**
      * 消息集来源
      */
@@ -36,7 +36,7 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
      */
     @Override
     protected Region buildNationalRegion(Locale locale) {
-        String nation = getNation();
+        String nation = getNationCode();
         Map<String, String> messages = this.messagesSource.getMessages(locale, nation, true);
         String nationCaption = messages.get(nation);
         if (nationCaption != null) { // 取得到国家显示名才构建国家级区域选项
@@ -45,26 +45,32 @@ public class ResourceBundleNationalRegionSource extends AbstractNationalRegionSo
                 Iterable<Region> subs = this.parser.parseAll(nation, messages);
 
                 Map<String, Region> codeSubsMap = new HashMap<>();
-                Map<String, Region> captionSubsMap = new HashMap<>();
+                Map<String, Region> shortCaptionSubsMap = new HashMap<>();
+                Map<String, Region> fullCaptionSubsMap = new HashMap<>();
                 for (Region sub : subs) {
                     codeSubsMap.put(sub.getCode(), sub);
-                    StringBuilder caption = new StringBuilder(sub.getCaption());
+                    StringBuilder shortCaption = new StringBuilder(sub.getCaption());
+                    StringBuilder fullCaption = new StringBuilder(sub.getFullCaption());
                     Region parent = sub.getParent();
                     if (parent == null) { // 所有子选项中未指定父选项的才作为下一级子选项加入国家级选项中
                         nationalRegion.addSub(sub);
                     }
                     while (parent != null && !parent.getCode().equals(nation)) { // 不加国别名称
-                        caption.insert(0, Strings.MINUS).insert(0, parent.getCaption());
+                        shortCaption.insert(0, parent.getCaption());
+                        fullCaption.insert(0, parent.getFullCaption());
                         parent = parent.getParent();
                     }
-                    captionSubsMap.put(caption.toString(), sub);
+                    shortCaptionSubsMap.put(shortCaption.toString(), sub);
+                    fullCaptionSubsMap.put(fullCaption.toString(), sub);
                 }
                 this.localeCodeSubsMap.put(locale, codeSubsMap);
-                this.localeCaptionSubsMap.put(locale, captionSubsMap);
+                this.localeShortCaptionSubsMap.put(locale, shortCaptionSubsMap);
+                this.localeFullCaptionSubsMap.put(locale, fullCaptionSubsMap);
             }
             this.localeNationalRegionMap.put(locale, nationalRegion);
             return nationalRegion;
         }
         return null;
     }
+
 }

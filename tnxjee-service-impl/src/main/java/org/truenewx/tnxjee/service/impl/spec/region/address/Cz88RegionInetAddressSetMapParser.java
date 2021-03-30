@@ -26,7 +26,6 @@ import org.truenewx.tnxjee.service.spec.region.RegionSource;
  *
  * @author jianglei
  * @version 1.0.0 2014年7月14日
- * 
  */
 public class Cz88RegionInetAddressSetMapParser implements RegionInetAddressSetMapParser {
 
@@ -216,15 +215,15 @@ public class Cz88RegionInetAddressSetMapParser implements RegionInetAddressSetMa
                 }
             }
             Region region = this.regionSource.getRegion(this.defaultNation, provinceCaption,
-                    cityCaption, countyCaption, locale);
+                    cityCaption, countyCaption, true, locale);
             // 如果无法取得区划选项，则尝试取上一级的区划选项
             if (region == null && countyCaption != null) {
                 region = this.regionSource.getRegion(this.defaultNation, provinceCaption,
-                        cityCaption, null, locale);
+                        cityCaption, null, true, locale);
             }
             if (region == null && cityCaption != null) {
                 region = this.regionSource.getRegion(this.defaultNation, provinceCaption, null,
-                        null, locale);
+                        null, true, locale);
             }
             if (region != null) {
                 return region.getCode();

@@ -23,19 +23,22 @@ public class StatsGovCnRegionMapParser implements RegionMapParser {
         Map<String, Region> codeRegionMapping = new HashMap<>();
         for (String code : codes) {
             if (code.startsWith(nationCode) && code.length() == 8) { // 代码一定以国家代号开头，且是8位的
-                String value = codeCaptionMap.get(code);
-                String caption;
-                String group;
-                int index = value.indexOf(Strings.LEFT_BRACKET);
-                if (index >= 0) { // 如果有括号，则括号中的值为分组
-                    caption = value.substring(0, index);
-                    group = value.substring(index + 1, value.length() - Strings.RIGHT_BRACKET.length());
-                } else { // 没有括号，则没有分组，值即为显示名
-                    caption = value;
-                    group = null;
+                String caption = codeCaptionMap.get(code);
+                String suffix = null;
+                String group = null;
+                // 如果有方括号，则方括号中的值为分组
+                int index = caption.indexOf(Strings.LEFT_SQUARE_BRACKET);
+                if (index > 0) {
+                    group = caption.substring(index + 1, caption.length() - 1);
+                    caption = caption.substring(0, index);
                 }
-
-                Region region = buildRegion(codeRegionMapping, group, code, caption);
+                // 如果有括号，则括号中的值为后缀
+                index = caption.indexOf(Strings.LEFT_BRACKET);
+                if (index > 0) {
+                    suffix = caption.substring(index + 1, caption.length() - 1);
+                    caption = caption.substring(0, index);
+                }
+                Region region = buildRegion(codeRegionMapping, code, caption, suffix, group);
                 result.add(region);
                 codeRegionMapping.put(region.getCode(), region);
             }
@@ -43,12 +46,18 @@ public class StatsGovCnRegionMapParser implements RegionMapParser {
         return result;
     }
 
-    private Region buildRegion(Map<String, Region> codeRegionMapping, String group, String code, String caption) {
+    private Region buildRegion(Map<String, Region> codeRegionMapping, String code, String caption, String suffix,
+            String group) {
         Region region;
+        // 省级和市级区划如果没有后缀，则将最后一个字作为后缀
+        if (code.endsWith("00") && suffix == null) {
+            suffix = caption.substring(caption.length() - 1);
+            caption = caption.substring(0, caption.length() - 1);
+        }
         if (code.endsWith("0000")) { // 0000结尾的为省级区划，省级区划不需要考虑父级区划，且所有省级区划均为有效
-            region = new Region(code, caption, group);
+            region = new Region(code, caption, suffix, group);
         } else { // 其它为市级或县级区划，需考虑父级区划
-            region = new Region(code, caption, group);
+            region = new Region(code, caption, suffix, group);
             Region parentRegion = getParentRegion(codeRegionMapping, code);
             if (parentRegion != null) {
                 parentRegion.addSub(region);

@@ -93,12 +93,12 @@ public class AdditionalCaptionUtil {
                 if (StringUtils.isNotBlank(value)) {
                     Region region = regionSource.getRegion(value, locale);
                     if (region != null) {
-                        caption = region.getCaption();
+                        caption = region.getCaption(regionCode.withSuffix());
                         if (caption != null) {
                             StringBuilder sb = new StringBuilder(caption);
                             Region parentRegion = region.getParent();
                             while (parentRegion != null && parentRegion.getLevel() >= regionCode.captionBeginLevel()) {
-                                String parentCaption = parentRegion.getCaption();
+                                String parentCaption = parentRegion.getCaption(regionCode.withSuffix());
                                 if (parentCaption != null) {
                                     sb.insert(0, parentCaption);
                                 }

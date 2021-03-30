@@ -11,8 +11,9 @@ import org.truenewx.tnxjee.model.validation.constraint.validator.RegionCodeValid
 
 /**
  * 标注属性是行政区划代码
+ *
+ * @author jianglei
  */
-
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,5 +33,10 @@ public @interface RegionCode {
      * @return 显示名称的开始级别，默认为1，即从省级区域开始
      */
     int captionBeginLevel() default 1;
+
+    /**
+     * @return 显示名称中的省市是否包含后缀，默认为false
+     */
+    boolean withSuffix() default false;
 
 }
