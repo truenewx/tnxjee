@@ -274,14 +274,17 @@ public class TemporalUtil {
     @SuppressWarnings("unchecked")
     public static <T extends Temporal> T parse(Class<T> type, String s, String pattern) {
         if (StringUtils.isNotBlank(s)) {
-            if (type == Instant.class) {
-                return (T) formatter(pattern).parse(s, Instant::from);
-            } else if (type == LocalDate.class) {
-                return (T) formatter(pattern).parse(s, LocalDate::from);
-            } else if (type == LocalDateTime.class) {
-                return (T) formatter(pattern).parse(s, LocalDateTime::from);
-            } else if (type == LocalTime.class) {
-                return (T) formatter(pattern).parse(s, LocalTime::from);
+            try {
+                if (type == Instant.class) {
+                    return (T) formatter(pattern).parse(s, Instant::from);
+                } else if (type == LocalDate.class) {
+                    return (T) formatter(pattern).parse(s, LocalDate::from);
+                } else if (type == LocalDateTime.class) {
+                    return (T) formatter(pattern).parse(s, LocalDateTime::from);
+                } else if (type == LocalTime.class) {
+                    return (T) formatter(pattern).parse(s, LocalTime::from);
+                }
+            } catch (Exception ignored) {
             }
         }
         return null;
