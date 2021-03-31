@@ -2,7 +2,6 @@ package org.truenewx.tnxjee.core.enums;
 
 import java.util.Locale;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.truenewx.tnxjee.core.i18n.TextResolver;
 
 /**
@@ -15,6 +14,8 @@ public interface EnumDictResolver extends TextResolver {
      * 布尔枚举类型的简称
      */
     String BOOLEAN_ENUM_TYPE = "boolean";
+
+    String getGroupedCaptionSeparator(Locale locale);
 
     EnumDict getEnumDict(Locale locale);
 
@@ -33,15 +34,7 @@ public interface EnumDictResolver extends TextResolver {
 
     EnumItem getEnumItem(Enum<?> enumConstant, Locale locale);
 
-    default <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, Locale locale) {
-        EnumType enumType = getEnumType(enumClass.getName(), locale);
-        if (enumType != null) {
-            EnumItem enumItem = enumType.getItemByCaption(caption);
-            if (enumItem != null) {
-                return EnumUtils.getEnum(enumClass, enumItem.getKey());
-            }
-        }
-        return null;
-    }
+    <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption,
+            Locale locale);
 
 }

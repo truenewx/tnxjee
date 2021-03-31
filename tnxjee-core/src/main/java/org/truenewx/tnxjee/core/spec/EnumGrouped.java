@@ -1,6 +1,4 @@
-package org.truenewx.tnxjee.model.spec.enums;
-
-import org.truenewx.tnxjee.model.spec.Grouped;
+package org.truenewx.tnxjee.core.spec;
 
 /**
  * 按枚举类型分组的

@@ -9,12 +9,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -25,6 +28,7 @@ import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.caption.Caption;
 import org.truenewx.tnxjee.core.caption.CaptionUtil;
 import org.truenewx.tnxjee.core.spec.BooleanEnum;
+import org.truenewx.tnxjee.core.spec.EnumGrouped;
 import org.truenewx.tnxjee.core.spec.Name;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.IOUtil;
@@ -48,9 +52,30 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      */
     private static final String CONFIG_FILE_EXTENSION = "xml";
 
+    private static final String GROUPED_ENUM_CAPTION_SEPARATOR = "constant.tnxjee.core.enum.grouped_caption_separator";
+
     private Map<Locale, EnumDict> dicts = new Hashtable<>();
 
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Override
+    public String getGroupedCaptionSeparator(Locale locale) {
+        return this.messageSource.getMessage(GROUPED_ENUM_CAPTION_SEPARATOR, null, locale);
+    }
+
+    @Override
+    public void afterInitialized(ApplicationContext context) throws Exception {
+        // 从Spring容器中找出所有EnumType，加入对应区域的枚举字典中
+        Map<String, EnumType> enumTypeMap = context.getBeansOfType(EnumType.class);
+        for (Entry<String, EnumType> entry : enumTypeMap.entrySet()) {
+            Locale locale = getLocale(entry.getKey());
+            EnumDict dict = getEnumDict(locale);
+            dict.addType(entry.getValue());
+        }
+    }
 
     @Override
     public EnumDict getEnumDict(Locale locale) {
@@ -81,8 +106,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         return result;
     }
 
-    private EnumItem getEnumItem(String type, String subtype, String key, Locale locale,
-            String... keys) {
+    private EnumItem getEnumItem(String type, String subtype, String key, Locale locale, String... keys) {
         EnumType enumType = getEnumType(type, subtype, locale);
         if (enumType != null) { // 尝试构建不成功时item可能为null
             return enumType.getItem(key, keys);
@@ -180,10 +204,9 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      * @param locale    区域
      * @return 枚举类型
      */
-    private EnumType readEnumType(SAXReader reader, Class<Enum<?>> enumClass, String subtype,
-            Locale locale) {
-        String basename = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + ClassUtils
-                .addResourcePathToPackagePath(enumClass, EnumDictFactory.CONFIG_FILE_BASE_NAME);
+    private EnumType readEnumType(SAXReader reader, Class<Enum<?>> enumClass, String subtype, Locale locale) {
+        String basename = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+                + ClassUtils.addResourcePathToPackagePath(enumClass, EnumDictFactory.CONFIG_FILE_BASE_NAME);
         Resource resource = IOUtil.findI18nResource(basename, locale, CONFIG_FILE_EXTENSION);
         EnumType result = readEnumType(reader, resource, enumClass.getSimpleName(), subtype);
         if (result == null) {// 与枚举类相关的配置文件不存在，或其中找不到匹配的枚举类型，则尝试从全局配置文件中读取
@@ -262,18 +285,29 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private EnumType buildEnumType(Class<Enum<?>> enumClass, String subtype, Locale locale) {
         EnumType enumType = newEnumType(enumClass, subtype);
+
+        Class<Enum> groupEnumClass = null;
+        if (EnumGrouped.class.isAssignableFrom(enumClass)) {
+            groupEnumClass = ClassUtil.getActualGenericType(enumClass, EnumGrouped.class, 0);
+        }
         for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
             Field field = ClassUtil.getField(enumConstant);
-            Integer ordinal = getOrdinal(field, subtype);
-            if (ordinal != null) {
+            if (field != null) {
+                int ordinal = getOrdinal(field, subtype);
                 if (ordinal < 0) { // 取得的序号小于0时，使用枚举常量的定义顺序号
                     ordinal = enumConstant.ordinal();
                 }
                 String caption = CaptionUtil.getCaption(field, locale);
-                if (caption == null) { // 默认用枚举常量名称作为显示名
+                if (caption == null) { // 默认用枚举常量名称作为显示名称
                     caption = enumConstant.name();
+                }
+                if (groupEnumClass != null) { // 如果具有分组枚举，则显示名称以分组枚举作为前缀
+                    Enum<?> group = ((EnumGrouped<?>) enumConstant).group();
+                    String groupCaption = getText(group, locale);
+                    caption = groupCaption + getGroupedCaptionSeparator(locale) + caption;
                 }
                 enumType.addItem(new EnumItem(ordinal, enumConstant.name(), caption));
             }
@@ -281,27 +315,23 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         return enumType;
     }
 
-    private Integer getOrdinal(Field field, String subname) {
-        if (field == null) {
-            return null;
-        }
-        if (subname == null) {
-            return EnumSub.DEFAULT_ORDINAL;
-        }
-        EnumSub[] enumSubs = field.getAnnotationsByType(EnumSub.class);
-        for (EnumSub enumSub : enumSubs) {
-            if (enumSub.value().equals(subname)) {
-                return enumSub.ordinal();
+    private int getOrdinal(Field field, String subname) {
+        if (subname != null) {
+            EnumSub[] enumSubs = field.getAnnotationsByType(EnumSub.class);
+            for (EnumSub enumSub : enumSubs) {
+                if (enumSub.value().equals(subname)) {
+                    return enumSub.ordinal();
+                }
             }
         }
-        return null;
+        return EnumSub.DEFAULT_ORDINAL;
     }
 
     /**
      * 创建枚举类型对象，不含枚举项目
      *
      * @param enumClass 枚举类
-     * @param subname
+     * @param subname   子类型名称
      * @return 不含枚举项目的枚举类型对象
      */
     private EnumType newEnumType(Class<?> enumClass, String subname) {
@@ -373,13 +403,15 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     }
 
     @Override
-    public void afterInitialized(ApplicationContext context) throws Exception {
-        // 从Spring容器中找出所有EnumType，加入对应区域的枚举字典中
-        Map<String, EnumType> enumTypeMap = context.getBeansOfType(EnumType.class);
-        for (Entry<String, EnumType> entry : enumTypeMap.entrySet()) {
-            Locale locale = getLocale(entry.getKey());
-            EnumDict dict = getEnumDict(locale);
-            dict.addType(entry.getValue());
+    public <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, Locale locale) {
+        EnumType enumType = getEnumType(enumClass.getName(), locale);
+        if (enumType != null) {
+            EnumItem enumItem = enumType.getItemByCaption(caption);
+            if (enumItem != null) {
+                return EnumUtils.getEnum(enumClass, enumItem.getKey());
+            }
         }
+        return null;
     }
+
 }
