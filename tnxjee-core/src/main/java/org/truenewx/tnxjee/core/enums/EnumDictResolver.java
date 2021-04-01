@@ -15,8 +15,6 @@ public interface EnumDictResolver extends TextResolver {
      */
     String BOOLEAN_ENUM_TYPE = "boolean";
 
-    String getGroupedCaptionSeparator(Locale locale);
-
     EnumDict getEnumDict(Locale locale);
 
     EnumType getEnumType(String type, Locale locale);
@@ -35,6 +33,6 @@ public interface EnumDictResolver extends TextResolver {
     EnumItem getEnumItem(Enum<?> enumConstant, Locale locale);
 
     <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption,
-            Locale locale);
+            String groupCaption, Locale locale);
 
 }

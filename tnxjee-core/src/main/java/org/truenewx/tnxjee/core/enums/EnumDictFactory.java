@@ -15,9 +15,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -52,19 +50,9 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
      */
     private static final String CONFIG_FILE_EXTENSION = "xml";
 
-    private static final String GROUPED_ENUM_CAPTION_SEPARATOR = "constant.tnxjee.core.enum.grouped_caption_separator";
-
     private Map<Locale, EnumDict> dicts = new Hashtable<>();
 
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-
-    @Autowired
-    private MessageSource messageSource;
-
-    @Override
-    public String getGroupedCaptionSeparator(Locale locale) {
-        return this.messageSource.getMessage(GROUPED_ENUM_CAPTION_SEPARATOR, null, locale);
-    }
 
     @Override
     public void afterInitialized(ApplicationContext context) throws Exception {
@@ -289,27 +277,25 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     private EnumType buildEnumType(Class<Enum<?>> enumClass, String subtype, Locale locale) {
         EnumType enumType = newEnumType(enumClass, subtype);
 
-        Class<Enum> groupEnumClass = null;
-        if (EnumGrouped.class.isAssignableFrom(enumClass)) {
-            groupEnumClass = ClassUtil.getActualGenericType(enumClass, EnumGrouped.class, 0);
+        Enum<?> group = null;
+        if (EnumGrouped.class.isAssignableFrom(enumClass) && subtype != null) {
+            Class<Enum> groupEnumClass = ClassUtil.getActualGenericType(enumClass, EnumGrouped.class, 0);
+            group = EnumUtils.getEnum(groupEnumClass, subtype);
         }
         for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
-            Field field = ClassUtil.getField(enumConstant);
-            if (field != null) {
-                int ordinal = getOrdinal(field, subtype);
-                if (ordinal < 0) { // 取得的序号小于0时，使用枚举常量的定义顺序号
-                    ordinal = enumConstant.ordinal();
+            if (group == null || ((EnumGrouped) enumConstant).group() == group) {
+                Field field = ClassUtil.getField(enumConstant);
+                if (field != null) {
+                    int ordinal = getOrdinal(field, subtype);
+                    if (ordinal < 0) { // 取得的序号小于0时，使用枚举常量的定义顺序号
+                        ordinal = enumConstant.ordinal();
+                    }
+                    String caption = CaptionUtil.getCaption(field, locale);
+                    if (caption == null) { // 默认用枚举常量名称作为显示名称
+                        caption = enumConstant.name();
+                    }
+                    enumType.addItem(new EnumItem(ordinal, enumConstant.name(), caption));
                 }
-                String caption = CaptionUtil.getCaption(field, locale);
-                if (caption == null) { // 默认用枚举常量名称作为显示名称
-                    caption = enumConstant.name();
-                }
-                if (groupEnumClass != null) { // 如果具有分组枚举，则显示名称以分组枚举作为前缀
-                    Enum<?> group = ((EnumGrouped<?>) enumConstant).group();
-                    String groupCaption = getText(group, locale);
-                    caption = groupCaption + getGroupedCaptionSeparator(locale) + caption;
-                }
-                enumType.addItem(new EnumItem(ordinal, enumConstant.name(), caption));
             }
         }
         return enumType;
@@ -403,8 +389,17 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     }
 
     @Override
-    public <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, Locale locale) {
-        EnumType enumType = getEnumType(enumClass.getName(), locale);
+    public <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, String groupCaption,
+            Locale locale) {
+        String subtype = null;
+        if (EnumGrouped.class.isAssignableFrom(enumClass)) {
+            Class<Enum> groupClass = ClassUtil.getActualGenericType(enumClass, EnumGrouped.class, 0);
+            Enum<?> group = getEnumConstantByCaption(groupClass, groupCaption, null, locale);
+            if (group != null) {
+                subtype = group.name();
+            }
+        }
+        EnumType enumType = getEnumType(enumClass.getName(), subtype, locale);
         if (enumType != null) {
             EnumItem enumItem = enumType.getItemByCaption(caption);
             if (enumItem != null) {
