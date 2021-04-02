@@ -1,6 +1,17 @@
 package org.truenewx.tnxjee.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -112,7 +123,7 @@ public class CollectionUtil {
             return ((Map<?, ?>) iterable).size();
         } else {
             int size = 0;
-            for (Iterator<?> iterator = iterable.iterator(); iterator.hasNext(); ) {
+            for (Iterator<?> iterator = iterable.iterator(); iterator.hasNext();) {
                 size++;
             }
             return size;
@@ -410,7 +421,6 @@ public class CollectionUtil {
         return result;
     }
 
-
     /**
      * 将指定映射集转换为按值排序的映射集返回，指定映射集没有变化
      *
@@ -429,6 +439,26 @@ public class CollectionUtil {
             result.put(entry.getKey(), entry.getValue());
         });
         return result;
+    }
+
+    /**
+     * 移除指定数组中的null值，去重后，进行排序
+     *
+     * @param array 数组
+     * @param <E>   可排序的元素类型
+     * @return 处理后得到的集合
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <E extends Comparable> List<E> sortValidly(E[] array) {
+        Set<E> set = new HashSet<>();
+        for (E obj : array) {
+            if (obj != null) {
+                set.add(obj);
+            }
+        }
+        List<E> list = new ArrayList<>(set);
+        Collections.sort(list);
+        return list;
     }
 
 }
