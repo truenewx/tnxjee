@@ -273,7 +273,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private EnumType buildEnumType(Class<Enum<?>> enumClass, String subtype, Locale locale) {
         EnumType enumType = newEnumType(enumClass, subtype);
 
@@ -389,6 +389,7 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <E extends Enum<E>> E getEnumConstantByCaption(Class<E> enumClass, String caption, String groupCaption,
             Locale locale) {
         String subtype = null;
