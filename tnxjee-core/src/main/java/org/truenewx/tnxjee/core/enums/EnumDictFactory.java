@@ -281,12 +281,13 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         if (EnumGrouped.class.isAssignableFrom(enumClass) && subtype != null) {
             Class<Enum> groupEnumClass = ClassUtil.getActualGenericType(enumClass, EnumGrouped.class, 0);
             group = EnumUtils.getEnum(groupEnumClass, subtype);
+            subtype = null; // 子类型名称匹配了分组枚举，则置空，以避免重复校验子类型
         }
         for (Enum<?> enumConstant : enumClass.getEnumConstants()) {
             if (group == null || ((EnumGrouped) enumConstant).group() == group) {
                 Field field = ClassUtil.getField(enumConstant);
-                if (field != null) {
-                    int ordinal = getOrdinal(field, subtype);
+                Integer ordinal = getOrdinal(field, subtype);
+                if (ordinal != null) {
                     if (ordinal < 0) { // 取得的序号小于0时，使用枚举常量的定义顺序号
                         ordinal = enumConstant.ordinal();
                     }
@@ -301,16 +302,21 @@ public class EnumDictFactory implements EnumDictResolver, ContextInitializedBean
         return enumType;
     }
 
-    private int getOrdinal(Field field, String subname) {
-        if (subname != null) {
-            EnumSub[] enumSubs = field.getAnnotationsByType(EnumSub.class);
-            for (EnumSub enumSub : enumSubs) {
-                if (enumSub.value().equals(subname)) {
-                    return enumSub.ordinal();
-                }
+    private Integer getOrdinal(Field field, String subname) {
+        if (field == null) {
+            return null;
+        }
+        // 未指定子类型，则采用默认的顺序号
+        if (StringUtils.isBlank(subname)) {
+            return EnumSub.DEFAULT_ORDINAL;
+        }
+        EnumSub[] enumSubs = field.getAnnotationsByType(EnumSub.class);
+        for (EnumSub enumSub : enumSubs) {
+            if (enumSub.value().equals(subname)) {
+                return enumSub.ordinal();
             }
         }
-        return EnumSub.DEFAULT_ORDINAL;
+        return null;
     }
 
     /**
