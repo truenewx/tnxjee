@@ -10,6 +10,12 @@ import org.apache.commons.lang3.StringUtils;
  * @author jianglei
  */
 public class Region {
+
+    /**
+     * 行政区划级别：国家级
+     */
+    public static final int LEVEL_NATION = 0;
+
     /**
      * 代号
      */
@@ -210,7 +216,7 @@ public class Region {
      * @return 级别
      */
     public int getLevel() {
-        int level = 0;
+        int level = LEVEL_NATION;
         Region parent = getParent();
         while (parent != null) {
             level++;

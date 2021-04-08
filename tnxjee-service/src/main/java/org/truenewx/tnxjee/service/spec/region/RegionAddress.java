@@ -1,7 +1,5 @@
 package org.truenewx.tnxjee.service.spec.region;
 
-import org.truenewx.tnxjee.model.validation.constraint.RegionCode;
-
 /**
  * 带行政区划代码的地址
  *
@@ -9,21 +7,19 @@ import org.truenewx.tnxjee.model.validation.constraint.RegionCode;
  */
 public class RegionAddress {
 
-    @RegionCode
-    private String regionCode;
+    private Region region;
     private String detail;
 
-    public RegionAddress(String regionCode, String detail) {
-        this.regionCode = regionCode;
+    public RegionAddress(Region region, String detail) {
+        this.region = region;
         this.detail = detail;
     }
 
-    public String getRegionCode() {
-        return this.regionCode;
+    public Region getRegion() {
+        return this.region;
     }
 
     public String getDetail() {
         return this.detail;
     }
-
 }

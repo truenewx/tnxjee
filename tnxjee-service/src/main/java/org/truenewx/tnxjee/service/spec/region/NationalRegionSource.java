@@ -61,10 +61,11 @@ public interface NationalRegionSource {
      * 从包含行政区划名称的地址中解析出行政区划代号，剩余部分作为详细地址
      *
      * @param address    包含行政区划名称的地址
+     * @param level      需要解析到的级别，超出的级别不解析
      * @param withSuffix 省市名称是否包含后缀
      * @param locale     显示区域
      * @return 包含行政区划代号的地址
      */
-    RegionAddress parseAddress(String address, boolean withSuffix, Locale locale);
+    RegionAddress parseAddress(String address, int level, boolean withSuffix, Locale locale);
 
 }

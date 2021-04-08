@@ -145,16 +145,19 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
     }
 
     @Override
-    public RegionAddress parseAddress(String address, boolean withSuffix, Locale locale) {
-        if (address == null || address.length() < 10) { // 地址至少10位才可能合规
+    public RegionAddress parseAddress(String address, int level, boolean withSuffix, Locale locale) {
+        int normalProvinceCaptionLength = withSuffix ? 3 : 2; // 一般的省级区划名称长度，后缀为一个字
+        if (address == null || address.length() < normalProvinceCaptionLength) { // 地址至少为一般省级区划名称长度
             return null;
         }
         Region nationalRegion = getNationalRegion(locale);
+        if (nationalRegion.getLevel() >= level) {
+            return new RegionAddress(nationalRegion, address);
+        }
 
         // 先查找省级区划
         Region province = null;
         try {
-            int normalProvinceCaptionLength = withSuffix ? 3 : 2; // 一般的省级区划名称长度，后缀为一个字
             province = nationalRegion.findSubByCaption(address.substring(0, normalProvinceCaptionLength), withSuffix);
             if (province == null) { // 再尝试匹配超过一般长度的省级名称
                 List<Region> provinces = nationalRegion
@@ -171,8 +174,11 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
             throw new BusinessException(RegionExceptionCodes.PROVINCE_ERROR);
         }
 
-        // 此时省级区划一定已经找到，去掉省级区划名称后，查找市级区划
+        // 此时省级区划一定已经找到，去掉省级区划名称后，进一步查找市级区划
         String regionCaption = address.substring(province.getCaption(withSuffix).length());
+        if (province.getLevel() >= level) {
+            return new RegionAddress(province, regionCaption);
+        }
         Region city = null;
         // 如果省级区划为直辖市，则市级区划后缀需是特殊的市级区县后缀
         boolean provincialCity = ArrayUtils.contains(this.provinceLevelCitySuffixes, province.getSuffix());
@@ -193,6 +199,9 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
             county = city;
         } else {
             regionCaption = regionCaption.substring(city.getCaption(withSuffix).length());
+            if (city.getLevel() >= level) {
+                return new RegionAddress(city, regionCaption);
+            }
             index = StringUtil.indexOfFirstInTurn(regionCaption, this.countySuffixes, true);
             if (index > 0) {
                 String countyCaption = regionCaption.substring(0, index);
@@ -205,7 +214,7 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
 
         // 此时县级区划一定已经找到，去掉县级区划名称后，剩下的是地址详情
         String detail = regionCaption.substring(county.getCaption(withSuffix).length());
-        return new RegionAddress(county.getCode(), detail);
+        return new RegionAddress(county, detail);
     }
 
 }
