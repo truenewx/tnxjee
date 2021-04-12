@@ -8,15 +8,22 @@ import org.truenewx.tnxjee.core.util.LogUtil;
 
 /**
  * 传递Spring Web上下文的多线程任务
+ *
+ * @author jianglei
  */
 public abstract class SpringWebContextTask implements Runnable {
 
     private RequestAttributes requestAttributes;
     private SecurityContext securityContext;
 
-    public SpringWebContextTask() {
-        this.requestAttributes = RequestContextHolder.currentRequestAttributes();
+    public SpringWebContextTask(boolean nullableWebRequest) {
+        this.requestAttributes = nullableWebRequest ? RequestContextHolder.getRequestAttributes() : RequestContextHolder
+                .currentRequestAttributes();
         this.securityContext = SecurityContextHolder.getContext();
+    }
+
+    public SpringWebContextTask() {
+        this(false);
     }
 
     @Override

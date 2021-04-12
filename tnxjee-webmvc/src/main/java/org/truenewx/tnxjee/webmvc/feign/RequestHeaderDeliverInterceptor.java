@@ -27,6 +27,8 @@ import feign.RequestTemplate;
 
 /**
  * 请求头信息传递拦截器
+ *
+ * @author jianglei
  */
 @Component
 public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
@@ -37,8 +39,8 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         HttpServletRequest request = SpringWebContext.getRequest();
+        boolean noJwt = true;
         if (request != null) {
-            boolean noJwt = true;
             Map<String, Collection<String>> feignHeaders = template.headers();
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
@@ -56,13 +58,13 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
                     }
                 }
             }
-            if (noJwt) { // 没有JWT则构建JWT传递
-                String token = generateJwt(template);
-                if (token == null) { // 确保存在JWT头信息，以便于判断是否内部RPC
-                    token = Boolean.TRUE.toString();
-                }
-                template.header(WebConstants.HEADER_INTERNAL_JWT, token);
+        }
+        if (noJwt) { // 没有JWT则构建JWT传递
+            String token = generateJwt(template);
+            if (token == null) { // 确保存在JWT头信息，以便于判断是否内部RPC
+                token = Boolean.TRUE.toString();
             }
+            template.header(WebConstants.HEADER_INTERNAL_JWT, token);
         }
     }
 
@@ -88,6 +90,8 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
                         } else {
                             addGrantedAuthorities(userDetails, grantAuthority);
                         }
+                        break;
+                    default:
                         break;
                 }
             }
