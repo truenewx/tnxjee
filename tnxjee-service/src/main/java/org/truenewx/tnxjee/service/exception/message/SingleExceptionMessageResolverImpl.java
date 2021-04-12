@@ -3,11 +3,9 @@ package org.truenewx.tnxjee.service.exception.message;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.enums.EnumDictResolver;
 import org.truenewx.tnxjee.core.i18n.PropertyCaptionResolver;
+import org.truenewx.tnxjee.core.message.MessageResolver;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.FormatException;
 import org.truenewx.tnxjee.service.exception.SingleException;
@@ -21,36 +19,9 @@ import org.truenewx.tnxjee.service.exception.SingleException;
 public class SingleExceptionMessageResolverImpl implements SingleExceptionMessageResolver {
 
     @Autowired
-    private MessageSource messageSource;
-    @Autowired
-    private EnumDictResolver enumDictResolver;
+    private MessageResolver messageResolver;
     @Autowired
     private PropertyCaptionResolver propertyCaptionResolver;
-
-    @Override
-    public String resolveMessage(String code, Locale locale, Object... args) {
-        String[] argTexts = getArgTexts(args, locale);
-        return this.messageSource.getMessage(code, argTexts, code, locale);
-    }
-
-    private String[] getArgTexts(Object[] args, Locale locale) {
-        if (args == null) {
-            return null;
-        }
-        String[] result = new String[args.length];
-        for (int i = 0; i < args.length; i++) {
-            Object arg = args[i];
-            if (arg instanceof Enum<?>) {
-                result[i] = this.enumDictResolver.getText((Enum<?>) arg, locale);
-            } else if (arg != null) {
-                result[i] = arg.toString();
-            }
-            if (result[i] == null) {
-                result[i] = Strings.EMPTY;
-            }
-        }
-        return result;
-    }
 
     @Override
     public String resolveMessage(SingleException se, Locale locale) {
@@ -59,7 +30,7 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
         }
         if (se instanceof BusinessException) {
             BusinessException be = (BusinessException) se;
-            return resolveMessage(be.getCode(), locale, be.getArgs());
+            return this.messageResolver.resolveMessage(be.getCode(), locale, be.getArgs());
         } else if (se instanceof FormatException) {
             FormatException fe = (FormatException) se;
             String propertyCaption = this.propertyCaptionResolver
@@ -67,7 +38,7 @@ public class SingleExceptionMessageResolverImpl implements SingleExceptionMessag
             if (propertyCaption == null) {
                 propertyCaption = fe.getProperty(); // 如果均未取到，则取属性名
             }
-            String message = resolveMessage(fe.getCode(), locale);
+            String message = this.messageResolver.resolveMessage(fe.getCode(), locale);
             return propertyCaption + message;
         }
         return null;
