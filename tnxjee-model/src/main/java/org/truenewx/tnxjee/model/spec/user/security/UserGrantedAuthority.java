@@ -98,10 +98,12 @@ public class UserGrantedAuthority implements GrantedAuthority {
             if (StringUtils.isNotBlank(app) && !Strings.ASTERISK.equals(this.app) && !app.equals(this.app)) {
                 return false;
             }
-            for (String pattern : this.permissions) {
-                // 有一个许可忽略大小写通配符匹配，则视为匹配
-                if (StringUtil.wildcardMatch(permission.toLowerCase(), pattern.toLowerCase())) {
-                    return true;
+            if (this.permissions != null) {
+                for (String pattern : this.permissions) {
+                    // 有一个许可忽略大小写通配符匹配，则视为匹配
+                    if (StringUtil.wildcardMatch(permission.toLowerCase(), pattern.toLowerCase())) {
+                        return true;
+                    }
                 }
             }
             // 限定了许可但未包含，则不匹配
