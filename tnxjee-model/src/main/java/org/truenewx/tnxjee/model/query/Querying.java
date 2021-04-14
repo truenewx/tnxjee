@@ -37,6 +37,10 @@ public class Querying extends Pagination implements QueryModel, Paging {
 
     public void setIgnoring(QueryIgnoring ignoring) {
         this.ignoring = ignoring;
+        // 在忽略记录时，为了确保执行获取总数的动作，确保页大小>0
+        if (ignoring == QueryIgnoring.RECORD && getPageSize() <= 0) {
+            setPageSize(20);
+        }
     }
 
     //////
