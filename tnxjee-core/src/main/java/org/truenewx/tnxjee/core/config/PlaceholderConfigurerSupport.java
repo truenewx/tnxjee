@@ -1,8 +1,13 @@
 package org.truenewx.tnxjee.core.config;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 /**
@@ -31,7 +36,17 @@ public abstract class PlaceholderConfigurerSupport {
     }
 
     protected Resource getLocation() {
+        try {
+            Resource resource = new ClassPathResource("/");
+            File root = resource.getFile().getParentFile().getParentFile().getParentFile().getParentFile();
+            String path = root.getAbsolutePath() + "/conf/" + getAppName() + ".properties";
+            return new FileSystemResource(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
+
+    protected abstract String getAppName();
 
 }
