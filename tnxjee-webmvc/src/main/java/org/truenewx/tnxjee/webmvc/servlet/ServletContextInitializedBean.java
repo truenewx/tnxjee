@@ -15,6 +15,8 @@ import org.truenewx.tnxjee.core.version.VersionReader;
 
 /**
  * ServletContext初始化Bean
+ *
+ * @author jianglei
  */
 @Component
 public class ServletContextInitializedBean implements ServletContextAware, ContextInitializedBean {
@@ -41,9 +43,11 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
             });
         }
 
-        this.servletContext.setAttribute("version", this.versionReader.getVersion());
+        this.servletContext.setAttribute("profile", this.profileSupplier.get());
 
         boolean formalProfile = this.profileSupplier.isFormal();
+        this.servletContext.setAttribute("version", this.versionReader.getVersion(!formalProfile));
+
         this.servletContext.setAttribute("formalProfile", formalProfile);
         this.servletContext.setAttribute("resourceMin", formalProfile ? ".min" : Strings.EMPTY);
     }
