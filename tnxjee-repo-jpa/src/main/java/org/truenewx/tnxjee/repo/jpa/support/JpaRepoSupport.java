@@ -12,6 +12,8 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.mapping.Column;
+import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.MathUtil;
@@ -30,8 +32,7 @@ import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
  *
  * @author jianglei
  */
-public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
-        implements JpaRepo<T> {
+public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> implements JpaRepo<T> {
 
     @Autowired
     private ModelPropertyLimitValueManager propertyLimitValueManager;
@@ -96,10 +97,21 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T>
         return query(ql, params, null, pageSize, pageNo, Arrays.asList(orders));
     }
 
+    protected final String getTableName() {
+        return getPersistentClass().getTable().getName();
+    }
+
+    private PersistentClass getPersistentClass() {
+        return getAccessTemplate().getPersistentClass(getEntityName());
+    }
+
     protected final Column getColumn(String propertyName) {
-        return (Column) getAccessTemplate().getPersistentClass(getEntityName())
-                .getProperty(propertyName)
-                .getColumnIterator().next();
+        Property property = getPersistentClass().getProperty(propertyName);
+        return (Column) property.getColumnIterator().next();
+    }
+
+    protected final String getColumnName(String propertyName) {
+        return getColumn(propertyName).getName();
     }
 
     private Number getNumberPropertyMinValue(String propertyName) {
