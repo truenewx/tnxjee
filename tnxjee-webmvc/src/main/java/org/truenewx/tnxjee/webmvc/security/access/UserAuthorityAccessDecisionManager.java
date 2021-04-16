@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,9 +24,10 @@ import org.truenewx.tnxjee.web.util.WebUtil;
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends AffirmativeBased implements GrantedAuthorityDecider {
+public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
+        // 让父类判断方法校验Web表达式形式的权限
         super(Collections.singletonList(new WebExpressionVoter()));
     }
 
@@ -35,6 +36,7 @@ public class UserAuthorityAccessDecisionManager extends AffirmativeBased impleme
             throws AccessDeniedException, InsufficientAuthenticationException {
         super.decide(authentication, object, configAttributes);
 
+        // 父类判断已通过，必然为已登录的用户
         FilterInvocation fi = (FilterInvocation) object;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (!contains(fi, authorities, configAttributes)) {
@@ -45,32 +47,31 @@ public class UserAuthorityAccessDecisionManager extends AffirmativeBased impleme
 
     private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
             Collection<ConfigAttribute> configAttributes) {
-        // 只要包含一个要求的权限就匹配
+        boolean granted = true; // 如果没有支持的配置属性限定，则授权默认为通过
         for (ConfigAttribute attribute : configAttributes) {
-            if (contains(fi, authorities, attribute)) {
-                return true;
+            if (supports(attribute)) {
+                granted = false; // 只要有一个支持的配置属性限定，则授权默认为不通过
+                if (contains(fi, authorities, (UserConfigAuthority) attribute)) {
+                    return true; // 支持的用户配置权限限定有一个通过，则结果视为通过
+                }
             }
         }
-        return false;
+        return granted;
     }
 
     private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
-            ConfigAttribute attribute) {
-        if (supports(attribute)) {
-            UserConfigAuthority configAuthority = (UserConfigAuthority) attribute;
-            if (configAuthority.isDenyAll()) {
-                return false;
-            }
-            if (configAuthority.isIntranet()) { // 如果限制内网访问
-                String ip = WebUtil.getRemoteAddress(fi.getHttpRequest());
-                if (!NetUtil.isIntranetIp(ip)) {
-                    return false; // 拒绝非内网访问
-                }
-            }
-            return isGranted(authorities, configAuthority.getType(), configAuthority.getRank(),
-                    configAuthority.getApp(), configAuthority.getPermission());
+            UserConfigAuthority configAuthority) {
+        if (configAuthority.isDenyAll()) {
+            return false;
         }
-        return true; // 不支持的配置权限视为匹配
+        if (configAuthority.isIntranet()) { // 如果限制内网访问
+            String ip = WebUtil.getRemoteAddress(fi.getHttpRequest());
+            if (!NetUtil.isIntranetIp(ip)) {
+                return false; // 拒绝非内网访问
+            }
+        }
+        return isGranted(authorities, configAuthority.getType(), configAuthority.getRank(),
+                configAuthority.getApp(), configAuthority.getPermission());
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface GrantedAuthorityDecider {
      * @param authorities 获权集合
      * @param type        用户类型
      * @param rank        用户级别
-     * @param app
+     * @param app         应用名称
      * @param permission  许可
      * @return 是否为已获权
      */
