@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.webmvc.security.web.access;
 
+import java.util.Collection;
+
 import org.springframework.http.HttpMethod;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 
@@ -13,8 +15,8 @@ public interface ConfigAuthorityResolver {
      *
      * @param uri    请求路径
      * @param method 请求方法
-     * @return 配置权限
+     * @return 配置权限集
      */
-    UserConfigAuthority resolveConfigAuthority(String uri, HttpMethod method);
+    Collection<UserConfigAuthority> resolveConfigAuthorities(String uri, HttpMethod method);
 
 }

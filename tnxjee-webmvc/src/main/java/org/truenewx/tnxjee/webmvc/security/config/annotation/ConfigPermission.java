@@ -5,13 +5,14 @@ import java.lang.annotation.*;
 import org.truenewx.tnxjee.core.Strings;
 
 /**
- * {@link ConfigAuthority}的替代者，替代其中的许可限定为默认许可名称的限定，其它限定不变
+ * 配置许可限定。{@link ConfigAuthority}的替代者，替代其中的许可限定为默认许可名称的限定，其它限定不变
  *
  * @author jianglei
  */
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(ConfigPermissions.class)
 public @interface ConfigPermission {
 
     /**

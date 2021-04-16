@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.webmvc.view.menu;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -88,9 +89,8 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
         if (item.matchesProfile(this.profile)) { // 首先需匹配运行环境
             MenuItem grantedItem = null;
 
-            UserConfigAuthority configAuthority = getConfigAuthority(item);
             // 权限匹配，菜单项不带子菜单项加入目标集合
-            if (isGranted(grantedAuthorities, configAuthority)) {
+            if (isGranted(grantedAuthorities, getConfigAuthorities(item))) {
                 grantedItem = item.clone(false);
                 items.add(grantedItem);
             }
@@ -109,39 +109,48 @@ public class MenuManagerImpl implements MenuManager, InitializingBean {
         }
     }
 
-    private UserConfigAuthority getConfigAuthority(MenuItem item) {
+    private Collection<UserConfigAuthority> getConfigAuthorities(MenuItem item) {
         String rank = item.getRank();
         String permission = item.getPermission();
         // 用户类型是一定在菜单中有配置的，所以不视为在菜单中配置权限的标志
         boolean menuConfigured = StringUtils.isNotBlank(rank) || StringUtils.isNotBlank(permission);
-        UserConfigAuthority configAuthority = this.authorityResolver
-                .resolveConfigAuthority(item.getPath(), HttpMethod.GET);
-        // 不允许菜单配置中有权限配置，同时对应的Controller方法上也有权限配置，且两者不一致
-        if (menuConfigured && configAuthority != null
-                && (!StringUtil.equalsIgnoreBlank(this.menu.getUserType(), configAuthority.getType())
-                || !StringUtil.equalsIgnoreBlank(rank, configAuthority.getRank())
-                || !StringUtil.equalsIgnoreBlank(this.appName, configAuthority.getApp())
-                || !StringUtil.equalsIgnoreBlank(permission, configAuthority.getPermission()))) {
-            throw new ConflictedMenuItemConfigAuthorityException(item);
-        }
-        if (configAuthority != null) {
-            return configAuthority;
+        Collection<UserConfigAuthority> configAuthorities = this.authorityResolver
+                .resolveConfigAuthorities(item.getPath(), HttpMethod.GET);
+        if (configAuthorities != null) {
+            for (UserConfigAuthority configAuthority : configAuthorities) {
+                // 不允许菜单配置中有权限配置，同时对应的Controller方法上也有权限配置，且两者不一致
+                if (menuConfigured && (!StringUtil.equalsIgnoreBlank(this.menu.getUserType(), configAuthority.getType())
+                        || !StringUtil.equalsIgnoreBlank(rank, configAuthority.getRank())
+                        || !StringUtil.equalsIgnoreBlank(this.appName, configAuthority.getApp())
+                        || !StringUtil.equalsIgnoreBlank(permission, configAuthority.getPermission()))) {
+                    throw new ConflictedMenuItemConfigAuthorityException(item);
+                }
+            }
+            return configAuthorities;
         }
         if (menuConfigured) {
-            return new UserConfigAuthority(this.menu.getUserType(), rank, this.appName, permission, false);
+            return Collections.singletonList(
+                    new UserConfigAuthority(this.menu.getUserType(), rank, this.appName, permission, false));
         }
         // 两者都没有权限配置时返回null
         return null;
     }
 
     private boolean isGranted(Collection<? extends GrantedAuthority> grantedAuthorities,
-            UserConfigAuthority configAuthority) {
-        if (configAuthority == null) {
+            Collection<UserConfigAuthority> configAuthorities) {
+        if (configAuthorities == null) {
             // 即使允许匿名访问也必须配置匿名限定，没有权限限定是不允许出现的情况，视为获权失败
             return false;
         }
-        return this.authorityDecider.isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(),
-                configAuthority.getApp(), configAuthority.getPermission());
+        for (UserConfigAuthority configAuthority : configAuthorities) {
+            // 有一个权限匹配，就视为具有权限
+            if (this.authorityDecider
+                    .isGranted(grantedAuthorities, configAuthority.getType(), configAuthority.getRank(),
+                            configAuthority.getApp(), configAuthority.getPermission())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

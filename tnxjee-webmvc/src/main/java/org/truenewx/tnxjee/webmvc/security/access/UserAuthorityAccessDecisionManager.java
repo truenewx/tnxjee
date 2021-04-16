@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.vote.UnanimousBased;
+import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +24,7 @@ import org.truenewx.tnxjee.web.util.WebUtil;
 /**
  * 基于用户权限的访问判定管理器
  */
-public class UserAuthorityAccessDecisionManager extends UnanimousBased implements GrantedAuthorityDecider {
+public class UserAuthorityAccessDecisionManager extends AffirmativeBased implements GrantedAuthorityDecider {
 
     public UserAuthorityAccessDecisionManager() {
         super(Collections.singletonList(new WebExpressionVoter()));
@@ -45,13 +45,13 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
 
     private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,
             Collection<ConfigAttribute> configAttributes) {
+        // 只要包含一个要求的权限就匹配
         for (ConfigAttribute attribute : configAttributes) {
-            if (!contains(fi, authorities, attribute)) { // 只要有一个要求的权限未包含，则不匹配
-                return false;
+            if (contains(fi, authorities, attribute)) {
+                return true;
             }
         }
-        // 拥有的权限集包含所有要求的权限，才视为匹配
-        return true;
+        return false;
     }
 
     private boolean contains(FilterInvocation fi, Collection<? extends GrantedAuthority> authorities,

@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.webmvc.view.menu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,14 +65,15 @@ public class UserMenuResolverImpl implements UserMenuResolver {
         Menu menu = getUserGrantedMenu();
         // 有访问权限的链接才需要查找索引
         if (menu != null) {
-            UserConfigAuthority configAuthority = this.authorityResolver.resolveConfigAuthority(path, HttpMethod.GET);
+            Collection<UserConfigAuthority> configAuthorities = this.authorityResolver
+                    .resolveConfigAuthorities(path, HttpMethod.GET);
             List<MenuItem> items = menu.getItems();
-            applyIndex(items, configAuthority, path, indexes);
+            applyIndex(items, configAuthorities, path, indexes);
         }
         return indexes;
     }
 
-    private void applyIndex(List<MenuItem> items, UserConfigAuthority configAuthority, String path,
+    private void applyIndex(List<MenuItem> items, Collection<UserConfigAuthority> configAuthorities, String path,
             List<Integer> indexes) {
         for (int i = 0; i < items.size(); i++) {
             MenuItem item = items.get(i);
@@ -82,14 +84,16 @@ public class UserMenuResolverImpl implements UserMenuResolver {
                     return; // 找到匹配的直接返回
                 }
             } else { // 没有配路径，则尝试比较权限等级和许可
-                if (StringUtil.equalsIgnoreBlank(configAuthority.getRank(), item.getRank()) && StringUtil
-                        .equalsIgnoreBlank(configAuthority.getPermission(), item.getPermission())) {
-                    indexes.add(i);
-                    return; // 找到匹配的直接返回
+                for (UserConfigAuthority configAuthority : configAuthorities) {
+                    if (StringUtil.equalsIgnoreBlank(configAuthority.getRank(), item.getRank()) && StringUtil
+                            .equalsIgnoreBlank(configAuthority.getPermission(), item.getPermission())) {
+                        indexes.add(i);
+                        return; // 找到匹配的直接返回
+                    }
                 }
             }
             // 不匹配则尝试比较下级菜单项
-            applyIndex(item.getSubs(), configAuthority, path, indexes);
+            applyIndex(item.getSubs(), configAuthorities, path, indexes);
             if (indexes.size() > 0) { // 下级菜单项匹配，则当前菜单项视为匹配，加入当前索引
                 indexes.add(0, i);
             }
