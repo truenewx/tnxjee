@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.service.exception.ResolvableException;
+import org.truenewx.tnxjee.web.util.WebUtil;
 import org.truenewx.tnxjee.webmvc.exception.message.ResolvableExceptionMessageSaver;
 
 /**
@@ -27,8 +28,12 @@ public class AccessDeniedBusinessExceptionHandler extends AccessDeniedHandlerImp
         if (cause instanceof ResolvableException) {
             this.resolvableExceptionMessageSaver.saveMessage(request, response, null, (ResolvableException) cause);
         }
-        // 保存业务异常后，执行默认的处理机制
-        super.handle(request, response, accessDeniedException);
+
+        if (WebUtil.isAjaxRequest(request)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            super.handle(request, response, accessDeniedException);
+        }
     }
 
 }

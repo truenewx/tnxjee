@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.web.configuration.WebMvcSecurityConfigurerSupport;
 import org.truenewx.tnxjee.webmvc.view.exception.resolver.ViewResolvableExceptionResolver;
@@ -28,7 +29,22 @@ public abstract class WebViewSecurityConfigurerSupport extends WebMvcSecurityCon
     @Override
     public AccessDeniedHandler accessDeniedHandler() {
         AccessDeniedHandlerImpl accessDeniedHandler = (AccessDeniedHandlerImpl) super.accessDeniedHandler();
-        accessDeniedHandler.setErrorPage(this.viewResolvableExceptionResolver.getBusinessErrorPath());
+        String prefix = this.mvcProperties.getView().getPrefix();
+        if (StringUtils.isNotBlank(prefix)) {
+            prefix = NetUtil.standardizeUrl(prefix);
+        } else {
+            prefix = Strings.EMPTY;
+        }
+        String businessErrorPath = this.viewResolvableExceptionResolver.getBusinessErrorPath();
+        if (StringUtils.isNotBlank(businessErrorPath)) {
+            businessErrorPath = NetUtil.standardizeUrl(businessErrorPath);
+        } else {
+            businessErrorPath = Strings.EMPTY;
+        }
+        String errorPage = prefix + businessErrorPath + this.mvcProperties.getView().getSuffix();
+        if (StringUtils.isNotBlank(errorPage)) {
+            accessDeniedHandler.setErrorPage(errorPage);
+        }
         return accessDeniedHandler;
     }
 

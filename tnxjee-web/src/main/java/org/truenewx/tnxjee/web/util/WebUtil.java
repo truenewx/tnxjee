@@ -551,7 +551,14 @@ public class WebUtil {
      * @return 是否AJAX请求
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
-        return "XMLHttpRequest".equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST));
+        if ("XMLHttpRequest".equalsIgnoreCase(request.getHeader(WebConstants.HEADER_AJAX_REQUEST))) {
+            return true;
+        }
+        String referer = request.getHeader(WebConstants.HEADER_REFERER);
+        if (referer != null && referer.endsWith("/swagger-ui.html")) {
+            return true;
+        }
+        return false;
     }
 
     /**
