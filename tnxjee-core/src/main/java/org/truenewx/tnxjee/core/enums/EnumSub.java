@@ -1,9 +1,6 @@
 package org.truenewx.tnxjee.core.enums;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 枚举子集
@@ -12,6 +9,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(EnumSubs.class)
 public @interface EnumSub {
 
     int DEFAULT_ORDINAL = -1;
