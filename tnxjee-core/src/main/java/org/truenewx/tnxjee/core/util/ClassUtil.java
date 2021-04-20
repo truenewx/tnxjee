@@ -1,15 +1,27 @@
 package org.truenewx.tnxjee.core.util;
 
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.type.ClassMetadata;
+import org.springframework.core.type.StandardClassMetadata;
+import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.util.ClassUtils;
 import org.truenewx.tnxjee.core.Strings;
 
 /**
@@ -759,4 +771,46 @@ public class ClassUtil {
         }
         return false;
     }
+
+    public static Resource[] getClasspathResource(String locationPattern) {
+        try {
+            return new PathMatchingResourcePatternResolver()
+                    .getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + locationPattern);
+        } catch (IOException e) {
+            LogUtil.error(ClassUtil.class, e);
+        }
+        return new Resource[0];
+    }
+
+    public static void loopClass(String basePackage, Consumer<Class<?>> consumer) {
+        String dir = StringUtils.isBlank(basePackage) ? Strings.EMPTY : basePackage.replaceAll("[.]", Strings.SLASH);
+        Resource[] resources = getClasspathResource(dir + "/**/*.class");
+        MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
+        for (Resource resource : resources) {
+            try {
+                MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
+                ClassMetadata classMetadata = metadataReader.getClassMetadata();
+                Class<?> clazz;
+                if (classMetadata instanceof StandardClassMetadata) {
+                    clazz = ((StandardClassMetadata) classMetadata).getIntrospectedClass();
+                } else {
+                    clazz = ClassUtils.forName(classMetadata.getClassName(), null);
+                }
+                consumer.accept(clazz);
+            } catch (Exception e) {
+                LogUtil.error(ClassUtil.class, e);
+            }
+        }
+    }
+
+    public static Collection<Class<?>> findClasses(String basePackage, Class<?> type) {
+        Collection<Class<?>> classes = new ArrayList<>();
+        loopClass(basePackage, clazz -> {
+            if (type == null || type.isAssignableFrom(clazz)) {
+                classes.add(clazz);
+            }
+        });
+        return classes;
+    }
+
 }

@@ -96,6 +96,8 @@ public class StringUtil {
 
     private static final Map<String, ResourceBundle> resourceBundleCache = new Hashtable<>();
 
+    private static final Pattern PATTERN_UPPER_CHAR = Pattern.compile("[A-Z]");
+
     private StringUtil() {
     }
 
@@ -1179,6 +1181,34 @@ public class StringUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * 在指定字符串中的每个大写字母前插入下划线
+     *
+     * @param s           字符串
+     * @param toLowerCase 大写字母是否小写化
+     * @return 插入后新的字符串
+     */
+    public static String prependUnderLineToUpperChar(String s, boolean toLowerCase) {
+        if (StringUtils.isBlank(s)) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s);
+        Matcher matcher = PATTERN_UPPER_CHAR.matcher(s);
+        int index = 0;
+        while (matcher.find()) {
+            String group = matcher.group();
+            if (toLowerCase) {
+                group = group.toLowerCase();
+            }
+            sb.replace(matcher.start() + index, matcher.end() + index, Strings.UNDERLINE + group);
+            index++;
+        }
+        if (sb.charAt(0) == '_') {
+            sb.deleteCharAt(0);
+        }
+        return sb.toString();
     }
 
 }
