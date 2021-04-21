@@ -2,13 +2,11 @@ package org.truenewx.tnxjee.repo.jpa.codegen;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.ClassUtil;
-import org.truenewx.tnxjee.core.util.tuple.Binary;
 import org.truenewx.tnxjee.core.util.tuple.Binate;
 import org.truenewx.tnxjee.model.codegen.ClassGeneratorSupport;
 import org.truenewx.tnxjee.model.entity.Entity;
@@ -96,22 +94,9 @@ public class JpaRepoGeneratorImpl extends ClassGeneratorSupport implements JpaRe
             String rightKeyPropertyName = keyPropertyName + Strings.DOT + keyFieldBinate.getRight().getName();
             params.put("rightKeyPropertyName", rightKeyPropertyName);
             generate(module, entityClass, params, this.relationImplTemplateLocation, "Impl");
-        }
-    }
+        } else { // TODO 既不是单体也不是关系的普通实体
 
-    private void putClassName(Map<String, Object> params, Class<?> keyClass, String paramNamePrefix) {
-        params.put(paramNamePrefix + "ClassSimpleName", keyClass.getSimpleName());
-        String keyClassName = getImportedClassName(keyClass);
-        if (keyClassName != null) {
-            params.put(paramNamePrefix + "ClassName", keyClassName);
         }
-    }
-
-    private String getImportedClassName(Class<?> clazz) {
-        if (clazz.isPrimitive() || "java.lang".equals(clazz.getPackageName())) {
-            return null;
-        }
-        return clazz.getName();
     }
 
     private String generate(String module, Class<? extends Entity> entityClass, Map<String, Object> params,
@@ -126,24 +111,6 @@ public class JpaRepoGeneratorImpl extends ClassGeneratorSupport implements JpaRe
         params.put("entityClassSimpleName", entityClassSimpleName);
         generate(repoClassName, location, params);
         return repoClassSimpleName;
-    }
-
-    private Binate<Field, Field> getRelationKeyField(Class<?> relationKeyClass) {
-        Field leftField = null;
-        Field rightField = null;
-        Field[] fields = relationKeyClass.getDeclaredFields();
-        for (Field field : fields) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                if (leftField == null) {
-                    leftField = field;
-                } else if (rightField == null) {
-                    rightField = field;
-                } else {
-                    break;
-                }
-            }
-        }
-        return new Binary<>(leftField, rightField);
     }
 
 }

@@ -1,6 +1,7 @@
 package org.truenewx.tnxjee.service.unity;
 
 import java.io.Serializable;
+
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
 
@@ -9,8 +10,7 @@ import org.truenewx.tnxjee.model.entity.unity.Unity;
  *
  * @author jianglei
  */
-public interface CommandUnityService<T extends Unity<K>, K extends Serializable>
-        extends UnityService<T, K> {
+public interface CommandUnityService<T extends Unity<K>, K extends Serializable> extends UnityService<T, K> {
 
     /**
      * 添加单体

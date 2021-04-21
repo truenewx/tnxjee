@@ -3,6 +3,8 @@ package org.truenewx.tnxjee.model.codegen;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Map;
 
@@ -13,6 +15,8 @@ import org.springframework.util.ClassUtils;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.parser.FreeMarkerTemplateParser;
 import org.truenewx.tnxjee.core.parser.TemplateParser;
+import org.truenewx.tnxjee.core.util.tuple.Binary;
+import org.truenewx.tnxjee.core.util.tuple.Binate;
 
 /**
  * 类生成器支持
@@ -33,7 +37,7 @@ public abstract class ClassGeneratorSupport extends ModelBasedGeneratorSupport {
         this.templateParser = templateParser;
     }
 
-    protected final String getTargetModulePackageName(String module) {
+    protected String getTargetModulePackageName(String module) {
         String packageName = this.targetBasePackage;
         if (StringUtils.isNotBlank(module)) {
             packageName += Strings.DOT + module;
@@ -41,7 +45,7 @@ public abstract class ClassGeneratorSupport extends ModelBasedGeneratorSupport {
         return packageName;
     }
 
-    protected final void generate(String className, String templateLocation, Map<String, Object> params)
+    protected void generate(String className, String templateLocation, Map<String, Object> params)
             throws IOException {
         if (templateLocation != null) {
             try {
@@ -67,5 +71,38 @@ public abstract class ClassGeneratorSupport extends ModelBasedGeneratorSupport {
             file.createNewFile();
         }
         return file;
+    }
+
+    protected void putClassName(Map<String, Object> params, Class<?> clazz, String paramNamePrefix) {
+        params.put(paramNamePrefix + "ClassSimpleName", clazz.getSimpleName());
+        String className = getImportedClassName(clazz);
+        if (className != null) {
+            params.put(paramNamePrefix + "ClassName", className);
+        }
+    }
+
+    private String getImportedClassName(Class<?> clazz) {
+        if (clazz.isPrimitive() || "java.lang".equals(clazz.getPackageName())) {
+            return null;
+        }
+        return clazz.getName();
+    }
+
+    protected Binate<Field, Field> getRelationKeyField(Class<?> relationKeyClass) {
+        Field leftField = null;
+        Field rightField = null;
+        Field[] fields = relationKeyClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                if (leftField == null) {
+                    leftField = field;
+                } else if (rightField == null) {
+                    rightField = field;
+                } else {
+                    break;
+                }
+            }
+        }
+        return new Binary<>(leftField, rightField);
     }
 }

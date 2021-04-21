@@ -9,8 +9,8 @@ import org.truenewx.tnxjee.model.entity.unity.Unity;
  *
  * @author jianglei
  */
-public interface SimpleUnityService<T extends Unity<K>, K extends Serializable>
-        extends UnityService<T, K> {
+public interface SimpleUnityService<T extends Unity<K>, K extends Serializable> extends UnityService<T, K> {
+
     /**
      * 添加单体
      *
