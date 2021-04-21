@@ -27,12 +27,17 @@ public abstract class JpaCodeGenConfigSupport {
 
     @Bean
     public JpaEnumConverterGenerator enumConverterGenerator() {
-        return new JpaEnumConverterGenerator(getModelBasePackage(), getRepoBasePackage());
+        return new JpaEnumConverterGeneratorImpl(getModelBasePackage(), getRepoBasePackage());
     }
 
     @Bean
     public JpaEntityMappingGenerator entityMappingGenerator() {
-        return new JpaEntityMappingGenerator(getModelBasePackage());
+        return new JpaEntityMappingGeneratorImpl(getModelBasePackage());
+    }
+
+    @Bean
+    public JpaRepoGenerator repoGenerator() {
+        return new JpaRepoGeneratorImpl(getModelBasePackage(), getRepoBasePackage());
     }
 
 }
