@@ -8,5 +8,5 @@ import ${entityClassName};
 /**
  * @author tnxjee-code-generator
  */
-public interface ${repoClassSimpleName} extends JpaUnityRepository<${entityClassSimpleName}, ${keyClassSimpleName}><#if repoxClassSimpleName??>, ${repoxClassSimpleName}</#if> {
+public interface ${repoClassSimpleName} extends JpaUnityRepository<${entityClassSimpleName}, ${keyClassSimpleName}>, ${repoxClassSimpleName} {
 }

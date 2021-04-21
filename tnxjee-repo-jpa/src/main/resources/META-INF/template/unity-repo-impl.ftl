@@ -2,6 +2,7 @@ package ${packageName};
 
 import org.springframework.stereotype.Repository;
 import org.truenewx.tnxjee.repo.jpa.support.JpaUnityRepoSupport;
+<#if keyClassName??>import ${keyClassName};</#if>
 
 import ${entityClassName};
 
