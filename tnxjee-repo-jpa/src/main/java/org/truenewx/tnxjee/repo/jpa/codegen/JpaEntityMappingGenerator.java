@@ -54,6 +54,8 @@ import org.truenewx.tnxjee.repo.jpa.converter.spec.HttpRequestMethodAttributeCon
 public class JpaEntityMappingGenerator extends ModelBasedGenerator {
 
     private static final String INFO_COLUMN_NOT_EXISTS = "info.tnxjee.repo.jpa.codegen.column_not_exists";
+    private static final String INFO_CONFIRM_MAPS_ID = "info.tnxjee.repo.jpa.codegen.confirm_maps_id";
+    private static final String INFO_UNSUPPORTED_COLLECTION_PROPERTY = "info.tnxjee.repo.jpa.codegen.unsupported_collection_property";
 
     @Autowired
     private DataSource dataSource;
@@ -348,7 +350,8 @@ public class JpaEntityMappingGenerator extends ModelBasedGenerator {
         String propertyName = field.getName();
         Class<?> fieldType = field.getType();
         if (ClassUtil.isAggregation(fieldType)) { // 集合类型字段，为一对多或多对多引用
-
+            // 暂时不支持
+            attributesElement.addComment(this.messageResolver.resolveMessage(INFO_UNSUPPORTED_COLLECTION_PROPERTY));
         } else { // 单个引用字段，为一对一或多对一引用
             if (Entity.class.isAssignableFrom(fieldType)) { // 实体类型生成引用配置
                 String columnName = StringUtil.prependUnderLineToUpperChar(propertyName, true) + "_id";
@@ -359,6 +362,11 @@ public class JpaEntityMappingGenerator extends ModelBasedGenerator {
                     Boolean optional = getBoolean(rs.getString("IS_NULLABLE"));
                     if (optional != null) {
                         refElement.addAttribute("optional", optional.toString());
+                    }
+                    String mapsId = getMapsId(attributesElement, field);
+                    if (mapsId != null) {
+                        refElement.addAttribute("maps-id", mapsId);
+                        refElement.addComment(this.messageResolver.resolveMessage(INFO_CONFIRM_MAPS_ID));
                     }
                     refElement.addElement("join-column").addAttribute("name", columnName);
                 } else { // 不存在外键字段，为一对一引用
@@ -374,6 +382,21 @@ public class JpaEntityMappingGenerator extends ModelBasedGenerator {
                 addEmbeddedAttributeElements(metaData, tableName, embeddedElement, field, true);
             }
         }
+    }
+
+    private String getMapsId(Element attributesElement, Field field) throws Exception {
+        Element embeddedIdElement = attributesElement.element("embedded-id");
+        if (embeddedIdElement != null) {
+            String idPropertyName = embeddedIdElement.attributeValue("name");
+            Class<?> entityClass = field.getDeclaringClass();
+            Field idField = entityClass.getDeclaredField(idPropertyName);
+            Class<?> idFieldType = idField.getType();
+            Field mapsIdField = ClassUtil.findField(idFieldType, field.getName() + "Id");
+            if (mapsIdField != null) {
+                return mapsIdField.getName();
+            }
+        }
+        return null;
     }
 
     private void generateEmbeddableMapping(Class<?> embeddableClass) throws Exception {
