@@ -64,8 +64,7 @@ public class OqlUtil {
                 comparison = Comparison.EQUAL;
             }
             // 等于和不等于在参数个数大于5后使用IN/NOT IN代替
-            if ((comparison == Comparison.EQUAL || comparison == Comparison.NOT_EQUAL)
-                    && fieldParamValues.size() > 5) {
+            if ((comparison == Comparison.EQUAL || comparison == Comparison.NOT_EQUAL) && fieldParamValues.size() > 5) {
                 condition.append(fieldName);
                 if (comparison == Comparison.EQUAL) {
                     condition.append(Comparison.IN.toQlString());
@@ -83,11 +82,10 @@ public class OqlUtil {
                     condition.append(junction).append(fieldName);
                     if (fieldParamValue != null) { // 忽略为null的参数值
                         String paramName = getParamName(fieldName) + (i++);
-                        condition.append(comparison.toQlString()).append(Strings.COLON)
-                                .append(paramName);
+                        condition.append(comparison.toQlString()).append(Strings.COLON).append(paramName);
                         if (comparison == Comparison.LIKE || comparison == Comparison.NOT_LIKE) {
-                            params.put(paramName, StringUtils.join(Strings.PERCENT,
-                                    fieldParamValue.toString(), Strings.PERCENT));
+                            params.put(paramName,
+                                    StringUtils.join(Strings.PERCENT, fieldParamValue.toString(), Strings.PERCENT));
                         } else {
                             params.put(paramName, fieldParamValue);
                         }
@@ -96,8 +94,7 @@ public class OqlUtil {
                 if (fieldParamValues.size() == 1) { // 一个字段参数不需要添加括号
                     condition.delete(0, junction.length());
                 } else {
-                    condition.replace(0, junction.length(), Strings.LEFT_BRACKET)
-                            .append(Strings.RIGHT_BRACKET); // 去掉多余的or后添加括号
+                    condition.replace(0, junction.length(), Strings.LEFT_BRACKET).append(Strings.RIGHT_BRACKET); // 去掉多余的or后添加括号
                 }
             }
         }
@@ -118,18 +115,18 @@ public class OqlUtil {
      * @return OR条件子句
      * @author jianglei
      */
-    public static String buildOrConditionString(Map<String, Object> params, String fieldName,
-            Object[] fieldParamValues, Comparison comparison) {
+    public static String buildOrConditionString(Map<String, Object> params, String fieldName, Object[] fieldParamValues,
+            Comparison comparison) {
         return buildOrConditionString(params, fieldName, Arrays.asList(fieldParamValues), comparison);
     }
 
-    public static String buildOrConditionString(Map<String, Object> params, String fieldName,
-            int[] fieldParamValues, Comparison comparison) {
+    public static String buildOrConditionString(Map<String, Object> params, String fieldName, int[] fieldParamValues,
+            Comparison comparison) {
         return buildOrConditionString(params, fieldName, ArrayUtil.toList(fieldParamValues), comparison);
     }
 
-    public static String buildOrConditionString(Map<String, Object> params, String fieldName,
-            long[] fieldParamValues, Comparison comparison) {
+    public static String buildOrConditionString(Map<String, Object> params, String fieldName, long[] fieldParamValues,
+            Comparison comparison) {
         return buildOrConditionString(params, fieldName, ArrayUtil.toList(fieldParamValues), comparison);
     }
 
@@ -145,6 +142,25 @@ public class OqlUtil {
         if (ifNull != null) {
             condition.append(fieldName).append(" is");
             if (!ifNull) {
+                condition.append(" not");
+            }
+            condition.append(" null");
+        }
+        return condition.toString();
+    }
+
+    /**
+     * 构建指定字段的不为null条件子句
+     *
+     * @param fieldName 字段名
+     * @param ifNotNull 是否不为null，其值本身为null表示忽略该字段条件
+     * @return 条件子句
+     */
+    public static String buildNotNullConditionString(String fieldName, Boolean ifNotNull) {
+        StringBuilder condition = new StringBuilder();
+        if (ifNotNull != null) {
+            condition.append(fieldName).append(" is");
+            if (ifNotNull) {
                 condition.append(" not");
             }
             condition.append(" null");

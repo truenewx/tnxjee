@@ -54,12 +54,12 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
 
     private static final String INFO_COLUMN_NOT_EXISTS = "info.tnxjee.repo.jpa.codegen.column_not_exists";
     private static final String INFO_CONFIRM_MAPS_ID = "info.tnxjee.repo.jpa.codegen.confirm_maps_id";
-    private static final String INFO_UNSUPPORTED_COLLECTION_PROPERTY = "info.tnxjee.repo.jpa.codegen.unsupported_collection_property";
+    private static final String INFO_UNSUPPORTED_PROPERTY = "info.tnxjee.repo.jpa.codegen.unsupported_property";
 
     @Autowired
-    private DataSource dataSource;
-    @Autowired
     private MessageResolver messageResolver;
+    @Autowired
+    private DataSource dataSource;
     @Autowired
     private JpaEnumConverterGenerator enumConverterGenerator;
 
@@ -273,8 +273,7 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
 
     private void addColumnElement(Element parentElement, JpaEntityColumn column, boolean withNullable) {
         if (!column.isExists()) {
-            String comment = this.messageResolver.resolveMessage(INFO_COLUMN_NOT_EXISTS, column.getName());
-            parentElement.addComment(comment);
+            addComment(parentElement, INFO_COLUMN_NOT_EXISTS, column.getName());
         }
         Element columnElement = parentElement.addElement("column").addAttribute("name", column.getName());
         if (withNullable && column.getNullable() != null) {
@@ -292,6 +291,10 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
         if (column.getScale() != null) {
             columnElement.addAttribute("scale", column.getScale().toString());
         }
+    }
+
+    private void addComment(Element element, String messageCode, Object... args) {
+        element.addComment(this.messageResolver.resolveMessage(messageCode, args));
     }
 
     private Binate<Boolean, String> getBasicConverter(Class<?> fieldType) throws Exception {
@@ -340,8 +343,8 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
         String propertyName = field.getName();
         Class<?> fieldType = field.getType();
         if (ClassUtil.isAggregation(fieldType)) { // 集合类型字段，为一对多或多对多引用
-            // 暂时不支持
-            attributesElement.addComment(this.messageResolver.resolveMessage(INFO_UNSUPPORTED_COLLECTION_PROPERTY));
+            // 暂时不支持，提醒手工配置
+            addUnsupportedPropertyComment(attributesElement, propertyName);
         } else { // 单个引用字段，为一对一或多对一引用
             if (Entity.class.isAssignableFrom(fieldType)) { // 实体类型生成引用配置
                 String columnName = StringUtil.prependUnderLineToUpperChar(propertyName, true) + "_id";
@@ -356,7 +359,7 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
                     String mapsId = getMapsId(attributesElement, field);
                     if (mapsId != null) {
                         refElement.addAttribute("maps-id", mapsId);
-                        refElement.addComment(this.messageResolver.resolveMessage(INFO_CONFIRM_MAPS_ID));
+                        addComment(refElement, INFO_CONFIRM_MAPS_ID);
                     }
                     refElement.addElement("join-column").addAttribute("name", columnName);
                 } else { // 不存在外键字段，为一对一引用
@@ -370,8 +373,14 @@ public class JpaEntityMappingGeneratorImpl extends ModelBasedGeneratorSupport im
                 Element embeddedElement = attributesElement.addElement("embedded")
                         .addAttribute("name", propertyName);
                 addEmbeddedAttributeElements(metaData, tableName, embeddedElement, field, true);
+            } else { // 其它自定义类型提醒手工设置
+                addUnsupportedPropertyComment(attributesElement, propertyName);
             }
         }
+    }
+
+    private void addUnsupportedPropertyComment(Element element, String propertyName) {
+        addComment(element, INFO_UNSUPPORTED_PROPERTY, propertyName);
     }
 
     private String getMapsId(Element attributesElement, Field field) throws Exception {
