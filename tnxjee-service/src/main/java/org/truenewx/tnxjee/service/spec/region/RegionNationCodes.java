@@ -12,4 +12,9 @@ public class RegionNationCodes {
      */
     public static final String CHINA = "CN";
 
+    /**
+     * 中国香港
+     */
+    public static final String HONG_KONG = "HK";
+
 }
