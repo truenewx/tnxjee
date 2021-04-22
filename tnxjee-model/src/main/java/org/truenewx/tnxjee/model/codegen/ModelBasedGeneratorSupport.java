@@ -28,6 +28,7 @@ public abstract class ModelBasedGeneratorSupport {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected static void generate(String modelBasePackage, BiConsumer<String, Class<? extends Entity>> consumer,
             String... modules) {
         if (ArrayUtils.isEmpty(modules)) {
