@@ -129,8 +129,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 if (min != null) {
                     minValue = min.value();
                 } else {
-                    DecimalMin decimalMin = ClassUtil
-                            .findAnnotation(getEntityClass(), propertyName, DecimalMin.class);
+                    DecimalMin decimalMin = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMin.class);
                     if (decimalMin != null) {
                         minValue = MathUtil.parseDecimal(decimalMin.value(), null);
                     }
@@ -167,8 +166,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
                 if (max != null) {
                     maxValue = max.value();
                 } else {
-                    DecimalMax decimalMax = ClassUtil
-                            .findAnnotation(getEntityClass(), propertyName, DecimalMax.class);
+                    DecimalMax decimalMax = ClassUtil.findAnnotation(getEntityClass(), propertyName, DecimalMax.class);
                     if (decimalMax != null) {
                         maxValue = MathUtil.parseDecimal(decimalMax.value(), null);
                     }
@@ -190,8 +188,7 @@ public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> im
         return maxValue;
     }
 
-    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params,
-            String propertyName,
+    protected final boolean doIncreaseNumber(StringBuffer ql, Map<String, Object> params, String propertyName,
             boolean positive, Number limit) {
         if (positive) { // 增量为正时需限定最大值
             Number maxValue = limit == null ? getNumberPropertyMaxValue(propertyName) : limit;
