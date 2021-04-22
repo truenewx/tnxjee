@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.service.feign;
+package org.truenewx.tnxjee.service.impl.feign;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
