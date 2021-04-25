@@ -16,9 +16,9 @@ import org.truenewx.tnxjee.model.spec.user.DefaultUserIdentity;
 import org.truenewx.tnxjee.model.spec.user.security.DefaultUserSpecificDetails;
 import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthorityImpl;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
+import org.truenewx.tnxjee.service.feign.GrantAuthority;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
 import org.truenewx.tnxjee.web.util.WebConstants;
-import org.truenewx.tnxjee.webmvc.security.config.annotation.GrantAuthority;
 import org.truenewx.tnxjee.webmvc.security.util.SecurityUtil;
 import org.truenewx.tnxjee.webmvc.util.RpcUtil;
 

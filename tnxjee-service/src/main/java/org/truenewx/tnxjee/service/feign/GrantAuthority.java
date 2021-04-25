@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.webmvc.security.config.annotation;
+package org.truenewx.tnxjee.service.feign;
 
 import java.lang.annotation.*;
 

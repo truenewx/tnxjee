@@ -1,4 +1,4 @@
-package org.truenewx.tnxjee.service.impl.feign;
+package org.truenewx.tnxjee.service.feign;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
