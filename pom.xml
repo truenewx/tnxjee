@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.2</version><!-- 与openfeign依赖的版本保持一致 -->
+                <version>2.7</version><!-- 与openfeign依赖的版本保持一致 -->
             </dependency>
             <dependency>
                 <groupId>com.github.stuxuhai</groupId>
