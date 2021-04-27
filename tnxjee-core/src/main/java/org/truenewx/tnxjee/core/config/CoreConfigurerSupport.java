@@ -33,8 +33,9 @@ public abstract class CoreConfigurerSupport {
                 return 1000;
             case Profiles.TEST:
                 return 100;
+            default:
+                return 10;
         }
-        return 10;
     }
 
     /**
