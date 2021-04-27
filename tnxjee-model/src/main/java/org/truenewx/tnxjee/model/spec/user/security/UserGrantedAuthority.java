@@ -2,6 +2,7 @@ package org.truenewx.tnxjee.model.spec.user.security;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -127,6 +128,23 @@ public class UserGrantedAuthority implements GrantedAuthority {
             authority.append(StringUtils.join(this.permissions, Strings.COMMA));
         }
         return authority.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserGrantedAuthority that = (UserGrantedAuthority) o;
+        return getAuthority().equals(that.getAuthority());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.type, this.rank, this.app, this.permissions);
     }
 
     @Override
