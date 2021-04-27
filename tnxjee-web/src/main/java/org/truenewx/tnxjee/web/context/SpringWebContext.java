@@ -1,5 +1,7 @@
 package org.truenewx.tnxjee.web.context;
 
+import java.util.Locale;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,15 @@ public class SpringWebContext {
             return ((ServletRequestAttributes) requestAttributes).getRequest();
         }
         return null;
+    }
+
+    public static Locale getLocale() {
+        HttpServletRequest request = getRequest();
+        if (request != null) {
+            return request.getLocale();
+        } else {
+            return Locale.getDefault();
+        }
     }
 
     public static HttpServletResponse getResponse() {
