@@ -16,7 +16,6 @@ import org.truenewx.tnxjee.core.util.LogUtil;
  * 如果一个bean具有代理，则只执行代理
  *
  * @author jianglei
- * 
  */
 @Component
 public class ContextInitializedBeanListener implements ApplicationListener<ContextRefreshedEvent> {
@@ -36,9 +35,7 @@ public class ContextInitializedBeanListener implements ApplicationListener<Conte
                     map.put(target, proxy);
                 }
             } else {
-                if (map.get(bean) == null) {
-                    map.put(bean, bean);
-                }
+                map.putIfAbsent(bean, bean);
             }
         }
         for (ContextInitializedBean bean : map.values()) {
