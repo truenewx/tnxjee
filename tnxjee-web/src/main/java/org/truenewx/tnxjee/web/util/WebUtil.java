@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
@@ -64,6 +65,31 @@ public class WebUtil {
             }
         });
         return map;
+    }
+
+    public static String getRequestBodyString(ServletRequest request) {
+        try {
+            return IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static Map<String, String> getRequestBodyMap(ServletRequest request, String... excludedParameterNames) {
+        Map<String, String> body = new HashMap<>();
+        String json = getRequestBodyString(request);
+        if (StringUtils.isNotBlank(json)) {
+            Map<String, Object> map = JsonUtil.json2Map(json);
+            map.forEach((key, value) -> {
+                body.put(key, value.toString());
+            });
+        }
+        if (body.size() > 0 && excludedParameterNames.length > 0) {
+            for (String excludedParameterName : excludedParameterNames) {
+                body.remove(excludedParameterName);
+            }
+        }
+        return body;
     }
 
     /**
