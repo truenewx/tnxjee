@@ -1,13 +1,12 @@
 package org.truenewx.tnxjee.repo.jpa.support;
 
-import org.truenewx.tnxjee.core.Strings;
-import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-import org.truenewx.tnxjee.repo.OwnedUnityRepo;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.truenewx.tnxjee.core.util.LogUtil;
+import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
+import org.truenewx.tnxjee.repo.OwnedUnityRepo;
 
 /**
  * 从属单体的数据访问仓库支持
@@ -64,21 +63,16 @@ public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K ext
     public <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit) {
         double stepValue = step.doubleValue();
         if (stepValue != 0) { // 增量不为0时才处理
-            String entityName = getEntityName();
-            StringBuffer hql = new StringBuffer("update ").append(entityName).append(" set ")
-                    .append(propertyName).append(Strings.EQUAL).append(propertyName)
-                    .append("+:step where id=:id");
             Map<String, Object> params = new HashMap<>();
-            params.put("id", id);
-            params.put("step", step);
+            StringBuffer ql = buildIncreaseQl(id, propertyName, step, params);
 
             String ownerProperty = getOwnerProperty();
             if (owner != null && ownerProperty != null) {
-                hql.append(" and ").append(ownerProperty).append("=:owner");
+                ql.append(" and ").append(ownerProperty).append("=:owner");
                 params.put("owner", owner);
             }
 
-            if (doIncreaseNumber(hql, params, propertyName, stepValue > 0, limit)) {
+            if (doIncreaseNumber(ql, params, propertyName, stepValue > 0, limit)) {
                 // 更新字段后需刷新实体
                 T unity = find(id);
                 try {

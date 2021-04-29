@@ -22,8 +22,6 @@ public interface UnityRepo<T extends Unity<K>, K extends Serializable> extends R
      * @param limit        增减后允许的最大/最小值，设定以避免数值超限
      * @return 单体
      */
-    default <N extends Number> T increaseNumber(K id, String propertyName, N step, N limit) {
-        throw new UnsupportedOperationException();
-    }
+    <N extends Number> T increaseNumber(K id, String propertyName, N step, N limit);
 
 }

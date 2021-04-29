@@ -16,13 +16,9 @@ import org.truenewx.tnxjee.model.entity.relation.Relation;
 public interface RelationRepo<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
         extends Repo<T> {
 
-    default Optional<T> findById(L leftId, R rightId) {
-        throw new UnsupportedOperationException();
-    }
+    Optional<T> findById(L leftId, R rightId);
 
-    default boolean exists(L leftId, R rightId) {
-        throw new UnsupportedOperationException();
-    }
+    boolean exists(L leftId, R rightId);
 
     /**
      * 递增指定关系的指定数值属性值
@@ -34,7 +30,5 @@ public interface RelationRepo<T extends Relation<L, R>, L extends Serializable, 
      * @param limit        增减后允许的最大/最小值，设定以避免数值超限
      * @return 关系
      */
-    default <N extends Number> T increaseNumber(L leftId, R rightId, String propertyName, N step, N limit) {
-        throw new UnsupportedOperationException();
-    }
+    <N extends Number> T increaseNumber(L leftId, R rightId, String propertyName, N step, N limit);
 }
