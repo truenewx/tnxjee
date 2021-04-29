@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -48,13 +47,13 @@ public class ResolvableExceptionAuthenticationFailureHandler implements Authenti
             AuthenticationException exception) throws IOException, ServletException {
         saveException(request, response, exception);
 
-        // AJAX请求登录认证失败直接报401错误
+        // AJAX请求登录认证失败直接报401错误，不使用sendError()方法，以避免错误消息丢失
         if (WebUtil.isAjaxRequest(request)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
             String targetUrl = this.loginViewResultResolver.resolveLoginViewResult(request);
             if (StringUtils.isBlank(targetUrl)) { // 登录认证失败后的跳转地址未设置，也报401错误
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             } else { // 跳转到目标地址
                 if (this.useForward) {
                     WebMvcProperties.View view = this.webMvcProperties.getView();
