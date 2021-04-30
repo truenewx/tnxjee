@@ -41,19 +41,23 @@ public class AdditionalCaptionUtil {
             if (rawValue instanceof Object[]) {
                 Object[] array = (Object[]) rawValue;
                 for (Object element : array) {
-                    String caption = getSingleAdditionalCaption(meta.getRawClass(), meta.getAnnotation(), element,
-                            enumDictResolver, regionSource, locale);
-                    if (caption != null) {
-                        captionMap.put(element.toString(), caption);
+                    if (element != null) {
+                        String caption = getSingleAdditionalCaption(meta.getRawClass(), meta.getAnnotation(), element,
+                                enumDictResolver, regionSource, locale);
+                        if (caption != null) {
+                            captionMap.put(element.toString(), caption);
+                        }
                     }
                 }
             } else if (rawValue instanceof Collection) {
                 Collection<?> collection = (Collection<?>) rawValue;
                 for (Object element : collection) {
-                    String caption = getSingleAdditionalCaption(meta.getRawClass(), meta.getAnnotation(), element,
-                            enumDictResolver, regionSource, locale);
-                    if (caption != null) {
-                        captionMap.put(element.toString(), caption);
+                    if (element != null) {
+                        String caption = getSingleAdditionalCaption(meta.getRawClass(), meta.getAnnotation(), element,
+                                enumDictResolver, regionSource, locale);
+                        if (caption != null) {
+                            captionMap.put(element.toString(), caption);
+                        }
                     }
                 }
             }
