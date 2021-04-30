@@ -621,6 +621,11 @@ public class ClassUtil {
         return type.isArray() || Map.class.isAssignableFrom(type) || Iterable.class.isAssignableFrom(type);
     }
 
+    public static boolean isNumeric(Class<?> type) {
+        return Number.class.isAssignableFrom(type) || type == int.class || type == long.class
+                || type == float.class || type == double.class || type == char.class || type == byte.class;
+    }
+
 
     /**
      * 获取指定类型（包括父类）中指定方法名称和参数个数的公开方法清单
