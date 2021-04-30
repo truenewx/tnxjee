@@ -12,14 +12,14 @@ import org.truenewx.tnxjee.model.query.Paging;
 import org.truenewx.tnxjee.model.query.QueryIgnoring;
 import org.truenewx.tnxjee.model.query.QueryResult;
 import org.truenewx.tnxjee.repo.mongo.util.MongoQueryUtil;
-import org.truenewx.tnxjee.repo.support.RepoSupport;
+import org.truenewx.tnxjee.repo.support.RepoxSupport;
 
 /**
- * MongoDB数据访问仓库支持
+ * MongoDB数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class MongoRepoSupport<T extends Entity> extends RepoSupport<T> {
+public abstract class MongoRepoxSupport<T extends Entity> extends RepoxSupport<T> {
 
     @Override
     public String getEntityName() {

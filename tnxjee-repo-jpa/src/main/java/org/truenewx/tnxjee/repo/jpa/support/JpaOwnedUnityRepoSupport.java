@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-import org.truenewx.tnxjee.repo.OwnedUnityRepo;
+import org.truenewx.tnxjee.repo.OwnedUnityRepox;
 
 /**
  * 从属单体的数据访问仓库支持
@@ -14,7 +14,7 @@ import org.truenewx.tnxjee.repo.OwnedUnityRepo;
  * @author jianglei
  */
 public abstract class JpaOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
-        extends JpaUnityRepoSupport<T, K> implements OwnedUnityRepo<T, K, O> {
+        extends JpaUnityRepoxSupport<T, K> implements OwnedUnityRepox<T, K, O> {
 
     /**
      * 获取所属者属性名<br/>

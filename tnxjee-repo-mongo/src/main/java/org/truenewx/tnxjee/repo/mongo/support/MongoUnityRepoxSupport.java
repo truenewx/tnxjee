@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
-import org.truenewx.tnxjee.repo.UnityRepo;
+import org.truenewx.tnxjee.repo.UnityRepox;
 
 /**
- * MongoDB单体数据访问仓库支持
+ * MongoDB单体数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class MongoUnityRepoSupport<T extends Unity<K>, K extends Serializable> extends MongoRepoSupport<T>
-        implements UnityRepo<T, K> {
+public abstract class MongoUnityRepoxSupport<T extends Unity<K>, K extends Serializable> extends MongoRepoxSupport<T>
+        implements UnityRepox<T, K> {
 
     protected final T find(K id) {
         CrudRepository<T, K> repository = getRepository();

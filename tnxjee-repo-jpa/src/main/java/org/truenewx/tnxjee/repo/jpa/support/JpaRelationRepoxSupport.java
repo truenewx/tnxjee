@@ -3,21 +3,20 @@ package org.truenewx.tnxjee.repo.jpa.support;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.tuple.Binate;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
-import org.truenewx.tnxjee.repo.RelationRepo;
+import org.truenewx.tnxjee.repo.RelationRepox;
 
 /**
- * 关系JPA数据访问仓库支持
+ * 关系JPA数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
-        extends JpaRepoSupport<T> implements RelationRepo<T, L, R> {
+public abstract class JpaRelationRepoxSupport<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
+        extends JpaRepoxSupport<T> implements RelationRepox<T, L, R> {
 
     /**
      * 获取标识属性对，left-左标识属性名，right-右标识属性名
@@ -27,11 +26,7 @@ public abstract class JpaRelationRepoSupport<T extends Relation<L, R>, L extends
     protected abstract Binate<String, String> getIdProperty();
 
     @Override
-    public Optional<T> findById(L leftId, R rightId) {
-        return Optional.ofNullable(find(leftId, rightId));
-    }
-
-    protected T find(L leftId, R rightId) {
+    public T find(L leftId, R rightId) {
         if (leftId != null && rightId != null) {
             Map<String, Object> params = new HashMap<>();
             StringBuffer ql = buildQlById(params, leftId, rightId);

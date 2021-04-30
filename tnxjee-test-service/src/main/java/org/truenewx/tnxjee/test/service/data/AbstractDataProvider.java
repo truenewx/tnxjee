@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.support.RepositoryFactory;
+import org.truenewx.tnxjee.repo.support.RepoFactory;
 
 /**
  * 抽象的数据提供者
@@ -16,10 +16,10 @@ import org.truenewx.tnxjee.repo.support.RepositoryFactory;
  */
 public abstract class AbstractDataProvider<T extends Entity> implements DataProvider<T> {
     @Autowired
-    private RepositoryFactory repositoryFactory;
+    private RepoFactory repoFactory;
 
     private <R extends CrudRepository<T, K>, K> R getRepository() {
-        return this.repositoryFactory.getRepository(getEntityClass());
+        return this.repoFactory.getRepository(getEntityClass());
     }
 
     private Class<T> getEntityClass() {

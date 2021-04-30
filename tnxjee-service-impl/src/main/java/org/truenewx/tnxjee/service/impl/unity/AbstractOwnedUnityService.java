@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-import org.truenewx.tnxjee.repo.OwnedUnityRepo;
+import org.truenewx.tnxjee.repo.OwnedUnityRepox;
 import org.truenewx.tnxjee.service.unity.CommandOwnedUnityService;
 import org.truenewx.tnxjee.service.unity.SimpleOwnedUnityService;
 
@@ -23,8 +23,8 @@ public abstract class AbstractOwnedUnityService<T extends OwnedUnity<K, O>, K ex
 
     @Override
     public T find(O owner, K id) {
-        OwnedUnityRepo<T, K, O> repo = getRepo();
-        return repo.findByOwnerAndId(owner, id);
+        OwnedUnityRepox<T, K, O> repox = getRepox();
+        return repox.findByOwnerAndId(owner, id);
     }
 
     @Override

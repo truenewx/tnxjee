@@ -7,15 +7,15 @@ import java.util.Map;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.model.entity.unity.Unity;
-import org.truenewx.tnxjee.repo.UnityRepo;
+import org.truenewx.tnxjee.repo.UnityRepox;
 
 /**
- * 单体JPA数据访问仓库支持
+ * 单体JPA数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class JpaUnityRepoSupport<T extends Unity<K>, K extends Serializable> extends JpaRepoSupport<T>
-        implements UnityRepo<T, K> {
+public abstract class JpaUnityRepoxSupport<T extends Unity<K>, K extends Serializable> extends JpaRepoxSupport<T>
+        implements UnityRepox<T, K> {
 
     protected final T find(K id) {
         return getRepository().findById(id).orElse(null);

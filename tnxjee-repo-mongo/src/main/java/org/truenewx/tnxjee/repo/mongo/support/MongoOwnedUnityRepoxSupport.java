@@ -5,15 +5,15 @@ import java.io.Serializable;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
-import org.truenewx.tnxjee.repo.OwnedUnityRepo;
+import org.truenewx.tnxjee.repo.OwnedUnityRepox;
 
 /**
- * MongoDB从属单体的数据访问仓库
+ * MongoDB从属单体的数据访问扩展仓库
  *
  * @author jianglei
  */
-public abstract class MongoOwnedUnityRepoSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
-        extends MongoUnityRepoSupport<T, K> implements OwnedUnityRepo<T, K, O> {
+public abstract class MongoOwnedUnityRepoxSupport<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
+        extends MongoUnityRepoxSupport<T, K> implements OwnedUnityRepox<T, K, O> {
 
     /**
      * @return 所属者属性名

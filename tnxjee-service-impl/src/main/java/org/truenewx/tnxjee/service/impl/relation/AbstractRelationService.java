@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.truenewx.tnxjee.model.CommandModel;
 import org.truenewx.tnxjee.model.entity.relation.Relation;
-import org.truenewx.tnxjee.repo.RelationRepo;
+import org.truenewx.tnxjee.repo.RelationRepox;
 import org.truenewx.tnxjee.service.impl.AbstractService;
 import org.truenewx.tnxjee.service.relation.CommandRelationService;
 import org.truenewx.tnxjee.service.relation.SimpleRelationService;
@@ -19,13 +19,12 @@ import org.truenewx.tnxjee.service.relation.SimpleRelationService;
  * @author jianglei
  */
 public abstract class AbstractRelationService<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
-        extends AbstractService<T>
-        implements SimpleRelationService<T, L, R>, CommandRelationService<T, L, R> {
+        extends AbstractService<T> implements SimpleRelationService<T, L, R>, CommandRelationService<T, L, R> {
 
     @Override
     public T find(L leftId, R rightId) {
-        RelationRepo<T, L, R> repo = getRepo();
-        return repo.findById(leftId, rightId).orElse(null);
+        RelationRepox<T, L, R> repox = getRepox();
+        return repox.find(leftId, rightId);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package ${packageName};
 
-import org.truenewx.tnxjee.repo.jpa.repository.JpaUnityRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 <#if keyClassName??>import ${keyClassName};</#if>
 
 import ${entityClassName};
@@ -8,5 +8,5 @@ import ${entityClassName};
 /**
  * @author tnxjee-code-generator
  */
-public interface ${repoClassSimpleName} extends JpaUnityRepository<${entityClassSimpleName}, ${keyClassSimpleName}><#if repoxClassSimpleName??>, ${repoxClassSimpleName}</#if> {
+public interface ${repoClassSimpleName} extends JpaRepository<${entityClassSimpleName}, ${keyClassSimpleName}><#if repoxClassSimpleName??>, ${repoxClassSimpleName}</#if> {
 }

@@ -24,15 +24,15 @@ import org.truenewx.tnxjee.model.query.QueryIgnoring;
 import org.truenewx.tnxjee.model.query.QueryResult;
 import org.truenewx.tnxjee.repo.jpa.JpaRepo;
 import org.truenewx.tnxjee.repo.jpa.util.OqlUtil;
-import org.truenewx.tnxjee.repo.support.RepoSupport;
+import org.truenewx.tnxjee.repo.support.RepoxSupport;
 import org.truenewx.tnxjee.repo.util.ModelPropertyLimitValueManager;
 
 /**
- * JPA的数据访问仓库支持
+ * JPA的数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class JpaRepoSupport<T extends Entity> extends RepoSupport<T> implements JpaRepo<T> {
+public abstract class JpaRepoxSupport<T extends Entity> extends RepoxSupport<T> implements JpaRepo<T> {
 
     @Autowired
     private ModelPropertyLimitValueManager propertyLimitValueManager;

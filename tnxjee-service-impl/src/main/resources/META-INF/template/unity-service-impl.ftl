@@ -15,6 +15,6 @@ import ${repoClassName};
 public class ${serviceClassSimpleName} extends AbstractUnityService<${entityClassSimpleName}, ${keyClassSimpleName}> implements ${serviceInterfaceSimpleName} {
 
     @Autowired
-    private ${repoClassSimpleName} repo;
+    private ${repoClassSimpleName} repox;
 
 }

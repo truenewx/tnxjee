@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.Repo;
+import org.truenewx.tnxjee.repo.Repox;
 
 /**
- * 数据访问仓库支持
+ * 数据访问仓库扩展支持
  *
  * @author jianglei
  */
-public abstract class RepoSupport<T extends Entity> implements Repo<T> {
+public abstract class RepoxSupport<T extends Entity> implements Repox<T> {
 
     @Autowired
-    private RepositoryFactory repositoryFactory;
+    private RepoFactory repoFactory;
     @Autowired
     private DataAccessTemplateFactory accessTemplateFactory;
 
@@ -37,7 +37,7 @@ public abstract class RepoSupport<T extends Entity> implements Repo<T> {
         if (this instanceof CrudRepository) {
             return (R) this;
         }
-        return this.repositoryFactory.getRepository(getEntityClass());
+        return this.repoFactory.getRepository(getEntityClass());
     }
 
     protected DataAccessTemplate getAccessTemplate() {

@@ -5,15 +5,15 @@ import java.io.Serializable;
 import org.truenewx.tnxjee.model.entity.unity.OwnedUnity;
 
 /**
- * 从属单体的数据访问仓库
+ * 从属单体的数据访问仓库扩展
  *
  * @param <T> 单体类型
  * @param <K> 标识类型
  * @param <O> 所属者类型
  * @author jianglei
  */
-public interface OwnedUnityRepo<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
-        extends UnityRepo<T, K> {
+public interface OwnedUnityRepox<T extends OwnedUnity<K, O>, K extends Serializable, O extends Serializable>
+        extends UnityRepox<T, K> {
     /**
      * 获取指定所属者下的单体个数
      *
@@ -41,7 +41,6 @@ public interface OwnedUnityRepo<T extends OwnedUnity<K, O>, K extends Serializab
      * @param limit        增减后允许的最大/最小值，设定以避免数值超限
      * @return 单体
      */
-    default <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit) {
-        throw new UnsupportedOperationException();
-    }
+    <N extends Number> T increaseNumber(O owner, K id, String propertyName, N step, N limit);
+
 }

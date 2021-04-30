@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.Repo;
+import org.truenewx.tnxjee.repo.Repox;
 
 /**
  * Repository工厂实现
@@ -19,10 +19,10 @@ import org.truenewx.tnxjee.repo.Repo;
  * @author jianglei
  */
 @Component
-public class RepositoryFactoryImpl implements RepositoryFactory, ContextInitializedBean {
+public class RepoFactoryImpl implements RepoFactory, ContextInitializedBean {
 
     private Map<Class<?>, Repository<?, ?>> repositoryMapping = new HashMap<>();
-    private Map<Class<?>, Repo<?>> repoMapping = new HashMap<>();
+    private Map<Class<?>, Repox<?>> repoxMapping = new HashMap<>();
 
     @Override
     @SuppressWarnings("rawtypes")
@@ -35,11 +35,11 @@ public class RepositoryFactoryImpl implements RepositoryFactory, ContextInitiali
             }
         }
 
-        Map<String, Repo> beans = context.getBeansOfType(Repo.class);
-        for (Repo<?> repo : beans.values()) {
-            Class<?> entityClass = getEntityClass(repo);
+        Map<String, Repox> beans = context.getBeansOfType(Repox.class);
+        for (Repox<?> repox : beans.values()) {
+            Class<?> entityClass = getEntityClass(repox);
             if (entityClass != null) {
-                this.repoMapping.put(entityClass, repo);
+                this.repoxMapping.put(entityClass, repox);
             }
         }
     }
@@ -54,10 +54,10 @@ public class RepositoryFactoryImpl implements RepositoryFactory, ContextInitiali
         return null;
     }
 
-    private Class<?> getEntityClass(Repo<?> repo) {
-        Class<?> entityClass = getEntityClassOfRepoClass(repo.getClass());
-        if (entityClass == null && repo instanceof Advised) {
-            entityClass = getEntityClassOfRepoClass(((Advised) repo).getTargetClass());
+    private Class<?> getEntityClass(Repox<?> repox) {
+        Class<?> entityClass = getEntityClassOfRepoClass(repox.getClass());
+        if (entityClass == null && repox instanceof Advised) {
+            entityClass = getEntityClassOfRepoClass(((Advised) repox).getTargetClass());
         }
         return entityClass;
     }
@@ -65,8 +65,8 @@ public class RepositoryFactoryImpl implements RepositoryFactory, ContextInitiali
     private Class<?> getEntityClassOfRepoClass(Class<?> repoClass) {
         Class<?>[] interfaces = repoClass.getInterfaces();
         for (Class<?> clazz : interfaces) {
-            if (clazz != Repo.class && Repo.class.isAssignableFrom(clazz)) {
-                return ClassUtil.getActualGenericType(clazz, Repo.class, 0);
+            if (clazz != Repox.class && Repox.class.isAssignableFrom(clazz)) {
+                return ClassUtil.getActualGenericType(clazz, Repox.class, 0);
             }
         }
         return null;
@@ -80,8 +80,8 @@ public class RepositoryFactoryImpl implements RepositoryFactory, ContextInitiali
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R extends Repo<T>, T extends Entity> R getRepo(Class<T> entityClass) {
-        return (R) this.repoMapping.get(entityClass);
+    public <R extends Repox<T>, T extends Entity> R getRepo(Class<T> entityClass) {
+        return (R) this.repoxMapping.get(entityClass);
     }
 
 }

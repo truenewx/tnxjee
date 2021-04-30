@@ -1,5 +1,9 @@
 package org.truenewx.tnxjee.test.service.data;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -9,11 +13,7 @@ import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.support.RepositoryFactory;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.truenewx.tnxjee.repo.support.RepoFactory;
 
 /**
  * 单元测试数据提供者工厂
@@ -21,7 +21,7 @@ import java.util.Map;
 @Component
 public class TestDataProviderFactory implements DataProviderFactory, ContextInitializedBean {
     @Autowired
-    private RepositoryFactory repositoryFacotory;
+    private RepoFactory repositoryFacotory;
     private Map<Class<?>, DataProvider<?>> providers = new HashMap<>();
 
     @Override

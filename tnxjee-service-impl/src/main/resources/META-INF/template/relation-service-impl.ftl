@@ -16,6 +16,6 @@ import ${repoClassName};
 public class ${serviceClassSimpleName} extends AbstractRelationService<${entityClassSimpleName}, ${leftKeyClassSimpleName}, ${rightKeyClassSimpleName}> implements ${serviceInterfaceSimpleName} {
 
     @Autowired
-    private ${repoClassSimpleName} repo;
+    private ${repoClassSimpleName} repox;
 
 }

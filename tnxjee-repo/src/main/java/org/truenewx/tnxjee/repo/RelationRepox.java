@@ -1,22 +1,21 @@
 package org.truenewx.tnxjee.repo;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 import org.truenewx.tnxjee.model.entity.relation.Relation;
 
 /**
- * 关系数据访问仓库
+ * 关系数据访问仓库扩展
  *
  * @param <T> 关系类型
  * @param <L> 左标识类型
  * @param <R> 右标识类型
  * @author jianglei
  */
-public interface RelationRepo<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
-        extends Repo<T> {
+public interface RelationRepox<T extends Relation<L, R>, L extends Serializable, R extends Serializable>
+        extends Repox<T> {
 
-    Optional<T> findById(L leftId, R rightId);
+    T find(L leftId, R rightId);
 
     boolean exists(L leftId, R rightId);
 

@@ -6,8 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.truenewx.tnxjee.core.caption.CaptionUtil;
 import org.truenewx.tnxjee.core.util.ClassUtil;
 import org.truenewx.tnxjee.model.entity.Entity;
-import org.truenewx.tnxjee.repo.Repo;
-import org.truenewx.tnxjee.repo.support.RepositoryFactory;
+import org.truenewx.tnxjee.repo.Repox;
+import org.truenewx.tnxjee.repo.support.RepoFactory;
 import org.truenewx.tnxjee.service.Service;
 import org.truenewx.tnxjee.service.exception.BusinessException;
 import org.truenewx.tnxjee.service.exception.ServiceExceptionCodes;
@@ -21,18 +21,18 @@ import org.truenewx.tnxjee.service.exception.ServiceExceptionCodes;
 public abstract class AbstractService<T extends Entity> extends ServiceSupport implements Service {
 
     @Autowired
-    private RepositoryFactory repositoryFactory;
+    private RepoFactory repoFactory;
 
     protected Class<T> getEntityClass() {
         return ClassUtil.getActualGenericType(getClass(), 0);
     }
 
     protected final <R extends CrudRepository<T, K>, K> R getRepository() {
-        return this.repositoryFactory.getRepository(getEntityClass());
+        return this.repoFactory.getRepository(getEntityClass());
     }
 
-    protected final <R extends Repo<T>> R getRepo() {
-        return this.repositoryFactory.getRepo(getEntityClass());
+    protected final <R extends Repox<T>> R getRepox() {
+        return this.repoFactory.getRepo(getEntityClass());
     }
 
     /**

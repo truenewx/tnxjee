@@ -85,9 +85,17 @@ public class JpaRepoGeneratorImpl extends ClassGeneratorSupport implements JpaRe
             String repoxClassSimpleName = generate(module, entityClass, params, this.relationExtTemplateLocation,
                     "x");
             params.put("repoxClassSimpleName", repoxClassSimpleName);
-            generate(module, entityClass, params, this.relationBaseTemplateLocation, Strings.EMPTY);
             Field keyField = ClassUtil.findField(entityClass, RelationKey.class);
-            Binate<Field, Field> keyFieldBinate = getRelationKeyField(keyField.getType());
+            Class<?> keyFieldType = keyField.getType();
+            if (keyFieldType.isMemberClass()) { // 关键字类型为成员类，则只需生成实体类下限定的简称类
+                params.put("keyClassSimpleName",
+                        entityClass.getSimpleName() + Strings.DOT + keyFieldType.getSimpleName());
+            } else { // 否则需生成完成的关键字类名称
+                params.put("keyClassSimpleName", keyFieldType.getSimpleName());
+                params.put("keyClassName", keyFieldType.getName());
+            }
+            generate(module, entityClass, params, this.relationBaseTemplateLocation, Strings.EMPTY);
+            Binate<Field, Field> keyFieldBinate = getRelationKeyField(keyFieldType);
             String keyPropertyName = keyField.getName();
             String leftKeyPropertyName = keyPropertyName + Strings.DOT + keyFieldBinate.getLeft().getName();
             params.put("leftKeyPropertyName", leftKeyPropertyName);
