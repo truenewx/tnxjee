@@ -81,7 +81,9 @@ public class WebUtil {
         if (StringUtils.isNotBlank(json)) {
             Map<String, Object> map = JsonUtil.json2Map(json);
             map.forEach((key, value) -> {
-                body.put(key, value.toString());
+                if (value != null) {
+                    body.put(key, value.toString());
+                }
             });
         }
         if (body.size() > 0 && excludedParameterNames.length > 0) {
