@@ -1,5 +1,6 @@
 package org.truenewx.tnxjee.web.util;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -69,7 +70,11 @@ public class WebUtil {
 
     public static String getRequestBodyString(ServletRequest request) {
         try {
-            return IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+            BufferedInputStream in = new BufferedInputStream(request.getInputStream());
+            in.mark(in.available());
+            String s = IOUtils.toString(in, request.getCharacterEncoding());
+            in.reset();
+            return s;
         } catch (IOException e) {
             return null;
         }
