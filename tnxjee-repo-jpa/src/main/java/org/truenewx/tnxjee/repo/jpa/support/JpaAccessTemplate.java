@@ -280,11 +280,18 @@ public class JpaAccessTemplate implements DataAccessTemplate {
     public void applyParamsToQuery(Query query, List<?> params) {
         if (params != null) {
             for (int i = 0; i < params.size(); i++) {
-                applyParamToQuery(query, i, params.get(i));
+                applyParamToQuery(query, i + 1, params.get(i));
             }
         }
     }
 
+    /**
+     * 设置查询参数到查询对象中
+     *
+     * @param query    查询对象
+     * @param position 参数位置，从1开始计数
+     * @param value    参数值
+     */
     public void applyParamToQuery(Query query, int position, Object value) {
         if (value instanceof Calendar) {
             query.setParameter(position, (Calendar) value, TemporalType.TIMESTAMP);
