@@ -30,6 +30,10 @@ public class DateUtil {
      */
     public static final String TIME_PATTERN = "HH:mm:ss";
     /**
+     * 精确到分钟的时间格式
+     */
+    public static final String TIME_PATTERN_TO_MINUTE = "HH:mm";
+    /**
      * 长日期格式
      */
     public static final String LONG_DATE_PATTERN = DateUtil.SHORT_DATE_PATTERN + Strings.SPACE
