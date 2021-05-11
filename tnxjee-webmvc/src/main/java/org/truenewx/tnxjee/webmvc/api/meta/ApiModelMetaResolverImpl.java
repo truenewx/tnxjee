@@ -3,6 +3,8 @@ package org.truenewx.tnxjee.webmvc.api.meta;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.*;
 
@@ -144,9 +146,18 @@ public class ApiModelMetaResolverImpl implements ApiModelMetaResolver, ContextIn
                     return ApiModelPropertyType.OPTION;
                 }
             }
-            // 枚举或日期类型为单选选项型
-            if (fieldType.isEnum() || Temporal.class.isAssignableFrom(fieldType)
-                    || Date.class.isAssignableFrom(fieldType)) {
+            if (LocalDate.class.isAssignableFrom(fieldType)) {
+                return ApiModelPropertyType.DATE;
+            }
+            if (LocalTime.class.isAssignableFrom(fieldType)) {
+                return ApiModelPropertyType.TIME;
+            }
+            // 其它日期和时间类型均为日期时间型
+            if (Temporal.class.isAssignableFrom(fieldType) || Date.class.isAssignableFrom(fieldType)) {
+                return ApiModelPropertyType.DATETIME;
+            }
+            // 枚举为单选选项型
+            if (fieldType.isEnum()) {
                 return ApiModelPropertyType.OPTION;
             }
         }
