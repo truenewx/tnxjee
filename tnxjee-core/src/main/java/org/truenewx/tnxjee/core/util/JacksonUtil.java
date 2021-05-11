@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+import org.truenewx.tnxjee.core.jackson.CompositeLocalTimeDeserializer;
 import org.truenewx.tnxjee.core.jackson.PredicateTypeResolverBuilder;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
@@ -52,7 +52,9 @@ public class JacksonUtil {
         //处理LocalTime
         DateTimeFormatter timeFormatter = TemporalUtil.formatter(DateUtil.TIME_PATTERN);
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        DateTimeFormatter timeToMinuteFormatter = TemporalUtil.formatter(DateUtil.TIME_PATTERN_TO_MINUTE);
+        javaTimeModule.addDeserializer(LocalTime.class,
+                new CompositeLocalTimeDeserializer(timeFormatter, timeToMinuteFormatter));
         //注册时间模块
         DEFAULT_MAPPER.registerModule(javaTimeModule);
 
