@@ -145,8 +145,8 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
     }
 
     @Override
-    public RegionAddress parseAddress(String address, int level, boolean withSuffix, Locale locale) {
-        int normalProvinceCaptionLength = withSuffix ? 3 : 2; // 一般的省级区划名称长度，后缀为一个字
+    public RegionAddress parseAddress(String address, int level, Locale locale) {
+        int normalProvinceCaptionLength = 2; // 一般的省级区划名称长度
         if (address == null || address.length() < normalProvinceCaptionLength) { // 地址至少为一般省级区划名称长度
             return null;
         }
@@ -158,12 +158,12 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         // 先查找省级区划
         Region province = null;
         try {
-            province = nationalRegion.findSubByCaption(address.substring(0, normalProvinceCaptionLength), withSuffix);
+            province = nationalRegion.findSubByCaption(address.substring(0, normalProvinceCaptionLength), false);
             if (province == null) { // 再尝试匹配超过一般长度的省级名称
                 List<Region> provinces = nationalRegion
-                        .findSubsByCaptionMinLength(normalProvinceCaptionLength + 1, withSuffix);
+                        .findSubsByCaptionMinLength(normalProvinceCaptionLength + 1, false);
                 for (Region p : provinces) {
-                    if (address.startsWith(p.getCaption(withSuffix))) {
+                    if (address.startsWith(p.getCaption(false))) {
                         province = p;
                     }
                 }
@@ -175,10 +175,15 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         }
 
         // 此时省级区划一定已经找到，去掉省级区划名称后，进一步查找市级区划
-        String regionCaption = address.substring(province.getCaption(withSuffix).length());
+        String provinceCaption = province.getCaption(true);
+        if (!address.startsWith(provinceCaption)) { // 不以带后缀的名称开头，则取不带后缀的名称
+            provinceCaption = province.getCaption(false);
+        }
+        String regionCaption = address.substring(provinceCaption.length());
         if (province.getLevel() >= level) {
             return new RegionAddress(province, regionCaption);
         }
+
         Region city = null;
         // 如果省级区划为直辖市，则市级区划后缀需是特殊的市级区县后缀
         boolean provincialCity = ArrayUtils.contains(this.provinceLevelCitySuffixes, province.getSuffix());
@@ -186,7 +191,7 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         int index = StringUtil.indexOfFirstInTurn(regionCaption, citySuffixes, true);
         if (index > 0) {
             String cityCaption = regionCaption.substring(0, index);
-            city = province.findSubByCaption(cityCaption, withSuffix);
+            city = province.findSubByCaption(cityCaption, false);
         }
         if (city == null) { // 无法正确匹配市级区划
             throw new BusinessException(RegionExceptionCodes.CITY_ERROR);
@@ -198,14 +203,18 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         if (provincialCity) {
             county = city;
         } else {
-            regionCaption = regionCaption.substring(city.getCaption(withSuffix).length());
+            String cityCaption = city.getCaption(true);
+            if (!regionCaption.startsWith(cityCaption)) { // 不以带后缀的名称开头，则取不带后缀的名称
+                cityCaption = city.getCaption(false);
+            }
+            regionCaption = regionCaption.substring(cityCaption.length());
             if (city.getLevel() >= level) {
                 return new RegionAddress(city, regionCaption);
             }
             index = StringUtil.indexOfFirstInTurn(regionCaption, this.countySuffixes, true);
             if (index > 0) {
                 String countyCaption = regionCaption.substring(0, index);
-                county = city.findSubByCaption(countyCaption, withSuffix);
+                county = city.findSubByCaption(countyCaption, false);
             }
             if (county == null) { // 无法正确匹配县级区划
                 throw new BusinessException(RegionExceptionCodes.COUNTY_ERROR);
@@ -213,7 +222,11 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         }
 
         // 此时县级区划一定已经找到，去掉县级区划名称后，剩下的是地址详情
-        String detail = regionCaption.substring(county.getCaption(withSuffix).length());
+        String countyCaption = county.getCaption(true);
+        if (!regionCaption.startsWith(countyCaption)) { // 不以带后缀的名称开头，则取不带后缀的名称
+            countyCaption = county.getCaption(false);
+        }
+        String detail = regionCaption.substring(countyCaption.length());
         return new RegionAddress(county, detail);
     }
 
