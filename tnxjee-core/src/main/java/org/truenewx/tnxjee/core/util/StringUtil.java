@@ -1211,4 +1211,46 @@ public class StringUtil {
         return sb.toString();
     }
 
+    /**
+     * 获取指定字符串末尾包含的数字字符串
+     *
+     * @param s              字符串
+     * @param acceptFraction 是否接受小数
+     * @return 字符串末尾包含的数字字符串，如果不是以数字结尾，则返回空字符串
+     */
+    public static String getEndDecimalString(String s, boolean acceptFraction) {
+        char[] chars = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        // 反向遍历最大编号的每个字符，取得末尾的数值
+        for (int i = chars.length - 1; i >= 0; i--) {
+            char c = chars[i];
+            if (isNumberChar(c)) {
+                sb.insert(0, c);
+            } else if (acceptFraction && c == '.') {
+                sb.insert(0, c);
+            } else {
+                break;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 获取指定字符串末尾包含的数值
+     *
+     * @param s              字符串
+     * @param acceptFraction 是否接受小数
+     * @return 字符串末尾包含的数值，如果不是以数字结尾，则返回null
+     */
+    public static BigDecimal getEndDecimal(String s, boolean acceptFraction) {
+        try {
+            String decimalString = getEndDecimalString(s, acceptFraction);
+            if (decimalString.length() > 0) {
+                return new BigDecimal(decimalString);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return null;
+    }
+
 }
