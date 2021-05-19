@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.MappingException;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -165,8 +166,11 @@ public class JpaValidationConfigurationFactory extends DefaultValidationConfigur
                 // 必须同时有读方法和写方法才视为有效属性
                 if (pd.getReadMethod() != null && pd.getWriteMethod() != null) {
                     String propertyPath = propertyNamePrefix + pd.getName();
-                    Property referencedProperty = persistentClass.getReferencedProperty(propertyPath);
-                    addRuleByPersistentProperty(configuration, referencedProperty, pd, propertyNamePrefix);
+                    try {
+                        Property referencedProperty = persistentClass.getReferencedProperty(propertyPath);
+                        addRuleByPersistentProperty(configuration, referencedProperty, pd, propertyNamePrefix);
+                    } catch (MappingException ignored) {
+                    }
                 }
             }
         }
