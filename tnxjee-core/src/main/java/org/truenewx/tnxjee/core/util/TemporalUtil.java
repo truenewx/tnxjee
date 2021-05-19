@@ -16,6 +16,11 @@ public class TemporalUtil {
 
     public static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
 
+    /**
+     * 最未来的日期：9999-12-31
+     */
+    public static final LocalDate MOST_FUTURE_DATE = LocalDate.of(9999, 12, 31);
+
     private TemporalUtil() {
     }
 
