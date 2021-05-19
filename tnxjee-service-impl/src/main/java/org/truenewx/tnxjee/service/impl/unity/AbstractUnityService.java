@@ -19,6 +19,8 @@ import org.truenewx.tnxjee.service.unity.SimpleUnityService;
 public abstract class AbstractUnityService<T extends Unity<K>, K extends Serializable>
         extends AbstractService<T> implements SimpleUnityService<T, K>, CommandUnityService<T, K> {
 
+    protected static final String MESSAGE_ID_NOT_EQUAL = "id must equal unity's id";
+
     @Override
     public T find(K id) {
         return id == null ? null : getRepository().findById(id).orElse(null);
@@ -35,11 +37,15 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
     public T add(T unity) {
         T newUnity = beforeSave(null, unity);
         Assert.isTrue(newUnity != unity, "the returned unity must not be the input unity");
-        if (newUnity != null) {
-            getRepository().save(newUnity);
-            afterSave(newUnity);
-        }
+        doAdd(newUnity);
         return newUnity;
+    }
+
+    private void doAdd(T unity) {
+        if (unity != null) {
+            getRepository().save(unity);
+            afterSave(unity);
+        }
     }
 
     @Override
@@ -48,12 +54,16 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
             return null;
         }
         T newUnity = beforeSave(id, unity);
-        if (newUnity != null) {
-            Assert.isTrue(id.equals(newUnity.getId()), "id must equal unity's id");
-            getRepository().save(newUnity);
-            afterSave(newUnity);
-        }
+        doUpdate(id, newUnity);
         return newUnity;
+    }
+
+    private void doUpdate(K id, T unity) {
+        if (unity != null) {
+            Assert.isTrue(id.equals(unity.getId()), MESSAGE_ID_NOT_EQUAL);
+            getRepository().save(unity);
+            afterSave(unity);
+        }
     }
 
     /**
@@ -79,10 +89,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
     @Override
     public T add(CommandModel<T> commandModel) {
         T unity = beforeSave(null, commandModel);
-        if (unity != null) {
-            getRepository().save(unity);
-            afterSave(unity);
-        }
+        doAdd(unity);
         return unity;
     }
 
@@ -92,11 +99,7 @@ public abstract class AbstractUnityService<T extends Unity<K>, K extends Seriali
             return null;
         }
         T unity = beforeSave(id, commandModel);
-        if (unity != null) {
-            Assert.isTrue(id.equals(unity.getId()), "id must equal unity's id");
-            getRepository().save(unity);
-            afterSave(unity);
-        }
+        doUpdate(id, unity);
         return unity;
     }
 
