@@ -23,6 +23,11 @@ public @interface GrantAuthority {
     String rank() default Strings.EMPTY;
 
     /**
+     * @return 授予的许可所属应用名称
+     */
+    String app() default Strings.EMPTY;
+
+    /**
      * @return 授予许可清单
      */
     String[] permission() default {};

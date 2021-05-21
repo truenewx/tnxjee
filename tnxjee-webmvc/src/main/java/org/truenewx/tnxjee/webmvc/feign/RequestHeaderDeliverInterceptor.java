@@ -7,14 +7,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.truenewx.tnxjee.core.config.InternalJwtConfiguration;
 import org.truenewx.tnxjee.model.spec.user.DefaultUserIdentity;
 import org.truenewx.tnxjee.model.spec.user.security.DefaultUserSpecificDetails;
-import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthorityImpl;
+import org.truenewx.tnxjee.model.spec.user.security.UserGrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 import org.truenewx.tnxjee.service.feign.GrantAuthority;
 import org.truenewx.tnxjee.web.context.SpringWebContext;
@@ -118,18 +117,10 @@ public class RequestHeaderDeliverInterceptor implements RequestInterceptor {
     @SuppressWarnings("unchecked")
     private void addGrantedAuthorities(UserSpecificDetails<?> userDetails, GrantAuthority grantAuthority) {
         Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) userDetails.getAuthorities();
-        String type = grantAuthority.type();
-        if (StringUtils.isNotBlank(type)) {
-            authorities.add(KindGrantedAuthorityImpl.ofType(type));
-        }
-        String rank = grantAuthority.rank();
-        if (StringUtils.isNotBlank(rank)) {
-            authorities.add(KindGrantedAuthorityImpl.ofRank(rank));
-        }
-        String[] permissions = grantAuthority.permission();
-        for (String permission : permissions) {
-            authorities.add(KindGrantedAuthorityImpl.ofPermission(permission));
-        }
+        UserGrantedAuthority userAuthority = new UserGrantedAuthority(grantAuthority.type(), grantAuthority.rank(),
+                grantAuthority.app());
+        userAuthority.addPermissions(grantAuthority.permission());
+        authorities.add(userAuthority);
     }
 
 }

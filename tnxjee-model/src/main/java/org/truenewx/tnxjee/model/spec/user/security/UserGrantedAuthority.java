@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.truenewx.tnxjee.core.Strings;
@@ -30,9 +31,9 @@ public class UserGrantedAuthority implements GrantedAuthority {
     }
 
     public UserGrantedAuthority(String type, String rank, String app) {
-        this.type = type;
-        this.rank = rank;
-        this.app = app;
+        setType(type);
+        setRank(rank);
+        setApp(app);
     }
 
     public String getType() {
@@ -40,11 +41,23 @@ public class UserGrantedAuthority implements GrantedAuthority {
     }
 
     public void setType(String type) {
-        this.type = type;
+        if (StringUtils.isNotBlank(type)) {
+            this.type = type;
+        } else {
+            this.type = null;
+        }
     }
 
     public String getRank() {
         return this.rank;
+    }
+
+    public void setRank(String rank) {
+        if (StringUtils.isNotBlank(rank)) {
+            this.rank = rank;
+        } else {
+            this.rank = null;
+        }
     }
 
     public String getApp() {
@@ -52,11 +65,11 @@ public class UserGrantedAuthority implements GrantedAuthority {
     }
 
     public void setApp(String app) {
-        this.app = app;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
+        if (StringUtils.isNotBlank(app)) {
+            this.app = app;
+        } else {
+            this.app = null;
+        }
     }
 
     public Set<String> getPermissions() {
@@ -84,6 +97,17 @@ public class UserGrantedAuthority implements GrantedAuthority {
                 this.permissions = new LinkedHashSet<>();
             }
             this.permissions.addAll(permissions);
+        }
+    }
+
+    public void addPermissions(String[] permissions) {
+        if (ArrayUtils.isNotEmpty(permissions)) {
+            if (this.permissions == null) {
+                this.permissions = new LinkedHashSet<>();
+            }
+            for (String permission : permissions) {
+                this.permissions.add(permission);
+            }
         }
     }
 

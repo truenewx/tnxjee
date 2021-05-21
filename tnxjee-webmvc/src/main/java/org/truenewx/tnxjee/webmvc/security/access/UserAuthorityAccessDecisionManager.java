@@ -13,8 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.truenewx.tnxjee.core.util.NetUtil;
-import org.truenewx.tnxjee.model.spec.user.security.GrantedAuthorityKind;
-import org.truenewx.tnxjee.model.spec.user.security.KindGrantedAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.model.spec.user.security.UserGrantedAuthority;
 import org.truenewx.tnxjee.service.exception.BusinessException;
@@ -87,27 +85,6 @@ public class UserAuthorityAccessDecisionManager extends UnanimousBased implement
                 if (userAuthority.matches(type, rank, app, permission)) {
                     return true;
                 }
-            }
-        }
-        return isKindGranted(authorities, GrantedAuthorityKind.TYPE, type)
-                // 类型不为空才检查级别
-                && (StringUtils.isBlank(type) || isKindGranted(authorities, GrantedAuthorityKind.RANK, rank))
-                && isKindGranted(authorities, GrantedAuthorityKind.PERMISSION, permission);
-    }
-
-    private boolean isKindGranted(Collection<? extends GrantedAuthority> authorities, GrantedAuthorityKind kind,
-            String name) {
-        if (StringUtils.isBlank(name)) { // 配置权限不限制，则视为匹配包含
-            return true;
-        }
-        for (GrantedAuthority authority : authorities) {
-            if (authority instanceof KindGrantedAuthority) {
-                KindGrantedAuthority kindAuthority = (KindGrantedAuthority) authority;
-                if (kindAuthority.getKind() == kind && name.equals(kindAuthority.getName())) {
-                    return true;
-                }
-            } else if (name.equals(authority.getAuthority()) || name.equals(authority.toString())) {
-                return true;
             }
         }
         return false;
