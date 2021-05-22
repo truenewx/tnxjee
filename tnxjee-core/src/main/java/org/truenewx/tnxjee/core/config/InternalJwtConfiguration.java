@@ -10,13 +10,17 @@ public class InternalJwtConfiguration {
     private String secretKey;
     private int expiredIntervalSeconds;
 
+    /**
+     * @param secretKey              密钥
+     * @param expiredIntervalSeconds 过期间隔秒数，应大于服务的启动时间
+     */
     public InternalJwtConfiguration(String secretKey, int expiredIntervalSeconds) {
         this.secretKey = secretKey;
         this.expiredIntervalSeconds = expiredIntervalSeconds;
     }
 
     public InternalJwtConfiguration(String secretKey) {
-        this(secretKey, 10);
+        this(secretKey, 120);
     }
 
     public String getSecretKey() {
