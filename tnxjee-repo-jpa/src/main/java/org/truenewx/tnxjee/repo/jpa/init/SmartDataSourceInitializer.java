@@ -47,6 +47,7 @@ public abstract class SmartDataSourceInitializer {
         Map<String, List<Resource>> mapping = getVersionResourcesMapping(connection);
         if (mapping.size() > 0) {
             String lastVersion = null;
+            Exception executeException = null;
             this.logger.info("======== Begin execute sql scripts:");
             for (Map.Entry<String, List<Resource>> entry : mapping.entrySet()) {
                 try {
@@ -55,8 +56,8 @@ public abstract class SmartDataSourceInitializer {
                     databasePopulator.populate(connection);
                     lastVersion = entry.getKey();
                 } catch (Exception e) {
-                    LogUtil.error(getClass(), e);
-                    // 有一个版本的脚本出现问题，则后续版本的脚本不执行
+                    // 有一个版本的脚本出现问题，则缓存异常，并中止后续版本的脚本执行
+                    executeException = e;
                     break;
                 }
             }
@@ -70,6 +71,9 @@ public abstract class SmartDataSourceInitializer {
                 LogUtil.error(getClass(), e);
             } finally {
                 DataSourceUtils.releaseConnection(connection, dataSource);
+            }
+            if (executeException != null) { // 如果有脚本执行异常，则抛出异常中止服务启动
+                throw new RuntimeException(executeException);
             }
         } else {
             this.logger.info("======== No scripts need to be executed.");
