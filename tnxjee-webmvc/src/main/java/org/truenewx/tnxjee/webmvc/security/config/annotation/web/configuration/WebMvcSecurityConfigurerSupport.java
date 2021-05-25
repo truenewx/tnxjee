@@ -136,8 +136,7 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
      */
     protected Collection<String> getIgnoringAntPatterns() {
         Collection<String> patterns = new HashSet<>();
-        RequestMapping mapping = ApiMetaController.class.getAnnotation(RequestMapping.class);
-        patterns.add(mapping.value()[0] + "/**");
+        patterns.add(getIgnoringAntPatternFromController(ApiMetaController.class));
 
         if (SwaggerUtil.isEnabled(getApplicationContext())) {
             patterns.add("/swagger-ui.html");
@@ -153,6 +152,11 @@ public abstract class WebMvcSecurityConfigurerSupport extends WebSecurityConfigu
             }
         }
         return patterns;
+    }
+
+    protected final String getIgnoringAntPatternFromController(Class<?> controllerClass) {
+        RequestMapping mapping = controllerClass.getAnnotation(RequestMapping.class);
+        return mapping.value()[0] + "/**";
     }
 
     @Override

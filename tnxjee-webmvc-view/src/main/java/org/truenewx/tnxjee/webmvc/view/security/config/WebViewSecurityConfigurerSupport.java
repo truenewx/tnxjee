@@ -13,6 +13,7 @@ import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.util.NetUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.web.configuration.WebMvcSecurityConfigurerSupport;
+import org.truenewx.tnxjee.webmvc.view.controller.RedirectControllerSupport;
 import org.truenewx.tnxjee.webmvc.view.exception.resolver.ViewResolvableExceptionResolver;
 
 /**
@@ -56,6 +57,7 @@ public abstract class WebViewSecurityConfigurerSupport extends WebMvcSecurityCon
     @Override
     protected Collection<String> getIgnoringAntPatterns() {
         Collection<String> patterns = super.getIgnoringAntPatterns();
+        patterns.add(getIgnoringAntPatternFromController(RedirectControllerSupport.class));
         // 静态资源全部忽略
         String staticPathPattern = this.mvcProperties.getStaticPathPattern();
         if (StringUtils.isNotBlank(staticPathPattern)) {
