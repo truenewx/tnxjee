@@ -1,7 +1,6 @@
 package org.truenewx.tnxjee.service.impl.spec.region;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -146,7 +145,7 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
 
     @Override
     public RegionAddress parseAddress(String address, int level, Locale locale) {
-        int normalProvinceCaptionLength = 2; // 一般的省级区划名称长度
+        int normalProvinceCaptionLength = 2; // 一般的省级区划名称长度为2
         if (address == null || address.length() < normalProvinceCaptionLength) { // 地址至少为一般省级区划名称长度
             return null;
         }
@@ -159,14 +158,9 @@ public abstract class AbstractNationalRegionSource implements NationalRegionSour
         Region province = null;
         try {
             province = nationalRegion.findSubByCaption(address.substring(0, normalProvinceCaptionLength), false);
-            if (province == null) { // 再尝试匹配超过一般长度的省级名称
-                List<Region> provinces = nationalRegion
-                        .findSubsByCaptionMinLength(normalProvinceCaptionLength + 1, false);
-                for (Region p : provinces) {
-                    if (address.startsWith(p.getCaption(false))) {
-                        province = p;
-                    }
-                }
+            if (province == null) { // 再尝试匹配长度为3的省级名称，中国暂不存在长度超过3的省级名称，国外的情况暂时不考虑
+                province = nationalRegion
+                        .findSubByCaption(address.substring(0, normalProvinceCaptionLength + 1), false);
             }
         } catch (Exception ignored) {
         }
