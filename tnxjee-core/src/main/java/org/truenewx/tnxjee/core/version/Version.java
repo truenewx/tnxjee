@@ -99,6 +99,20 @@ public class Version implements Comparable<Version> {
                 return 1;
             }
         }
-        return Integer.compare(this.bases.length, other.bases.length);
+        int result = Integer.compare(this.bases.length, other.bases.length);
+        if (result == 0) {
+            if (StringUtils.isBlank(this.build)) {
+                if (StringUtils.isNotBlank(other.build)) {
+                    result = -1;
+                }
+            } else {
+                if (StringUtils.isBlank(other.build)) {
+                    result = 1;
+                } else {
+                    result = this.build.compareTo(other.build);
+                }
+            }
+        }
+        return result;
     }
 }
