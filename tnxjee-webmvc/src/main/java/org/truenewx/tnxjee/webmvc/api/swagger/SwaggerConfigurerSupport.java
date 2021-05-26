@@ -34,7 +34,7 @@ public abstract class SwaggerConfigurerSupport {
     }
 
     private ApiInfo apiInfo() {
-        String version = this.versionReader.getVersion();
+        String version = this.versionReader.getVersion().toString();
         return new ApiInfoBuilder().version(version).build();
     }
 

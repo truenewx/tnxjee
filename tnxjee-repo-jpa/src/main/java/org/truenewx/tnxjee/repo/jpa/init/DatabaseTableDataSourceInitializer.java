@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.truenewx.tnxjee.core.config.AppConstants;
+import org.truenewx.tnxjee.core.version.Version;
 
 /**
  * 使用数据表进行智能判断的数据初始化器
@@ -30,7 +31,7 @@ public class DatabaseTableDataSourceInitializer extends SmartDataSourceInitializ
         if (lastVersion == null) { // 找不到最近执行版本，则返回false以避免在开发人员不知情的情况下执行脚本
             return false;
         }
-        return version.compareTo(lastVersion) > 0; // 比较版本高于最近执行版本才能执行
+        return new Version(version).compareTo(new Version(lastVersion)) > 0; // 比较版本高于最近执行版本才能执行
     }
 
     private String getLastVersion(Connection connection) throws SQLException {

@@ -46,7 +46,7 @@ public class ServletContextInitializedBean implements ServletContextAware, Conte
         this.servletContext.setAttribute("profile", this.profileSupplier.get());
 
         boolean formalProfile = this.profileSupplier.isFormal();
-        this.servletContext.setAttribute("version", this.versionReader.getVersion(!formalProfile));
+        this.servletContext.setAttribute("version", this.versionReader.getVersion().toText(!formalProfile));
 
         this.servletContext.setAttribute("formalProfile", formalProfile);
         this.servletContext.setAttribute("resourceMin", formalProfile ? ".min" : Strings.EMPTY);
