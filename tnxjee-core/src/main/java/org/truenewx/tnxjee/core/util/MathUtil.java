@@ -531,4 +531,22 @@ public class MathUtil {
         return null;
     }
 
+    public static String toShortestString(BigDecimal decimal) {
+        if (decimal == null) {
+            return null;
+        }
+        String s = decimal.toPlainString();
+        if (s.endsWith("0")) {
+            StringBuilder sb = new StringBuilder(s);
+            do {
+                sb.deleteCharAt(sb.length() - 1);
+            } while (sb.charAt(sb.length() - 1) == '0');
+            if (sb.charAt(sb.length() - 1) == '.') {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            s = sb.toString();
+        }
+        return s;
+    }
+
 }
