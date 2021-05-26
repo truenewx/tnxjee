@@ -24,7 +24,7 @@ public abstract class AjaxAuthenticationSuccessHandler extends SavedRequestAware
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
         if (WebUtil.isAjaxRequest(request)) {
-            Object result = getLoginResult(request, authentication);
+            Object result = getAjaxLoginResult(request, authentication);
             if (result != null) {
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -35,6 +35,6 @@ public abstract class AjaxAuthenticationSuccessHandler extends SavedRequestAware
         }
     }
 
-    protected abstract Object getLoginResult(HttpServletRequest request, Authentication authentication);
+    protected abstract Object getAjaxLoginResult(HttpServletRequest request, Authentication authentication);
 
 }
