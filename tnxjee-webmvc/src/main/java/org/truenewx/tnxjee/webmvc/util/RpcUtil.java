@@ -4,12 +4,13 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.JacksonUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
 import org.truenewx.tnxjee.web.util.WebConstants;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * RPC工具类
@@ -34,11 +35,16 @@ public class RpcUtil {
             long expiredIntervalSeconds) {
         if (userDetails != null) {
             long expiredTimeMillis = System.currentTimeMillis() + expiredIntervalSeconds * 1000;
-            String token = JWT.create()
-                    .withExpiresAt(new Date(expiredTimeMillis))
-                    .withAudience(JsonUtil.toJson(userDetails))
-                    .sign(Algorithm.HMAC256(secretKey));
-            return JWT_PREFIX + token;
+            try {
+                String audienceJson = JacksonUtil.CLASSED_MAPPER.writeValueAsString(userDetails);
+                String token = JWT.create()
+                        .withExpiresAt(new Date(expiredTimeMillis))
+                        .withAudience(audienceJson)
+                        .sign(Algorithm.HMAC256(secretKey));
+                return JWT_PREFIX + token;
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

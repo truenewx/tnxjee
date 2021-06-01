@@ -16,7 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 import org.truenewx.tnxjee.core.config.InternalJwtConfiguration;
 import org.truenewx.tnxjee.core.util.CollectionUtil;
-import org.truenewx.tnxjee.core.util.JsonUtil;
+import org.truenewx.tnxjee.core.util.JacksonUtil;
 import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserSpecificDetails;
@@ -58,10 +58,10 @@ public class InternalJwtAuthenticationFilter extends GenericFilterBean {
                     if (token != null) {
                         try {
                             DecodedJWT jwt = this.verifier.verify(token);
-                            String json = CollectionUtil.getFirst(jwt.getAudience(), null);
-                            if (StringUtils.isNotBlank(json)) {
-                                UserSpecificDetails<?> details = (UserSpecificDetails<?>) JsonUtil
-                                        .json2Bean(json, UserSpecificDetails.class);
+                            String audienceJson = CollectionUtil.getFirst(jwt.getAudience(), null);
+                            if (StringUtils.isNotBlank(audienceJson)) {
+                                UserSpecificDetails<?> details = (UserSpecificDetails<?>) JacksonUtil.CLASSED_MAPPER
+                                        .readValue(audienceJson, UserSpecificDetails.class);
                                 Authentication authResult = new UserSpecificDetailsAuthenticationToken(details);
                                 securityContext.setAuthentication(authResult);
                                 clearAuthentication = true; // 设置的一次性授权，需要在后续处理完之后清除

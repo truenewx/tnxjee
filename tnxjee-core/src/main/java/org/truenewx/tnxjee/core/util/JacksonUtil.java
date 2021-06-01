@@ -35,8 +35,8 @@ public class JacksonUtil {
     private JacksonUtil() {
     }
 
-    static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
-    static final ObjectMapper CLASSED_MAPPER;
+    public static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper CLASSED_MAPPER;
 
     static {
         // 初始化JavaTimeModule
