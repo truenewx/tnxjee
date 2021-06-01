@@ -5,9 +5,11 @@ import java.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 import org.truenewx.tnxjee.core.config.CommonProperties;
@@ -16,6 +18,7 @@ import org.truenewx.tnxjee.core.util.CollectionUtil;
 import org.truenewx.tnxjee.web.cors.CorsRegistryProperties;
 import org.truenewx.tnxjee.web.util.SwaggerUtil;
 import org.truenewx.tnxjee.web.util.WebConstants;
+import org.truenewx.tnxjee.webmvc.cors.IgnoreNullConfigCorsProcessor;
 import org.truenewx.tnxjee.webmvc.cors.SingleCorsConfigurationSource;
 
 /**
@@ -94,6 +97,13 @@ public abstract class WebMvcConfigurerSupport implements WebMvcConfigurer {
         exposedHeaders.add(WebConstants.HEADER_REDIRECT_TO);
         exposedHeaders.add(WebConstants.HEADER_LOGIN_URL);
         exposedHeaders.add(WebConstants.HEADER_ORIGINAL_REQUEST);
+    }
+
+    @Bean("corsFilter")
+    public CorsFilter corsFilter() {
+        CorsFilter corsFilter = new CorsFilter(this.corsConfigurationSource);
+        corsFilter.setCorsProcessor(new IgnoreNullConfigCorsProcessor());
+        return corsFilter;
     }
 
 }
