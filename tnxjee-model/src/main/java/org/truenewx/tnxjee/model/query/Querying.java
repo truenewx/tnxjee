@@ -52,10 +52,14 @@ public class Querying extends Pagination implements QueryModel, Paging {
     }
 
     public void setOrderBy(String orderBy) {
+        setOrders(null);
         if (StringUtils.isNotBlank(orderBy)) {
             String[] orders = orderBy.split(Strings.COMMA);
             for (String order : orders) {
-                addOrder(FieldOrder.of(order));
+                FieldOrder fieldOrder = FieldOrder.of(order);
+                if (fieldOrder != null) {
+                    addOrder(fieldOrder);
+                }
             }
         }
     }

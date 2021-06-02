@@ -90,4 +90,10 @@ public class Pagination implements Serializable {
         addOrder(new FieldOrder(fieldName, desc));
     }
 
+    public void setOrderDefault(String fieldName, boolean desc) {
+        if (this.orders == null || this.orders.isEmpty()) {
+            addOrder(fieldName, desc);
+        }
+    }
+
 }

@@ -22,7 +22,8 @@ public class QueryResult<T> implements Iterable<T> {
         this.paged = paged;
     }
 
-    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, Long total) {
+    public static <T> QueryResult<T> of(List<T> records, int pageSize, int pageNo, Long total,
+            List<FieldOrder> orders) {
         if (pageSize <= 0) {
             pageSize = records.size();
             pageNo = 1;
@@ -37,6 +38,7 @@ public class QueryResult<T> implements Iterable<T> {
             }
             paged = new Paged(pageSize, pageNo, morePage);
         }
+        paged.setOrders(orders);
         return new QueryResult<>(records, paged);
     }
 

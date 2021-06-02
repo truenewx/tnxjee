@@ -44,7 +44,7 @@ public abstract class MongoRepoxSupport<T extends Entity> extends RepoxSupport<T
         } else {
             records = getAccessTemplate().list(getEntityClass(), query, pageSize, pageNo, orders);
         }
-        return QueryResult.of(records, pageSize, pageNo, total);
+        return QueryResult.of(records, pageSize, pageNo, total, orders);
     }
 
     protected QueryResult<T> query(List<Criteria> criteriaList, Paging paging) {

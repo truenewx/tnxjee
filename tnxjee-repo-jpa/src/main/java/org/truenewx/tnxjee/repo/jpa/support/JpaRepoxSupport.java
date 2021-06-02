@@ -82,7 +82,7 @@ public abstract class JpaRepoxSupport<T extends Entity> extends RepoxSupport<T> 
                 total = (long) records.size();
             }
         }
-        return QueryResult.of(records, pageSize, pageNo, total);
+        return QueryResult.of(records, pageSize, pageNo, total, orders);
     }
 
     protected QueryResult<T> query(CharSequence ql, Map<String, Object> params, Paging paging) {
