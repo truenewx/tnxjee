@@ -1,10 +1,13 @@
 package org.truenewx.tnxjee.model.query;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.truenewx.tnxjee.core.Strings;
+import org.truenewx.tnxjee.core.util.LogUtil;
 import org.truenewx.tnxjee.core.util.StringUtil;
 import org.truenewx.tnxjee.model.annotation.RequestParamIgnore;
 
@@ -78,8 +81,14 @@ public class Querying extends Pagination implements QueryModel, Paging {
     public static String toOrderBy(Collection<FieldOrder> orders) {
         StringBuilder orderBy = new StringBuilder();
         if (orders != null) {
+            Set<String> fieldNames = new HashSet<>();
             for (FieldOrder order : orders) {
-                orderBy.append(Strings.COMMA).append(order.toString());
+                String fieldName = order.getName();
+                if (fieldNames.add(fieldName)) { // 忽略重复的字段
+                    orderBy.append(Strings.COMMA).append(order);
+                } else { // 重复的字段输出警告日志
+                    LogUtil.warn(Querying.class, "Repeated field({}) order is ignored.", fieldName);
+                }
             }
             if (orderBy.length() > 0) {
                 orderBy.deleteCharAt(0); // 去掉首位的多余逗号
