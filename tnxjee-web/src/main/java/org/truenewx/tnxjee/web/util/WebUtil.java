@@ -531,13 +531,27 @@ public class WebUtil {
 
     public static void setDownloadFilename(HttpServletRequest request, HttpServletResponse response, String filename) {
         response.setContentType(Mimetypes.getInstance().getMimetype(filename));
-        String userAgent = request.getHeader("User-Agent").toUpperCase();
-        if (userAgent.contains("MSIE") || userAgent.contains("TRIDENT")) {
+        if (isRequestFromMsie(request)) {
             filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
         } else {
             filename = new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         }
         response.setHeader("content-disposition", "attachment;filename=" + filename);
+    }
+
+    /**
+     * 判断请求是否来自微软IE浏览器
+     *
+     * @param request 请求
+     * @return 请求是否来自微软IE浏览器
+     */
+    public static boolean isRequestFromMsie(HttpServletRequest request) {
+        String userAgent = request.getHeader(WebConstants.HEADER_USER_AGENT);
+        if (userAgent != null) {
+            userAgent = userAgent.toUpperCase();
+            return userAgent.contains("MSIE") || userAgent.contains("TRIDENT");
+        }
+        return false;
     }
 
     /**
@@ -555,7 +569,7 @@ public class WebUtil {
         Device device = Device.PC;
         Program program = Program.WEB;
         OS os = null;
-        String userAgent = request.getHeader("User-Agent");
+        String userAgent = request.getHeader(WebConstants.HEADER_USER_AGENT);
         if (StringUtils.isNotBlank(userAgent)) {
             userAgent = userAgent.toLowerCase();
             if (!userAgent.contains("webkit") && !userAgent.contains("firefox") && !userAgent.contains("opera")

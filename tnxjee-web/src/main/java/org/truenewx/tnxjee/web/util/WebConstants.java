@@ -9,6 +9,11 @@ public class WebConstants {
     }
 
     /**
+     * 头信息名：User-Agent
+     */
+    public static final String HEADER_USER_AGENT = "User-Agent";
+
+    /**
      * 头信息名：AJAX请求
      */
     public static final String HEADER_AJAX_REQUEST = "X-Requested-With";

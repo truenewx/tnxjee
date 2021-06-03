@@ -27,7 +27,7 @@ public class RpcUtil {
         if (internalJwt != null) {
             return true;
         }
-        String userAgent = request.getHeader("User-Agent");
+        String userAgent = request.getHeader(WebConstants.HEADER_USER_AGENT);
         return userAgent == null || userAgent.toLowerCase().startsWith("java");
     }
 
