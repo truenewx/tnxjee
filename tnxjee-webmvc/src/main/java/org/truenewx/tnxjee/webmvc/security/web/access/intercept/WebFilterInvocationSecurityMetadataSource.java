@@ -6,7 +6,6 @@ import java.util.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
@@ -15,10 +14,7 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.web.method.HandlerMethod;
 import org.truenewx.tnxjee.core.Strings;
 import org.truenewx.tnxjee.core.beans.ContextInitializedBean;
-import org.truenewx.tnxjee.core.config.AppConstants;
-import org.truenewx.tnxjee.core.config.CommonProperties;
 import org.truenewx.tnxjee.core.util.LogUtil;
-import org.truenewx.tnxjee.core.util.SpringUtil;
 import org.truenewx.tnxjee.model.spec.user.security.UserConfigAuthority;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAnonymous;
 import org.truenewx.tnxjee.webmvc.security.config.annotation.ConfigAuthority;
@@ -43,8 +39,6 @@ public class WebFilterInvocationSecurityMetadataSource
      * 映射集：方法名称-所需权限清单，用户具有权限清单中的任意一个权限，即可访问对应方法
      */
     private final Map<String, Collection<UserConfigAuthority>> methodConfigAuthoritiesMapping = new HashMap<>();
-    @Value(AppConstants.EL_SPRING_APP_NAME)
-    private String limitedApp;
 
     public void setOrigin(FilterInvocationSecurityMetadataSource origin) {
         this.origin = origin;
@@ -52,11 +46,6 @@ public class WebFilterInvocationSecurityMetadataSource
 
     @Override
     public void afterInitialized(ApplicationContext context) {
-        // 不存在多个微服务时，不限定应用
-        CommonProperties commonProperties = SpringUtil.getFirstBeanByClass(context, CommonProperties.class);
-        if (commonProperties == null || commonProperties.getAppSize() == 1) {
-            this.limitedApp = null;
-        }
         this.handlerMethodMapping.getAllHandlerMethods().forEach((action, handlerMethod) -> {
             Collection<UserConfigAuthority> authorities = getUserConfigAuthorities(handlerMethod);
             if (authorities != null) {
@@ -78,11 +67,11 @@ public class WebFilterInvocationSecurityMetadataSource
             if (annotation instanceof ConfigAuthority) {
                 ConfigAuthority configAuthority = (ConfigAuthority) annotation;
                 authorities.add(new UserConfigAuthority(configAuthority.type(), configAuthority.rank(),
-                        this.limitedApp, configAuthority.permission(), configAuthority.intranet()));
+                        configAuthority.app(), configAuthority.permission(), configAuthority.intranet()));
             } else if (annotation instanceof ConfigPermission) {
                 ConfigPermission configPermission = (ConfigPermission) annotation;
                 authorities.add(new UserConfigAuthority(configPermission.type(),
-                        configPermission.rank(), this.limitedApp, getDefaultPermission(url),
+                        configPermission.rank(), configPermission.app(), getDefaultPermission(url),
                         configPermission.intranet()));
             }
         }

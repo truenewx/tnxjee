@@ -28,6 +28,11 @@ public @interface ConfigPermission {
     String rank() default Strings.EMPTY;
 
     /**
+     * @return 所需权限所属应用，默认为不限
+     */
+    String app() default Strings.EMPTY;
+
+    /**
      * @return 是否只有内网可访问
      */
     boolean intranet() default false;
